@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Interests</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#0f0f0f,#1a1a2e,#16213e);
+  color:white;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+
+.container{
+  width:95%;
+  max-width:500px;
+  height:95vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+}
+
+.step{
+  display:none;
+  animation:fade 0.5s ease;
+  height:100%;
+}
+
+.step.active{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+h1{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+p{
+  opacity:0.8;
+  margin-bottom:15px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.buttons{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:30px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.skip{
+  background:transparent;
+  color:#ccc;
+}
+
+.next{
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+  color:white;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* INTEREST STEP LAYOUT FIX */
+.interests-wrapper{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.interests-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+.interest{
+  padding:8px;
+  border-radius:18px;
+  font-size:12px;
+  background:rgba(255,255,255,0.08);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.interest.selected{
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+}
+
+/* Continue Button */
+.finish-btn{
+  margin-top:12px;
+  width:100%;
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+  color:white;
+  opacity:0.4;
+  cursor:not-allowed;
+  transition:0.3s;
+}
+
+.finish-btn.active{
+  opacity:1;
+  cursor:pointer;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateX(10px);}
+  to{opacity:1; transform:translateX(0);}
+}
+
+/* Small Devices */
+@media(max-height:650px){
+  h1{font-size:20px;}
+  p{font-size:13px;}
+  .interest{font-size:11px;padding:6px;}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Step 1 -->
+  <div class="step active">
+    <h1>Welcome to BIGULA </h1>
+    <p>BIGULA is your stress-free content platform. Watch, create, upload and earn from your passion.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <h1>Login & Build Your Profile </h1>
+    <p>Create your account to personalize your feed and connect with your audience.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <h1>Upload & Share </h1>
+    <p>Upload videos, share your talent, and grow your community on BIGULA.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <h1>Monetize </h1>
+    <p>Earn money by monetizing your content. Turn creativity into income.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Choose Interests</button>
+    </div>
+  </div>
+
+  <!-- Interests Step -->
+  <div class="step">
+    <h1>Select Your Interests</h1>
+    <p>Choose what you love. We’ll show you videos based on your preferences.</p>
+
+    <div class="interests-wrapper">
+      <div class="interests-grid">
+        <div class="interest">Entertainment</div>
+        <div class="interest">Comedy</div>
+        <div class="interest">Music</div>
+        <div class="interest">Autos & Vehicles</div>
+        <div class="interest">Animals</div>
+        <div class="interest">Cooking</div>
+        <div class="interest">Film & Animation</div>
+        <div class="interest">People & Blogs</div>
+        <div class="interest">Fashion & Style</div>
+        <div class="interest">Science & Technology</div>
+        <div class="interest">Sports</div>
+        <div class="interest">Technology</div>
+        <div class="interest">Education</div>
+        <div class="interest">Travel</div>
+        <div class="interest">Dance</div>
+        <div class="interest">Business</div>
+        <div class="interest">News & Politics</div>
+      </div>
+
+      <button class="finish-btn" disabled>Continue</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const steps = document.querySelectorAll(".step");
+const nextBtns = document.querySelectorAll(".next");
+const skipBtns = document.querySelectorAll(".skip");
+let currentStep = 0;
+
+function showStep(index){
+  steps.forEach(step => step.classList.remove("active"));
+  steps[index].classList.add("active");
+}
+
+nextBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    currentStep++;
+    if(currentStep < steps.length){
+      showStep(currentStep);
+    }
+  });
+});
+
+skipBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    currentStep = steps.length - 1;
+    showStep(currentStep);
+  });
+});
+
+const interests = document.querySelectorAll(".interest");
+const finishBtn = document.querySelector(".finish-btn");
+let selectedInterests = [];
+
+interests.forEach(item=>{
+  item.addEventListener("click", ()=>{
+    item.classList.toggle("selected");
+    const value = item.innerText;
+
+    if(selectedInterests.includes(value)){
+      selectedInterests = selectedInterests.filter(i => i !== value);
+    } else {
+      selectedInterests.push(value);
+    }
+
+    if(selectedInterests.length >= 1){
+      finishBtn.disabled = false;
+      finishBtn.classList.add("active");
+    } else {
+      finishBtn.disabled = true;
+      finishBtn.classList.remove("active");
+    }
+  });
+});
+
+finishBtn.addEventListener("click", ()=>{
+  if(selectedInterests.length >= 1){
+    localStorage.setItem("userInterests", JSON.stringify(selectedInterests));
+    window.location.href = "home.html";
+  }
+});
+</script>
+
+</body>
+</html>
