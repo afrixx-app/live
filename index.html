@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Welcome</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f0f0f,#1a1a2e,#16213e);
+  overflow:hidden;
+  color:white;
+}
+
+/* Center Text */
+.splash{
+  text-align:center;
+  z-index:2;
+  animation: fadeIn 1.5s ease forwards;
+}
+
+.splash h2{
+  font-weight:300;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  opacity:0.8;
+}
+
+.splash h1{
+  font-size:60px;
+  margin:10px 0;
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-weight:800;
+  letter-spacing:5px;
+}
+
+.splash p{
+  font-size:18px;
+  letter-spacing:2px;
+  opacity:0.7;
+}
+
+/* Floating Shapes */
+.floating{
+  position:absolute;
+  width:100%;
+  height:100%;
+  top:0;
+  left:0;
+  overflow:hidden;
+  z-index:1;
+}
+
+.floating span{
+  position:absolute;
+  display:block;
+  width:25px;
+  height:25px;
+  background:rgba(255,255,255,0.1);
+  animation: float 20s linear infinite;
+  border-radius:50%;
+}
+
+/* Random positions */
+.floating span:nth-child(1){ left:10%; animation-duration:18s; }
+.floating span:nth-child(2){ left:25%; animation-duration:22s; width:40px; height:40px;}
+.floating span:nth-child(3){ left:40%; animation-duration:16s;}
+.floating span:nth-child(4){ left:55%; animation-duration:25s; width:35px; height:35px;}
+.floating span:nth-child(5){ left:70%; animation-duration:19s;}
+.floating span:nth-child(6){ left:85%; animation-duration:23s; width:30px; height:30px;}
+
+@keyframes float{
+  0%{
+    transform:translateY(100vh) rotate(0deg);
+    opacity:0;
+  }
+  10%{opacity:1;}
+  90%{opacity:1;}
+  100%{
+    transform:translateY(-10vh) rotate(360deg);
+    opacity:0;
+  }
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Responsive */
+@media(max-width:600px){
+  .splash h1{font-size:40px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="floating">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<div class="splash">
+  <h2>welcome to</h2>
+  <h1>BIGULA</h1>
+  <p>your stressfree home</p>
+</div>
+
+<script>
+// Wait 4 seconds before checking
+setTimeout(function(){
+
+  const interests = localStorage.getItem("userInterests");
+
+  if(!interests){
+    // First time user
+    window.location.href = "interests.html";
+  } else {
+    // Returning user
+    window.location.href = "home.html";
+  }
+
+}, 4000);
+</script>
+
+</body>
+</html>
