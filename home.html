@@ -440,6 +440,17 @@ video{
   pointer-events:none;
 }
 
+
+/* SIGN-IN MODAL */
+.signin-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:10000}
+.signin-card{width:100%;max-width:390px;background:#111;border:1px solid #2b2b2b;border-radius:20px;padding:26px 22px;box-shadow:0 20px 70px rgba(0,0,0,.65);text-align:center}
+.signin-card h2{margin:0 0 8px;font-size:22px}
+.signin-card p{margin:0;color:#aaa;line-height:1.5;font-size:14px}
+.signin-actions{display:flex;gap:10px;margin-top:20px}
+.signin-actions button{flex:1;padding:12px;border:0;border-radius:12px;font-weight:800;cursor:pointer}
+.signin-cancel{background:#252525;color:#fff}
+.signin-go{background:#fff;color:#111}
+
 /* TOAST */
 
 #toast{
@@ -519,6 +530,18 @@ video{
 
 </div>
 
+
+<div class="signin-modal" id="signinModal" role="dialog" aria-modal="true" aria-labelledby="signinTitle">
+  <div class="signin-card">
+    <h2 id="signinTitle">Sign in to BIGULA</h2>
+    <p id="signinMessage">Sign in to continue.</p>
+    <div class="signin-actions">
+      <button class="signin-cancel" id="signinCancel" type="button">Not now</button>
+      <button class="signin-go" id="signinGo" type="button">Continue with Google</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <div class="footer">
@@ -541,7 +564,7 @@ video{
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdGVpZ2dkaHRodnJybG5kdGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMDUwMjgsImV4cCI6MjEwMzc4MTAyOH0.7ct7JgEOMrYOPp3clmyG8JXMZ3Aj0-bvc6EUK6XJayU"
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}
 })
@@ -562,19 +585,41 @@ function showToast(message){
 
 function requireSignIn(action){
   if(currentUser) return true
-  const ok=confirm(`Sign in to BIGULA to ${action}.\n\nPress OK to continue to sign in.`)
-  if(ok) location.href='signup.html'
+  const modal=document.getElementById('signinModal')
+  const message=document.getElementById('signinMessage')
+  if(message) message.textContent=`Please sign in to ${action}. You can keep watching BIGULA without signing in.`
+  if(modal) modal.style.display='flex'
   return false
 }
+
+function closeSignInModal(){
+  const modal=document.getElementById('signinModal')
+  if(modal) modal.style.display='none'
+}
+
+document.getElementById('signinCancel').onclick=closeSignInModal
+document.getElementById('signinModal').addEventListener('click',e=>{
+  if(e.target.id==='signinModal') closeSignInModal()
+})
+document.getElementById('signinGo').onclick=()=>{
+  location.href='signup.html'
+}
+
 
 function escapeHtml(value=''){
   return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
 }
 
+function getGoogleName(user){
+  const m=user?.user_metadata || {}
+  return m.name || m.full_name || m.display_name ||
+         [m.given_name,m.family_name].filter(Boolean).join(' ') || null
+}
+
 function getUserName(profile,user){
-  return profile?.name || profile?.full_name || profile?.display_name || profile?.username ||
-         profile?.user_name || user?.user_metadata?.name || user?.user_metadata?.full_name ||
-         user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'BIGULA creator'
+  return profile?.name || profile?.full_name || profile?.display_name ||
+         profile?.username || profile?.user_name || getGoogleName(user) ||
+         (user?.email ? user.email.split('@')[0] : null) || 'BIGULA creator'
 }
 
 async function loadProfile(uid){
@@ -583,6 +628,30 @@ async function loadProfile(uid){
   const {data,error}=await supabase.from('users').select('*').eq('id',uid).maybeSingle()
   if(!error && data) profileCache.set(uid,data)
   return data || null
+}
+
+async function syncGoogleProfile(user){
+  if(!user?.id) return null
+  const metadata=user.user_metadata || {}
+  const googleName=getGoogleName(user)
+  const avatar=metadata.avatar_url || metadata.picture || null
+  const fallbackUsername=`user_${user.id.slice(0,8)}`
+  const payload={
+    id:user.id,
+    name:googleName || fallbackUsername,
+    username:googleName || fallbackUsername
+  }
+  if(avatar) payload.avatar_url=avatar
+
+  const {data,error}=await supabase.from('users').upsert(payload,{onConflict:'id'}).select('*').single()
+  if(error){
+    console.warn('Could not sync Google profile:',error.message)
+    return loadProfile(user.id)
+  }
+  profileCache.set(user.id,data)
+  localStorage.setItem('bigula_profile',JSON.stringify(data))
+  localStorage.setItem('bigula_user_name',data.name || googleName || fallbackUsername)
+  return data
 }
 
 async function initUser(){
@@ -595,13 +664,17 @@ async function initUser(){
 
   currentUser=session?.user || null
 
+  if(currentUser){
+    currentProfile=await syncGoogleProfile(currentUser)
+  }
+
   const uploadBtn=document.querySelector('.upload-btn')
   const accountBtn=document.getElementById('accountBtn')
   const notifBtn=document.getElementById('notifBtn')
   const loginBtn=document.querySelector('.login-btn')
 
   if(currentUser){
-    currentProfile=await loadProfile(currentUser.id)
+    currentProfile=currentProfile || await loadProfile(currentUser.id)
     const name=getUserName(currentProfile,currentUser)
     localStorage.setItem('bigula_profile',JSON.stringify(currentProfile || {id:currentUser.id,name}))
     const welcome=document.getElementById('welcomeUser')
