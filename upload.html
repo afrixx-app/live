@@ -17,6 +17,11 @@ video { width:100%; border-radius:12px; margin-top:10px; }
 #filterBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
 #filterProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
 .progress-bar { width:100%; height:8px; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; } .progress-fill { width:0%; height:100%; background:#ff0050; transition:width .2s; } .message { margin-top:8px; font-size:14px; color:#ff9999; text-align:center; display:none; }
+#globalUploadStatus { display:none; margin-top:14px; padding:12px; border-radius:10px; background:#181818; border:1px solid #333; }
+#globalUploadStatus .upload-title { font-weight:700; font-size:13px; }
+#globalUploadStatus .upload-percent { font-size:12px; color:#aaa; margin-top:5px; }
+#globalUploadStatus .global-progress { height:6px; background:#333; border-radius:4px; overflow:hidden; margin-top:8px; }
+#globalUploadStatus .global-progress-fill { height:100%; width:0%; background:#ff0050; transition:width .2s; }
 section { display:none; flex-direction:column; }
 section.active { display:flex; }
 </style>
@@ -25,20 +30,21 @@ section.active { display:flex; }
 
 <div class="container">
 <h1>Upload Video</h1>
+<div id="globalUploadStatus"><div class="upload-title">BIGULA upload</div><div class="upload-percent" id="globalUploadPercent">0%</div><div class="global-progress"><div class="global-progress-fill" id="globalUploadFill"></div></div></div>
 
 <!-- Step 1: Choose Video -->
 <section id="step1" class="active">
   <button id="fileBtn">📁 Select Video from Storage</button>
   <button id="cameraBtn">🎥 Record Video with Camera</button>
   <button id="goLiveBtn" class="disabled" disabled>🔴 Go Live</button>
-  <video id="preview" controls></video>
+  <video id="preview" muted playsinline preload="metadata"></video>
   <div id="msgStep1" class="message"></div>
   <button id="toStep2" class="disabled" disabled>Next: Edit Video</button>
 </section>
 
 <!-- Step 2: Trim & Filter -->
 <section id="step2">
-  <video id="editPreview" controls></video>
+  <video id="editPreview" muted playsinline preload="metadata"></video>
   <div id="trimBar"><div id="trimProgress"></div></div>
   <div id="filterBar"><div id="filterProgress"></div></div>
   <div style="display:flex; gap:5px; margin-top:10px;">
@@ -176,7 +182,6 @@ document.getElementById("fileBtn").onclick = ()=>{
   input.onchange = ()=>{
     selectedFile = input.files[0]
     preview.src = URL.createObjectURL(selectedFile)
-    preview.play()
     toStep2.disabled = false
     toStep2.classList.remove("disabled")
   }
@@ -188,7 +193,6 @@ document.getElementById("cameraBtn").onclick = async ()=>{
   try{
     const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true })
     preview.srcObject = stream
-    preview.play()
     const recorder = new MediaRecorder(stream)
     let chunks = []
     recorder.ondataavailable = e=>chunks.push(e.data)
@@ -196,8 +200,8 @@ document.getElementById("cameraBtn").onclick = async ()=>{
       selectedFile = new Blob(chunks,{type:'video/mp4'})
       preview.src = URL.createObjectURL(selectedFile)
       preview.srcObject = null
-      preview.play()
-      toStep2.disabled = false
+      try { stream.getTracks().forEach(track => track.stop()) } catch(e) {}
+        toStep2.disabled = false
       toStep2.classList.remove("disabled")
     }
     recorder.start()
@@ -252,8 +256,43 @@ document.getElementById("toStep3").onclick = ()=>{
   step3.classList.add("active")
 }
 
+// Shared upload state. Every BIGULA page can read this state from localStorage
+// and receive live updates through BroadcastChannel while this page is alive.
+const UPLOAD_STATE_KEY = "bigula_upload_state_v1";
+const uploadChannel = "BroadcastChannel" in window ? new BroadcastChannel("bigula_uploads") : null;
+const globalUploadStatus = document.getElementById("globalUploadStatus");
+const globalUploadPercent = document.getElementById("globalUploadPercent");
+const globalUploadFill = document.getElementById("globalUploadFill");
+
+function publishUploadState(state){
+  localStorage.setItem(UPLOAD_STATE_KEY, JSON.stringify(state));
+  if(uploadChannel) uploadChannel.postMessage(state);
+  renderUploadState(state);
+}
+
+function renderUploadState(state){
+  if(!state || !state.active){
+    globalUploadStatus.style.display = "none";
+    return;
+  }
+  globalUploadStatus.style.display = "block";
+  const percent = Math.max(0, Math.min(100, Number(state.percent || 0)));
+  globalUploadPercent.textContent = `${state.status || "Uploading"} ${percent}%`;
+  globalUploadFill.style.width = percent + "%";
+}
+
+function readUploadState(){
+  try { return JSON.parse(localStorage.getItem(UPLOAD_STATE_KEY) || "null"); }
+  catch(e){ return null; }
+}
+
+if(uploadChannel) uploadChannel.onmessage = event => renderUploadState(event.data);
+window.addEventListener("storage", event => {
+  if(event.key === UPLOAD_STATE_KEY) renderUploadState(readUploadState());
+});
+renderUploadState(readUploadState());
+
 // Upload to Supabase Storage with TUS resumable uploads.
-// This replaces the single-request upload that was failing with HTTP/2 errors.
 document.getElementById("uploadBtn").onclick = async ()=>{
   const msg = document.getElementById("msgStep3")
   const uploadBtn = document.getElementById("uploadBtn")
@@ -280,6 +319,12 @@ document.getElementById("uploadBtn").onclick = async ()=>{
     if(!currentUser) return
   }
 
+  // Never allow the selected video to keep playing during upload.
+  [preview, editPreview].forEach(video=>{
+    try { video.pause(); } catch(e) {}
+    video.removeAttribute("autoplay");
+  })
+
   uploadBtn.disabled = true
   uploadBtn.classList.add("disabled")
   msg.style.display = "block"
@@ -287,9 +332,7 @@ document.getElementById("uploadBtn").onclick = async ()=>{
   progressFill.style.width = "0%"
 
   try{
-    const { data:{session}, error:sessionError } =
-      await supabase.auth.getSession()
-
+    const { data:{session}, error:sessionError } = await supabase.auth.getSession()
     if(sessionError || !session?.access_token){
       throw new Error("Your BIGULA login session is not available. Please sign in again.")
     }
@@ -298,12 +341,22 @@ document.getElementById("uploadBtn").onclick = async ()=>{
     const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_")
     const filePath = `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
 
-    const endpoint =
-      "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable"
+    // IMPORTANT: the Supabase Storage bucket must exist with the exact id/name "videos".
+    // A 404 "Bucket not found" is a bucket configuration problem, not a TUS progress problem.
+    const endpoint = "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable"
+
+    publishUploadState({
+      active:true,
+      status:"Uploading video...",
+      percent:0,
+      fileName:originalName,
+      startedAt:Date.now()
+    })
 
     const upload = new tus.Upload(selectedFile, {
       endpoint,
       retryDelays: [0, 3000, 5000, 10000, 20000],
+      chunkSize: 6 * 1024 * 1024,
       headers: {
         authorization: `Bearer ${session.access_token}`,
         apikey: SUPABASE_KEY,
@@ -320,30 +373,37 @@ document.getElementById("uploadBtn").onclick = async ()=>{
 
       onError(error){
         console.error("TUS upload error:", error)
-        msg.textContent = "Upload failed: " + (error?.message || "Network error")
+        const message = error?.message || "Network error"
+        const bucketMissing = /Bucket not found|NoSuchBucket/i.test(message)
+        msg.textContent = bucketMissing
+          ? 'Upload failed: Supabase Storage bucket "videos" does not exist. Create the bucket first.'
+          : "Upload failed: " + message
+        progressFill.style.width = "0%"
+        publishUploadState({active:false, status:"Upload failed", percent:0, error:message})
         uploadBtn.disabled = false
         uploadBtn.classList.remove("disabled")
       },
 
       onProgress(bytesUploaded, bytesTotal){
-        const percent = bytesTotal
-          ? Math.round((bytesUploaded / bytesTotal) * 100)
-          : 0
-
+        const percent = bytesTotal ? Math.round((bytesUploaded / bytesTotal) * 100) : 0
         progressFill.style.width = percent + "%"
         msg.textContent = `Uploading video... ${percent}%`
+        publishUploadState({
+          active:true,
+          status:"Uploading video...",
+          percent,
+          fileName:originalName,
+          startedAt:Date.now()
+        })
       },
 
       onSuccess: async function(){
         try{
           progressFill.style.width = "100%"
           msg.textContent = "Upload complete. Saving video information..."
+          publishUploadState({active:true, status:"Saving video...", percent:100, fileName:originalName})
 
-          const { data:publicData } = supabase
-            .storage
-            .from("videos")
-            .getPublicUrl(filePath)
-
+          const { data:publicData } = supabase.storage.from("videos").getPublicUrl(filePath)
           const videoUrl = publicData.publicUrl
 
           const { data:videoRow, error:dbError } = await supabase
@@ -360,12 +420,12 @@ document.getElementById("uploadBtn").onclick = async ()=>{
 
           if(dbError){
             console.error("videos table error:", dbError)
-            msg.textContent =
-              "Video uploaded, but saving it to the videos table failed: " +
-              dbError.message
+            msg.textContent = "Video uploaded, but saving it to the videos table failed: " + dbError.message
+            publishUploadState({active:false, status:"Uploaded; database save failed", percent:100, error:dbError.message})
           }else{
             msg.textContent = "✅ Video uploaded and published successfully!"
             console.log("BIGULA video:", videoRow)
+            publishUploadState({active:false, status:"Upload complete", percent:100, fileName:originalName})
           }
 
           uploadBtn.disabled = false
@@ -373,6 +433,7 @@ document.getElementById("uploadBtn").onclick = async ()=>{
         }catch(error){
           console.error("Post-upload error:", error)
           msg.textContent = "Upload finished, but finalizing the video failed."
+          publishUploadState({active:false, status:"Upload finished; finalizing failed", percent:100, error:error?.message || "Unknown error"})
           uploadBtn.disabled = false
           uploadBtn.classList.remove("disabled")
         }
@@ -386,6 +447,7 @@ document.getElementById("uploadBtn").onclick = async ()=>{
     console.error("Upload setup error:", error)
     msg.textContent = "Upload failed: " + (error?.message || "Unknown error")
     progressFill.style.width = "0%"
+    publishUploadState({active:false, status:"Upload failed", percent:0, error:error?.message || "Unknown error"})
     uploadBtn.disabled = false
     uploadBtn.classList.remove("disabled")
   }
