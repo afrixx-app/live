@@ -79,11 +79,45 @@ button{width:100%;height:54px;border:0;border-radius:13px;font-size:16px;font-we
     }
   });
 
+  function googleName(user) {
+    const m = user?.user_metadata || {};
+    return m.name || m.full_name || m.display_name ||
+      [m.given_name, m.family_name].filter(Boolean).join(' ') || null;
+  }
+
+  async function syncUserProfile(user) {
+    if (!user || !user.id) return null;
+    const m = user.user_metadata || {};
+    const name = googleName(user) || `user_${user.id.slice(0, 8)}`;
+    const avatar = m.avatar_url || m.picture || null;
+    const payload = { id: user.id, name, username: name };
+    if (avatar) payload.avatar_url = avatar;
+
+    const { data, error } = await client
+      .from('users')
+      .upsert(payload, { onConflict: 'id' })
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('BIGULA profile sync failed:', error);
+      return null;
+    }
+
+    localStorage.setItem('bigula_profile', JSON.stringify(data));
+    localStorage.setItem('bigula_user_name', data.name || name);
+    localStorage.setItem('supabase_auth_user_id', user.id);
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('loggedIn', 'true');
+    return data;
+  }
+
   async function existingSession() {
     try {
       const { data, error } = await client.auth.getSession();
       if (error) throw error;
       if (data && data.session && data.session.user) {
+        await syncUserProfile(data.session.user);
         window.location.replace(REDIRECT_URL);
         return true;
       }
