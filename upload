@@ -16,7 +16,7 @@ video { width:100%; border-radius:12px; margin-top:10px; }
 #trimProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
 #filterBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
 #filterProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
-.message { margin-top:8px; font-size:14px; color:#ff9999; text-align:center; display:none; }
+.progress-bar { width:100%; height:8px; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; } .progress-fill { width:0%; height:100%; background:#ff0050; transition:width .2s; } .message { margin-top:8px; font-size:14px; color:#ff9999; text-align:center; display:none; }
 section { display:none; flex-direction:column; }
 section.active { display:flex; }
 </style>
@@ -80,12 +80,59 @@ section.active { display:flex; }
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const SUPABASE_URL = 'https://uyuofjiiptnbbcuntbfi.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW9mamlpcHRuYmJjdW50YmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMzQ3MjcsImV4cCI6MjA4NzkxMDcyN30.-FBKM7NKTSm20qzkExueYhqrE6oaK6a6de1qCsl2nuQ'
+const SUPABASE_URL = 'https://vfteiggdhthvrrlndtbs.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe'
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let selectedFile = null
-let currentUser = { uid:"123", followers:400 } // mock user, replace with real auth
+let currentUser = null
+let currentProfile = null
+
+async function requireUser(){
+  const { data:{session}, error } = await supabase.auth.getSession()
+  if(error) console.error("Auth session error:", error)
+
+  if(session?.user){
+    currentUser = session.user
+  }else{
+    const params = new URLSearchParams(location.search)
+    const code = params.get("code")
+
+    if(code){
+      const result = await supabase.auth.exchangeCodeForSession(code)
+      if(!result.error && result.data.session?.user){
+        currentUser = result.data.session.user
+        history.replaceState({}, document.title, location.pathname)
+      }else{
+        console.error("Google OAuth exchange failed:", result.error)
+      }
+    }
+  }
+
+  if(!currentUser){
+    location.replace("signup.html")
+    return null
+  }
+
+  const { data:profile, error:profileError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", currentUser.id)
+    .maybeSingle()
+
+  if(profileError) console.warn("Profile refresh failed:", profileError.message)
+
+  if(profile){
+    currentProfile = profile
+    localStorage.setItem("bigula_profile", JSON.stringify(profile))
+  }
+
+  return currentUser
+}
+
+function followerCount(){
+  return Number(currentProfile?.followers ?? currentProfile?.followers_count ?? 0)
+}
 
 // Elements
 const step1 = document.getElementById("step1")
@@ -102,10 +149,15 @@ const filterProgress = document.getElementById("filterProgress")
 const msgStep1 = document.getElementById("msgStep1")
 const msgStep2 = document.getElementById("msgStep2")
 
-// Enable Go Live if followers >= 500
-if(currentUser.followers >= 500){
-  goLiveBtn.disabled = false
-  goLiveBtn.classList.remove("disabled")
+// Go Live requires the real follower count.
+function updateGoLiveAccess(){
+  if(followerCount() >= 500){
+    goLiveBtn.disabled = false
+    goLiveBtn.classList.remove("disabled")
+  }else{
+    goLiveBtn.disabled = true
+    goLiveBtn.classList.add("disabled")
+  }
 }
 
 // Step 1: File selection
@@ -146,7 +198,7 @@ document.getElementById("cameraBtn").onclick = async ()=>{
 }
 
 // Go Live
-goLiveBtn.onclick = ()=>{ if(currentUser.followers >= 500) location.href='live.html' }
+goLiveBtn.onclick = ()=>{ if(followerCount() >= 500) location.href='live.html' }
 
 // Step 2: Edit
 toStep2.onclick = ()=>{
@@ -192,32 +244,102 @@ document.getElementById("toStep3").onclick = ()=>{
   step3.classList.add("active")
 }
 
-// Upload
+// Upload to Supabase Storage, then save the public URL in videos.
 document.getElementById("uploadBtn").onclick = async ()=>{
-  if(!selectedFile){ 
-    document.getElementById("msgStep3").textContent="Select a video first"
-    document.getElementById("msgStep3").style.display="block"
+  const msg = document.getElementById("msgStep3")
+  const uploadBtn = document.getElementById("uploadBtn")
+  const progressFill = document.getElementById("progressFill")
+
+  if(!selectedFile){
+    msg.textContent = "Select a video first"
+    msg.style.display = "block"
     return
   }
-  const title = document.getElementById("title").value
+
+  const title = document.getElementById("title").value.trim()
   const category = document.getElementById("category").value
-  const description = document.getElementById("description").value
+  const description = document.getElementById("description").value.trim()
+
   if(!title || !category || !description){
-    document.getElementById("msgStep3").textContent="Fill all fields"
-    document.getElementById("msgStep3").style.display="block"
+    msg.textContent = "Fill all fields"
+    msg.style.display = "block"
     return
   }
-  const fileName = `${Date.now()}_${selectedFile.name||'video.mp4'}`
-  const { data, error } = await supabase.storage.from('videos').upload(fileName, selectedFile)
-  if(error){
-    document.getElementById("msgStep3").textContent="Upload failed: "+error.message
-    document.getElementById("msgStep3").style.display="block"
+
+  if(!currentUser){
+    currentUser = await requireUser()
+    if(!currentUser) return
+  }
+
+  uploadBtn.disabled = true
+  uploadBtn.classList.add("disabled")
+  msg.style.display = "block"
+  msg.textContent = "Uploading video..."
+  progressFill.style.width = "10%"
+
+  const originalName = selectedFile.name || "video.mp4"
+  const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_")
+  const filePath = `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
+
+  const { data:uploadData, error:uploadError } = await supabase
+    .storage
+    .from("videos")
+    .upload(filePath, selectedFile, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: selectedFile.type || "video/mp4"
+    })
+
+  if(uploadError){
+    console.error(uploadError)
+    msg.textContent = "Upload failed: " + uploadError.message
+    progressFill.style.width = "0%"
+    uploadBtn.disabled = false
+    uploadBtn.classList.remove("disabled")
     return
   }
-  const { publicUrl } = supabase.storage.from('videos').getPublicUrl(fileName)
-  document.getElementById("msgStep3").textContent="Upload complete! URL: "+publicUrl
-  document.getElementById("msgStep3").style.display="block"
+
+  progressFill.style.width = "70%"
+
+  const { data:publicData } = supabase
+    .storage
+    .from("videos")
+    .getPublicUrl(uploadData.path)
+
+  const videoUrl = publicData.publicUrl
+
+  const { data:videoRow, error:dbError } = await supabase
+    .from("videos")
+    .insert({
+      user_id: currentUser.id,
+      title: title,
+      category: category,
+      description: description,
+      video_url: videoUrl
+    })
+    .select()
+    .single()
+
+  if(dbError){
+    console.error(dbError)
+    msg.textContent = "Video uploaded, but saving to videos failed: " + dbError.message
+  }else{
+    msg.textContent = "Upload complete! Your video is now saved to BIGULA."
+    console.log("BIGULA video record:", videoRow)
+  }
+
+  progressFill.style.width = "100%"
+  uploadBtn.disabled = false
+  uploadBtn.classList.remove("disabled")
 }
+
+requireUser().then(user=>{
+  if(user) updateGoLiveAccess()
+})
+
+supabase.auth.onAuthStateChange((event, session)=>{
+  if(session?.user) currentUser = session.user
+})
 </script>
 </body>
 </html>
