@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload - BIGULA</title>
+<style>
+body { margin:0; padding:0; font-family:'Segoe UI',sans-serif; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; background:#000; color:#fff; }
+.container { width:400px; margin-top:50px; background:#111; padding:20px; border-radius:12px; }
+h1 { text-align:center; color:#ff0000; margin-bottom:20px; }
+button { padding:12px; margin-top:10px; border:none; border-radius:8px; font-weight:bold; background:#ff0000; color:#fff; cursor:pointer; width:100%; }
+button.disabled { opacity:.4; cursor:not-allowed; }
+input, select, textarea { width:100%; padding:10px; margin-top:10px; border-radius:8px; border:none; background:#222; color:#fff; }
+video { width:100%; border-radius:12px; margin-top:10px; }
+#trimBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
+#trimProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
+#filterBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
+#filterProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
+.message { margin-top:8px; font-size:14px; color:#ff9999; text-align:center; display:none; }
+section { display:none; flex-direction:column; }
+section.active { display:flex; }
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Upload Video</h1>
+
+<!-- Step 1: Choose Video -->
+<section id="step1" class="active">
+  <button id="fileBtn">📁 Select Video from Storage</button>
+  <button id="cameraBtn">🎥 Record Video with Camera</button>
+  <button id="goLiveBtn" class="disabled" disabled>🔴 Go Live</button>
+  <video id="preview" controls></video>
+  <div id="msgStep1" class="message"></div>
+  <button id="toStep2" class="disabled" disabled>Next: Edit Video</button>
+</section>
+
+<!-- Step 2: Trim & Filter -->
+<section id="step2">
+  <video id="editPreview" controls></video>
+  <div id="trimBar"><div id="trimProgress"></div></div>
+  <div id="filterBar"><div id="filterProgress"></div></div>
+  <div style="display:flex; gap:5px; margin-top:10px;">
+    <button data-filter="">Normal</button>
+    <button data-filter="grayscale(50%)">B&W</button>
+    <button data-filter="sepia(60%)">Sepia</button>
+    <button data-filter="brightness(1.3)">Bright</button>
+    <button data-filter="contrast(1.3)">Contrast</button>
+  </div>
+  <div id="msgStep2" class="message"></div>
+  <button id="toStep3">Next: Add Details</button>
+</section>
+
+<!-- Step 3: Metadata & Upload -->
+<section id="step3">
+  <input type="text" id="title" placeholder="Title" required>
+  <select id="category" required>
+    <option value="">Select Category</option>
+    <option value="music">Music</option>
+    <option value="dance">Dance</option>
+    <option value="animals">Animals</option>
+    <option value="film and animation">Film & Animation</option>
+    <option value="people and blogs">People & Blogs</option>
+    <option value="autos and vehicles">Autos & Vehicles</option>
+    <option value="sports">Sports</option>
+    <option value="comedy">Comedy</option>
+    <option value="entertainment">Entertainment</option>
+    <option value="news and politics">News & Politics</option>
+    <option value="fashion and style">Fashion & Style</option>
+    <option value="education">Education</option>
+    <option value="science and technology">Science & Technology</option>
+  </select>
+  <textarea id="description" placeholder="Description" required></textarea>
+  <button id="uploadBtn">Upload Video</button>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div id="msgStep3" class="message"></div>
+</section>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+const SUPABASE_URL = 'https://uyuofjiiptnbbcuntbfi.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW9mamlpcHRuYmJjdW50YmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMzQ3MjcsImV4cCI6MjA4NzkxMDcyN30.-FBKM7NKTSm20qzkExueYhqrE6oaK6a6de1qCsl2nuQ'
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+let selectedFile = null
+let currentUser = { uid:"123", followers:400 } // mock user, replace with real auth
+
+// Elements
+const step1 = document.getElementById("step1")
+const step2 = document.getElementById("step2")
+const step3 = document.getElementById("step3")
+const preview = document.getElementById("preview")
+const editPreview = document.getElementById("editPreview")
+const toStep2 = document.getElementById("toStep2")
+const goLiveBtn = document.getElementById("goLiveBtn")
+const trimBar = document.getElementById("trimBar")
+const trimProgress = document.getElementById("trimProgress")
+const filterBar = document.getElementById("filterBar")
+const filterProgress = document.getElementById("filterProgress")
+const msgStep1 = document.getElementById("msgStep1")
+const msgStep2 = document.getElementById("msgStep2")
+
+// Enable Go Live if followers >= 500
+if(currentUser.followers >= 500){
+  goLiveBtn.disabled = false
+  goLiveBtn.classList.remove("disabled")
+}
+
+// Step 1: File selection
+document.getElementById("fileBtn").onclick = ()=>{
+  const input = document.createElement("input")
+  input.type = "file"
+  input.accept = "video/*"
+  input.onchange = ()=>{
+    selectedFile = input.files[0]
+    preview.src = URL.createObjectURL(selectedFile)
+    preview.play()
+    toStep2.disabled = false
+    toStep2.classList.remove("disabled")
+  }
+  input.click()
+}
+
+// Record video
+document.getElementById("cameraBtn").onclick = async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true })
+    preview.srcObject = stream
+    preview.play()
+    const recorder = new MediaRecorder(stream)
+    let chunks = []
+    recorder.ondataavailable = e=>chunks.push(e.data)
+    recorder.onstop = ()=>{
+      selectedFile = new Blob(chunks,{type:'video/mp4'})
+      preview.src = URL.createObjectURL(selectedFile)
+      preview.srcObject = null
+      preview.play()
+      toStep2.disabled = false
+      toStep2.classList.remove("disabled")
+    }
+    recorder.start()
+    setTimeout(()=>recorder.stop(),15000) // demo 15s
+  }catch(e){ msgStep1.textContent="Camera access denied"; msgStep1.style.display="block" }
+}
+
+// Go Live
+goLiveBtn.onclick = ()=>{ if(currentUser.followers >= 500) location.href='live.html' }
+
+// Step 2: Edit
+toStep2.onclick = ()=>{
+  if(!selectedFile) return
+  step1.classList.remove("active")
+  step2.classList.add("active")
+  editPreview.src = preview.src
+  editPreview.onloadedmetadata = ()=>{ trimProgress.style.width = '0%'; filterProgress.style.width='0%' }
+}
+
+// Trim click-drag
+let trimming=false
+trimBar.addEventListener("mousedown", e=>{ trimming=true; updateTrim(e) })
+window.addEventListener("mouseup", ()=>trimming=false)
+trimBar.addEventListener("mousemove", e=>{ if(trimming) updateTrim(e) })
+function updateTrim(e){
+  const rect=trimBar.getBoundingClientRect()
+  let percent = Math.min(Math.max(0,(e.clientX-rect.left)/rect.width),1)
+  trimProgress.style.width = percent*100 + "%"
+  if(editPreview.duration) editPreview.currentTime = percent * editPreview.duration
+}
+
+// Filter click-drag (for demo, we just apply linear intensity)
+let filtering=false
+filterBar.addEventListener("mousedown", e=>{ filtering=true; updateFilter(e) })
+window.addEventListener("mouseup", ()=>filtering=false)
+filterBar.addEventListener("mousemove", e=>{ if(filtering) updateFilter(e) })
+function updateFilter(e){
+  const rect=filterBar.getBoundingClientRect()
+  let percent = Math.min(Math.max(0,(e.clientX-rect.left)/rect.width),1)
+  filterProgress.style.width = percent*100 + "%"
+  editPreview.style.filter = `brightness(${1 + percent*0.5})` // example dynamic filter
+}
+
+// Filter buttons
+document.querySelectorAll("#step2 button[data-filter]").forEach(btn=>{
+  btn.onclick = ()=>{ editPreview.style.filter = btn.dataset.filter; filterProgress.style.width='100%' }
+})
+
+// Step 3
+document.getElementById("toStep3").onclick = ()=>{
+  step2.classList.remove("active")
+  step3.classList.add("active")
+}
+
+// Upload
+document.getElementById("uploadBtn").onclick = async ()=>{
+  if(!selectedFile){ 
+    document.getElementById("msgStep3").textContent="Select a video first"
+    document.getElementById("msgStep3").style.display="block"
+    return
+  }
+  const title = document.getElementById("title").value
+  const category = document.getElementById("category").value
+  const description = document.getElementById("description").value
+  if(!title || !category || !description){
+    document.getElementById("msgStep3").textContent="Fill all fields"
+    document.getElementById("msgStep3").style.display="block"
+    return
+  }
+  const fileName = `${Date.now()}_${selectedFile.name||'video.mp4'}`
+  const { data, error } = await supabase.storage.from('videos').upload(fileName, selectedFile)
+  if(error){
+    document.getElementById("msgStep3").textContent="Upload failed: "+error.message
+    document.getElementById("msgStep3").style.display="block"
+    return
+  }
+  const { publicUrl } = supabase.storage.from('videos').getPublicUrl(fileName)
+  document.getElementById("msgStep3").textContent="Upload complete! URL: "+publicUrl
+  document.getElementById("msgStep3").style.display="block"
+}
+</script>
+</body>
+</html>
