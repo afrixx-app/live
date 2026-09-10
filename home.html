@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA – Home</title>
+<!-- BIGULA Home: Supabase Auth session-aware build -->
 
 <style>
 
@@ -515,7 +516,7 @@ body{background:radial-gradient(circle at 50% -10%,rgba(255,0,0,.12),transparent
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdGVpZ2dkaHRodnJybG5kdGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMDUwMjgsImV4cCI6MjEwMzc4MTAyOH0.7ct7JgEOMrYOPp3clmyG8JXMZ3Aj0-bvc6EUK6XJayU"
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let currentUser = null
@@ -538,12 +539,40 @@ function showToast(message){
   },2500)
 }
 
-/* USER */
+/* USER / AUTH */
 
-async function initUser(){
+let authReady = false
+let redirectingToSignup = false
 
-  const { data:{ user } } = await supabase.auth.getUser()
+function saveProfileCache(profile){
+  try{
+    if(profile){
+      localStorage.setItem("bigula_profile", JSON.stringify(profile))
+    }
+  }catch(e){
+    console.warn("Could not cache profile:", e)
+  }
+}
 
+async function refreshUserProfile(user){
+  if(!user) return null
+
+  const { data: profile, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle()
+
+  if(error){
+    console.warn("BIGULA profile refresh failed:", error)
+    return null
+  }
+
+  if(profile) saveProfileCache(profile)
+  return profile
+}
+
+function applySignedInUI(user){
   currentUser = user
 
   const loginBtn = document.querySelector(".login-btn")
@@ -551,35 +580,98 @@ async function initUser(){
   const accountBtn = document.getElementById("accountBtn")
   const notifBtn = document.getElementById("notifBtn")
 
-  /* Login always opens signup. */
-  loginBtn.textContent = "Login"
-  loginBtn.onclick = ()=>location.href="signup.html"
+  if(loginBtn) loginBtn.style.display = "none"
 
-  if(user){
-
+  if(uploadBtn){
     uploadBtn.classList.remove("disabled")
     uploadBtn.textContent = "Upload"
     uploadBtn.onclick = ()=>location.href="upload.html"
+  }
 
+  if(accountBtn){
     accountBtn.classList.remove("disabled")
-    notifBtn.classList.remove("disabled")
-
     accountBtn.onclick = ()=>location.href="account.html"
+  }
 
-  } else {
+  if(notifBtn){
+    notifBtn.classList.remove("disabled")
+    notifBtn.onclick = ()=>location.href="notifications.html"
+  }
+}
 
-    /* Upload remains active; explain sign-in is required, then redirect. */
+function applySignedOutUI(){
+  currentUser = null
+
+  const loginBtn = document.querySelector(".login-btn")
+  const uploadBtn = document.querySelector(".upload-btn")
+  const accountBtn = document.getElementById("accountBtn")
+  const notifBtn = document.getElementById("notifBtn")
+
+  if(loginBtn){
+    loginBtn.style.display = "inline-block"
+    loginBtn.textContent = "Login"
+    loginBtn.onclick = ()=>location.href="signup.html"
+  }
+
+  if(uploadBtn){
     uploadBtn.classList.remove("disabled")
     uploadBtn.textContent = "Upload"
     uploadBtn.onclick = ()=>{
       showToast("Sign in first to upload videos")
       setTimeout(()=>location.href="signup.html",900)
     }
-
-    accountBtn.classList.add("disabled")
-    notifBtn.classList.add("disabled")
   }
+
+  if(accountBtn) accountBtn.classList.add("disabled")
+  if(notifBtn) notifBtn.classList.add("disabled")
 }
+
+async function initUser(){
+  /*
+    getSession() reads the persisted Supabase Auth session.
+    onAuthStateChange below also handles the OAuth return to Home.
+  */
+  const { data: { session }, error } = await supabase.auth.getSession()
+
+  if(error) console.error("Supabase session error:", error)
+
+  authReady = true
+
+  const user = session?.user || null
+
+  if(!user){
+    if(!redirectingToSignup){
+      redirectingToSignup = true
+      location.replace("signup.html")
+    }
+    return
+  }
+
+  applySignedInUI(user)
+  await refreshUserProfile(user)
+}
+
+supabase.auth.onAuthStateChange(async (event, session)=>{
+  const user = session?.user || null
+
+  if(user && (
+    event === "SIGNED_IN" ||
+    event === "TOKEN_REFRESHED" ||
+    event === "INITIAL_SESSION"
+  )){
+    applySignedInUI(user)
+    await refreshUserProfile(user)
+    return
+  }
+
+  if(event === "SIGNED_OUT"){
+    currentUser = null
+    if(!redirectingToSignup){
+      redirectingToSignup = true
+      location.replace("signup.html")
+    }
+  }
+})
 
 initUser()
 
