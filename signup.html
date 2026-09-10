@@ -18,6 +18,7 @@
 <button class="phone" disabled>Continue with phone number</button>
 <div class="note">Phone sign-up is coming soon.</div>
 <div id="status" class="status"></div>
+<p style="margin:10px 0 0;color:#aaa;font-size:11px;">Google sign-in requires Google to be enabled in Supabase Authentication.</p>
 <p class="terms">By continuing, you agree to BIGULA's terms and community guidelines.</p>
 </main>
 <script>
@@ -30,12 +31,54 @@ async function init(){
  const {data,error}=await supabase.auth.getSession();
  if(!error && data.session) location.href="home.html";
 }
-document.getElementById("google").onclick=async()=>{
- status.textContent="Connecting to Google...";
- const redirectTo=location.origin+location.pathname.replace(/signup\.html?$/i,"home.html");
- const {error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo}});
- if(error) status.textContent=error.message;
-};
+document.getElementById("google").addEventListener("click", async (event)=>{
+ event.preventDefault();
+
+ const button = document.getElementById("google");
+ button.disabled = true;
+ button.textContent = "Connecting to Google...";
+ status.style.color = "#555";
+ status.textContent = "Opening Google sign-in...";
+
+ /*
+  * BIGULA is hosted at:
+  * https://afrixx-app.github.io/live/
+  *
+  * OAuth must return to the real Home page, not back to signup.
+  */
+ const redirectTo = "https://afrixx-app.github.io/live/home.html";
+
+ try {
+   const { data, error } = await supabase.auth.signInWithOAuth({
+     provider: "google",
+     options: {
+       redirectTo: redirectTo,
+       skipBrowserRedirect: false
+     }
+   });
+
+   if(error){
+     console.error("Google OAuth error:", error);
+     status.style.color = "#c62828";
+     status.textContent = error.message || "Google sign-in could not start.";
+     button.disabled = false;
+     button.textContent = "Continue with Google";
+   }
+ } catch(error){
+   console.error("Google OAuth exception:", error);
+   status.style.color = "#c62828";
+   status.textContent = error.message || "Unable to connect to Google.";
+   button.disabled = false;
+   button.textContent = "Continue with Google";
+ }
+});
+
+supabase.auth.onAuthStateChange((event, session)=>{
+ if(session){
+   window.location.replace("home.html");
+ }
+});
+
 init();
 </script>
 </body>
