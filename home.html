@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA – Home</title>
-<!-- BIGULA Home: Supabase Auth session-aware build -->
 
 <style>
 
@@ -44,6 +43,16 @@ body{
   text-shadow:0 0 20px rgba(255,0,0,.8);
 }
 
+.welcome-back{
+  font-size:18px;
+  font-weight:800;
+  margin-top:2px;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 .top-row{
   display:flex;
   justify-content:space-between;
@@ -76,6 +85,7 @@ body{
 }
 
 .login-btn{
+  display:none !important;
   background:#fff;
   color:#000;
 }
@@ -211,7 +221,7 @@ video{
 
 .username{
   font-weight:900;
-  font-size:30px;
+  font-size:20px;
   cursor:pointer;
   color:pink; /* TikTok-like pink/red accent */
   letter-spacing:0.5px;
@@ -425,16 +435,6 @@ video{
   transform:translateX(-50%) translateY(0);
 }
 
-/* BIGULA visual polish */
-body{background:radial-gradient(circle at 50% -10%,rgba(255,0,0,.12),transparent 34%),#050505;}
-.topbar{background:linear-gradient(to bottom,rgba(0,0,0,.98) 65%,rgba(0,0,0,.72) 82%,transparent);backdrop-filter:blur(8px);}
-.logo{font-size:34px;letter-spacing:5px;text-shadow:0 0 12px rgba(255,0,0,.45),0 0 28px rgba(255,0,0,.25);}
-.actions{gap:8px}.btn{padding:9px 17px;border-radius:999px;box-shadow:0 5px 18px rgba(0,0,0,.28)}
-.login-btn{background:linear-gradient(135deg,#fff,#e8e8e8)}.upload-btn{background:linear-gradient(135deg,#007bff,#0057d9)}
-.search{font-size:30px;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.07);transition:.25s}.search:hover{background:rgba(255,255,255,.14);transform:scale(1.06)}
-.tabs{gap:24px}.tab{padding:6px 2px}.video-card{background:linear-gradient(145deg,#151515,#0c0c0c);border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.45)}
-.meta-overlay{background:linear-gradient(to bottom,rgba(0,0,0,.48),rgba(0,0,0,.92))}.stat-btn{border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px rgba(255,255,255,.04)}
-.footer{background:rgba(0,0,0,.92);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08)}.footer-btn{font-size:25px}
 </style>
 </head>
 
@@ -445,15 +445,16 @@ body{background:radial-gradient(circle at 50% -10%,rgba(255,0,0,.12),transparent
   <div class="top-row">
 
     <div class="logo">BIGULA</div>
+    <div class="welcome-back" id="welcomeBack">Welcome back</div>
 
     <div class="actions">
       <div class="search">🔍</div>
 
-      <button class="btn login-btn" onclick="location.href='signup.html'">
+      <button class="btn login-btn">
         Login
       </button>
 
-      <button class="btn upload-btn">
+      <button class="btn upload-btn disabled">
         Upload
       </button>
 
@@ -516,16 +517,8 @@ body{background:radial-gradient(circle at 50% -10%,rgba(255,0,0,.12),transparent
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
-const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: "pkce"
-  }
-})
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdGVpZ2dkaHRodnJybG5kdGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMDUwMjgsImV4cCI6MjEwMzc4MTAyOH0.7ct7JgEOMrYOPp3clmyG8JXMZ3Aj0-bvc6EUK6XJayU"
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let currentUser = null
 let currentVideoId = null
@@ -547,270 +540,53 @@ function showToast(message){
   },2500)
 }
 
-/* USER / AUTH */
-
-let authReady = false
-let redirectingToSignup = false
-
-function saveProfileCache(profile){
-  try{
-    if(profile){
-      localStorage.setItem("bigula_profile", JSON.stringify(profile))
-    }
-  }catch(e){
-    console.warn("Could not cache profile:", e)
-  }
-}
-
-async function refreshUserProfile(user){
-  if(!user) return null
-
-  const { data: profile, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle()
-
-  if(error){
-    console.warn("BIGULA profile refresh failed:", error)
-    return null
-  }
-
-  if(profile) saveProfileCache(profile)
-  return profile
-}
-
-function applySignedInUI(user){
-  currentUser = user
-
-  const loginBtn = document.querySelector(".login-btn")
-  const uploadBtn = document.querySelector(".upload-btn")
-  const accountBtn = document.getElementById("accountBtn")
-  const notifBtn = document.getElementById("notifBtn")
-
-  if(loginBtn) loginBtn.style.display = "none"
-
-  if(uploadBtn){
-    uploadBtn.classList.remove("disabled")
-    uploadBtn.textContent = "Upload"
-    uploadBtn.onclick = ()=>location.href="upload.html"
-  }
-
-  if(accountBtn){
-    accountBtn.classList.remove("disabled")
-    accountBtn.onclick = ()=>location.href="account.html"
-  }
-
-  if(notifBtn){
-    notifBtn.classList.remove("disabled")
-    notifBtn.onclick = ()=>location.href="notifications.html"
-  }
-}
-
-function applySignedOutUI(){
-  currentUser = null
-
-  const loginBtn = document.querySelector(".login-btn")
-  const uploadBtn = document.querySelector(".upload-btn")
-  const accountBtn = document.getElementById("accountBtn")
-  const notifBtn = document.getElementById("notifBtn")
-
-  if(loginBtn){
-    loginBtn.style.display = "inline-block"
-    loginBtn.textContent = "Login"
-    loginBtn.onclick = ()=>location.href="signup.html"
-  }
-
-  if(uploadBtn){
-    uploadBtn.classList.remove("disabled")
-    uploadBtn.textContent = "Upload"
-    uploadBtn.onclick = ()=>{
-      showToast("Sign in first to upload videos")
-      setTimeout(()=>location.href="signup.html",900)
-    }
-  }
-
-  if(accountBtn) accountBtn.classList.add("disabled")
-  if(notifBtn) notifBtn.classList.add("disabled")
-}
+/* USER */
 
 async function initUser(){
-  /*
-    Google OAuth returns to Home with a PKCE "code".
-    Process that code explicitly before deciding that the user is logged out.
-    This prevents Home <-> Signup redirect loops while Supabase restores the
-    Google session.
-  */
-
   try{
-    let { data:{ session }, error } = await supabase.auth.getSession()
+    const { data:{ user }, error } = await supabase.auth.getUser()
+    if(error) console.warn("Auth user:", error)
+    currentUser = user || null
 
-    if(error){
-      console.error("Supabase session check failed:", error)
-      showAuthError("Unable to restore your BIGULA sign-in session. Please refresh once.")
+    const uploadBtn=document.querySelector(".upload-btn")
+    const accountBtn=document.getElementById("accountBtn")
+    const notifBtn=document.getElementById("notifBtn")
+    const welcome=document.getElementById("welcomeBack")
+
+    if(!user){
+      welcome.textContent="Welcome back"
+      uploadBtn.classList.add("disabled")
+      accountBtn.classList.add("disabled")
+      notifBtn.classList.add("disabled")
+      location.href="signup.html"
       return false
     }
 
-    /*
-      If Google has just redirected back to Home, Supabase may still have
-      the authorization code in the URL. Explicitly exchange it when no
-      session is available yet.
-    */
-    if(!session?.user){
-      const params = new URLSearchParams(window.location.search)
-      const code = params.get("code")
+    const { data:profile, error:profileError }=await supabase.from("users")
+      .select("*").eq("id",user.id).maybeSingle()
+    if(profileError) console.warn("Profile:",profileError)
 
-      if(code){
-        const result = await supabase.auth.exchangeCodeForSession(code)
+    const userName=profile?.name || profile?.username || profile?.display_name ||
+      localStorage.getItem("bigula_user_name") ||
+      user.user_metadata?.full_name || user.user_metadata?.name || "User"
 
-        if(result.error){
-          console.error("Google OAuth code exchange failed:", result.error)
-          showAuthError("Google sign-in could not be completed. Please return to signup and try again.")
-          return false
-        }
+    localStorage.setItem("bigula_profile",JSON.stringify(profile || {id:user.id,name:userName}))
+    localStorage.setItem("bigula_user_name",userName)
+    welcome.textContent=`Welcome back, ${userName}`
 
-        session = result.data?.session || null
-
-        /* Remove the OAuth code from the address bar after successful login. */
-        try{
-          window.history.replaceState({}, document.title, window.location.pathname)
-        }catch(e){}
-      }
-    }
-
-    if(!session?.user){
-      /*
-        Do NOT immediately bounce back to signup on a temporary/session
-        restoration problem. That was the source of the visible loop.
-      */
-      showAuthError("No active BIGULA sign-in session was found.")
-      return false
-    }
-
-    currentUser = session.user
-
-    const loginBtn = document.querySelector(".login-btn")
-    const uploadBtn = document.querySelector(".upload-btn")
-    const accountBtn = document.getElementById("accountBtn")
-    const notifBtn = document.getElementById("notifBtn")
-
-    if(loginBtn){
-      loginBtn.style.display = "none"
-    }
-
-    if(uploadBtn){
-      uploadBtn.classList.remove("disabled")
-      uploadBtn.textContent = "Upload"
-      uploadBtn.onclick = ()=>location.href="upload.html"
-    }
-
-    if(accountBtn){
-      accountBtn.classList.remove("disabled")
-      accountBtn.onclick = ()=>location.href="account.html"
-    }
-
-    if(notifBtn){
-      notifBtn.classList.remove("disabled")
-      notifBtn.onclick = ()=>location.href="notifications.html"
-    }
-
-    /*
-      Refresh the BIGULA profile, but never treat the profile row or
-      localStorage as proof of authentication.
-    */
-    const { data: profile, error: profileError } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .maybeSingle()
-
-    if(profile && !profileError){
-      localStorage.setItem("bigula_user", JSON.stringify(profile))
-      localStorage.setItem("supabase_auth_user_id", session.user.id)
-      localStorage.setItem("isLoggedIn", "true")
-    }else if(profileError){
-      console.warn("Could not refresh BIGULA profile cache:", profileError)
-    }
-
+    uploadBtn.classList.remove("disabled")
+    uploadBtn.onclick=()=>location.href="upload.html"
+    accountBtn.classList.remove("disabled")
+    notifBtn.classList.remove("disabled")
+    accountBtn.onclick=()=>location.href="account.html"
     return true
-
-  }catch(error){
-    console.error("BIGULA Home auth error:", error)
-    showAuthError("BIGULA could not restore your sign-in session. Please refresh once.")
+  }catch(err){
+    console.error("initUser failed:",err)
     return false
   }
 }
 
-function showAuthError(message){
-  console.error(message)
-
-  /*
-    Keep Home visible instead of redirecting endlessly.
-    The user can manually return to signup if the session is genuinely gone.
-  */
-  const feed = document.getElementById("feed")
-  if(feed){
-    feed.innerHTML = `
-      <div style="
-        margin:40px auto;
-        max-width:520px;
-        padding:24px;
-        text-align:center;
-        background:#111;
-        border:1px solid #333;
-        border-radius:18px;
-      ">
-        <h2 style="margin-bottom:10px;">BIGULA Sign-In</h2>
-        <p style="color:#bbb;margin-bottom:18px;">${message}</p>
-        <button
-          style="
-            padding:12px 20px;
-            border:0;
-            border-radius:999px;
-            background:#ff0000;
-            color:#fff;
-            font-weight:800;
-            cursor:pointer;
-          "
-          onclick="location.href='signup.html'"
-        >
-          Return to Sign Up
-        </button>
-      </div>
-    `
-  }
-}
-
-supabase.auth.onAuthStateChange((event, session)=>{
-  console.log("BIGULA Auth:", event)
-
-  if(session?.user){
-    currentUser = session.user
-
-    const loginBtn = document.querySelector(".login-btn")
-    const uploadBtn = document.querySelector(".upload-btn")
-    const accountBtn = document.getElementById("accountBtn")
-    const notifBtn = document.getElementById("notifBtn")
-
-    if(loginBtn) loginBtn.style.display = "none"
-
-    if(uploadBtn){
-      uploadBtn.classList.remove("disabled")
-      uploadBtn.textContent = "Upload"
-      uploadBtn.onclick = ()=>location.href="upload.html"
-    }
-
-    if(accountBtn){
-      accountBtn.classList.remove("disabled")
-      accountBtn.onclick = ()=>location.href="account.html"
-    }
-
-    if(notifBtn){
-      notifBtn.classList.remove("disabled")
-      notifBtn.onclick = ()=>location.href="notifications.html"
-    }
-  }
-})
+initUser()
 
 /* FETCH */
 
@@ -860,102 +636,72 @@ async function getCounts(videoId){
 
 /* RENDER */
 
+async function getProfiles(userIds){
+  const ids=[...new Set(userIds.filter(Boolean))]
+  if(!ids.length) return {}
+  const {data,error}=await supabase.from("users").select("*").in("id",ids)
+  if(error){console.error("Creator profiles:",error);return {}}
+  const map={}
+  ;(data||[]).forEach(u=>map[u.id]=u)
+  return map
+}
+
+async function isFollowing(uid){
+  if(!currentUser || !uid || currentUser.id===uid) return false
+  const {data,error}=await supabase.from("followers")
+    .select("follower_id").eq("follower_id",currentUser.id).eq("following_id",uid).maybeSingle()
+  if(error && error.code!=="PGRST116") console.warn("Follow check:",error)
+  return !!data
+}
+
 async function renderVideos(videos){
-
-  const feed = document.getElementById("feed")
-
-  feed.innerHTML = ""
+  const feed=document.getElementById("feed")
+  feed.innerHTML=""
+  const profiles=await getProfiles(videos.map(v=>v.user_id || v.creator_id))
 
   for(const video of videos){
+    const creatorId=video.user_id || video.creator_id
+    const profile=profiles[creatorId] || {}
+    const creatorName=profile.name || profile.username || profile.display_name || video.username || "User"
+    const counts=await getCounts(video.id)
+    const following=await isFollowing(creatorId)
 
-    const counts = await getCounts(video.id)
-
-    const card = document.createElement("div")
-
-    card.className = "video-card"
-
-    card.dataset.id = video.id
-
-    card.innerHTML = `
-      <video src="${video.video_url}" autoplay playsinline></video>
-
+    const card=document.createElement("div")
+    card.className="video-card"
+    card.dataset.id=video.id
+    card.dataset.creatorId=creatorId || ""
+    card.innerHTML=`
+      <video src="${video.video_url}" autoplay muted playsinline preload="metadata"></video>
       <div class="meta-overlay">
-
         <div class="user-row">
-
-          <span class="username"
-            onclick="openProfile('${video.creator_id}')">
-            <span class="username"
-  onclick="location.href='creator-profile.html?uid=${video.creator_id}'">
-  @${video.username || 'user'}
-</span>
-          </span>
-
+          <span class="username" onclick="openProfile('${creatorId || ""}')">${escapeHtml(creatorName)}</span>
           <div>
-
-            <button class="views-btn">
-  Views <span class="view-count">${counts.views || 0}</span>
-</button>
-
-            <button class="follow-btn"
-  onclick="followUser('${video.creator_id}', this)">
-  Follow
-</button>
-
-            <button class="share-btn"
-              onclick="toggleShare(this)">
-              Share
-            </button>
-
+            <button class="views-btn">Views <span class="view-count">${counts.views || 0}</span></button>
+            <button class="follow-btn ${following?"following":""}" onclick="followUser('${creatorId || ""}',this)">${following?"Following":"Follow"}</button>
+            <button class="share-btn" onclick="toggleShare(this)">Share</button>
             <div class="share-options">
-
-              <button onclick="shareStatus('${video.id}','${video.username||'user'}')">
-                Bigula Status
-              </button>
-
-              <button onclick="shareWhatsApp('${video.video_url}','${video.username||'user'}')">
-                WhatsApp
-              </button>
-
+              <button onclick="shareStatus('${video.id}','${escapeJs(creatorName)}')">Bigula Status</button>
+              <button onclick="shareWhatsApp('${escapeJs(video.video_url || "")}','${escapeJs(creatorName)}')">WhatsApp</button>
             </div>
-
           </div>
-
         </div>
-
-        <div class="title">
-          ${video.title || ''}
-        </div>
-
+        <div class="title">${escapeHtml(video.title || "")}</div>
         <div class="stats">
-
-          <div class="stat-btn"
-            onclick="toggleLike('${video.id}', this)">
-            ❤️
-            <span id="like-${video.id}">
-              ${counts.likes || 0}
-            </span>
-          </div>
-
-          <div class="stat-btn"
-            onclick="openComments('${video.id}')">
-            💬
-            <span id="commentCount-${video.id}">
-              ${counts.comments || 0}
-            </span>
-          </div>
-
+          <div class="stat-btn" onclick="toggleLike('${video.id}',this)">❤️ <span id="like-${video.id}">${counts.likes || 0}</span></div>
+          <div class="stat-btn" onclick="openComments('${video.id}')">💬 <span id="commentCount-${video.id}">${counts.comments || 0}</span></div>
         </div>
-
-      </div>
-    `
-
+      </div>`
     feed.appendChild(card)
-
     setupVideoAutoScroll(card)
   }
-
   setupAutoplay()
+}
+
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))
+}
+function escapeJs(value){
+  return String(value??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n")
 }
 
 /* AUTOPLAY */
@@ -1059,112 +805,67 @@ function openProfile(uid){
   location.href = `creator-profile.html?uid=${uid}`
 }
 
-async function toggleLike(videoId, btn){
+async function toggleLike(videoId,btn){
+  if(!currentUser)return location.href="signup.html"
+  const likeEl=document.getElementById(`like-${videoId}`)
+  const {data:existing,error:checkError}=await supabase.from("likes")
+    .select("video_id").eq("video_id",videoId).eq("user_id",currentUser.id).maybeSingle()
+  if(checkError && checkError.code!=="PGRST116"){console.error(checkError);showToast("Could not check like");return}
 
-  if(!currentUser){
-    return location.href='signup.html'
-  }
-
-  const likeEl = document.getElementById(`like-${videoId}`)
-
-  const { data:exists } = await supabase
-    .from('likes')
-    .select("*")
-    .eq('video_id', videoId)
-    .eq('user_id', currentUser.id)
-
-  if(exists && exists.length){
-
-    await supabase
-      .from('likes')
-      .delete()
-      .eq('video_id', videoId)
-      .eq('user_id', currentUser.id)
-
-    likeEl.innerText =
-      parseInt(likeEl.innerText)-1
-
-  } else {
-
-    await supabase
-      .from('likes')
-      .insert({
-        video_id: videoId,
-        user_id: currentUser.id
-      })
-
-    likeEl.innerText =
-      parseInt(likeEl.innerText)+1
-
-    btn.style.transform = "scale(1.2)"
-
-    setTimeout(()=>{
-      btn.style.transform = "scale(1)"
-    },180)
+  if(existing){
+    const {error}=await supabase.from("likes").delete().eq("video_id",videoId).eq("user_id",currentUser.id)
+    if(error){console.error(error);showToast("Could not unlike");return}
+    likeEl.textContent=Math.max(0,Number(likeEl.textContent)-1)
+  }else{
+    const {error}=await supabase.from("likes").insert({video_id:videoId,user_id:currentUser.id})
+    if(error){console.error(error);showToast("Could not like this video");return}
+    likeEl.textContent=Number(likeEl.textContent)+1
+    btn.style.transform="scale(1.2)"
+    setTimeout(()=>btn.style.transform="scale(1)",180)
   }
 }
 
 async function openComments(videoId){
+  if(!currentUser)return location.href="signup.html"
+  currentVideoId=videoId
+  const modal=document.getElementById("commentModal")
+  const list=document.getElementById("commentList")
+  list.innerHTML='<div style="opacity:.7;text-align:center;padding:20px">Loading comments...</div>'
+  modal.style.display="flex"
 
-  if(!currentUser){
-    return location.href='signup.html'
-  }
+  const {data:comments,error}=await supabase.from("comments").select("*")
+    .eq("video_id",videoId).order("created_at",{ascending:true})
+  if(error){console.error("Comments:",error);list.innerHTML='<div style="padding:20px">Could not load comments.</div>';return}
 
-  currentVideoId = videoId
-
-  const modal =
-    document.getElementById("commentModal")
-
-  const list =
-    document.getElementById("commentList")
-
-  list.innerHTML = ""
-
-  modal.style.display = "flex"
-
-  const { data:comments } = await supabase
-    .from("comments")
-    .select("*")
-    .eq("video_id",videoId)
-    .order("created_at",{ascending:true})
-
-  if(comments){
-
-    comments.forEach(c=>{
-
-      const div = document.createElement("div")
-
-      div.style.marginBottom = "10px"
-
-      div.innerHTML =
-        `<strong>${c.username}</strong>: ${c.text}`
-
-      list.appendChild(div)
-    })
-  }
+  const profiles=await getProfiles((comments||[]).map(c=>c.user_id))
+  list.innerHTML=""
+  if(!comments?.length){list.innerHTML='<div style="opacity:.7;text-align:center;padding:20px">No comments yet.</div>';return}
+  comments.forEach(c=>{
+    const profile=profiles[c.user_id]||{}
+    const name=profile.name||profile.username||profile.display_name||c.username||"User"
+    const div=document.createElement("div")
+    div.style.marginBottom="12px"
+    div.innerHTML=`<strong>${escapeHtml(name)}</strong>: ${escapeHtml(c.text||"")}`
+    list.appendChild(div)
+  })
 }
 
-document.getElementById("postCommentBtn").onclick = async ()=>{
+document.getElementById("postCommentBtn").onclick=async()=>{
+  if(!currentUser||!currentVideoId)return location.href="signup.html"
+  const input=document.getElementById("commentText")
+  const text=input.value.trim()
+  if(!text)return
+  const profile=JSON.parse(localStorage.getItem("bigula_profile")||"null")||{}
+  const name=profile.name||profile.username||profile.display_name||localStorage.getItem("bigula_user_name")||currentUser.user_metadata?.name||"User"
 
-  if(!currentUser || !currentVideoId){
-    return location.href='signup.html'
-  }
-
-  const text =
-    document.getElementById("commentText").value
-
-  if(!text) return
-
-  await supabase.from("comments").insert({
-    video_id: currentVideoId,
-    user_id: currentUser.id,
-    username: currentUser.email.split("@")[0],
-    text
+  const {error}=await supabase.from("comments").insert({
+    video_id:currentVideoId,user_id:currentUser.id,username:name,text
   })
-
-  document.getElementById("commentText").value=''
-
-  openComments(currentVideoId)
+  if(error){console.error("Comment failed:",error);showToast("Could not post comment");return}
+  input.value=""
+  const countEl=document.getElementById(`commentCount-${currentVideoId}`)
+  if(countEl)countEl.textContent=Number(countEl.textContent)+1
+  await openComments(currentVideoId)
 }
 
 document.getElementById("closeComments").onclick = ()=>{
@@ -1172,54 +873,26 @@ document.getElementById("closeComments").onclick = ()=>{
   document.getElementById("commentModal").style.display="none"
 }
 
-async function followUser(uid, btn){
+async function followUser(uid,btn){
+  if(!currentUser)return location.href="signup.html"
+  if(!uid)return showToast("Creator profile unavailable")
+  if(currentUser.id===uid)return showToast("You cannot follow yourself")
 
-  if(!currentUser){
-    return location.href='signup.html'
+  const {data:existing,error:checkError}=await supabase.from("followers")
+    .select("follower_id").eq("follower_id",currentUser.id).eq("following_id",uid).maybeSingle()
+  if(checkError && checkError.code!=="PGRST116"){console.error("Follow check:",checkError);showToast("Could not check follow status");return}
+
+  if(existing){
+    const {error}=await supabase.from("followers").delete().eq("follower_id",currentUser.id).eq("following_id",uid)
+    if(error){console.error("Unfollow:",error);showToast("Could not unfollow");return}
+    if(btn){btn.textContent="Follow";btn.classList.remove("following")}
+    showToast("Unfollowed")
+  }else{
+    const {error}=await supabase.from("followers").insert({follower_id:currentUser.id,following_id:uid})
+    if(error){console.error("Follow:",error);showToast("Could not follow creator");return}
+    if(btn){btn.textContent="Following";btn.classList.add("following")}
+    showToast("Following")
   }
-
-  if(currentUser.id === uid){
-    return showToast("You cannot follow yourself")
-  }
-
-  const { data:existing } = await supabase
-    .from('followers')
-    .select('*')
-    .eq('follower_id', currentUser.id)
-    .eq('following_id', uid)
-
-  // already following → unfollow
-  if(existing && existing.length){
-
-    await supabase
-      .from('followers')
-      .delete()
-      .eq('follower_id', currentUser.id)
-      .eq('following_id', uid)
-
-   if (btn) {
-  btn.textContent = "Follow"
-  btn.classList.remove("following")
-}
-
-showToast("Unfollowed")
-
-} else {
-
-  await supabase
-    .from('followers')
-    .insert({
-      follower_id: currentUser.id,
-      following_id: uid
-    })
-
-  if (btn) {
-    btn.textContent = "Following"
-    btn.classList.add("following")
-  }
-
-  showToast("Following")
-}
 }
 /* TABS */
 
@@ -1409,11 +1082,10 @@ window.shareWhatsApp = shareWhatsApp
 window.shareStatus = shareStatus
 window.openProfile = openProfile
 
-initUser().then(authenticated=>{
-  if(authenticated){
-    fetchVideos()
-  }
-})
+(async()=>{
+  const ok=await initUser()
+  if(ok) await fetchVideos()
+})()
 
 </script>
 
