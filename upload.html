@@ -79,10 +79,18 @@ section.active { display:flex; }
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+import * as tus from 'https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm'
 
 const SUPABASE_URL = 'https://vfteiggdhthvrrlndtbs.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe'
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: "pkce"
+  }
+})
 
 let selectedFile = null
 let currentUser = null
@@ -244,7 +252,8 @@ document.getElementById("toStep3").onclick = ()=>{
   step3.classList.add("active")
 }
 
-// Upload to Supabase Storage, then save the public URL in videos.
+// Upload to Supabase Storage with TUS resumable uploads.
+// This replaces the single-request upload that was failing with HTTP/2 errors.
 document.getElementById("uploadBtn").onclick = async ()=>{
   const msg = document.getElementById("msgStep3")
   const uploadBtn = document.getElementById("uploadBtn")
@@ -274,63 +283,112 @@ document.getElementById("uploadBtn").onclick = async ()=>{
   uploadBtn.disabled = true
   uploadBtn.classList.add("disabled")
   msg.style.display = "block"
-  msg.textContent = "Uploading video..."
-  progressFill.style.width = "10%"
+  msg.textContent = "Preparing upload..."
+  progressFill.style.width = "0%"
 
-  const originalName = selectedFile.name || "video.mp4"
-  const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_")
-  const filePath = `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
+  try{
+    const { data:{session}, error:sessionError } =
+      await supabase.auth.getSession()
 
-  const { data:uploadData, error:uploadError } = await supabase
-    .storage
-    .from("videos")
-    .upload(filePath, selectedFile, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: selectedFile.type || "video/mp4"
+    if(sessionError || !session?.access_token){
+      throw new Error("Your BIGULA login session is not available. Please sign in again.")
+    }
+
+    const originalName = selectedFile.name || "video.mp4"
+    const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_")
+    const filePath = `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
+
+    const endpoint =
+      "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable"
+
+    const upload = new tus.Upload(selectedFile, {
+      endpoint,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: {
+        authorization: `Bearer ${session.access_token}`,
+        apikey: SUPABASE_KEY,
+        "x-upsert": "false"
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      metadata: {
+        bucketName: "videos",
+        objectName: filePath,
+        contentType: selectedFile.type || "video/mp4",
+        cacheControl: "3600"
+      },
+
+      onError(error){
+        console.error("TUS upload error:", error)
+        msg.textContent = "Upload failed: " + (error?.message || "Network error")
+        uploadBtn.disabled = false
+        uploadBtn.classList.remove("disabled")
+      },
+
+      onProgress(bytesUploaded, bytesTotal){
+        const percent = bytesTotal
+          ? Math.round((bytesUploaded / bytesTotal) * 100)
+          : 0
+
+        progressFill.style.width = percent + "%"
+        msg.textContent = `Uploading video... ${percent}%`
+      },
+
+      onSuccess: async function(){
+        try{
+          progressFill.style.width = "100%"
+          msg.textContent = "Upload complete. Saving video information..."
+
+          const { data:publicData } = supabase
+            .storage
+            .from("videos")
+            .getPublicUrl(filePath)
+
+          const videoUrl = publicData.publicUrl
+
+          const { data:videoRow, error:dbError } = await supabase
+            .from("videos")
+            .insert({
+              user_id: currentUser.id,
+              title,
+              category,
+              description,
+              video_url: videoUrl
+            })
+            .select()
+            .single()
+
+          if(dbError){
+            console.error("videos table error:", dbError)
+            msg.textContent =
+              "Video uploaded, but saving it to the videos table failed: " +
+              dbError.message
+          }else{
+            msg.textContent = "✅ Video uploaded and published successfully!"
+            console.log("BIGULA video:", videoRow)
+          }
+
+          uploadBtn.disabled = false
+          uploadBtn.classList.remove("disabled")
+        }catch(error){
+          console.error("Post-upload error:", error)
+          msg.textContent = "Upload finished, but finalizing the video failed."
+          uploadBtn.disabled = false
+          uploadBtn.classList.remove("disabled")
+        }
+      }
     })
 
-  if(uploadError){
-    console.error(uploadError)
-    msg.textContent = "Upload failed: " + uploadError.message
+    msg.textContent = "Starting resumable upload..."
+    upload.start()
+
+  }catch(error){
+    console.error("Upload setup error:", error)
+    msg.textContent = "Upload failed: " + (error?.message || "Unknown error")
     progressFill.style.width = "0%"
     uploadBtn.disabled = false
     uploadBtn.classList.remove("disabled")
-    return
   }
-
-  progressFill.style.width = "70%"
-
-  const { data:publicData } = supabase
-    .storage
-    .from("videos")
-    .getPublicUrl(uploadData.path)
-
-  const videoUrl = publicData.publicUrl
-
-  const { data:videoRow, error:dbError } = await supabase
-    .from("videos")
-    .insert({
-      user_id: currentUser.id,
-      title: title,
-      category: category,
-      description: description,
-      video_url: videoUrl
-    })
-    .select()
-    .single()
-
-  if(dbError){
-    console.error(dbError)
-    msg.textContent = "Video uploaded, but saving to videos failed: " + dbError.message
-  }else{
-    msg.textContent = "Upload complete! Your video is now saved to BIGULA."
-    console.log("BIGULA video record:", videoRow)
-  }
-
-  progressFill.style.width = "100%"
-  uploadBtn.disabled = false
-  uploadBtn.classList.remove("disabled")
 }
 
 requireUser().then(user=>{
