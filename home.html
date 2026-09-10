@@ -424,6 +424,16 @@ video{
   transform:translateX(-50%) translateY(0);
 }
 
+/* BIGULA visual polish */
+body{background:radial-gradient(circle at 50% -10%,rgba(255,0,0,.12),transparent 34%),#050505;}
+.topbar{background:linear-gradient(to bottom,rgba(0,0,0,.98) 65%,rgba(0,0,0,.72) 82%,transparent);backdrop-filter:blur(8px);}
+.logo{font-size:34px;letter-spacing:5px;text-shadow:0 0 12px rgba(255,0,0,.45),0 0 28px rgba(255,0,0,.25);}
+.actions{gap:8px}.btn{padding:9px 17px;border-radius:999px;box-shadow:0 5px 18px rgba(0,0,0,.28)}
+.login-btn{background:linear-gradient(135deg,#fff,#e8e8e8)}.upload-btn{background:linear-gradient(135deg,#007bff,#0057d9)}
+.search{font-size:30px;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.07);transition:.25s}.search:hover{background:rgba(255,255,255,.14);transform:scale(1.06)}
+.tabs{gap:24px}.tab{padding:6px 2px}.video-card{background:linear-gradient(145deg,#151515,#0c0c0c);border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.45)}
+.meta-overlay{background:linear-gradient(to bottom,rgba(0,0,0,.48),rgba(0,0,0,.92))}.stat-btn{border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px rgba(255,255,255,.04)}
+.footer{background:rgba(0,0,0,.92);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.08)}.footer-btn{font-size:25px}
 </style>
 </head>
 
@@ -438,11 +448,11 @@ video{
     <div class="actions">
       <div class="search">🔍</div>
 
-      <button class="btn login-btn">
+      <button class="btn login-btn" onclick="location.href='signup.html'">
         Login
       </button>
 
-      <button class="btn upload-btn disabled">
+      <button class="btn upload-btn">
         Upload
       </button>
 
@@ -541,14 +551,14 @@ async function initUser(){
   const accountBtn = document.getElementById("accountBtn")
   const notifBtn = document.getElementById("notifBtn")
 
+  /* Login always opens signup. */
+  loginBtn.textContent = "Login"
+  loginBtn.onclick = ()=>location.href="signup.html"
+
   if(user){
 
-    loginBtn.textContent = "Dashboard"
-
-    loginBtn.onclick = ()=>location.href="dashboard.html"
-
     uploadBtn.classList.remove("disabled")
-
+    uploadBtn.textContent = "Upload"
     uploadBtn.onclick = ()=>location.href="upload.html"
 
     accountBtn.classList.remove("disabled")
@@ -558,7 +568,13 @@ async function initUser(){
 
   } else {
 
-    loginBtn.onclick = ()=>location.href="signup.html"
+    /* Upload remains active; explain sign-in is required, then redirect. */
+    uploadBtn.classList.remove("disabled")
+    uploadBtn.textContent = "Upload"
+    uploadBtn.onclick = ()=>{
+      showToast("Sign in first to upload videos")
+      setTimeout(()=>location.href="signup.html",900)
+    }
 
     accountBtn.classList.add("disabled")
     notifBtn.classList.add("disabled")
