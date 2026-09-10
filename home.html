@@ -43,15 +43,45 @@ body{
   text-shadow:0 0 20px rgba(255,0,0,.8);
 }
 
-.welcome-back{
-  font-size:18px;
-  font-weight:800;
+.welcome-user{
   margin-top:2px;
+  font-size:16px;
+  font-weight:800;
   color:#fff;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  opacity:.95;
 }
+.creator-line{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.creator-name{
+  background:none;
+  border:0;
+  color:#fff;
+  font-weight:900;
+  font-size:22px;
+  padding:0;
+  cursor:pointer;
+  text-align:left;
+}
+.action-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.comment-item{
+  padding:12px 0;
+  border-bottom:1px solid #222;
+}
+.comment-body{line-height:1.45}
+.comment-actions{display:flex;gap:8px;margin-top:7px}
+.comment-actions button{
+  background:#222;color:#fff;border:0;border-radius:18px;padding:6px 10px;cursor:pointer;font-weight:700;
+}
+.stat-btn.active-like{background:rgba(255,0,0,.2)}
 
 .top-row{
   display:flex;
@@ -85,7 +115,6 @@ body{
 }
 
 .login-btn{
-  display:none !important;
   background:#fff;
   color:#000;
 }
@@ -221,7 +250,7 @@ video{
 
 .username{
   font-weight:900;
-  font-size:20px;
+  font-size:30px;
   cursor:pointer;
   color:pink; /* TikTok-like pink/red accent */
   letter-spacing:0.5px;
@@ -445,14 +474,10 @@ video{
   <div class="top-row">
 
     <div class="logo">BIGULA</div>
-    <div class="welcome-back" id="welcomeBack">Welcome back</div>
+    <div id="welcomeUser" class="welcome-user">Welcome to BIGULA</div>
 
     <div class="actions">
       <div class="search">🔍</div>
-
-      <button class="btn login-btn">
-        Login
-      </button>
 
       <button class="btn upload-btn disabled">
         Upload
@@ -513,580 +538,351 @@ video{
 </div>
 
 <script type="module">
-
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdGVpZ2dkaHRodnJybG5kdGJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMDUwMjgsImV4cCI6MjEwMzc4MTAyOH0.7ct7JgEOMrYOPp3clmyG8JXMZ3Aj0-bvc6EUK6XJayU"
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}
+})
 
 let currentUser = null
+let currentProfile = null
 let currentVideoId = null
-
-/* TOAST */
+let currentCommentId = null
+const profileCache = new Map()
 
 function showToast(message){
-
-  const toast = document.getElementById("toast")
-
-  toast.textContent = message
-
-  toast.classList.add("show")
-
+  const toast=document.getElementById('toast')
+  toast.textContent=message
+  toast.classList.add('show')
   clearTimeout(toast.timer)
-
-  toast.timer = setTimeout(()=>{
-    toast.classList.remove("show")
-  },2500)
+  toast.timer=setTimeout(()=>toast.classList.remove('show'),2600)
 }
 
-/* USER */
+function requireSignIn(action){
+  if(currentUser) return true
+  const ok=confirm(`Sign in to BIGULA to ${action}.\n\nPress OK to continue to sign in.`)
+  if(ok) location.href='signup.html'
+  return false
+}
+
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
+}
+
+function getUserName(profile,user){
+  return profile?.name || profile?.full_name || profile?.display_name || profile?.username ||
+         profile?.user_name || user?.user_metadata?.name || user?.user_metadata?.full_name ||
+         user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'BIGULA creator'
+}
+
+async function loadProfile(uid){
+  if(!uid) return null
+  if(profileCache.has(uid)) return profileCache.get(uid)
+  const {data,error}=await supabase.from('users').select('*').eq('id',uid).maybeSingle()
+  if(!error && data) profileCache.set(uid,data)
+  return data || null
+}
 
 async function initUser(){
-  try{
-    const { data:{ user }, error } = await supabase.auth.getUser()
-    if(error) console.warn("Auth user:", error)
-    currentUser = user || null
+  let {data:{session}}=await supabase.auth.getSession()
+  if(!session && new URLSearchParams(location.search).has('code')){
+    const {data,error}=await supabase.auth.exchangeCodeForSession(new URLSearchParams(location.search).get('code'))
+    if(!error) session=data?.session || null
+    history.replaceState({},document.title,location.pathname)
+  }
 
-    const uploadBtn=document.querySelector(".upload-btn")
-    const accountBtn=document.getElementById("accountBtn")
-    const notifBtn=document.getElementById("notifBtn")
-    const welcome=document.getElementById("welcomeBack")
+  currentUser=session?.user || null
 
-    if(!user){
-      welcome.textContent="Welcome back"
-      uploadBtn.classList.add("disabled")
-      accountBtn.classList.add("disabled")
-      notifBtn.classList.add("disabled")
-      location.href="signup.html"
-      return false
-    }
+  const uploadBtn=document.querySelector('.upload-btn')
+  const accountBtn=document.getElementById('accountBtn')
+  const notifBtn=document.getElementById('notifBtn')
+  const loginBtn=document.querySelector('.login-btn')
 
-    const { data:profile, error:profileError }=await supabase.from("users")
-      .select("*").eq("id",user.id).maybeSingle()
-    if(profileError) console.warn("Profile:",profileError)
+  if(currentUser){
+    currentProfile=await loadProfile(currentUser.id)
+    const name=getUserName(currentProfile,currentUser)
+    localStorage.setItem('bigula_profile',JSON.stringify(currentProfile || {id:currentUser.id,name}))
+    const welcome=document.getElementById('welcomeUser')
+    if(welcome) welcome.textContent=`Welcome back, ${name}`
 
-    const userName=profile?.name || profile?.username || profile?.display_name ||
-      localStorage.getItem("bigula_user_name") ||
-      user.user_metadata?.full_name || user.user_metadata?.name || "User"
-
-    localStorage.setItem("bigula_profile",JSON.stringify(profile || {id:user.id,name:userName}))
-    localStorage.setItem("bigula_user_name",userName)
-    welcome.textContent=`Welcome back, ${userName}`
-
-    uploadBtn.classList.remove("disabled")
-    uploadBtn.onclick=()=>location.href="upload.html"
-    accountBtn.classList.remove("disabled")
-    notifBtn.classList.remove("disabled")
-    accountBtn.onclick=()=>location.href="account.html"
-    return true
-  }catch(err){
-    console.error("initUser failed:",err)
-    return false
+    uploadBtn.classList.remove('disabled')
+    uploadBtn.onclick=()=>location.href='upload.html'
+    accountBtn.classList.remove('disabled')
+    notifBtn.classList.remove('disabled')
+    accountBtn.onclick=()=>location.href='account.html'
+    notifBtn.onclick=()=>location.href='notifications.html'
+    if(loginBtn) loginBtn.style.display='none'
+  }else{
+    const welcome=document.getElementById('welcomeUser')
+    if(welcome) welcome.textContent='Welcome to BIGULA'
+    uploadBtn.classList.remove('disabled')
+    uploadBtn.onclick=()=>requireSignIn('upload a video')
+    accountBtn.classList.remove('disabled')
+    notifBtn.classList.remove('disabled')
+    accountBtn.onclick=()=>requireSignIn('open your account')
+    notifBtn.onclick=()=>requireSignIn('open your notifications')
+    if(loginBtn) loginBtn.style.display='none'
   }
 }
-
-initUser()
-
-/* FETCH */
-
-async function fetchVideos(type="foryou"){
-
-  let query = supabase.from("videos").select("*")
-
-  if(type==="latest"){
-    query = query.order("created_at",{ascending:false})
-  }
-
-  if(type==="viral"){
-    query = query.order("views",{ascending:false})
-  }
-
-  const { data, error } = await query
-
-  if(error){
-    console.error(error)
-    return
-  }
-
-  renderVideos(data)
-}
-
-/* COUNTS */
 
 async function getCounts(videoId){
-
-  const { count:likes } = await supabase
-    .from("likes")
-    .select("*",{head:true})
-    .eq("video_id",videoId)
-
-  const { count:comments } = await supabase
-    .from("comments")
-    .select("*",{head:true})
-    .eq("video_id",videoId)
-
-  const { count:views } = await supabase
-    .from("views")
-    .select("*",{head:true})
-    .eq("video_id",videoId)
-
-  return { likes, comments, views }
-}
-
-/* RENDER */
-
-async function getProfiles(userIds){
-  const ids=[...new Set(userIds.filter(Boolean))]
-  if(!ids.length) return {}
-  const {data,error}=await supabase.from("users").select("*").in("id",ids)
-  if(error){console.error("Creator profiles:",error);return {}}
-  const map={}
-  ;(data||[]).forEach(u=>map[u.id]=u)
-  return map
+  const [l,c,v]=await Promise.all([
+    supabase.from('likes').select('*',{head:true,count:'exact'}).eq('video_id',videoId),
+    supabase.from('comments').select('*',{head:true,count:'exact'}).eq('video_id',videoId),
+    supabase.from('views').select('*',{head:true,count:'exact'}).eq('video_id',videoId)
+  ])
+  return {likes:l.count||0,comments:c.count||0,views:v.count||0}
 }
 
 async function isFollowing(uid){
-  if(!currentUser || !uid || currentUser.id===uid) return false
-  const {data,error}=await supabase.from("followers")
-    .select("follower_id").eq("follower_id",currentUser.id).eq("following_id",uid).maybeSingle()
-  if(error && error.code!=="PGRST116") console.warn("Follow check:",error)
+  if(!currentUser || !uid) return false
+  const {data}=await supabase.from('followers').select('follower_id').eq('follower_id',currentUser.id).eq('following_id',uid).maybeSingle()
   return !!data
 }
 
+async function isLiked(videoId){
+  if(!currentUser) return false
+  const {data}=await supabase.from('likes').select('video_id').eq('video_id',videoId).eq('user_id',currentUser.id).maybeSingle()
+  return !!data
+}
+
+async function fetchVideos(type='foryou'){
+  let query=supabase.from('videos').select('*')
+  if(type==='latest') query=query.order('created_at',{ascending:false})
+  if(type==='viral') query=query.order('views',{ascending:false})
+  const {data,error}=await query
+  if(error){console.error('Video fetch error:',error);return}
+  await renderVideos(data||[])
+}
+
 async function renderVideos(videos){
-  const feed=document.getElementById("feed")
-  feed.innerHTML=""
-  const profiles=await getProfiles(videos.map(v=>v.user_id || v.creator_id))
+  const feed=document.getElementById('feed')
+  feed.innerHTML=''
+  if(!videos.length){feed.innerHTML='<div style="padding:40px;text-align:center;opacity:.7">No videos yet.</div>';return}
 
   for(const video of videos){
-    const creatorId=video.user_id || video.creator_id
-    const profile=profiles[creatorId] || {}
-    const creatorName=profile.name || profile.username || profile.display_name || video.username || "User"
+    const creatorId=String(video.user_id || video.creator_id || video.owner_id || '')
+    const creatorProfile=await loadProfile(creatorId)
+    const creatorName=getUserName(creatorProfile,null)
     const counts=await getCounts(video.id)
     const following=await isFollowing(creatorId)
+    const liked=await isLiked(video.id)
 
-    const card=document.createElement("div")
-    card.className="video-card"
+    const card=document.createElement('div')
+    card.className='video-card'
     card.dataset.id=video.id
-    card.dataset.creatorId=creatorId || ""
+    card.dataset.creatorId=creatorId
     card.innerHTML=`
-      <video src="${video.video_url}" autoplay muted playsinline preload="metadata"></video>
+      <video src="${escapeHtml(video.video_url||'')}" autoplay playsinline></video>
       <div class="meta-overlay">
         <div class="user-row">
-          <span class="username" onclick="openProfile('${creatorId || ""}')">${escapeHtml(creatorName)}</span>
-          <div>
-            <button class="views-btn">Views <span class="view-count">${counts.views || 0}</span></button>
-            <button class="follow-btn ${following?"following":""}" onclick="followUser('${creatorId || ""}',this)">${following?"Following":"Follow"}</button>
-            <button class="share-btn" onclick="toggleShare(this)">Share</button>
+          <div class="creator-line">
+            <button class="creator-name" type="button">${escapeHtml(creatorName)}</button>
+            <button class="follow-btn ${following?'following':''}" type="button">${following?'Following':'Follow'}</button>
+          </div>
+          <div class="action-row">
+            <button class="views-btn" type="button">Views <span class="view-count">${counts.views}</span></button>
+            <button class="share-btn" type="button">Share</button>
             <div class="share-options">
-              <button onclick="shareStatus('${video.id}','${escapeJs(creatorName)}')">Bigula Status</button>
-              <button onclick="shareWhatsApp('${escapeJs(video.video_url || "")}','${escapeJs(creatorName)}')">WhatsApp</button>
+              <button class="status-share" type="button">Bigula Status</button>
+              <button class="wa-share" type="button">WhatsApp</button>
             </div>
           </div>
         </div>
-        <div class="title">${escapeHtml(video.title || "")}</div>
+        <div class="title">${escapeHtml(video.title||'')}</div>
         <div class="stats">
-          <div class="stat-btn" onclick="toggleLike('${video.id}',this)">❤️ <span id="like-${video.id}">${counts.likes || 0}</span></div>
-          <div class="stat-btn" onclick="openComments('${video.id}')">💬 <span id="commentCount-${video.id}">${counts.comments || 0}</span></div>
+          <button class="stat-btn like-btn ${liked?'active-like':''}" type="button">❤️ <span>${counts.likes}</span></button>
+          <button class="stat-btn comment-btn" type="button">💬 <span>${counts.comments}</span></button>
         </div>
       </div>`
+
     feed.appendChild(card)
+    bindCardActions(card,video,creatorName)
     setupVideoAutoScroll(card)
   }
   setupAutoplay()
 }
 
-function escapeHtml(value){
-  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))
+function bindCardActions(card,video,creatorName){
+  const creatorId=card.dataset.creatorId
+  card.querySelector('.creator-name').onclick=()=>openProfile(creatorId)
+  card.querySelector('.follow-btn').onclick=()=>followUser(creatorId,card.querySelector('.follow-btn'))
+  card.querySelector('.like-btn').onclick=()=>toggleLike(video.id,card.querySelector('.like-btn'))
+  card.querySelector('.comment-btn').onclick=()=>openComments(video.id)
+  card.querySelector('.share-btn').onclick=e=>toggleShare(e.currentTarget)
+  card.querySelector('.status-share').onclick=()=>showToast('Status sharing is coming soon.')
+  card.querySelector('.wa-share').onclick=()=>shareWhatsApp(video.video_url,creatorName)
 }
-function escapeJs(value){
-  return String(value??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(/\n/g,"\\n")
-}
-
-/* AUTOPLAY */
 
 function setupAutoplay(){
-
-  const vids = document.querySelectorAll("video")
-
-  const topbar = document.getElementById("topbar")
-
-  const observer = new IntersectionObserver(entries=>{
-
-    entries.forEach(async entry=>{
-
-      const video = entry.target
-
-      if(entry.isIntersecting){
-
-        document.querySelectorAll("video").forEach(v=>{
-          if(v !== video){
-            v.pause()
-          }
-        })
-
-        video.volume = 1
-
-        video.play()
-
-        topbar.style.top = "-120px"
-
-      } else {
-
-        video.pause()
-
-        topbar.style.top = "0"
-      }
-    })
-
-  }, { threshold:0.75 })
-
+  const vids=document.querySelectorAll('.video-card video')
+  const topbar=document.getElementById('topbar')
+  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+    const video=entry.target
+    if(entry.isIntersecting){
+      vids.forEach(v=>{if(v!==video)v.pause()})
+      video.volume=1
+      video.play().catch(()=>{})
+      topbar.style.top='-120px'
+    }else{video.pause();topbar.style.top='0'}
+  }),{threshold:.75})
   vids.forEach(v=>observer.observe(v))
 }
 
 function setupVideoAutoScroll(card){
-
-  const video = card.querySelector("video")
-
-  video.addEventListener("ended", ()=>{
-
-    const next = card.nextElementSibling
-
-    if(next){
-      next.scrollIntoView({
-        behavior:"smooth",
-        block:"center"
-      })
-    }
-  })
+  const video=card.querySelector('video')
+  video.addEventListener('ended',()=>card.nextElementSibling?.scrollIntoView({behavior:'smooth',block:'center'}))
 }
-
-/* SHARE */
 
 function toggleShare(btn){
-
-  document.querySelectorAll(".share-options").forEach(el=>{
-    if(el !== btn.nextElementSibling){
-      el.style.display = "none"
-    }
-  })
-
-  const options = btn.nextElementSibling
-
-  if(!options) return
-
-  options.style.display =
-    options.style.display === "flex"
-      ? "none"
-      : "flex"
+  document.querySelectorAll('.share-options').forEach(el=>{if(el!==btn.nextElementSibling)el.style.display='none'})
+  const options=btn.nextElementSibling
+  options.style.display=options.style.display==='flex'?'none':'flex'
 }
 
-function shareWhatsApp(url, username){
-
-  const text =
-    `Watch this BIGULA video created by @${username}: ${url}`
-
-  window.open(
-    `https://wa.me/?text=${encodeURIComponent(text)}`,
-    '_blank'
-  )
+function shareWhatsApp(url,name){
+  window.open(`https://wa.me/?text=${encodeURIComponent(`Watch this BIGULA video created by ${name}: ${url}`)}`,'_blank')
 }
-
-function shareStatus(videoId, username){
-
-  showToast(`Status feature coming soon`)
-}
-
-/* ACTIONS */
 
 function openProfile(uid){
-
-  location.href = `creator-profile.html?uid=${uid}`
+  if(!uid || uid==='undefined' || uid==='null') return showToast('Creator profile is unavailable.')
+  location.href=`creator-profile.html?uid=${encodeURIComponent(uid)}`
 }
 
 async function toggleLike(videoId,btn){
-  if(!currentUser)return location.href="signup.html"
-  const likeEl=document.getElementById(`like-${videoId}`)
-  const {data:existing,error:checkError}=await supabase.from("likes")
-    .select("video_id").eq("video_id",videoId).eq("user_id",currentUser.id).maybeSingle()
-  if(checkError && checkError.code!=="PGRST116"){console.error(checkError);showToast("Could not check like");return}
-
-  if(existing){
-    const {error}=await supabase.from("likes").delete().eq("video_id",videoId).eq("user_id",currentUser.id)
-    if(error){console.error(error);showToast("Could not unlike");return}
-    likeEl.textContent=Math.max(0,Number(likeEl.textContent)-1)
-  }else{
-    const {error}=await supabase.from("likes").insert({video_id:videoId,user_id:currentUser.id})
-    if(error){console.error(error);showToast("Could not like this video");return}
-    likeEl.textContent=Number(likeEl.textContent)+1
-    btn.style.transform="scale(1.2)"
-    setTimeout(()=>btn.style.transform="scale(1)",180)
-  }
-}
-
-async function openComments(videoId){
-  if(!currentUser)return location.href="signup.html"
-  currentVideoId=videoId
-  const modal=document.getElementById("commentModal")
-  const list=document.getElementById("commentList")
-  list.innerHTML='<div style="opacity:.7;text-align:center;padding:20px">Loading comments...</div>'
-  modal.style.display="flex"
-
-  const {data:comments,error}=await supabase.from("comments").select("*")
-    .eq("video_id",videoId).order("created_at",{ascending:true})
-  if(error){console.error("Comments:",error);list.innerHTML='<div style="padding:20px">Could not load comments.</div>';return}
-
-  const profiles=await getProfiles((comments||[]).map(c=>c.user_id))
-  list.innerHTML=""
-  if(!comments?.length){list.innerHTML='<div style="opacity:.7;text-align:center;padding:20px">No comments yet.</div>';return}
-  comments.forEach(c=>{
-    const profile=profiles[c.user_id]||{}
-    const name=profile.name||profile.username||profile.display_name||c.username||"User"
-    const div=document.createElement("div")
-    div.style.marginBottom="12px"
-    div.innerHTML=`<strong>${escapeHtml(name)}</strong>: ${escapeHtml(c.text||"")}`
-    list.appendChild(div)
-  })
-}
-
-document.getElementById("postCommentBtn").onclick=async()=>{
-  if(!currentUser||!currentVideoId)return location.href="signup.html"
-  const input=document.getElementById("commentText")
-  const text=input.value.trim()
-  if(!text)return
-  const profile=JSON.parse(localStorage.getItem("bigula_profile")||"null")||{}
-  const name=profile.name||profile.username||profile.display_name||localStorage.getItem("bigula_user_name")||currentUser.user_metadata?.name||"User"
-
-  const {error}=await supabase.from("comments").insert({
-    video_id:currentVideoId,user_id:currentUser.id,username:name,text
-  })
-  if(error){console.error("Comment failed:",error);showToast("Could not post comment");return}
-  input.value=""
-  const countEl=document.getElementById(`commentCount-${currentVideoId}`)
-  if(countEl)countEl.textContent=Number(countEl.textContent)+1
-  await openComments(currentVideoId)
-}
-
-document.getElementById("closeComments").onclick = ()=>{
-
-  document.getElementById("commentModal").style.display="none"
+  if(!requireSignIn('like this video')) return
+  const countEl=btn.querySelector('span')
+  const old=Number(countEl.textContent)||0
+  btn.disabled=true
+  try{
+    const {data:existing,error:checkError}=await supabase.from('likes').select('video_id').eq('video_id',videoId).eq('user_id',currentUser.id).maybeSingle()
+    if(checkError) throw checkError
+    if(existing){
+      const {error}=await supabase.from('likes').delete().eq('video_id',videoId).eq('user_id',currentUser.id)
+      if(error) throw error
+      countEl.textContent=Math.max(0,old-1);btn.classList.remove('active-like')
+    }else{
+      const {error}=await supabase.from('likes').insert({video_id:videoId,user_id:currentUser.id})
+      if(error) throw error
+      countEl.textContent=old+1;btn.classList.add('active-like')
+    }
+  }catch(e){console.error('Like error:',e);showToast('Could not update like. Please try again.')}
+  finally{btn.disabled=false}
 }
 
 async function followUser(uid,btn){
-  if(!currentUser)return location.href="signup.html"
-  if(!uid)return showToast("Creator profile unavailable")
-  if(currentUser.id===uid)return showToast("You cannot follow yourself")
-
-  const {data:existing,error:checkError}=await supabase.from("followers")
-    .select("follower_id").eq("follower_id",currentUser.id).eq("following_id",uid).maybeSingle()
-  if(checkError && checkError.code!=="PGRST116"){console.error("Follow check:",checkError);showToast("Could not check follow status");return}
-
-  if(existing){
-    const {error}=await supabase.from("followers").delete().eq("follower_id",currentUser.id).eq("following_id",uid)
-    if(error){console.error("Unfollow:",error);showToast("Could not unfollow");return}
-    if(btn){btn.textContent="Follow";btn.classList.remove("following")}
-    showToast("Unfollowed")
-  }else{
-    const {error}=await supabase.from("followers").insert({follower_id:currentUser.id,following_id:uid})
-    if(error){console.error("Follow:",error);showToast("Could not follow creator");return}
-    if(btn){btn.textContent="Following";btn.classList.add("following")}
-    showToast("Following")
-  }
-}
-/* TABS */
-
-document.querySelectorAll(".tab").forEach(tab=>{
-
-  tab.onclick = ()=>{
-
-    document.querySelectorAll(".tab")
-      .forEach(t=>t.classList.remove("active"))
-
-    tab.classList.add("active")
-
-    fetchVideos(tab.dataset.feed)
-  }
-})
-
-/* SEARCH */
-
-document.querySelector(".search").onclick = ()=>{
-
-  document.querySelector(".search-bar").style.display = "block"
+  if(!requireSignIn('follow this creator')) return
+  if(!uid || uid===currentUser.id){showToast('You cannot follow yourself.');return}
+  btn.disabled=true
+  try{
+    const {data:existing,error:checkError}=await supabase.from('followers').select('follower_id').eq('follower_id',currentUser.id).eq('following_id',uid).maybeSingle()
+    if(checkError) throw checkError
+    if(existing){
+      const {error}=await supabase.from('followers').delete().eq('follower_id',currentUser.id).eq('following_id',uid)
+      if(error) throw error
+      btn.textContent='Follow';btn.classList.remove('following');showToast('Unfollowed')
+    }else{
+      const {error}=await supabase.from('followers').insert({follower_id:currentUser.id,following_id:uid})
+      if(error) throw error
+      btn.textContent='Following';btn.classList.add('following');showToast('Following')
+    }
+  }catch(e){console.error('Follow error:',e);showToast('Could not update follow. Check your connection or permissions.')}
+  finally{btn.disabled=false}
 }
 
-document.getElementById("searchInput")
-.addEventListener("input",e=>{
+async function openComments(videoId){
+  currentVideoId=videoId
+  currentCommentId=null
+  const modal=document.getElementById('commentModal')
+  const list=document.getElementById('commentList')
+  list.innerHTML='<div style="opacity:.6;text-align:center;padding:20px">Loading comments…</div>'
+  modal.style.display='flex'
 
-  const term = e.target.value.toLowerCase()
+  const {data:comments,error}=await supabase.from('comments').select('*').eq('video_id',videoId).order('created_at',{ascending:true})
+  if(error){console.error('Comments fetch error:',error);list.innerHTML='<div style="opacity:.7;padding:20px;text-align:center">Comments could not be loaded.</div>';return}
+  if(!comments?.length){list.innerHTML='<div style="opacity:.6;text-align:center;padding:25px">No comments yet. Be the first.</div>';return}
 
-  document.querySelectorAll(".video-card")
-  .forEach(card=>{
-
-    card.style.display =
-      card.innerText.toLowerCase().includes(term)
-      ? "flex"
-      : "none"
-  })
-})
-
-/* INSTALL */
-
-let deferredPrompt = null
-
-const installBtn =
-  document.getElementById('installBtn')
-
-installBtn.style.display = 'none'
-
-window.addEventListener('beforeinstallprompt', (e)=>{
-
-  e.preventDefault()
-
-  deferredPrompt = e
-
-  installBtn.style.display = 'inline-block'
-})
-
-installBtn.addEventListener('click', async ()=>{
-
-  if (!deferredPrompt) return
-
-  deferredPrompt.prompt()
-
-  await deferredPrompt.userChoice
-
-  deferredPrompt = null
-
-  installBtn.style.display = 'none'
-})
-document.addEventListener("click", (e) => {
-
-  const video = e.target.closest(".video-card")?.querySelector("video")
-
-  if (!video) return
-
-  // toggle play/pause
-  if (video.paused) {
-    video.play()
-    showToast("▶️ Playing")
-  } else {
-    video.pause()
-    showToast("⏸ Paused")
+  list.innerHTML=''
+  for(const c of comments){
+    const commenter=await loadProfile(c.user_id)
+    const name=getUserName(commenter,null) || c.username || 'BIGULA user'
+    const div=document.createElement('div')
+    div.className='comment-item'
+    div.dataset.commentId=c.id || ''
+    div.innerHTML=`<div class="comment-body"><strong>${escapeHtml(name)}</strong><div>${escapeHtml(c.text||'')}</div></div>
+      <div class="comment-actions">
+        <button class="comment-like" type="button">❤️ ${Number(c.likes_count||c.like_count||0)}</button>
+        <button class="comment-reply" type="button">Reply</button>
+      </div>`
+    div.querySelector('.comment-like').onclick=()=>likeComment(c.id)
+    div.querySelector('.comment-reply').onclick=()=>replyToComment(c.id,name)
+    list.appendChild(div)
   }
-})
+}
 
-/* =========================
-   SWIPE GESTURE SYSTEM
-   ========================= */
+function replyToComment(commentId,name){
+  if(!requireSignIn('reply to this comment')) return
+  currentCommentId=commentId
+  const input=document.getElementById('commentText')
+  input.value=`@${name} `
+  input.focus()
+}
 
-let startX = 0
-let startY = 0
-let endX = 0
-let endY = 0
+async function likeComment(commentId){
+  if(!requireSignIn('like this comment')) return
+  if(!commentId){showToast('This comment cannot be liked yet.');return}
+  showToast('Comment likes will be enabled when comment-like storage is connected.')
+}
 
-const SWIPE_THRESHOLD = 80
-
-document.addEventListener("touchstart", (e) => {
-
-  startX = e.touches[0].clientX
-  startY = e.touches[0].clientY
-})
-
-document.addEventListener("touchend", (e) => {
-
-  endX = e.changedTouches[0].clientX
-  endY = e.changedTouches[0].clientY
-
-  const dx = endX - startX
-  const dy = endY - startY
-
-  /* HORIZONTAL SWIPE (LEFT / RIGHT) */
-  if (Math.abs(dx) > Math.abs(dy)) {
-
-    // swipe right → open uploader dashboard
-    if (dx > SWIPE_THRESHOLD) {
-
-      const card = document.elementFromPoint(startX, startY)
-        ?.closest(".video-card")
-
-      if (!card) return
-
-      const uid = card?.querySelector(".username")
-        ?.getAttribute("onclick")
-        ?.match(/'([^']+)'/)?.[1]
-
-      if (uid && window.openProfile) {
-        openProfile(uid)
-      }
-    }
-
-    // swipe left → future action (can be like/share panel)
-    if (dx < -SWIPE_THRESHOLD) {
-      console.log("Left swipe detected (reserved action)")
-    }
-
+async function postComment(){
+  if(!requireSignIn('add a comment')) return
+  if(!currentVideoId)return
+  const input=document.getElementById('commentText')
+  const text=input.value.trim()
+  if(!text)return
+  const profileName=getUserName(currentProfile,currentUser)
+  const payload={video_id:currentVideoId,user_id:currentUser.id,username:profileName,text}
+  if(currentCommentId) payload.parent_id=currentCommentId
+  const {error}=await supabase.from('comments').insert(payload)
+  if(error){
+    // If the existing comments table does not yet have parent_id, retry as a normal comment.
+    if(currentCommentId && /parent_id|column/i.test(error.message||'')){
+      delete payload.parent_id
+      const retry=await supabase.from('comments').insert(payload)
+      if(retry.error){console.error(retry.error);showToast('Could not post comment.');return}
+    }else{console.error(error);showToast('Could not post comment.');return}
   }
+  input.value=''
+  currentCommentId=null
+  await openComments(currentVideoId)
+}
 
-  /* VERTICAL SWIPE (UP / DOWN) */
-  else {
+document.getElementById('postCommentBtn').onclick=postComment
+document.getElementById('closeComments').onclick=()=>document.getElementById('commentModal').style.display='none'
 
-    // swipe up → next video
-    if (dy < -SWIPE_THRESHOLD) {
-
-      const current = document.elementFromPoint(
-        window.innerWidth / 2,
-        window.innerHeight / 2
-      )?.closest(".video-card")
-
-      const next = current?.nextElementSibling
-
-      if (next) {
-        next.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        })
-      }
-    }
-
-    // swipe down → previous video
-    if (dy > SWIPE_THRESHOLD) {
-
-      const current = document.elementFromPoint(
-        window.innerWidth / 2,
-        window.innerHeight / 2
-      )?.closest(".video-card")
-
-      const prev = current?.previousElementSibling
-
-      if (prev) {
-        prev.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        })
-      }
-    }
-  }
+document.querySelectorAll('.tab').forEach(tab=>tab.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+  tab.classList.add('active')
+  fetchVideos(tab.dataset.feed)
 })
 
-/* =========================
-   GLOBALS
-   ========================= */
+document.querySelector('.search').onclick=()=>document.querySelector('.search-bar').style.display='block'
+document.getElementById('searchInput').addEventListener('input',e=>{
+  const term=e.target.value.toLowerCase()
+  document.querySelectorAll('.video-card').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(term)?'flex':'none')
+})
 
-window.followUser = followUser
-window.toggleLike = toggleLike
-window.openComments = openComments
-window.toggleShare = toggleShare
-window.shareWhatsApp = shareWhatsApp
-window.shareStatus = shareStatus
-window.openProfile = openProfile
+let deferredPrompt=null
+const installBtn=document.getElementById('installBtn')
+installBtn.style.display='none'
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'})
+installBtn.onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none'}
 
-(async()=>{
-  const ok=await initUser()
-  if(ok) await fetchVideos()
-})()
-
+// Do NOT make Home dependent on authentication. Everyone can browse/watch.
+await initUser()
+await fetchVideos()
 </script>
 
 </body>
