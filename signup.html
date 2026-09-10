@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Sign Up</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Arial,sans-serif;background:#f6f6f6;display:flex;align-items:center;justify-content:center;color:#111}.card{width:min(430px,calc(100% - 32px));background:#fff;border-radius:20px;padding:34px 28px;box-shadow:0 10px 35px rgba(0,0,0,.08);text-align:center}.logo{font-size:38px;font-weight:900;letter-spacing:-2px;margin-bottom:8px}h1{margin:0 0 8px;font-size:25px}.sub{margin:0 0 26px;color:#666;font-size:14px;line-height:1.5}button{width:100%;border:0;border-radius:12px;padding:14px 16px;font-size:15px;font-weight:700}.google{background:#111;color:#fff;cursor:pointer}.phone{margin-top:12px;background:#e5e5e5;color:#999;cursor:not-allowed}.note{margin:8px 0 20px;color:#999;font-size:12px}.status{min-height:20px;margin-top:18px;font-size:13px;color:#c62828}.terms{margin-top:22px;color:#999;font-size:11px;line-height:1.5}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="logo">BIGULA</div>
+<h1>Create your account</h1>
+<p class="sub">Join BIGULA and start discovering short videos from around the world.</p>
+<button id="google" class="google">Continue with Google</button>
+<button class="phone" disabled>Continue with phone number</button>
+<div class="note">Phone sign-up is coming soon.</div>
+<div id="status" class="status"></div>
+<p class="terms">By continuing, you agree to BIGULA's terms and community guidelines.</p>
+</main>
+<script>
+const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const status=document.getElementById("status");
+
+async function init(){
+ const {data,error}=await supabase.auth.getSession();
+ if(!error && data.session) location.href="home.html";
+}
+document.getElementById("google").onclick=async()=>{
+ status.textContent="Connecting to Google...";
+ const redirectTo=location.origin+location.pathname.replace(/signup\.html?$/i,"home.html");
+ const {error}=await supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo}});
+ if(error) status.textContent=error.message;
+};
+init();
+</script>
+</body>
+</html>
