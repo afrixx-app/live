@@ -517,7 +517,15 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
 const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: "pkce"
+  }
+})
 
 let currentUser = null
 let currentVideoId = null
@@ -628,52 +636,181 @@ function applySignedOutUI(){
 
 async function initUser(){
   /*
-    getSession() reads the persisted Supabase Auth session.
-    onAuthStateChange below also handles the OAuth return to Home.
+    Google OAuth returns to Home with a PKCE "code".
+    Process that code explicitly before deciding that the user is logged out.
+    This prevents Home <-> Signup redirect loops while Supabase restores the
+    Google session.
   */
-  const { data: { session }, error } = await supabase.auth.getSession()
 
-  if(error) console.error("Supabase session error:", error)
+  try{
+    let { data:{ session }, error } = await supabase.auth.getSession()
 
-  authReady = true
-
-  const user = session?.user || null
-
-  if(!user){
-    if(!redirectingToSignup){
-      redirectingToSignup = true
-      location.replace("signup.html")
+    if(error){
+      console.error("Supabase session check failed:", error)
+      showAuthError("Unable to restore your BIGULA sign-in session. Please refresh once.")
+      return false
     }
-    return
-  }
 
-  applySignedInUI(user)
-  await refreshUserProfile(user)
+    /*
+      If Google has just redirected back to Home, Supabase may still have
+      the authorization code in the URL. Explicitly exchange it when no
+      session is available yet.
+    */
+    if(!session?.user){
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get("code")
+
+      if(code){
+        const result = await supabase.auth.exchangeCodeForSession(code)
+
+        if(result.error){
+          console.error("Google OAuth code exchange failed:", result.error)
+          showAuthError("Google sign-in could not be completed. Please return to signup and try again.")
+          return false
+        }
+
+        session = result.data?.session || null
+
+        /* Remove the OAuth code from the address bar after successful login. */
+        try{
+          window.history.replaceState({}, document.title, window.location.pathname)
+        }catch(e){}
+      }
+    }
+
+    if(!session?.user){
+      /*
+        Do NOT immediately bounce back to signup on a temporary/session
+        restoration problem. That was the source of the visible loop.
+      */
+      showAuthError("No active BIGULA sign-in session was found.")
+      return false
+    }
+
+    currentUser = session.user
+
+    const loginBtn = document.querySelector(".login-btn")
+    const uploadBtn = document.querySelector(".upload-btn")
+    const accountBtn = document.getElementById("accountBtn")
+    const notifBtn = document.getElementById("notifBtn")
+
+    if(loginBtn){
+      loginBtn.style.display = "none"
+    }
+
+    if(uploadBtn){
+      uploadBtn.classList.remove("disabled")
+      uploadBtn.textContent = "Upload"
+      uploadBtn.onclick = ()=>location.href="upload.html"
+    }
+
+    if(accountBtn){
+      accountBtn.classList.remove("disabled")
+      accountBtn.onclick = ()=>location.href="account.html"
+    }
+
+    if(notifBtn){
+      notifBtn.classList.remove("disabled")
+      notifBtn.onclick = ()=>location.href="notifications.html"
+    }
+
+    /*
+      Refresh the BIGULA profile, but never treat the profile row or
+      localStorage as proof of authentication.
+    */
+    const { data: profile, error: profileError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", session.user.id)
+      .maybeSingle()
+
+    if(profile && !profileError){
+      localStorage.setItem("bigula_user", JSON.stringify(profile))
+      localStorage.setItem("supabase_auth_user_id", session.user.id)
+      localStorage.setItem("isLoggedIn", "true")
+    }else if(profileError){
+      console.warn("Could not refresh BIGULA profile cache:", profileError)
+    }
+
+    return true
+
+  }catch(error){
+    console.error("BIGULA Home auth error:", error)
+    showAuthError("BIGULA could not restore your sign-in session. Please refresh once.")
+    return false
+  }
 }
 
-supabase.auth.onAuthStateChange(async (event, session)=>{
-  const user = session?.user || null
+function showAuthError(message){
+  console.error(message)
 
-  if(user && (
-    event === "SIGNED_IN" ||
-    event === "TOKEN_REFRESHED" ||
-    event === "INITIAL_SESSION"
-  )){
-    applySignedInUI(user)
-    await refreshUserProfile(user)
-    return
+  /*
+    Keep Home visible instead of redirecting endlessly.
+    The user can manually return to signup if the session is genuinely gone.
+  */
+  const feed = document.getElementById("feed")
+  if(feed){
+    feed.innerHTML = `
+      <div style="
+        margin:40px auto;
+        max-width:520px;
+        padding:24px;
+        text-align:center;
+        background:#111;
+        border:1px solid #333;
+        border-radius:18px;
+      ">
+        <h2 style="margin-bottom:10px;">BIGULA Sign-In</h2>
+        <p style="color:#bbb;margin-bottom:18px;">${message}</p>
+        <button
+          style="
+            padding:12px 20px;
+            border:0;
+            border-radius:999px;
+            background:#ff0000;
+            color:#fff;
+            font-weight:800;
+            cursor:pointer;
+          "
+          onclick="location.href='signup.html'"
+        >
+          Return to Sign Up
+        </button>
+      </div>
+    `
   }
+}
 
-  if(event === "SIGNED_OUT"){
-    currentUser = null
-    if(!redirectingToSignup){
-      redirectingToSignup = true
-      location.replace("signup.html")
+supabase.auth.onAuthStateChange((event, session)=>{
+  console.log("BIGULA Auth:", event)
+
+  if(session?.user){
+    currentUser = session.user
+
+    const loginBtn = document.querySelector(".login-btn")
+    const uploadBtn = document.querySelector(".upload-btn")
+    const accountBtn = document.getElementById("accountBtn")
+    const notifBtn = document.getElementById("notifBtn")
+
+    if(loginBtn) loginBtn.style.display = "none"
+
+    if(uploadBtn){
+      uploadBtn.classList.remove("disabled")
+      uploadBtn.textContent = "Upload"
+      uploadBtn.onclick = ()=>location.href="upload.html"
+    }
+
+    if(accountBtn){
+      accountBtn.classList.remove("disabled")
+      accountBtn.onclick = ()=>location.href="account.html"
+    }
+
+    if(notifBtn){
+      notifBtn.classList.remove("disabled")
+      notifBtn.onclick = ()=>location.href="notifications.html"
     }
   }
 })
-
-initUser()
 
 /* FETCH */
 
@@ -1272,7 +1409,11 @@ window.shareWhatsApp = shareWhatsApp
 window.shareStatus = shareStatus
 window.openProfile = openProfile
 
-fetchVideos()
+initUser().then(authenticated=>{
+  if(authenticated){
+    fetchVideos()
+  }
+})
 
 </script>
 
