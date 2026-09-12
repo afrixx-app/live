@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,180 +6,706 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA — Sign Up</title>
 <meta name="theme-color" content="#000000">
+
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.container{width:100%;max-width:430px}
-.logo{text-align:center;font-size:38px;font-weight:900;letter-spacing:3px;margin-bottom:7px}
-.subtitle{text-align:center;color:#999;font-size:14px;margin-bottom:28px}
-.card{background:#111;border:1px solid #252525;border-radius:20px;padding:28px 22px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
-h1{text-align:center;font-size:25px;margin:0 0 9px}
-.desc{text-align:center;color:#999;font-size:14px;line-height:1.5;margin:0 0 24px}
-button{width:100%;height:54px;border:0;border-radius:13px;font-size:16px;font-weight:800;cursor:pointer;margin-top:12px}
-.google{background:#fff;color:#111}
-.google:disabled{opacity:.55;cursor:wait}
-.phone{background:#202020;color:#777;border:1px solid #333;cursor:not-allowed}
-.divider{display:flex;align-items:center;gap:12px;color:#555;font-size:12px;margin:20px 0}
-.divider:before,.divider:after{content:"";height:1px;background:#2b2b2b;flex:1}
-.status{display:none;margin-top:16px;padding:12px;border-radius:10px;background:#191919;font-size:13px;line-height:1.45;text-align:center}
-.status.show{display:block}.status.error{color:#ff9999}.status.info{color:#aaa}
-.note{text-align:center;color:#666;font-size:11px;line-height:1.5;margin-top:18px}
-.footer{text-align:center;color:#555;font-size:11px;margin-top:20px}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent
+}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif
+}
+body{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px
+}
+.container{
+  width:100%;
+  max-width:430px
+}
+.logo{
+  text-align:center;
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:3px;
+  margin-bottom:7px
+}
+.subtitle{
+  text-align:center;
+  color:#999;
+  font-size:14px;
+  margin-bottom:28px
+}
+.card{
+  background:#111;
+  border:1px solid #252525;
+  border-radius:20px;
+  padding:28px 22px;
+  box-shadow:0 18px 50px rgba(0,0,0,.5)
+}
+h1{
+  text-align:center;
+  font-size:25px;
+  margin:0 0 9px
+}
+.desc{
+  text-align:center;
+  color:#999;
+  font-size:14px;
+  line-height:1.5;
+  margin:0 0 24px
+}
+button{
+  width:100%;
+  height:54px;
+  border:0;
+  border-radius:13px;
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+  margin-top:12px
+}
+.google{
+  background:#fff;
+  color:#111
+}
+.google:disabled{
+  opacity:.55;
+  cursor:wait
+}
+.phone{
+  background:#202020;
+  color:#777;
+  border:1px solid #333;
+  cursor:not-allowed
+}
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#555;
+  font-size:12px;
+  margin:20px 0
+}
+.divider:before,
+.divider:after{
+  content:"";
+  height:1px;
+  background:#2b2b2b;
+  flex:1
+}
+.status{
+  display:none;
+  margin-top:16px;
+  padding:12px;
+  border-radius:10px;
+  background:#191919;
+  font-size:13px;
+  line-height:1.45;
+  text-align:center
+}
+.status.show{
+  display:block
+}
+.status.error{
+  color:#ff9999
+}
+.status.info{
+  color:#aaa
+}
+.note{
+  text-align:center;
+  color:#666;
+  font-size:11px;
+  line-height:1.5;
+  margin-top:18px
+}
+.footer{
+  text-align:center;
+  color:#555;
+  font-size:11px;
+  margin-top:20px
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
   <div class="logo">BIGULA</div>
   <div class="subtitle">Your stressfree home</div>
-  <div class="card">
-    <h1>Create your account</h1>
-    <p class="desc">Choose how you want to join BIGULA.</p>
 
-    <button id="googleBtn" class="google" type="button">Continue with Google</button>
+  <div class="card">
+
+    <h1>Create your account</h1>
+
+    <p class="desc">
+      Choose how you want to join BIGULA.
+    </p>
+
+    <button id="googleBtn" class="google" type="button">
+      Continue with Google
+    </button>
 
     <div class="divider">OR</div>
 
-    <button class="phone" type="button" disabled>Continue with phone number</button>
+    <button class="phone" type="button" disabled>
+      Continue with phone number
+    </button>
 
     <div id="status" class="status"></div>
-    <div class="note">Phone sign-up is coming soon. It will be enabled after phone authentication is configured.</div>
+
+    <div class="note">
+      Phone sign-up is coming soon. It will be enabled after phone authentication is configured.
+    </div>
+
   </div>
+
   <div class="footer">BIGULA</div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 (function () {
   "use strict";
 
-  const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-  const REDIRECT_URL = "https://afrixx-app.github.io/live/home.html";
+  /*
+   * ============================================================
+   * BIGULA SUPABASE CONFIGURATION
+   * ============================================================
+   */
 
-  const googleBtn = document.getElementById("googleBtn");
-  const statusBox = document.getElementById("status");
+  const SUPABASE_URL =
+    "https://vfteiggdhthvrrlndtbs.supabase.co";
 
-  function status(message, type) {
-    statusBox.textContent = message;
-    statusBox.className = "status show " + (type || "info");
+  const SUPABASE_KEY =
+    "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+
+  /*
+   * ============================================================
+   * OAUTH REDIRECTS
+   * ============================================================
+   *
+   * Android Capacitor:
+   *   com.bigula.app://auth/callback
+   *
+   * Normal website:
+   *   https://afrixx-app.github.io/live/home.html
+   */
+
+  const WEB_REDIRECT_URL =
+    "https://afrixx-app.github.io/live/home.html";
+
+  const APP_REDIRECT_URL =
+    "com.bigula.app://auth/callback";
+
+
+  /*
+   * Detect whether BIGULA is running inside Capacitor.
+   *
+   * Capacitor exposes window.Capacitor when the native
+   * application is running.
+   */
+
+  function isCapacitorApp() {
+
+    try {
+
+      return !!(
+        window.Capacitor &&
+        (
+          typeof window.Capacitor.isNativePlatform === "function"
+            ? window.Capacitor.isNativePlatform()
+            : window.Capacitor.getPlatform &&
+              window.Capacitor.getPlatform() !== "web"
+        )
+      );
+
+    } catch (e) {
+
+      console.warn("Capacitor detection failed:", e);
+
+      return false;
+    }
   }
 
-  if (!window.supabase || !window.supabase.createClient) {
-    status("Supabase could not be loaded. Please check your internet connection.", "error");
+
+  /*
+   * Select the correct OAuth callback.
+   */
+
+  function getRedirectURL() {
+
+    if (isCapacitorApp()) {
+      console.log("BIGULA running as native app.");
+      console.log("OAuth redirect:", APP_REDIRECT_URL);
+
+      return APP_REDIRECT_URL;
+    }
+
+    console.log("BIGULA running as website.");
+    console.log("OAuth redirect:", WEB_REDIRECT_URL);
+
+    return WEB_REDIRECT_URL;
+  }
+
+
+  const googleBtn =
+    document.getElementById("googleBtn");
+
+  const statusBox =
+    document.getElementById("status");
+
+
+  /*
+   * ============================================================
+   * STATUS MESSAGE
+   * ============================================================
+   */
+
+  function status(message, type) {
+
+    statusBox.textContent = message;
+
+    statusBox.className =
+      "status show " + (type || "info");
+  }
+
+
+  /*
+   * ============================================================
+   * SUPABASE INITIALIZATION
+   * ============================================================
+   */
+
+  if (
+    !window.supabase ||
+    !window.supabase.createClient
+  ) {
+
+    status(
+      "Supabase could not be loaded. Please check your internet connection.",
+      "error"
+    );
+
     googleBtn.disabled = true;
+
     return;
   }
 
-  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: "pkce"
-    }
-  });
+
+  const client =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+          flowType: "pkce"
+        }
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * GET GOOGLE USER NAME
+   * ============================================================
+   */
 
   function googleName(user) {
-    const m = user?.user_metadata || {};
-    return m.name || m.full_name || m.display_name ||
-      [m.given_name, m.family_name].filter(Boolean).join(' ') || null;
+
+    const m =
+      user?.user_metadata || {};
+
+    return (
+      m.name ||
+      m.full_name ||
+      m.display_name ||
+      [
+        m.given_name,
+        m.family_name
+      ]
+      .filter(Boolean)
+      .join(" ") ||
+      null
+    );
   }
 
+
+  /*
+   * ============================================================
+   * SYNC AUTH USER → BIGULA users TABLE
+   * ============================================================
+   *
+   * The Supabase Auth UUID remains the BIGULA users.id.
+   *
+   * This means Google login does NOT create a separate
+   * identity. Existing users remain connected to their
+   * videos, followers, likes, comments, earnings, etc.
+   */
+
   async function syncUserProfile(user) {
-    if (!user || !user.id) return null;
-    const m = user.user_metadata || {};
-    const name = googleName(user) || `user_${user.id.slice(0, 8)}`;
-    const avatar = m.avatar_url || m.picture || null;
-    const payload = { id: user.id, name, username: name };
-    if (avatar) payload.avatar_url = avatar;
 
-    const { data, error } = await client
-      .from('users')
-      .upsert(payload, { onConflict: 'id' })
-      .select('*')
-      .single();
-
-    if (error) {
-      console.error('BIGULA profile sync failed:', error);
+    if (!user || !user.id) {
       return null;
     }
 
-    localStorage.setItem('bigula_profile', JSON.stringify(data));
-    localStorage.setItem('bigula_user_name', data.name || name);
-    localStorage.setItem('supabase_auth_user_id', user.id);
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('loggedIn', 'true');
+    const m =
+      user.user_metadata || {};
+
+    const name =
+      googleName(user) ||
+      `user_${user.id.slice(0, 8)}`;
+
+    const avatar =
+      m.avatar_url ||
+      m.picture ||
+      null;
+
+
+    const payload = {
+      id: user.id,
+      name: name,
+      username: name
+    };
+
+
+    if (avatar) {
+      payload.avatar_url = avatar;
+    }
+
+
+    const {
+      data,
+      error
+    } = await client
+      .from("users")
+      .upsert(
+        payload,
+        {
+          onConflict: "id"
+        }
+      )
+      .select("*")
+      .single();
+
+
+    if (error) {
+
+      console.error(
+        "BIGULA profile sync failed:",
+        error
+      );
+
+      return null;
+    }
+
+
+    /*
+     * Cache BIGULA profile locally.
+     */
+
+    localStorage.setItem(
+      "bigula_profile",
+      JSON.stringify(data)
+    );
+
+    localStorage.setItem(
+      "bigula_user_name",
+      data.name || name
+    );
+
+    localStorage.setItem(
+      "supabase_auth_user_id",
+      user.id
+    );
+
+    localStorage.setItem(
+      "isLoggedIn",
+      "true"
+    );
+
+    localStorage.setItem(
+      "loggedIn",
+      "true"
+    );
+
+
     return data;
   }
 
+
+  /*
+   * ============================================================
+   * EXISTING SESSION
+   * ============================================================
+   */
+
   async function existingSession() {
+
     try {
-      const { data, error } = await client.auth.getSession();
-      if (error) throw error;
-      if (data && data.session && data.session.user) {
-        await syncUserProfile(data.session.user);
-        window.location.replace(REDIRECT_URL);
+
+      const {
+        data,
+        error
+      } = await client.auth.getSession();
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      if (
+        data &&
+        data.session &&
+        data.session.user
+      ) {
+
+        await syncUserProfile(
+          data.session.user
+        );
+
+        window.location.replace(
+          WEB_REDIRECT_URL
+        );
+
         return true;
       }
+
     } catch (e) {
-      console.error("Session check:", e);
+
+      console.error(
+        "Session check:",
+        e
+      );
     }
+
+
     return false;
   }
 
-  client.auth.onAuthStateChange(function (event, session) {
-    console.log("BIGULA Auth:", event);
 
-    if (session && session.user) {
-      localStorage.setItem("supabase_auth_user_id", session.user.id);
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("loggedIn", "true");
+  /*
+   * ============================================================
+   * AUTH STATE CHANGES
+   * ============================================================
+   */
 
-      setTimeout(function () {
-        window.location.replace(REDIRECT_URL);
-      }, 150);
-    }
-  });
+  client.auth.onAuthStateChange(
+    async function (event, session) {
 
-  googleBtn.addEventListener("click", async function () {
-    googleBtn.disabled = true;
-    googleBtn.textContent = "Opening Google...";
-    status("Connecting to Google...", "info");
+      console.log(
+        "BIGULA Auth:",
+        event
+      );
 
-    try {
-      const result = await client.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: REDIRECT_URL,
-          skipBrowserRedirect: false
+
+      if (
+        session &&
+        session.user
+      ) {
+
+        /*
+         * Keep the Supabase Auth UUID.
+         */
+
+        localStorage.setItem(
+          "supabase_auth_user_id",
+          session.user.id
+        );
+
+        localStorage.setItem(
+          "isLoggedIn",
+          "true"
+        );
+
+        localStorage.setItem(
+          "loggedIn",
+          "true"
+        );
+
+
+        /*
+         * Sync the authenticated Google account
+         * into BIGULA's users table.
+         */
+
+        try {
+
+          await syncUserProfile(
+            session.user
+          );
+
+        } catch (e) {
+
+          console.error(
+            "BIGULA profile synchronization error:",
+            e
+          );
         }
-      });
 
-      if (result.error) throw result.error;
 
-      console.log("Google OAuth started:", result.data);
-    } catch (e) {
-      console.error("Google OAuth error:", e);
+        /*
+         * After authentication, go to BIGULA Home.
+         */
 
-      let message = e && e.message ? e.message : "Google sign-in could not be started.";
+        setTimeout(
+          function () {
 
-      if (/provider.*not enabled|unsupported provider/i.test(message)) {
-        message = "Google is not enabled in Supabase Authentication.";
-      } else if (/redirect/i.test(message)) {
-        message = "The Google/Supabase redirect URL is not configured correctly.";
-      } else if (/api.?key/i.test(message)) {
-        message = "The BIGULA Supabase API key is invalid.";
+            window.location.replace(
+              WEB_REDIRECT_URL
+            );
+
+          },
+          150
+        );
       }
 
-      status(message, "error");
-      googleBtn.disabled = false;
-      googleBtn.textContent = "Continue with Google";
     }
-  });
+  );
+
+
+  /*
+   * ============================================================
+   * GOOGLE SIGN-IN
+   * ============================================================
+   */
+
+  googleBtn.addEventListener(
+    "click",
+    async function () {
+
+      googleBtn.disabled = true;
+
+      googleBtn.textContent =
+        "Opening Google...";
+
+      status(
+        "Connecting to Google...",
+        "info"
+      );
+
+
+      try {
+
+        const redirectURL =
+          getRedirectURL();
+
+
+        console.log(
+          "BIGULA Google redirect:",
+          redirectURL
+        );
+
+
+        const result =
+          await client.auth.signInWithOAuth({
+
+            provider: "google",
+
+            options: {
+
+              redirectTo:
+                redirectURL,
+
+              skipBrowserRedirect:
+                false
+            }
+          });
+
+
+        if (result.error) {
+          throw result.error;
+        }
+
+
+        console.log(
+          "Google OAuth started:",
+          result.data
+        );
+
+
+      } catch (e) {
+
+        console.error(
+          "Google OAuth error:",
+          e
+        );
+
+
+        let message =
+          e && e.message
+            ? e.message
+            : "Google sign-in could not be started.";
+
+
+        if (
+          /provider.*not enabled|unsupported provider/i
+            .test(message)
+        ) {
+
+          message =
+            "Google is not enabled in Supabase Authentication.";
+
+        } else if (
+          /redirect/i.test(message)
+        ) {
+
+          message =
+            "The Google/Supabase redirect URL is not configured correctly.";
+
+        } else if (
+          /api.?key/i.test(message)
+        ) {
+
+          message =
+            "The BIGULA Supabase API key is invalid.";
+        }
+
+
+        status(
+          message,
+          "error"
+        );
+
+
+        googleBtn.disabled = false;
+
+        googleBtn.textContent =
+          "Continue with Google";
+      }
+
+    }
+  );
+
+
+  /*
+   * ============================================================
+   * STARTUP
+   * ============================================================
+   */
 
   existingSession();
+
 })();
 </script>
+
 </body>
 </html>
+
+
