@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,8 @@
 <title>BIGULA – Home</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-type:y mandatory;scroll-padding-top:112px;scroll-padding-bottom:72px;}
+html,body{background:#000;color:#fff;width:100%;min-height:100%;overflow-x:hidden;}
+body{overflow-y:auto;touch-action:pan-y;scroll-snap-type:y mandatory;scroll-padding-top:112px;scroll-padding-bottom:72px;}
 .topbar{position:fixed;top:0;left:0;width:100%;min-height:112px;background:linear-gradient(to bottom,#000 88%,rgba(0,0,0,.88));z-index:100;padding:10px 14px 8px;display:flex;flex-direction:column;transition:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 3px 18px rgba(0,0,0,.45);}
 .logo{font-size:30px;font-weight:900;letter-spacing:4px;color:#ff0000;text-shadow:0 0 20px rgba(255,0,0,.8);flex:0 0 auto;line-height:1;}
 .top-row{display:flex;align-items:center;gap:12px;width:100%;margin:0;}
@@ -18,11 +20,11 @@ body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-t
 .topbar{min-height:104px;padding:9px 10px 7px}
 .top-row{gap:8px}.logo{font-size:22px;letter-spacing:2px}
 .top-search input{height:38px;font-size:13px;padding:8px 12px}
-.actions{display:none}.tabs{gap:16px;margin-top:9px}
+.actions{display:none}.tabs{gap:0;margin-top:9px}
 .feed{margin-top:112px;margin-bottom:74px}
-.video-card{width:96vw;height:calc(100vh - 190px);min-height:390px;border-radius:16px;margin-bottom:14px}
-.video-stage{height:calc(100% - 132px)}
-.meta-overlay{flex-basis:132px;padding:10px 10px 11px}
+.video-card{width:100%;height:calc(100vh - 190px);min-height:390px;border-radius:0;margin-bottom:0}
+.video-stage{height:calc(100% - 118px)}
+.meta-overlay{flex-basis:118px;padding:10px 10px 9px}
 .username{font-size:16px}.title-overlay{font-size:13px}
 .footer{height:70px}.footer div{min-width:64px;font-size:19px}
 #notificationBadge{right:7px;top:2px;}
@@ -36,20 +38,33 @@ body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-t
 .tab{cursor:pointer;font-weight:700;opacity:.6;transition:.3s;font-size:16px;flex:1 1 0;text-align:center;padding:7px 6px 8px;white-space:nowrap;min-width:0;}
 .tab.active{opacity:1;color:#ff0000;border-bottom:2px solid #ff0000;}
 .feed{margin-top:112px;margin-bottom:72px;width:100%;min-height:calc(100vh - 184px);display:flex;flex-direction:column;align-items:stretch;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
-.video-card{width:100%;height:calc(100vh - 184px);min-height:0;max-height:none;background:#000;border-radius:0;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:none;margin:0;}
+.video-card{width:100%;height:calc(100vh - 184px);min-height:0;max-height:none;background:#000;border-radius:0;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:start;scroll-snap-stop:always;position:relative;box-shadow:none;margin:0;}
 .video-stage{position:relative;width:100%;height:calc(100% - 128px);min-height:0;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;user-select:none;-webkit-user-select:none;background:#000;}
-.meta-overlay{position:relative;flex:0 0 128px;padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#151515,#090909);border-top:1px solid #242424;border-radius:0 0 20px 20px;}
-.user-row{display:flex;align-items:center;gap:10px;justify-content:flex-start;flex-wrap:nowrap;width:100%;min-width:0;}
+video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;user-select:none;-webkit-user-select:none;background:#000;}
+.meta-overlay{position:relative;flex:0 0 118px;padding:10px 13px 10px;display:flex;flex-direction:column;gap:7px;background:#090909;border-top:1px solid #242424;border-radius:0;}
+.user-row{display:flex;align-items:center;gap:9px;justify-content:flex-start;flex-wrap:nowrap;width:100%;min-width:0;}
+.username{font-weight:900;font-size:18px;cursor:pointer;color:#00e5ff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 10px rgba(0,229,255,.18);}
+.user-row .follow-btn{flex:0 0 auto;padding:6px 11px;font-size:12px;}
 .username{font-weight:900;font-size:18px;cursor:pointer;color:#00e5ff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 10px rgba(0,229,255,.18);}
 .video-actions{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex-wrap:nowrap;margin:0;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:1px;}
 .video-actions::-webkit-scrollbar{display:none;}
 .follow-btn,.share-btn,.views-btn{background:linear-gradient(180deg,#1e1e1e,#111);color:#fff;padding:8px 11px;border-radius:999px;border:1px solid #333;font-size:12px;cursor:pointer;font-weight:800;margin:0;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);}
-.title-overlay{position:absolute;left:14px;right:14px;bottom:14px;max-width:calc(100% - 28px);font-size:15px;font-weight:800;color:#fff;text-shadow:0 2px 12px #000,0 0 3px #000;z-index:3;pointer-events:none;background:linear-gradient(transparent,rgba(0,0,0,.65));padding:28px 0 4px;}
+.title-overlay{position:absolute;left:14px;right:14px;bottom:14px;max-width:calc(100% - 28px);font-size:15px;font-weight:800;color:#fff;text-shadow:0 2px 12px #000,0 0 3px #000;z-index:3;pointer-events:none;background:none;padding:28px 0 4px;}
 .stats{display:flex;align-items:center;gap:7px;margin-top:0;width:100%;overflow-x:auto;scrollbar-width:none;}
 .stats::-webkit-scrollbar{display:none;}
 .stat-btn{display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(180deg,#202020,#111);padding:8px 11px;border-radius:999px;cursor:pointer;font-weight:800;font-size:12px;color:#fff;border:1px solid #353535;text-shadow:0 1px 3px #000;white-space:nowrap;min-width:78px;box-shadow:0 3px 10px rgba(0,0,0,.25);}
 .stat-btn span{color:#fff;font-weight:900;text-shadow:0 1px 4px #000;}
+
+.live-badge{display:inline-flex;align-items:center;gap:5px;color:#ff3040;font-size:11px;font-weight:900;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#ff3040;display:inline-block;box-shadow:0 0 8px rgba(255,48,64,.8);}
+.status-card{min-height:90px;padding:14px;border-bottom:1px solid #222;display:flex;align-items:center;gap:12px;background:#090909;}
+.status-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#222;color:#00e5ff;font-weight:900;font-size:18px;flex:0 0 52px;overflow:hidden;}
+.status-avatar img{width:100%;height:100%;object-fit:cover;}
+.status-content{min-width:0;flex:1;}
+.status-name{font-weight:900;color:#00e5ff;margin-bottom:5px;}
+.status-time{font-size:11px;color:#888;}
+.status-text{font-size:14px;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.feed.status-feed{display:block;overflow-y:auto;}
 .comment-modal{position:fixed;bottom:0;width:100%;height:60%;background:#111;display:none;flex-direction:column;border-top:3px solid #ff0000;z-index:50;}
 .comment-list{flex:1;overflow-y:auto;padding:15px;}
 .comment-input{display:flex;border-top:1px solid #333;}
@@ -133,6 +148,10 @@ async function initUser(){
   }
 
   currentUser = session?.user || null
+  if(!currentUser){
+    location.replace("signup.html")
+    return
+  }
 
   const uploadBtn = document.querySelector(".upload-btn")
   const footerUpload = document.getElementById("footerUpload")
@@ -234,6 +253,90 @@ async function fetchVideos(type="foryou"){
   renderVideos(publicVideos)
 }
 
+
+async function fetchLive(){
+  const feed=document.getElementById("feed")
+  feed.classList.remove("status-feed")
+  feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>Loading live videos...</p>"
+
+  let query=supabase.from("videos").select("*")
+  // Support common live-state column names without requiring one exact schema.
+  query=query.or("is_live.eq.true,live.eq.true,status.eq.live")
+  const {data,error}=await query.order("created_at",{ascending:false})
+
+  if(error){
+    console.warn("Live query failed:",error.message)
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>No users are live right now.</p>"
+    return
+  }
+  const live=(data||[]).filter(v=>v.is_live===true || v.live===true || String(v.status||"").toLowerCase()==="live")
+  if(!live.length){
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>No users are live right now.</p>"
+    return
+  }
+  await renderVideos(live)
+}
+
+async function fetchStatuses(){
+  const feed=document.getElementById("feed")
+  feed.classList.add("status-feed")
+  feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>Loading statuses...</p>"
+
+  if(!currentUser){
+    location.replace("signup.html")
+    return
+  }
+
+  const {data: follows,error:followError}=await supabase
+    .from("followers").select("following_id").eq("follower_id",currentUser.id)
+
+  if(followError){
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>Could not load followed users' statuses.</p>"
+    return
+  }
+
+  const ids=(follows||[]).map(x=>x.following_id).filter(Boolean)
+  if(!ids.length){
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>Follow creators to see their statuses here.</p>"
+    return
+  }
+
+  // BIGULA supports a dedicated statuses table when present.
+  let result=await supabase.from("statuses").select("*").in("user_id",ids).order("created_at",{ascending:false})
+  if(result.error){
+    console.warn("statuses table unavailable:",result.error.message)
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>No statuses available yet.</p>"
+    return
+  }
+
+  const statuses=result.data||[]
+  if(!statuses.length){
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>No new statuses from followed users.</p>"
+    return
+  }
+
+  await getCreatorProfiles(statuses.map(x=>({creator_id:x.user_id})))
+  feed.innerHTML=""
+  statuses.forEach(st=>{
+    const uid=st.user_id
+    const profile=creatorProfiles.get(uid)||{}
+    const name=String(profile.name||profile.full_name||profile.display_name||profile.username||"BIGULA User")
+    const text=String(st.text||st.content||st.caption||"")
+    const avatar=String(profile.avatar_url||profile.avatar||"")
+    const item=document.createElement("div")
+    item.className="status-card"
+    item.innerHTML=`
+      <div class="status-avatar">${avatar?`<img src="${avatar.replace(/"/g,"&quot;")}" alt="">`:name.charAt(0).toUpperCase()}</div>
+      <div class="status-content">
+        <div class="status-name">${name.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+        <div class="status-text">${text.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</div>
+        <div class="status-time">${st.created_at ? new Date(st.created_at).toLocaleString() : "Recent"}</div>
+      </div>`
+    item.addEventListener("click",()=>openProfile(uid))
+    feed.appendChild(item)
+  })
+}
+
 // Total video count helper: counts ALL creator/user videos, while the feed shows only public ones.
 async function getTotalVideoCount(){
   const { count, error } = await supabase
@@ -286,6 +389,7 @@ function getCreatorName(video){
 
 async function renderVideos(videos){
   const feed = document.getElementById("feed")
+  feed.classList.remove("status-feed")
   feed.innerHTML=""
 
   if(!videos.length){
@@ -311,21 +415,22 @@ async function renderVideos(videos){
 
     card.innerHTML=`
       <div class="video-stage">
-        <video src="${safeUrl}" autoplay muted playsinline preload="metadata"></video>
+        <video src="${safeUrl}" autoplay playsinline preload="auto"></video>
         ${title ? `<div class="title-overlay">${title}</div>` : ""}
       </div>
 
       <div class="meta-overlay">
         <div class="user-row">
           <span class="username" title="${safeCreatorName}" data-action="profile">${safeCreatorName}</span>
+          <button class="follow-btn" type="button" data-action="follow">Follow</button>
+          ${video.is_live || video.live ? '<span class="live-badge"><span class="live-dot"></span>LIVE</span>' : ''}
         </div>
 
         <div class="video-actions">
-          <button class="views-btn" type="button">Views ${counts.views}</button>
-          <div class="stat-btn" data-action="like">Likes <span id="like-${video.id}">${counts.likes}</span></div>
-          <div class="stat-btn" data-action="comments">Comments <span id="commentCount-${video.id}">${counts.comments}</span></div>
-          <button class="follow-btn" type="button" data-action="follow">Follow</button>
-          <button class="share-btn" type="button" data-action="share">Share</button>
+          <div class="stat-btn" data-action="like" title="Like"><span aria-hidden="true">♡</span><span id="like-${video.id}">${counts.likes}</span></div>
+          <div class="stat-btn" data-action="comments" title="Comments"><span aria-hidden="true">💬</span><span id="commentCount-${video.id}">${counts.comments}</span></div>
+          <button class="views-btn" type="button" title="Views">▶ ${counts.views}</button>
+          <button class="share-btn" type="button" data-action="share">↗ Share</button>
           <div class="share-options">
             <button type="button" data-action="status">Bigula Status</button>
             <button type="button" data-action="whatsapp">WhatsApp</button>
@@ -339,7 +444,7 @@ async function renderVideos(videos){
     setupVideo(card)
     const firstVideo = card.querySelector("video")
     if(feed.children.length === 1 && firstVideo){
-      firstVideo.muted = true
+      firstVideo.muted = false
       firstVideo.play().catch(()=>{})
     }
   }
@@ -396,9 +501,25 @@ function setupVideo(card){
       viewsBtn.textContent = `Views ${current + 1}`
     }
 
-    // Keep the feed moving one complete video at a time.
+    // Keep the feed moving forever. When the current card is the last one,
+    // duplicate the loaded video set before the user reaches the bottom.
     const next = card.nextElementSibling
-    if(next) next.scrollIntoView({behavior:"smooth",block:"center"})
+    if(next){
+      next.scrollIntoView({behavior:"smooth",block:"start"})
+    } else {
+      const cards=[...document.querySelectorAll(".video-card")]
+      cards.slice(0, Math.min(cards.length, 8)).forEach(original=>{
+        const clone=original.cloneNode(true)
+        clone.dataset.id=original.dataset.id
+        clone.dataset.creatorId=original.dataset.creatorId
+        clone.dataset.shortCode=original.dataset.shortCode
+        feed.appendChild(clone)
+        bindCardActions(clone)
+        setupVideo(clone)
+      })
+      const newNext=card.nextElementSibling
+      if(newNext) newNext.scrollIntoView({behavior:"auto",block:"start"})
+    }
   })
 
   // Swipe the video/player LEFT to open its video_view page using the real short code.
@@ -451,16 +572,34 @@ function setupAutoplay(){
   const observer = new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
       const video = entry.target
-      if(entry.isIntersecting){
-        video.muted = true
-        video.play().catch(()=>{})
-      } else {
+      if(entry.isIntersecting && entry.intersectionRatio >= 0.7){
+        // BIGULA should play with sound. Browser autoplay policies may block
+        // unmuted autoplay until the user interacts; when allowed, keep audio on.
+        video.muted = false
+        video.volume = 1
+        video.play().catch(()=>{
+          // If the browser blocks unmuted autoplay, do not permanently mute it.
+          video.muted = false
+        })
+      } else if(!entry.isIntersecting){
         video.pause()
       }
     })
-  }, { threshold: 0.85 })
-
+  }, { threshold:[0.7] })
   vids.forEach(v=>observer.observe(v))
+
+  // First user interaction unlocks audio for the active feed video.
+  const unlockAudio = ()=>{
+    const active = [...document.querySelectorAll("#feed video")]
+      .find(v=>v.getBoundingClientRect().top < innerHeight*0.65 &&
+             v.getBoundingClientRect().bottom > innerHeight*0.35)
+    if(active){
+      active.muted = false
+      active.volume = 1
+      active.play().catch(()=>{})
+    }
+  }
+  document.addEventListener("pointerdown", unlockAudio, {once:true, passive:true})
 }
 
 // --- Swipe right through tabs ---
@@ -528,7 +667,7 @@ function shareStatus(videoId, username){
 }
 
 // --- Actions ---
-function openProfile(uid){ location.href=`account.html?uid=${uid}` }
+function openProfile(uid){ if(!uid) return; location.href=`creator-profile.html?uid=${encodeURIComponent(uid)}` }
 
 async function toggleLike(videoId, btn){
     const likeEl = document.getElementById(`like-${videoId}`)
@@ -586,7 +725,9 @@ document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
     document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
     tab.classList.add("active")
-    fetchVideos(tab.dataset.feed)
+    if(tab.dataset.feed === "status") fetchStatuses()
+    else if(tab.dataset.feed === "live") fetchLive()
+    else fetchVideos(tab.dataset.feed)
   }
 })
 
@@ -598,11 +739,10 @@ document.getElementById("searchInput").addEventListener("input",e=>{
   })
 })
 
-initUser().finally(()=>{
-  fetchVideos("foryou")
+initUser().then(()=>{
+  if(currentUser) fetchVideos("foryou")
 })
 </script>
 </body>
 </html>
-
 
