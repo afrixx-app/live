@@ -42,7 +42,9 @@ video{width:100%;height:100%;object-fit:contain;background:#000}
 const SUPABASE_URL='https://vfteiggdhthvrrlndtbs.supabase.co';
 const SUPABASE_KEY='sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe';
 const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
-const id=new URLSearchParams(location.search).get('id');
+const params=new URLSearchParams(location.search);
+const shortCode=params.get('v') || params.get('short_code');
+const legacyId=params.get('id');
 let video=null, me=null, owner=null, liked=false, following=false, playing=false, commentsOpen=true;
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -60,22 +62,62 @@ async function first(table, selects, filters){
 }
 async function count(table, field, value){const {count}=await supabase.from(table).select('*',{count:'exact',head:true}).eq(field,value);return count||0}
 async function load(){
- if(!id){document.getElementById('app').innerHTML='<div class="loading">No video selected.</div>';return}
- await getMe();
- let r=await supabase.from('videos').select('*').eq('id',id).maybeSingle();
- if(r.error||!r.data){document.getElementById('app').innerHTML='<div class="loading">Video not found or unavailable.</div>';return}
- video=r.data;
- if(video.publication_status && !['approved','published','public'].includes(String(video.publication_status).toLowerCase()) && video.user_id!==me?.id){
-   document.getElementById('app').innerHTML='<div class="loading">This video is not available.</div>';return;
+ if(!shortCode && !legacyId){
+   document.getElementById('app').innerHTML='<div class="loading">No video selected.</div>';
+   return;
  }
+
+ await getMe();
+
+ // Primary lookup: the public short URL code.
+ // Legacy ?id=UUID is supported only as a fallback.
+ let r;
+ if(shortCode){
+   r=await supabase.from('videos').select('*').eq('short_code',shortCode).maybeSingle();
+ }else{
+   r=await supabase.from('videos').select('*').eq('id',legacyId).maybeSingle();
+ }
+
+ if(r.error||!r.data){
+   document.getElementById('app').innerHTML='<div class="loading">Video not found or unavailable.</div>';
+   return;
+ }
+
+ video=r.data;
+
+ if(video.publication_status &&
+    !['approved','published','public'].includes(String(video.publication_status).toLowerCase()) &&
+    ownerId(video)!==me?.id){
+   document.getElementById('app').innerHTML='<div class="loading">This video is not available.</div>';
+   return;
+ }
+
  const oid=ownerId(video);
- owner=await first('users','*',[['id',oid]]);
- if(me){liked=!!await first('likes','id',[['video_id',id],['user_id',me.id]]);following=!!await first('followers','id',[['follower_id',me.id],['following_id',oid]])}
- const [likes,comments,views,followers]=await Promise.all([count('likes','video_id',id),count('comments','video_id',id),count('views','video_id',id),count('followers','following_id',oid)]);
+ owner=oid ? await first('users','*',[['id',oid]]) : null;
+
+ const videoId=video.id;
+
+ if(me){
+   liked=!!await first('likes','id',[['video_id',videoId],['user_id',me.id]]);
+   following=!!(oid && await first('followers','id',[['follower_id',me.id],['following_id',oid]]));
+ }
+
+ // Record the view first, then fetch the live totals so the displayed
+ // count reflects the database as closely as possible.
+ await recordView();
+
+ const [likes,comments,views,followers]=await Promise.all([
+   count('likes','video_id',videoId),
+   count('comments','video_id',videoId),
+   count('views','video_id',videoId),
+   oid ? count('followers','following_id',oid) : Promise.resolve(0)
+ ]);
+
  render({likes,comments,views,followers});
  loadComments();
 }
 function render(c){
+ const videoId=video.id;
  const url=video.video_url||video.url||video.file_url;
  const canReuse=video.allow_sound_reuse===true||video.sound_reuse_allowed===true||video.reuse_allowed===true;
  const uname=owner?.username||owner?.user_name||owner?.name||'BIGULA creator';
@@ -146,12 +188,18 @@ async function bindActions(canReuse){
  });
  document.getElementById('like').onclick=async()=>{
   if(!me)return toast('Sign in to like this video');
-  if(liked){const {error}=await supabase.from('likes').delete().eq('video_id',id).eq('user_id',me.id);if(!error)liked=false}
-  else{const {error}=await supabase.from('likes').insert({video_id:id,user_id:me.id});if(!error)liked=true}
+  if(liked){const {error}=await supabase.from('likes').delete().eq('video_id',video.id).eq('user_id',me.id);if(!error)liked=false}
+  else{const {error}=await supabase.from('likes').insert({video_id:video.id,user_id:me.id});if(!error)liked=true}
   const n=await count('likes','video_id',id);document.getElementById('like').classList.toggle('active',liked);document.getElementById('likeTxt').textContent=`${liked?'Liked':'Like'} · ${fmt(n)}`;
  };
- document.getElementById('reuse').onclick=()=>{if(!canReuse)return;location.href=`upload.html?sound_video=${encodeURIComponent(id)}`};
- document.getElementById('share').onclick=async()=>{const link=location.href;if(navigator.share){try{await navigator.share({title:video.title||'BIGULA video',url:link})}catch(e){}}else{await navigator.clipboard?.writeText(link);toast('Video link copied')}};
+ document.getElementById('reuse').onclick=()=>{if(!canReuse)return;location.href=`upload.html?sound_video=${encodeURIComponent(video.id)}`};
+ document.getElementById('share').onclick=async()=>{const link=`${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
+if(navigator.share){
+  try{await navigator.share({title:video.title||'BIGULA video',url:link})}catch(e){}
+}else{
+  await navigator.clipboard?.writeText(link);
+  toast('Video link copied');
+}};
  document.getElementById('save').onclick=()=>toast(me?'Saved to your BIGULA collection':'Sign in to save videos');
  document.getElementById('soundInfo').onclick=()=>toast(canReuse?'Other creators can use this sound.':'The creator has disabled sound reuse.');
  document.getElementById('commentBtn').onclick=()=>document.getElementById('commentInput')?.focus();
@@ -159,21 +207,25 @@ async function bindActions(canReuse){
  document.getElementById('commentForm').onsubmit=postComment;
  document.getElementById('notInterested').onclick=()=>toast('We’ll show you fewer videos like this');
  document.getElementById('report').onclick=()=>reportVideo();
- document.getElementById('copyLink').onclick=async()=>{await navigator.clipboard?.writeText(location.href);toast('Link copied')};
+ document.getElementById('copyLink').onclick=async()=>{
+  const link=`${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
+  await navigator.clipboard?.writeText(link);
+  toast('Link copied');
+};
  document.getElementById('moreTop').onclick=()=>toast('More video options are below');
 }
 async function postComment(e){
  e.preventDefault(); if(!me)return toast('Sign in to comment');
  const input=document.getElementById('commentInput'),text=input.value.trim();if(!text)return;
- const payload={video_id:id,user_id:me.id,comment:text,content:text,text};
+ const payload={video_id:video.id,user_id:me.id,comment:text,content:text,text};
  let {error}=await supabase.from('comments').insert(payload);
- if(error){const fallback={video_id:id,user_id:me.id,content:text};({error}=await supabase.from('comments').insert(fallback))}
+ if(error){const fallback={video_id:video.id,user_id:me.id,content:text};({error}=await supabase.from('comments').insert(fallback))}
  if(error)return toast('Could not post comment');
  input.value='';toast('Comment posted');loadComments();
 }
 async function loadComments(){
  const box=document.getElementById('commentList');if(!box)return;
- let {data,error}=await supabase.from('comments').select('*').eq('video_id',id).order('created_at',{ascending:false}).limit(50);
+ let {data,error}=await supabase.from('comments').select('*').eq('video_id',video.id).order('created_at',{ascending:false}).limit(50);
  if(error||!data?.length){box.innerHTML='<div class="empty">No comments yet. Be the first to comment.</div>';return}
  const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];let users=[];
  if(ids.length){const r=await supabase.from('users').select('*').in('id',ids);users=r.data||[]}
@@ -181,15 +233,15 @@ async function loadComments(){
 }
 async function recordView(){
  try{
-  if(!me){await supabase.from('views').insert({video_id:id});return}
-  await supabase.from('views').insert({video_id:id,user_id:me.id});
+  if(!me){await supabase.from('views').insert({video_id:video.id});return}
+  await supabase.from('views').insert({video_id:video.id,user_id:me.id});
  }catch(e){}
 }
 async function reportVideo(){
  const reason=prompt('Why are you reporting this video?\\n\\nExamples: harmful content, copyright, spam, harassment, other');
  if(!reason)return;
  if(!me)return toast('Sign in to report a video');
- const payload={video_id:id,user_id:me.id,reason:reason.trim(),status:'open'};
+ const payload={video_id:video.id,user_id:me.id,reason:reason.trim(),status:'open'};
  let {error}=await supabase.from('reports').insert(payload);
  if(error)toast('Report could not be submitted');else toast('Report submitted. Thank you.');
 }
