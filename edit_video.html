@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Edit Video</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;margin:0;background:#f7f7f7;color:#111}
+main{max-width:700px;margin:20px auto;background:#fff;padding:20px;border-radius:16px}
+a{color:#111;text-decoration:none}
+h1{margin:16px 0 18px}
+.preview{width:100%;background:#000;border-radius:14px;overflow:hidden;margin-bottom:22px}
+.preview video{display:block;width:100%;max-height:520px;object-fit:contain;background:#000}
+.preview-note{text-align:center;font-size:12px;color:#777;margin-top:7px}
+label{display:block;font-weight:bold;margin:18px 0 7px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:130px;resize:vertical}
+button{margin-top:22px;width:100%;padding:14px;border:0;border-radius:10px;background:#111;color:#fff;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+#status{margin-top:12px;text-align:center;min-height:20px}
+.loading{text-align:center;color:#777;padding:30px}
+</style>
+</head>
+<body>
+<main>
+<a href="account.html">‹ Account</a>
+<h1>Edit video</h1>
+
+<div id="loading" class="loading">Loading video…</div>
+
+<section id="editor" style="display:none">
+  <div class="preview">
+    <video id="preview" controls playsinline preload="metadata"></video>
+  </div>
+  <div class="preview-note">Preview — tap play to watch</div>
+
+  <label for="title">Title</label>
+  <input id="title" maxlength="150" placeholder="Change your video title">
+
+  <label for="category">Category</label>
+  <select id="category">
+    <option value="">Select a category</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Comedy">Comedy</option>
+    <option value="Music">Music</option>
+    <option value="Dance">Dance</option>
+    <option value="Sports">Sports</option>
+    <option value="Gaming">Gaming</option>
+    <option value="Education">Education</option>
+    <option value="Technology">Technology</option>
+    <option value="News">News</option>
+    <option value="Lifestyle">Lifestyle</option>
+    <option value="Travel">Travel</option>
+    <option value="Food">Food</option>
+    <option value="Fashion">Fashion</option>
+    <option value="Beauty">Beauty</option>
+    <option value="Health & Fitness">Health & Fitness</option>
+    <option value="Business">Business</option>
+    <option value="Art">Art</option>
+    <option value="Animals & Nature">Animals & Nature</option>
+    <option value="People & Blogs">People & Blogs</option>
+    <option value="Cars & Vehicles">Cars & Vehicles</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <label for="description">Description</label>
+  <textarea id="description" maxlength="5000" placeholder="Change your video description"></textarea>
+
+  <button id="save">Save changes</button>
+  <div id="status"></div>
+</section>
+</main>
+
+<script>
+const SB="https://vfteiggdhthvrrlndtbs.supabase.co";
+const KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const H={apikey:KEY,Authorization:"Bearer "+KEY};
+const id=new URLSearchParams(location.search).get("id");
+
+async function req(path,options={}){
+  return fetch(SB+"/rest/v1/"+path,{
+    ...options,
+    headers:{
+      ...H,
+      "Content-Type":"application/json",
+      ...(options.headers||{})
+    }
+  });
+}
+
+function setStatus(text){
+  document.getElementById("status").textContent=text;
+}
+
+async function init(){
+  const auth=await fetch(SB+"/auth/v1/user",{headers:H});
+  if(!auth.ok){
+    location.href="signup.html";
+    return;
+  }
+
+  const me=await auth.json();
+
+  if(!id){
+    document.getElementById("loading").textContent="Missing video ID.";
+    return;
+  }
+
+  const r=await req(
+    "videos?id=eq."+encodeURIComponent(id)+
+    "&select=id,creator_id,title,category,description,video_url,url,file_url,storage_path"
+  );
+
+  if(!r.ok){
+    document.getElementById("loading").textContent="Could not load this video.";
+    return;
+  }
+
+  const rows=await r.json();
+  const v=rows[0];
+
+  if(!v){
+    document.getElementById("loading").textContent="Video not found.";
+    return;
+  }
+
+  if(v.creator_id!==me.id){
+    document.getElementById("loading").textContent="You can only edit your own video.";
+    return;
+  }
+
+  const videoUrl=v.video_url||v.url||v.file_url||"";
+
+  if(!videoUrl && v.storage_path){
+    const publicUrl=SB+"/storage/v1/object/public/bigula/"+v.storage_path;
+    document.getElementById("preview").src=publicUrl;
+  }else{
+    document.getElementById("preview").src=videoUrl;
+  }
+
+  document.getElementById("title").value=v.title||"";
+  document.getElementById("description").value=v.description||"";
+
+  const select=document.getElementById("category");
+  const current=v.category||"";
+
+  // Preserve an existing category even if it isn't in the standard list.
+  if(current && ![...select.options].some(o=>o.value===current)){
+    const option=document.createElement("option");
+    option.value=current;
+    option.textContent=current;
+    select.appendChild(option);
+  }
+  select.value=current;
+
+  window.video=v;
+  window.me=me;
+
+  document.getElementById("loading").style.display="none";
+  document.getElementById("editor").style.display="block";
+}
+
+document.getElementById("save").onclick=async()=>{
+  if(!window.video)return;
+
+  const save=document.getElementById("save");
+  save.disabled=true;
+  setStatus("Saving…");
+
+  const body={
+    title:document.getElementById("title").value.trim(),
+    category:document.getElementById("category").value,
+    description:document.getElementById("description").value.trim()
+  };
+
+  const r=await req(
+    "videos?id=eq."+encodeURIComponent(window.video.id)+
+    "&creator_id=eq."+encodeURIComponent(window.me.id),
+    {
+      method:"PATCH",
+      headers:{Prefer:"return=representation"},
+      body:JSON.stringify(body)
+    }
+  );
+
+  if(!r.ok){
+    save.disabled=false;
+    setStatus("Update failed — check your videos RLS policy.");
+    return;
+  }
+
+  const updated=await r.json();
+
+  if(updated[0]){
+    window.video={...window.video,...updated[0]};
+  }else{
+    window.video={...window.video,...body};
+  }
+
+  // Keep the edited values immediately available if the account page uses the cache.
+  setStatus("✓ Video updated instantly.");
+  setTimeout(()=>location.href="account.html",700);
+};
+
+init();
+</script>
+</body>
+</html>
