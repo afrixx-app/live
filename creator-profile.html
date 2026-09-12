@@ -287,6 +287,63 @@ body{
   }
 }
 
+
+.real-name{
+  font-size:24px;
+  font-weight:900;
+  margin-top:2px;
+  color:#fff;
+}
+.username{
+  font-size:15px;
+  font-weight:700;
+  color:#999;
+  margin-top:5px;
+  margin-bottom:8px;
+}
+.share-menu{
+  position:fixed;
+  inset:0;
+  background:#0009;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:100;
+  padding:20px;
+}
+.share-menu.show{display:flex}
+.share-panel{
+  width:min(440px,100%);
+  background:#181818;
+  border:1px solid #333;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 20px 60px #000;
+}
+.share-panel h3{margin:0 0 14px;font-size:18px}
+.share-option{
+  width:100%;
+  border:1px solid #333;
+  background:#222;
+  color:#fff;
+  border-radius:13px;
+  padding:14px;
+  margin-top:9px;
+  font-weight:800;
+  cursor:pointer;
+}
+.share-cancel{
+  width:100%;
+  border:0;
+  background:#333;
+  color:#fff;
+  border-radius:13px;
+  padding:13px;
+  margin-top:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+
 </style>
 </head>
 
@@ -317,14 +374,10 @@ body{
     src="https://placehold.co/300x300"
   >
 
-  <div class="username" id="username">
-    @creator
-    <span id="badgeArea"></span>
-  </div>
+  <div class="real-name" id="realName">Loading creator...</div>
+  <div class="username" id="username">@creator <span id="badgeArea"></span></div>
 
-  <div class="bio" id="bio">
-    Loading creator profile...
-  </div>
+  <div class="bio" id="bio">Loading creator profile...</div>
 
   <!-- STATS -->
 
@@ -348,6 +401,11 @@ body{
     <div class="stat-box">
       <h2 id="viewsCount">0</h2>
       <p>Total Views</p>
+    </div>
+
+    <div class="stat-box">
+      <h2 id="followingCount">0</h2>
+      <p>Following</p>
     </div>
 
   </div>
@@ -376,301 +434,346 @@ body{
 
 </div>
 
-<!-- TABS -->
-
-<div class="tabs">
-
-  <div class="tab active">
-    Videos
-  </div>
-
-  <div class="tab">
-    About
-  </div>
-
-  <div class="tab">
-    Achievements
-  </div>
-
-</div>
-
 <!-- VIDEO GRID -->
 
 <div class="video-grid" id="videoGrid">
 
 </div>
 
-<!-- INFO -->
-
-<div class="info-section">
-
-  <div class="info-box">
-
-    <h3>Creator Status</h3>
-
-    <p id="creatorStatus">
-      Loading...
-    </p>
-
-  </div>
-
-  <div class="info-box">
-
-    <h3>Creator Journey</h3>
-
-    <p>
-      BIGULA creators grow through engagement,
-      authentic content, community trust,
-      and monetization milestones.
-    </p>
-
-  </div>
-
-</div>
-
 <script type="module">
-
 import { createClient }
 from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const SUPABASE_URL =
-"https://uyuofjiiptnbbcuntbfi.supabase.co"
+const SUPABASE_URL = 'https://vfteiggdhthvrrlndtbs.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe'
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}
+})
 
-const SUPABASE_KEY =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW9mamlpcHRuYmJjdW50YmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMzQ3MjcsImV4cCI6MjA4NzkxMDcyN30.-FBKM7NKTSm20qzkExueYhqrE6oaK6a6de1qCsl2nuQ"
-
-const supabase =
-createClient(SUPABASE_URL, SUPABASE_KEY)
-
-/* GET UID FROM URL */
-
-const params =
-new URLSearchParams(location.search)
-
-const uid = params.get("uid")
+const params = new URLSearchParams(location.search)
+const uid = params.get('uid') || params.get('id')
 
 if(!uid){
-
-  alert("Creator not found")
+  alert('Creator not found')
   history.back()
 }
 
-/* LOAD PROFILE */
+let creator = null
+let me = null
+let isFollowing = false
+let isFollowedBack = false
 
-async function loadProfile(){
+const esc = value => String(value ?? '').replace(/[&<>"']/g,m=>({
+  '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[m]))
 
-  const {
-    data:user
-  } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", uid)
-    .single()
+const fmt = n => Intl.NumberFormat(undefined,{
+  notation:'compact',
+  maximumFractionDigits:1
+}).format(Number(n)||0)
 
-  if(!user) return
+function getOwnerId(row){
+  return row?.user_id || row?.creator_id || row?.owner_id
+}
 
-  document.getElementById("username")
-    .innerHTML =
-      `@${user.username}
-      ${user.is_monetized
-        ? '<span class="gold-badge">★</span>'
-        : ''}`
+async function getCurrentUser(){
+  const {data,error} = await supabase.auth.getUser()
+  if(!error) me = data?.user || null
+}
 
-  document.getElementById("bio")
-    .innerText =
-      user.bio || "No bio yet"
+async function exactCount(table,column,value){
+  const {count,error} = await supabase
+    .from(table)
+    .select('*',{head:true,count:'exact'})
+    .eq(column,value)
+  return error ? 0 : (count || 0)
+}
 
-  if(user.avatar_url){
+function setFollowButton(){
+  const btn=document.getElementById('followBtn')
+  if(!btn)return
 
-    document.getElementById("avatar")
-      .src = user.avatar_url
+  if(isFollowedBack){
+    btn.textContent='Besties'
+    btn.classList.add('following')
+  }else if(isFollowing){
+    btn.textContent='Following'
+    btn.classList.add('following')
+  }else{
+    btn.textContent='Follow'
+    btn.classList.remove('following')
+  }
+}
+
+async function loadFollowState(){
+  if(!me || !creator?.id || me.id===creator.id){
+    document.getElementById('followBtn').style.display =
+      me?.id===creator?.id ? 'none' : ''
+    return
   }
 
-  /* FOLLOWERS */
+  const [outgoing,incoming] = await Promise.all([
+    supabase.from('followers')
+      .select('id')
+      .eq('follower_id',me.id)
+      .eq('following_id',creator.id)
+      .maybeSingle(),
 
-  const { count:followers } =
-    await supabase
-      .from("followers")
-      .select("*",{head:true,count:"exact"})
-      .eq("following_id", uid)
+    supabase.from('followers')
+      .select('id')
+      .eq('follower_id',creator.id)
+      .eq('following_id',me.id)
+      .maybeSingle()
+  ])
 
-  document.getElementById("followersCount")
-    .innerText = followers || 0
+  isFollowing=!!outgoing.data
+  isFollowedBack=!!incoming.data && isFollowing
+  setFollowButton()
+}
 
-  /* VIDEOS */
+async function loadVideos(){
+  const grid=document.getElementById('videoGrid')
 
-  const {
-    data:videos
-  } = await supabase
-    .from("videos")
-    .select("*")
-    .eq("creator_id", uid)
-    .order("created_at",{ascending:false})
+  let query=supabase
+    .from('videos')
+    .select('*')
+    .order('created_at',{ascending:false})
 
-  document.getElementById("videosCount")
-    .innerText = videos.length
+  // Support either creator_id or user_id because the current project
+  // may use either column name.
+  let result=await query.eq('creator_id',creator.id)
 
-  let totalLikes = 0
-  let totalViews = 0
+  if(result.error){
+    result=await supabase
+      .from('videos')
+      .select('*')
+      .eq('user_id',creator.id)
+      .order('created_at',{ascending:false})
+  }
 
-  const grid =
-    document.getElementById("videoGrid")
+  const videos=result.data || []
 
-  grid.innerHTML = ""
+  document.getElementById('videosCount').textContent=fmt(videos.length)
+
+  if(!videos.length){
+    grid.innerHTML='<div class="empty" style="grid-column:1/-1">No videos yet.</div>'
+    return {videos:[],likes:0,views:0}
+  }
+
+  let totalLikes=0
+  let totalViews=0
+
+  grid.innerHTML=''
 
   for(const video of videos){
+    const [likes,views]=await Promise.all([
+      exactCount('likes','video_id',video.id),
+      exactCount('views','video_id',video.id)
+    ])
 
-    const { count:likes } =
-      await supabase
-        .from("likes")
-        .select("*",{head:true,count:"exact"})
-        .eq("video_id", video.id)
+    totalLikes+=likes
+    totalViews+=views
 
-    const { count:views } =
-      await supabase
-        .from("views")
-        .select("*",{head:true,count:"exact"})
-        .eq("video_id", video.id)
+    const card=document.createElement('div')
+    card.className='video-card'
 
-    totalLikes += likes || 0
-    totalViews += views || 0
+    const shortCode=video.short_code
+    const videoUrl=video.video_url || video.url || video.file_url || ''
 
-    const card =
-      document.createElement("div")
-
-    card.className = "video-card"
-
-    card.innerHTML = `
-
-      <video
-        src="${video.video_url}"
-        muted
-        loop
-        playsinline>
-      </video>
-
+    card.innerHTML=`
+      <video src="${esc(videoUrl)}" muted loop playsinline preload="metadata"></video>
       <div class="video-info">
-
-        <div class="video-title">
-          ${video.title || ''}
-        </div>
-
+        <div class="video-title">${esc(video.title || 'Untitled video')}</div>
         <div class="video-stats">
-
-          <div>
-            ❤️ ${likes || 0}
-          </div>
-
-          <div>
-            👁 ${views || 0}
-          </div>
-
+          <div>❤️ ${fmt(likes)}</div>
+          <div>👁 ${fmt(views)}</div>
         </div>
-
       </div>
     `
+
+    card.onclick=()=>{
+      if(shortCode){
+        location.href=`video_view.html?v=${encodeURIComponent(shortCode)}`
+      }else{
+        location.href=`video_view.html?id=${encodeURIComponent(video.id)}`
+      }
+    }
 
     grid.appendChild(card)
   }
 
-  document.getElementById("likesCount")
-    .innerText = totalLikes
+  document.getElementById('likesCount').textContent=fmt(totalLikes)
+  document.getElementById('viewsCount').textContent=fmt(totalViews)
 
-  document.getElementById("viewsCount")
-    .innerText = totalViews
+  return {videos,likes:totalLikes,views:totalViews}
+}
 
-  /* STATUS */
+async function loadProfile(){
+  await getCurrentUser()
 
-  let statusText = ""
+  const {data:user,error} = await supabase
+    .from('users')
+    .select('*')
+    .eq('id',uid)
+    .maybeSingle()
 
-  if(user.is_monetized){
-
-    statusText =
-      "★ Monetized Creator"
-
-  } else if(followers >= 500){
-
-    statusText =
-      "Eligible for LIVE streaming"
-
-  } else if(followers >= 100){
-
-    statusText =
-      "Eligible for custom thumbnails"
-
-  } else {
-
-    statusText =
-      "Growing creator"
+  if(error || !user){
+    document.getElementById('bio').textContent='Creator profile not found.'
+    return
   }
 
-  document.getElementById("creatorStatus")
-    .innerText = statusText
+  creator=user
 
+  // Real creator name. Try common name fields without hard-coding a
+  // display value into the page.
+  const realName =
+    user.full_name ||
+    user.display_name ||
+    user.name ||
+    user.real_name ||
+    user.username ||
+    'BIGULA Creator'
+
+  const username =
+    user.username ||
+    user.user_name ||
+    user.handle ||
+    ''
+
+  document.getElementById('realName').textContent=realName
+  document.getElementById('username').innerHTML=
+    `${username ? '@'+esc(username) : ''}${user.is_monetized ? ' <span class="gold-badge">★</span>' : ''}`
+
+  document.getElementById('bio').textContent=user.bio || 'No bio yet'
+
+  const photo =
+    user.avatar_url ||
+    user.photo_url ||
+    user.profile_photo ||
+    user.avatar
+
+  if(photo) document.getElementById('avatar').src=photo
+
+  const [followers,following] = await Promise.all([
+    exactCount('followers','following_id',creator.id),
+    exactCount('followers','follower_id',creator.id)
+  ])
+
+  document.getElementById('followersCount').textContent=fmt(followers)
+  document.getElementById('followingCount').textContent=fmt(following)
+
+  const totals=await loadVideos()
+
+  // Creator status is derived from the live users row.
+
+  await loadFollowState()
   setupAutoplay()
 }
 
-/* AUTOPLAY */
-
 function setupAutoplay(){
-
-  const videos =
-    document.querySelectorAll("video")
-
-  const observer =
-    new IntersectionObserver(entries=>{
-
-      entries.forEach(entry=>{
-
-        if(entry.isIntersecting){
-
-          entry.target.play()
-
-        } else {
-
-          entry.target.pause()
-        }
-      })
-
-    },{threshold:.7})
-
+  const videos=document.querySelectorAll('#videoGrid video')
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.play().catch(()=>{})
+      else entry.target.pause()
+    })
+  },{threshold:.7})
   videos.forEach(v=>observer.observe(v))
 }
 
-/* FOLLOW SYSTEM */
-
-document.getElementById("followBtn")
-.onclick = async function(){
-
-  const btn = this
-
-  btn.classList.toggle("following")
-
-  if(btn.classList.contains("following")){
-
-    btn.innerText = "Following"
-
-  } else {
-
-    btn.innerText = "Follow"
+document.getElementById('followBtn').onclick=async()=>{
+  if(!me){
+    location.href='signup.html'
+    return
   }
+
+  if(me.id===creator.id)return
+
+  const btn=document.getElementById('followBtn')
+  btn.disabled=true
+
+  if(isFollowing){
+    const {error}=await supabase
+      .from('followers')
+      .delete()
+      .eq('follower_id',me.id)
+      .eq('following_id',creator.id)
+
+    if(!error){
+      isFollowing=false
+      isFollowedBack=false
+    }
+  }else{
+    const {error}=await supabase
+      .from('followers')
+      .insert({
+        follower_id:me.id,
+        following_id:creator.id
+      })
+
+    if(!error){
+      isFollowing=true
+    }
+  }
+
+  const followers=await exactCount('followers','following_id',creator.id)
+  document.getElementById('followersCount').textContent=fmt(followers)
+  setFollowButton()
+  btn.disabled=false
 }
 
-/* SHARE */
+document.querySelector('.message-btn').onclick=()=>{
+  location.href=`message.html?uid=${encodeURIComponent(creator.id)}`
+}
 
-document.querySelector(".share-btn")
-.onclick = ()=>{
+function openShareMenu(){
+  document.getElementById('shareMenu').classList.add('show')
+}
 
-  navigator.share?.({
-    title:"BIGULA Creator",
-    text:"Check out this creator on BIGULA",
-    url:location.href
-  })
+function closeShareMenu(){
+  document.getElementById('shareMenu').classList.remove('show')
+}
+
+document.querySelector('.share-btn').onclick=openShareMenu
+document.getElementById('shareCancel').onclick=closeShareMenu
+
+document.getElementById('shareWhatsApp').onclick=()=>{
+  const shortLink=creator.short_link || ''
+  const name=creator.full_name || creator.display_name || creator.name || creator.username || 'BIGULA Creator'
+  const text=`${name} on BIGULA${shortLink ? `\n${shortLink}` : ''}`
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank')
+  closeShareMenu()
+}
+
+document.getElementById('shareStatus').onclick=async()=>{
+  const shortLink=creator.short_link || ''
+  const name=creator.full_name || creator.display_name || creator.name || creator.username || 'BIGULA Creator'
+  const text=`${name} on BIGULA${shortLink ? `\n${shortLink}` : ''}`
+
+  if(navigator.share){
+    try{
+      await navigator.share({title:name,text})
+    }catch(e){}
+  }else{
+    await navigator.clipboard?.writeText(text)
+    alert('BIGULA Status text copied')
+  }
+
+  closeShareMenu()
 }
 
 loadProfile()
-
 </script>
+
+
+<div class="share-menu" id="shareMenu">
+  <div class="share-panel">
+    <h3>Share creator</h3>
+    <button class="share-option" id="shareWhatsApp">WhatsApp</button>
+    <button class="share-option" id="shareStatus">BIGULA Status</button>
+    <button class="share-cancel" id="shareCancel">Cancel</button>
+  </div>
+</div>
 
 </body>
 </html>
