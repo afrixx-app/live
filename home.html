@@ -25,17 +25,18 @@ body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-t
 .meta-overlay{flex-basis:132px;padding:10px 10px 11px}
 .username{font-size:16px}.title-overlay{font-size:13px}
 .footer{height:70px}.footer div{min-width:64px;font-size:19px}
+#notificationBadge{right:7px;top:2px;}
 }
 .btn{padding:8px 16px;border-radius:25px;border:none;font-weight:800;cursor:pointer;transition:.3s;font-size:14px;min-width:80px;white-space:nowrap;}
 .upload-btn{background:#007BFF;color:#fff;display:none;}
 .upload-btn.disabled{opacity:.4;cursor:not-allowed;}
-#installBtn{background:#00cc00;color:#000;}
+
 .search-bar input{width:100%;padding:12px;border-radius:40px;border:1px solid #333;background:#000;color:#fff;font-size:16px;}
 .tabs{display:flex;gap:20px;margin-top:10px;}
 .tab{cursor:pointer;font-weight:700;opacity:.6;transition:.3s;font-size:16px;}
 .tab.active{opacity:1;color:#ff0000;border-bottom:2px solid #ff0000;padding-bottom:2px;}
-.feed{margin-top:124px;margin-bottom:78px;width:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
-.video-card{width:min(96vw,820px);height:calc(100vh - 202px);min-height:430px;max-height:760px;background:#0b0b0b;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:0 10px 38px rgba(0,0,0,.55);margin:0 0 18px;}
+.feed{margin-top:112px;margin-bottom:72px;width:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
+.video-card{width:min(100vw,1100px);height:calc(100vh - 190px);min-height:430px;max-height:none;background:#0b0b0b;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:0 10px 38px rgba(0,0,0,.55);margin:0 0 18px;}
 .video-stage{position:relative;width:100%;height:calc(100% - 128px);min-height:290px;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;user-select:none;-webkit-user-select:none;background:#000;}
 .meta-overlay{position:relative;flex:0 0 128px;padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#151515,#090909);border-top:1px solid #242424;border-radius:0 0 20px 20px;}
@@ -57,6 +58,8 @@ video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;use
 .footer{position:fixed;bottom:0;left:0;width:100%;height:72px;background:rgba(0,0,0,.96);border-top:1px solid #292929;display:flex;justify-content:space-around;align-items:center;font-size:22px;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 .footer div{cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:72px;height:58px;color:#ddd;font-size:20px;}
 .footer div::after{font-size:10px;font-weight:800;color:#aaa;letter-spacing:.2px;}
+#notifBtn{position:relative;}
+#notificationBadge{position:absolute;top:3px;right:12px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ff1744;color:#fff;font-size:10px;font-weight:900;display:none;align-items:center;justify-content:center;border:2px solid #000;box-shadow:0 2px 8px rgba(255,23,68,.45);}
 #footerUpload::after{content:'Upload';}
 #notifBtn::after{content:'Notifications';}
 #accountBtn::after{content:'Account';}
@@ -75,9 +78,7 @@ video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;use
     <div class="top-search">
       <input type="search" id="searchInput" placeholder="Search videos or creators..." autocomplete="off">
     </div>
-    <div class="actions">
-      <button class="btn" id="installBtn">Install App</button>
-    </div>
+    <div class="actions"></div>
   </div>
   <div class="tabs">
     <div class="tab active" data-feed="foryou">For You</div>
@@ -98,7 +99,7 @@ video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;use
 
 <div class="footer">
   <div id="footerUpload" title="Upload">＋</div>
-  <div id="notifBtn" class="disabled">🔔</div>
+  <div id="notifBtn" class="disabled">🔔<span id="notificationBadge">0</span></div>
   <div id="accountBtn">👤</div>
 </div>
 
@@ -145,8 +146,10 @@ async function initUser(){
   // Login is intentionally removed from Home; signup.html is the gate.
   document.querySelector(".login-btn")?.remove()
 
-  accountBtn.onclick = () => location.href = "account.html"
+  accountBtn.onclick = () => requireSignIn("account.html")
   notifBtn.classList.remove("disabled")
+  notifBtn.onclick = () => location.href = "notifications.html"
+  loadNotificationBadge()
 
   // Keep the local profile as a cache only. Authentication comes from Supabase.
   try {
@@ -164,6 +167,42 @@ async function initUser(){
   }
 }
 
+
+
+// --- Notifications badge ---
+async function loadNotificationBadge(){
+  const badge = document.getElementById("notificationBadge")
+  if(!badge || !currentUser) return
+
+  // Count the user's notification rows. Try the common recipient column first,
+  // then fall back to user_id so the page works with either schema naming.
+  let count = null
+
+  try{
+    const first = await supabase
+      .from("notifications")
+      .select("id",{count:"exact",head:true})
+      .eq("user_id",currentUser.id)
+
+    if(!first.error){
+      count = first.count || 0
+    }else{
+      const second = await supabase
+        .from("notifications")
+        .select("id",{count:"exact",head:true})
+        .eq("recipient_id",currentUser.id)
+
+      if(!second.error) count = second.count || 0
+    }
+  }catch(e){
+    console.warn("Could not load notification count:",e)
+  }
+
+  if(count === null) return
+
+  badge.textContent = count > 99 ? "99+" : String(count)
+  badge.style.display = count > 0 ? "flex" : "none"
+}
 
 // --- Fetch public videos / live counts ---
 function isPublicVideo(video){
@@ -260,6 +299,7 @@ async function renderVideos(videos){
     const card = document.createElement("div")
     card.className="video-card"
     card.dataset.id = video.id
+    card.dataset.shortCode = video.short_code || video.shortCode || 
 
     const safeUrl = String(video.video_url || video.url || "").replace(/"/g,"&quot;")
     const creatorName = getCreatorName(video)
@@ -323,34 +363,67 @@ function setupVideo(card){
   })
 
   // A view is added only after the video has actually been watched to the end.
+  // Replaying the complete video is allowed to create another view.
   video.addEventListener("ended", async ()=>{
-    await registerCompletedView(card.dataset.id)
-    const viewsBtn = card.querySelector(".views-btn")
-    const current = parseInt((viewsBtn.textContent.match(/\d+/)||["0"])[0],10)
-    viewsBtn.textContent = `Views ${current + 1}`
+    const recorded = await registerCompletedView(card.dataset.id)
+    if(recorded){
+      const viewsBtn = card.querySelector(".views-btn")
+      const current = parseInt((viewsBtn.textContent.match(/\d+/)||["0"])[0],10)
+      viewsBtn.textContent = `Views ${current + 1}`
+    }
+
+    // Keep the feed moving one complete video at a time.
     const next = card.nextElementSibling
     if(next) next.scrollIntoView({behavior:"smooth",block:"center"})
   })
+
+  // Swipe the video/player LEFT to open its video_view page using the real short code.
+  let swipeStartX = null
+  let swipeStartY = null
+  video.addEventListener("touchstart", e=>{
+    if(e.touches.length !== 1) return
+    swipeStartX = e.touches[0].clientX
+    swipeStartY = e.touches[0].clientY
+  },{passive:true})
+
+  video.addEventListener("touchend", e=>{
+    if(swipeStartX === null) return
+    const dx = e.changedTouches[0].clientX - swipeStartX
+    const dy = e.changedTouches[0].clientY - swipeStartY
+    swipeStartX = null
+    swipeStartY = null
+
+    // Only treat a clearly horizontal left swipe as navigation.
+    if(dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.25){
+      const shortCode = card.dataset.shortCode
+      if(shortCode){
+        location.href = `video_view.html?v=${encodeURIComponent(shortCode)}`
+      }
+    }
+  },{passive:true})
 }
 
 async function registerCompletedView(videoId){
-  if(!currentUser) return
-  // Avoid counting the same completed watch repeatedly in one page session.
-  const key = `bigula_viewed_${videoId}`
-  if(sessionStorage.getItem(key)) return
+  if(!currentUser) return false
+
+  // Every genuinely completed playback counts. Scrolling halfway never reaches
+  // this handler, and replaying the whole video can create another view.
   const {error} = await supabase.from("views").insert({
     video_id: videoId,
     user_id: currentUser.id
   })
-  if(!error) sessionStorage.setItem(key,"1")
-  else console.warn("View could not be recorded:",error.message)
+
+  if(error){
+    console.warn("View could not be recorded:",error.message)
+    return false
+  }
+
+  return true
 }
 
 // --- Autoplay ---
 function setupAutoplay(){
   const vids = document.querySelectorAll("#feed video")
-  const topbar = document.getElementById("topbar")
-
   const observer = new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
       const video = entry.target
@@ -407,6 +480,12 @@ function encodeVideoToken(id){
 }
 
 function createVideoShareUrl(videoId){
+  const video = [...document.querySelectorAll(".video-card")]
+    .find(card => card.dataset.id === String(videoId))
+  const shortCode = video?.dataset.shortCode
+  if(shortCode){
+    return new URL(`video_view.html?v=${encodeURIComponent(shortCode)}`, window.location.href).href
+  }
   const token = encodeVideoToken(videoId)
   return new URL(`video_view.html?v=${token}`, window.location.href).href
 }
@@ -428,6 +507,7 @@ function shareStatus(videoId, username){
 function openProfile(uid){ location.href=`account.html?uid=${uid}` }
 
 async function toggleLike(videoId, btn){
+  if(!currentUser){ location.href = 'signup.html'; return }
     const likeEl = document.getElementById(`like-${videoId}`)
   const { data: exists } = await supabase.from('likes').select("*").eq('video_id', videoId).eq('user_id', currentUser.id)
   if(exists && exists.length){
@@ -474,6 +554,7 @@ document.getElementById("postCommentBtn").onclick = async ()=>{
 }
 
 async function followUser(uid){
+  if(!currentUser){ location.href = 'signup.html'; return }
     await supabase.from('followers').upsert({ follower_id: currentUser.id, following_id: uid }, { onConflict:['follower_id','following_id'] })
   alert('Following!')
 }
@@ -494,23 +575,6 @@ document.getElementById("searchInput").addEventListener("input",e=>{
     card.style.display = card.innerText.toLowerCase().includes(term) ? "flex" : "none"
   })
 })
-
-// --- Install App ---
-let deferredPrompt = null;
-const installBtn = document.getElementById('installBtn');
-installBtn.style.display = 'none';
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBtn.style.display = 'inline-block';
-});
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  installBtn.style.display = 'none';
-});
 
 supabase.auth.getSession().then(({data:{session}})=>{
   if(session?.user) fetchVideos()
