@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Messages</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:Arial,sans-serif}
+header{height:64px;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 16px;gap:12px}
+.back{font-size:25px;text-decoration:none;color:#111}h1{font-size:20px;margin:0}main{max-width:700px;margin:auto;height:calc(100vh - 64px);display:flex;flex-direction:column}
+#messages{flex:1;overflow:auto;padding:18px 14px 12px;background:#fafafa}
+.msg{max-width:78%;padding:11px 14px;border-radius:18px;margin:8px 0;line-height:1.35;word-break:break-word}
+.mine{margin-left:auto;background:#111;color:#fff;border-bottom-right-radius:5px}.theirs{background:#e8e8e8;border-bottom-left-radius:5px}
+.meta{font-size:11px;opacity:.55;margin-top:4px}.empty{text-align:center;color:#777;margin-top:40px}
+.composer{display:flex;gap:8px;padding:10px;border-top:1px solid #ddd;background:#fff}
+textarea{flex:1;resize:none;border:1px solid #ccc;border-radius:22px;padding:12px 15px;font:inherit;height:46px;outline:none}
+button{border:0;border-radius:22px;background:#111;color:white;padding:0 20px;font-weight:bold}
+</style></head><body>
+<header><a class="back" href="account.html">‹</a><h1 id="title">Message</h1></header>
+<main><div id="messages"><div class="empty">Loading conversation…</div></div>
+<div class="composer"><textarea id="text" placeholder="Type a message…" maxlength="2000"></textarea><button id="send">Send</button></div></main>
+<script>
+const SB_URL="https://vfteiggdhthvrrlndtbs.supabase.co", SB_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const headers={apikey:SB_KEY,Authorization:"Bearer "+SB_KEY, "Content-Type":"application/json"};
+const qs=new URLSearchParams(location.search), selected=qs.get("uid")||qs.get("user_id")||qs.get("to");
+let me=null;
+async function api(path,opts={}){return fetch(SB_URL+"/rest/v1/"+path,{...opts,headers:{...headers,...(opts.headers||{})}})}
+async function session(){const r=await fetch(SB_URL+"/auth/v1/user",{headers}); if(!r.ok) return null; return r.json();}
+async function load(){
+ me=await session(); if(!me){location.href="signup.html";return;}
+ if(!selected){document.getElementById("title").textContent="Messages";document.getElementById("messages").innerHTML='<div class="empty">No recipient selected.</div>';return;}
+ let u=await api("users?id=eq."+encodeURIComponent(selected)+"&select=id,name,username,display_name").then(r=>r.json());
+ if(u[0]) document.getElementById("title").textContent=u[0].name||u[0].display_name||("@"+(u[0].username||"user"));
+ // Supports a messages table with sender_id, recipient_id, message/text, created_at.
+ let r=await api("messages?or=(and(sender_id.eq."+me.id+",recipient_id.eq."+selected+"),and(sender_id.eq."+selected+",recipient_id.eq."+me.id+"))&order=created_at.asc");
+ let rows=r.ok?await r.json():[]; render(rows);
+}
+function render(rows){const box=document.getElementById("messages");if(!rows.length){box.innerHTML='<div class="empty">Start the conversation.</div>';return;}
+ box.innerHTML=rows.map(x=>{let body=x.message??x.text??"";return '<div class="msg '+(x.sender_id===me.id?"mine":"theirs")+'">'+escapeHtml(body)+'<div class="meta">'+new Date(x.created_at||Date.now()).toLocaleString()+'</div></div>'}).join("");box.scrollTop=box.scrollHeight;}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function send(){const t=document.getElementById("text"),body=t.value.trim();if(!body||!selected)return;
+ let r=await api("messages",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({sender_id:me.id,recipient_id:selected,message:body})});if(!r.ok){alert("Could not send. Create the messages table first.");return} t.value="";load();}
+document.getElementById("send").onclick=send;document.getElementById("text").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});load();
+</script></body></html>
