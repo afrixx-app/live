@@ -4,560 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA – Home</title>
-
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Segoe UI',sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-type:y proximity;scroll-padding-top:112px;scroll-padding-bottom:74px;}
+.topbar{position:fixed;top:0;left:0;width:100%;min-height:112px;background:linear-gradient(to bottom,#000 88%,rgba(0,0,0,.88));z-index:100;padding:10px 14px 8px;display:flex;flex-direction:column;transition:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 3px 18px rgba(0,0,0,.45);}
+.logo{font-size:30px;font-weight:900;letter-spacing:4px;color:#ff0000;text-shadow:0 0 20px rgba(255,0,0,.8);flex:0 0 auto;line-height:1;}
+.top-row{display:flex;align-items:center;gap:12px;width:100%;margin:0;}
+.actions{display:flex;gap:8px;align-items:center;margin-left:auto;flex:0 0 auto;}
+.top-search{flex:1;min-width:0;max-width:none;}
+.top-search input{width:100%;height:42px;padding:10px 17px;border-radius:999px;border:1px solid #333;background:#111;color:#fff;font-size:15px;outline:none;}
+.top-search input:focus{border-color:#ff0000;box-shadow:0 0 0 2px rgba(255,0,0,.12);}
+@media(max-width:620px){
+.topbar{min-height:104px;padding:9px 10px 7px}
+.top-row{gap:8px}.logo{font-size:22px;letter-spacing:2px}
+.top-search input{height:38px;font-size:13px;padding:8px 12px}
+.actions{display:none}.tabs{gap:16px;margin-top:9px}
+.feed{margin-top:112px;margin-bottom:74px}
+.video-card{width:96vw;height:calc(100vh - 190px);min-height:390px;border-radius:16px;margin-bottom:14px}
+.video-stage{height:calc(100% - 132px)}
+.meta-overlay{flex-basis:132px;padding:10px 10px 11px}
+.username{font-size:16px}.title-overlay{font-size:13px}
+.footer{height:70px}.footer div{min-width:64px;font-size:19px}
 }
-
-body{
-  background:#000;
-  color:#fff;
-  overflow-y:auto;
-}
-
-/* TOPBAR */
-
-.topbar{
-  position:fixed;
-  top:0;
-  width:100%;
-  min-height:100px;
-  background:linear-gradient(to bottom,#000 80%,transparent);
-  z-index:20;
-  padding:10px 15px;
-  display:flex;
-  flex-direction:column;
-  transition:top .3s;
-}
-
-.logo{
-  font-size:32px;
-  font-weight:900;
-  letter-spacing:4px;
-  color:#ff0000;
-  text-shadow:0 0 20px rgba(255,0,0,.8);
-}
-
-.welcome-user{
-  margin-top:2px;
-  font-size:16px;
-  font-weight:800;
-  color:#fff;
-  opacity:.95;
-}
-.creator-line{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.creator-name{
-  background:none;
-  border:0;
-  color:#fff;
-  font-weight:900;
-  font-size:22px;
-  padding:0;
-  cursor:pointer;
-  text-align:left;
-}
-.action-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.comment-item{
-  padding:12px 0;
-  border-bottom:1px solid #222;
-}
-.comment-body{line-height:1.45}
-.comment-actions{display:flex;gap:8px;margin-top:7px}
-.comment-actions button{
-  background:#222;color:#fff;border:0;border-radius:18px;padding:6px 10px;cursor:pointer;font-weight:700;
-}
-.stat-btn.active-like{background:rgba(255,0,0,.2)}
-
-.top-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:5px;
-}
-
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  justify-content:flex-end;
-}
-
-.btn{
-  padding:8px 16px;
-  border-radius:25px;
-  border:none;
-  font-weight:800;
-  cursor:pointer;
-  transition:.3s;
-  font-size:14px;
-  min-width:80px;
-  white-space:nowrap;
-}
-
-.btn:hover{
-  transform:scale(1.04);
-}
-
-.login-btn{
-  background:#fff;
-  color:#000;
-}
-
-.upload-btn{
-  background:#007BFF;
-  color:#fff;
-}
-
-.upload-btn.disabled{
-  opacity:.4;
-  cursor:not-allowed;
-}
-
-#installBtn{
-  background:#00cc00;
-  color:#000;
-}
-
-.search{
-  font-size:42px;
-  cursor:pointer;
-  color:#ff0000;
-}
-
-/* SEARCH */
-
-.search-bar{
-  position:fixed;
-  top:140px;
-  width:100%;
-  background:#111;
-  padding:10px 15px;
-  display:none;
-  z-index:19;
-  border-bottom:1px solid #222;
-}
-
-.search-bar input{
-  width:100%;
-  padding:12px;
-  border-radius:40px;
-  border:1px solid #333;
-  background:#000;
-  color:#fff;
-  font-size:16px;
-}
-
-/* TABS */
-
-.tabs{
-  display:flex;
-  gap:20px;
-  margin-top:10px;
-}
-
-.tab{
-  cursor:pointer;
-  font-weight:700;
-  opacity:.6;
-  transition:.3s;
-  font-size:16px;
-}
-
-.tab.active{
-  opacity:1;
-  color:#ff0000;
-  border-bottom:2px solid #ff0000;
-  padding-bottom:2px;
-}
-
-/* FEED */
-
-.feed{
-  margin-top:180px;
-  margin-bottom:90px;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  overflow-y:auto;
-  scroll-snap-type:y mandatory;
-  gap:20px;
-}
-
-.video-card{
-  width:95%;
-  max-width:800px;
-  background:#111;
-  border-radius:18px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  scroll-snap-align:start;
-  position:relative;
-  border:1px solid #222;
-}
-.gold-badge{
-  margin-left:6px;
-  font-size:14px;
-  color:#ffd700;
-  text-shadow:0 0 6px rgba(255,215,0,0.6);
-  vertical-align:middle;
-}
-
-video{
-  width:100%;
-  height:auto;
-  max-height:500px;
-  object-fit:cover;
-  display:block;
-  background:#000;
-}
-
-/* META */
-
-.meta-overlay{
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background:rgba(0,0,0,.75);
-}
-
-.user-row{
-  display:flex;
-  flex-direction:column;
-  padding:6px 2px;
-  align-items:flex-start;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.username{
-  font-weight:900;
-  font-size:30px;
-  cursor:pointer;
-  color:pink; /* TikTok-like pink/red accent */
-  letter-spacing:0.5px;
-  text-shadow:0 2px 10px rgba(255,45,85,0.4);
-}
-
-.follow-btn,
-.share-btn{
-  background:#111;
-  color:#fff;
-  padding:7px 12px;
-  border-radius:20px;
-  border:none;
-  font-size:13px;
-  cursor:pointer;
-  font-weight:800;
-  margin-left:5px;
-  transition:.25s;
-}
-
-.view-count{
-  color:#00c6ff;
-  font-weight:900;
-  margin-left:4px;
-}
-.follow-btn:hover,
-.share-btn:hover{
-  transform:scale(1.05);
-}
-.follow-btn{
-  background:linear-gradient(45deg,#ff0000,blue);
-  border:none;
-  font-weight:900;
-}
-.follow-btn{
-  transition:all .25s;
-}
-
-.follow-btn.following{
-  background:#222;
-  color:#aaa;
-  border:1px solid #444;
-}
-.share-btn{
-  background:linear-gradient(45deg,#ff0000,green);
-  border:none;
-  font-weight:900;
-}
-.title{
-  font-size:16px;
-  font-weight:700;
-  color:#fff;
-}
-
-.stats{
-  display:flex;
-  gap:10px;
-  margin-top:5px;
-}
-
-.stat-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(255,255,255,.08);
-  padding:8px 14px;
-  border-radius:999px;
-  cursor:pointer;
-  font-weight:700;
-  font-size:14px;
-  transition:.25s;
-}
-
-.stat-btn:hover{
-  transform:scale(1.05);
-}
-
-/* SHARE */
-
-.share-options{
-  display:none;
-  position:absolute;
-  bottom:60px;
-  right:10px;
-  background:#111;
-  padding:10px;
-  border-radius:12px;
-  flex-direction:column;
-  gap:8px;
-  border:1px solid #222;
-}
-
-.share-options button{
-  background:#222;
-  color:#fff;
-  padding:8px 12px;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-}
-
-/* COMMENTS */
-
-.comment-modal{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:60%;
-  background:#111;
-  display:none;
-  flex-direction:column;
-  border-top:3px solid #ff0000;
-  z-index:50;
-}
-
-.close-comments{
-  background:#ff0000;
-  border:none;
-  color:#fff;
-  padding:12px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.comment-list{
-  flex:1;
-  overflow-y:auto;
-  padding:15px;
-}
-
-.comment-input{
-  display:flex;
-  border-top:1px solid #333;
-}
-
-.comment-input input{
-  flex:1;
-  padding:14px;
-  background:#000;
-  border:none;
-  color:#fff;
-  font-size:16px;
-}
-
-.following{
-  background:#222 !important;
-  color:#aaa !important;
-  border:1px solid #444;
-}
-.comment-input button{
-  background:#ff0000;
-  border:none;
-  padding:14px 22px;
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-}
-
-/* FOOTER */
-
-.footer{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:75px;
-  background:#000;
-  border-top:1px solid #222;
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  z-index:100;
-}
-
-.footer-btn{
-  font-size:28px;
-  cursor:pointer;
-  transition:.25s;
-}
-
-.footer-btn:hover:not(.disabled){
-  transform:scale(1.08);
-  color:#ff0000;
-}
-
-.footer-btn.disabled{
-  opacity:.3;
-  pointer-events:none;
-}
-
-
-/* SIGN-IN MODAL */
-.signin-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:10000}
-.signin-card{width:100%;max-width:390px;background:#111;border:1px solid #2b2b2b;border-radius:20px;padding:26px 22px;box-shadow:0 20px 70px rgba(0,0,0,.65);text-align:center}
-.signin-card h2{margin:0 0 8px;font-size:22px}
-.signin-card p{margin:0;color:#aaa;line-height:1.5;font-size:14px}
-.signin-actions{display:flex;gap:10px;margin-top:20px}
-.signin-actions button{flex:1;padding:12px;border:0;border-radius:12px;font-weight:800;cursor:pointer}
-.signin-cancel{background:#252525;color:#fff}
-.signin-go{background:#fff;color:#111}
-
-/* TOAST */
-
-#toast{
-  position:fixed;
-  bottom:95px;
-  left:50%;
-  transform:translateX(-50%) translateY(100px);
-  background:#111;
-  color:#fff;
-  padding:12px 24px;
-  border-radius:40px;
-  font-size:14px;
-  font-weight:700;
-  z-index:9999;
-  opacity:0;
-  transition:.35s ease;
-  border:1px solid #333;
-}
-
-#toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-
+.btn{padding:8px 16px;border-radius:25px;border:none;font-weight:800;cursor:pointer;transition:.3s;font-size:14px;min-width:80px;white-space:nowrap;}
+.upload-btn{background:#007BFF;color:#fff;display:none;}
+.upload-btn.disabled{opacity:.4;cursor:not-allowed;}
+#installBtn{background:#00cc00;color:#000;}
+.search-bar input{width:100%;padding:12px;border-radius:40px;border:1px solid #333;background:#000;color:#fff;font-size:16px;}
+.tabs{display:flex;gap:20px;margin-top:10px;}
+.tab{cursor:pointer;font-weight:700;opacity:.6;transition:.3s;font-size:16px;}
+.tab.active{opacity:1;color:#ff0000;border-bottom:2px solid #ff0000;padding-bottom:2px;}
+.feed{margin-top:124px;margin-bottom:78px;width:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
+.video-card{width:min(96vw,820px);height:calc(100vh - 202px);min-height:430px;max-height:760px;background:#0b0b0b;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:0 10px 38px rgba(0,0,0,.55);margin:0 0 18px;}
+.video-stage{position:relative;width:100%;height:calc(100% - 128px);min-height:290px;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;user-select:none;-webkit-user-select:none;background:#000;}
+.meta-overlay{position:relative;flex:0 0 128px;padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#151515,#090909);border-top:1px solid #242424;border-radius:0 0 20px 20px;}
+.user-row{display:flex;align-items:center;gap:10px;justify-content:flex-start;flex-wrap:nowrap;width:100%;min-width:0;}
+.username{font-weight:900;font-size:18px;cursor:pointer;color:#00e5ff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 10px rgba(0,229,255,.18);}
+.video-actions{display:flex;align-items:center;justify-content:flex-start;gap:7px;flex-wrap:nowrap;margin:0;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:1px;}
+.video-actions::-webkit-scrollbar{display:none;}
+.follow-btn,.share-btn,.views-btn{background:linear-gradient(180deg,#1e1e1e,#111);color:#fff;padding:8px 11px;border-radius:999px;border:1px solid #333;font-size:12px;cursor:pointer;font-weight:800;margin:0;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.25);}
+.title-overlay{position:absolute;left:14px;right:14px;bottom:14px;max-width:calc(100% - 28px);font-size:15px;font-weight:800;color:#fff;text-shadow:0 2px 12px #000,0 0 3px #000;z-index:3;pointer-events:none;background:linear-gradient(transparent,rgba(0,0,0,.65));padding:28px 0 4px;}
+.stats{display:flex;align-items:center;gap:7px;margin-top:0;width:100%;overflow-x:auto;scrollbar-width:none;}
+.stats::-webkit-scrollbar{display:none;}
+.stat-btn{display:flex;align-items:center;justify-content:center;gap:5px;background:linear-gradient(180deg,#202020,#111);padding:8px 11px;border-radius:999px;cursor:pointer;font-weight:800;font-size:12px;color:#fff;border:1px solid #353535;text-shadow:0 1px 3px #000;white-space:nowrap;min-width:78px;box-shadow:0 3px 10px rgba(0,0,0,.25);}
+.stat-btn span{color:#fff;font-weight:900;text-shadow:0 1px 4px #000;}
+.comment-modal{position:fixed;bottom:0;width:100%;height:60%;background:#111;display:none;flex-direction:column;border-top:3px solid #ff0000;z-index:50;}
+.comment-list{flex:1;overflow-y:auto;padding:15px;}
+.comment-input{display:flex;border-top:1px solid #333;}
+.comment-input input{flex:1;padding:12px;background:#000;border:none;color:#fff;font-size:16px;}
+.comment-input button{background:#ff0000;border:none;padding:12px 20px;color:#fff;font-weight:bold;cursor:pointer;font-size:16px;}
+.footer{position:fixed;bottom:0;left:0;width:100%;height:72px;background:rgba(0,0,0,.96);border-top:1px solid #292929;display:flex;justify-content:space-around;align-items:center;font-size:22px;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.footer div{cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:72px;height:58px;color:#ddd;font-size:20px;}
+.footer div::after{font-size:10px;font-weight:800;color:#aaa;letter-spacing:.2px;}
+#footerUpload::after{content:'Upload';}
+#notifBtn::after{content:'Notifications';}
+#accountBtn::after{content:'Account';}
+.footer div.disabled{opacity:.4;pointer-events:none;}
+.footer div:hover:not(.disabled){color:#ff0000;}
+.footer div:hover:not(.disabled)::after{color:#ff0000;}
+.share-options{display:none;position:absolute;bottom:50px;right:10px;background:#000;padding:10px;border-radius:10px;flex-direction:column;gap:5px;}
+.share-options button{background:#333;color:#fff;padding:5px 10px;border-radius:10px;cursor:pointer;}
 </style>
 </head>
-
 <body>
 
 <div class="topbar" id="topbar">
-
   <div class="top-row">
-
     <div class="logo">BIGULA</div>
-    <div id="welcomeUser" class="welcome-user">Welcome to BIGULA</div>
-
-    <div class="actions">
-      <div class="search">🔍</div>
-
-      <button class="btn upload-btn disabled">
-        Upload
-      </button>
-
-      <button class="btn" id="installBtn">
-        Install App
-      </button>
+    <div class="top-search">
+      <input type="search" id="searchInput" placeholder="Search videos or creators..." autocomplete="off">
     </div>
-
+    <div class="actions">
+      <button class="btn" id="installBtn">Install App</button>
+    </div>
   </div>
-
   <div class="tabs">
     <div class="tab active" data-feed="foryou">For You</div>
     <div class="tab" data-feed="latest">Latest</div>
     <div class="tab" data-feed="viral">Viral</div>
   </div>
-
-</div>
-
-<div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Search videos or creators...">
 </div>
 
 <div class="feed" id="feed"></div>
 
 <div class="comment-modal" id="commentModal">
-
-  <button class="close-comments" id="closeComments">
-    Close
-  </button>
-
   <div class="comment-list" id="commentList"></div>
-
   <div class="comment-input">
     <input type="text" id="commentText" placeholder="Write a comment...">
     <button id="postCommentBtn">Post</button>
   </div>
-
 </div>
-
-
-<div class="signin-modal" id="signinModal" role="dialog" aria-modal="true" aria-labelledby="signinTitle">
-  <div class="signin-card">
-    <h2 id="signinTitle">Sign in to BIGULA</h2>
-    <p id="signinMessage">Sign in to continue.</p>
-    <div class="signin-actions">
-      <button class="signin-cancel" id="signinCancel" type="button">Not now</button>
-      <button class="signin-go" id="signinGo" type="button">Continue with Google</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
 
 <div class="footer">
-
-  <div class="footer-btn" onclick="location.href='home.html'">
-    🏠
-  </div>
-
-  <div id="notifBtn" class="footer-btn disabled">
-    🔔
-  </div>
-
-  <div id="accountBtn" class="footer-btn disabled">
-    👤
-  </div>
-
+  <div id="footerUpload" title="Upload">＋</div>
+  <div id="notifBtn" class="disabled">🔔</div>
+  <div id="accountBtn">👤</div>
 </div>
 
 <script type="module">
@@ -565,398 +107,416 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
 const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}
-})
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
-let currentUser = null
-let currentProfile = null
-let currentVideoId = null
-let currentCommentId = null
-const profileCache = new Map()
+let currentUser = null;
+let currentVideoId = null;
+const creatorProfiles = new Map();
 
-function showToast(message){
-  const toast=document.getElementById('toast')
-  toast.textContent=message
-  toast.classList.add('show')
-  clearTimeout(toast.timer)
-  toast.timer=setTimeout(()=>toast.classList.remove('show'),2600)
-}
-
-function requireSignIn(action){
-  if(currentUser) return true
-  const modal=document.getElementById('signinModal')
-  const message=document.getElementById('signinMessage')
-  if(message) message.textContent=`Please sign in to ${action}. You can keep watching BIGULA without signing in.`
-  if(modal) modal.style.display='flex'
-  return false
-}
-
-function closeSignInModal(){
-  const modal=document.getElementById('signinModal')
-  if(modal) modal.style.display='none'
-}
-
-document.getElementById('signinCancel').onclick=closeSignInModal
-document.getElementById('signinModal').addEventListener('click',e=>{
-  if(e.target.id==='signinModal') closeSignInModal()
-})
-document.getElementById('signinGo').onclick=()=>{
-  location.href='signup.html'
-}
-
-
-function escapeHtml(value=''){
-  return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
-}
-
-function getGoogleName(user){
-  const m=user?.user_metadata || {}
-  return m.name || m.full_name || m.display_name ||
-         [m.given_name,m.family_name].filter(Boolean).join(' ') || null
-}
-
-function getUserName(profile,user){
-  return profile?.name || profile?.full_name || profile?.display_name ||
-         profile?.username || profile?.user_name || getGoogleName(user) ||
-         (user?.email ? user.email.split('@')[0] : null) || 'BIGULA creator'
-}
-
-async function loadProfile(uid){
-  if(!uid) return null
-  if(profileCache.has(uid)) return profileCache.get(uid)
-  const {data,error}=await supabase.from('users').select('*').eq('id',uid).maybeSingle()
-  if(!error && data) profileCache.set(uid,data)
-  return data || null
-}
-
-async function syncGoogleProfile(user){
-  if(!user?.id) return null
-  const metadata=user.user_metadata || {}
-  const googleName=getGoogleName(user)
-  const avatar=metadata.avatar_url || metadata.picture || null
-  const fallbackUsername=`user_${user.id.slice(0,8)}`
-  const payload={
-    id:user.id,
-    name:googleName || fallbackUsername,
-    username:googleName || fallbackUsername
-  }
-  if(avatar) payload.avatar_url=avatar
-
-  const {data,error}=await supabase.from('users').upsert(payload,{onConflict:'id'}).select('*').single()
-  if(error){
-    console.warn('Could not sync Google profile:',error.message)
-    return loadProfile(user.id)
-  }
-  profileCache.set(user.id,data)
-  localStorage.setItem('bigula_profile',JSON.stringify(data))
-  localStorage.setItem('bigula_user_name',data.name || googleName || fallbackUsername)
-  return data
-}
-
+// --- User ---
 async function initUser(){
-  let {data:{session}}=await supabase.auth.getSession()
-  if(!session && new URLSearchParams(location.search).has('code')){
-    const {data,error}=await supabase.auth.exchangeCodeForSession(new URLSearchParams(location.search).get('code'))
-    if(!error) session=data?.session || null
-    history.replaceState({},document.title,location.pathname)
+  // Home is an authenticated-only page.
+  // Signup.html is responsible for creating the anonymous Supabase session.
+  const { data: { session }, error } = await supabase.auth.getSession()
+
+  if(error){
+    console.error("Session check failed:", error)
+    location.href = "signup.html"
+    return
   }
 
-  currentUser=session?.user || null
-
-  if(currentUser){
-    currentProfile=await syncGoogleProfile(currentUser)
+  if(!session?.user){
+    location.href = "signup.html"
+    return
   }
 
-  const uploadBtn=document.querySelector('.upload-btn')
-  const accountBtn=document.getElementById('accountBtn')
-  const notifBtn=document.getElementById('notifBtn')
-  const loginBtn=document.querySelector('.login-btn')
+  currentUser = session.user
 
-  if(currentUser){
-    currentProfile=currentProfile || await loadProfile(currentUser.id)
-    const name=getUserName(currentProfile,currentUser)
-    localStorage.setItem('bigula_profile',JSON.stringify(currentProfile || {id:currentUser.id,name}))
-    const welcome=document.getElementById('welcomeUser')
-    if(welcome) welcome.textContent=`Welcome back, ${name}`
+  const uploadBtn = document.querySelector(".upload-btn")
+  const footerUpload = document.getElementById("footerUpload")
+  const accountBtn = document.getElementById("accountBtn")
+  const notifBtn = document.getElementById("notifBtn")
 
-    uploadBtn.classList.remove('disabled')
-    uploadBtn.onclick=()=>location.href='upload.html'
-    accountBtn.classList.remove('disabled')
-    notifBtn.classList.remove('disabled')
-    accountBtn.onclick=()=>location.href='account.html'
-    notifBtn.onclick=()=>location.href='notifications.html'
-    if(loginBtn) loginBtn.style.display='none'
-  }else{
-    const welcome=document.getElementById('welcomeUser')
-    if(welcome) welcome.textContent='Welcome to BIGULA'
-    uploadBtn.classList.remove('disabled')
-    uploadBtn.onclick=()=>requireSignIn('upload a video')
-    accountBtn.classList.remove('disabled')
-    notifBtn.classList.remove('disabled')
-    accountBtn.onclick=()=>requireSignIn('open your account')
-    notifBtn.onclick=()=>requireSignIn('open your notifications')
-    if(loginBtn) loginBtn.style.display='none'
+  // Everyone reaching Home has already authenticated through signup.html.
+  uploadBtn.classList.remove("disabled")
+  uploadBtn.onclick = () => location.href = "upload.html"
+  footerUpload.onclick = () => location.href = "upload.html"
+
+  // Login is intentionally removed from Home; signup.html is the gate.
+  document.querySelector(".login-btn")?.remove()
+
+  accountBtn.onclick = () => location.href = "account.html"
+  notifBtn.classList.remove("disabled")
+
+  // Keep the local profile as a cache only. Authentication comes from Supabase.
+  try {
+    const { data: profile } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", session.user.id)
+      .maybeSingle()
+
+    if(profile){
+      localStorage.setItem("bigula_user", JSON.stringify(profile))
+    }
+  } catch(e) {
+    console.warn("Could not refresh local profile cache:", e)
   }
+}
+
+
+// --- Fetch public videos / live counts ---
+function isPublicVideo(video){
+  const status = String(video.status ?? video.visibility ?? video.publish_status ?? video.content_status ?? "").toLowerCase().trim();
+  if(video.is_public === true || video.public === true || video.published === true) return true;
+  if(video.is_public === false || video.public === false || video.published === false) return false;
+  if(["public","published","live","active"].includes(status)) return true;
+  if(["private","draft","unlisted","blocked","rejected","pending","processing","deleted"].includes(status)) return false;
+  // If no visibility field exists, preserve the existing behavior.
+  return true;
+}
+
+async function fetchVideos(type="foryou"){
+  // Only public videos are rendered. Ordering changes by selected tab.
+  let query = supabase.from("videos").select("*")
+  if(type==="latest") query = query.order("created_at",{ascending:false})
+  else if(type==="viral") query = query.order("views",{ascending:false})
+  else query = query.order("created_at",{ascending:false})
+
+  const { data, error } = await query
+  if(error){
+    console.error(error)
+    document.getElementById("feed").innerHTML="<p style='color:#ff5555;text-align:center;margin-top:20px;'>Failed to load videos.</p>"
+    return
+  }
+
+  const publicVideos = (data || []).filter(isPublicVideo)
+  renderVideos(publicVideos)
+}
+
+// Total video count helper: counts ALL creator/user videos, while the feed shows only public ones.
+async function getTotalVideoCount(){
+  const { count, error } = await supabase
+    .from("videos")
+    .select("id",{count:"exact",head:true})
+  if(error) console.warn("Could not fetch total video count:", error)
+  return count || 0
 }
 
 async function getCounts(videoId){
-  const [l,c,v]=await Promise.all([
-    supabase.from('likes').select('*',{head:true,count:'exact'}).eq('video_id',videoId),
-    supabase.from('comments').select('*',{head:true,count:'exact'}).eq('video_id',videoId),
-    supabase.from('views').select('*',{head:true,count:'exact'}).eq('video_id',videoId)
+  const [{ count: likes }, { count: comments }, { count: views }] = await Promise.all([
+    supabase.from("likes").select("id",{head:true,count:"exact"}).eq("video_id",videoId),
+    supabase.from("comments").select("id",{head:true,count:"exact"}).eq("video_id",videoId),
+    supabase.from("views").select("id",{head:true,count:"exact"}).eq("video_id",videoId)
   ])
-  return {likes:l.count||0,comments:c.count||0,views:v.count||0}
+  return { likes: likes || 0, comments: comments || 0, views: views || 0 }
 }
 
-async function isFollowing(uid){
-  if(!currentUser || !uid) return false
-  const {data}=await supabase.from('followers').select('follower_id').eq('follower_id',currentUser.id).eq('following_id',uid).maybeSingle()
-  return !!data
+async function getCreatorProfiles(videos){
+  const ids = [...new Set(videos.map(v => v.creator_id || v.user_id).filter(Boolean))]
+  if(!ids.length) return
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .in("id", ids)
+
+  if(error){
+    console.warn("Could not fetch creator profiles:", error)
+    return
+  }
+
+  ;(data || []).forEach(profile => creatorProfiles.set(profile.id, profile))
 }
 
-async function isLiked(videoId){
-  if(!currentUser) return false
-  const {data}=await supabase.from('likes').select('video_id').eq('video_id',videoId).eq('user_id',currentUser.id).maybeSingle()
-  return !!data
-}
+function getCreatorName(video){
+  const uid = video.creator_id || video.user_id
+  const profile = uid ? creatorProfiles.get(uid) : null
 
-async function fetchVideos(type='foryou'){
-  let query=supabase.from('videos').select('*')
-  if(type==='latest') query=query.order('created_at',{ascending:false})
-  if(type==='viral') query=query.order('views',{ascending:false})
-  const {data,error}=await query
-  if(error){console.error('Video fetch error:',error);return}
-  await renderVideos(data||[])
+  // Prefer the actual profile name saved from the user's account.
+  return String(
+    profile?.name ||
+    profile?.full_name ||
+    profile?.display_name ||
+    profile?.username ||
+    video.username ||
+    "BIGULA Creator"
+  ).trim()
 }
 
 async function renderVideos(videos){
-  const feed=document.getElementById('feed')
-  feed.innerHTML=''
-  if(!videos.length){feed.innerHTML='<div style="padding:40px;text-align:center;opacity:.7">No videos yet.</div>';return}
+  const feed = document.getElementById("feed")
+  feed.innerHTML=""
+
+  if(!videos.length){
+    feed.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;'>No public videos available.</p>"
+    return
+  }
+
+  await getCreatorProfiles(videos)
 
   for(const video of videos){
-    const creatorId=String(video.user_id || video.creator_id || video.owner_id || '')
-    const creatorProfile=await loadProfile(creatorId)
-    const creatorName=getUserName(creatorProfile,null)
-    const counts=await getCounts(video.id)
-    const following=await isFollowing(creatorId)
-    const liked=await isLiked(video.id)
+    const counts = await getCounts(video.id)
+    const card = document.createElement("div")
+    card.className="video-card"
+    card.dataset.id = video.id
 
-    const card=document.createElement('div')
-    card.className='video-card'
-    card.dataset.id=video.id
-    card.dataset.creatorId=creatorId
+    const safeUrl = String(video.video_url || video.url || "").replace(/"/g,"&quot;")
+    const creatorName = getCreatorName(video)
+    const safeCreatorName = creatorName.replace(/\\/g,"\\\\").replace(/'/g,"&#39;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    const title = String(video.title || "").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    const creatorId = String(video.creator_id || video.user_id || "")
+
     card.innerHTML=`
-      <video src="${escapeHtml(video.video_url||'')}" autoplay playsinline></video>
+      <div class="video-stage">
+        <video src="${safeUrl}" autoplay muted playsinline preload="metadata"></video>
+        ${title ? `<div class="title-overlay">${title}</div>` : ""}
+      </div>
+
       <div class="meta-overlay">
         <div class="user-row">
-          <div class="creator-line">
-            <button class="creator-name" type="button">${escapeHtml(creatorName)}</button>
-            <button class="follow-btn ${following?'following':''}" type="button">${following?'Following':'Follow'}</button>
-          </div>
-          <div class="action-row">
-            <button class="views-btn" type="button">Views <span class="view-count">${counts.views}</span></button>
-            <button class="share-btn" type="button">Share</button>
-            <div class="share-options">
-              <button class="status-share" type="button">Bigula Status</button>
-              <button class="wa-share" type="button">WhatsApp</button>
-            </div>
+          <span class="username" title="${safeCreatorName}" onclick="openProfile('${creatorId}')">${safeCreatorName}</span>
+        </div>
+
+        <div class="video-actions">
+          <button class="views-btn" type="button">Views ${counts.views}</button>
+          <div class="stat-btn" onclick="toggleLike('${video.id}', this)">Likes <span id="like-${video.id}">${counts.likes}</span></div>
+          <div class="stat-btn" onclick="openComments('${video.id}')">Comments <span id="commentCount-${video.id}">${counts.comments}</span></div>
+          <button class="follow-btn" type="button" onclick="followUser('${creatorId}', this)">Follow</button>
+          <button class="share-btn" type="button" onclick="toggleShare(this)">Share</button>
+          <div class="share-options">
+            <button type="button" onclick="shareStatus('${video.id}','${safeCreatorName}')">Bigula Status</button>
+            <button type="button" onclick="shareWhatsApp('${video.id}','${safeCreatorName}','${title.replace(/'/g,"&#39;")}')">WhatsApp</button>
           </div>
         </div>
-        <div class="title">${escapeHtml(video.title||'')}</div>
-        <div class="stats">
-          <button class="stat-btn like-btn ${liked?'active-like':''}" type="button">❤️ <span>${counts.likes}</span></button>
-          <button class="stat-btn comment-btn" type="button">💬 <span>${counts.comments}</span></button>
-        </div>
-      </div>`
+      </div>
+    `
 
     feed.appendChild(card)
-    bindCardActions(card,video,creatorName)
-    setupVideoAutoScroll(card)
+    setupVideo(card)
   }
+
   setupAutoplay()
 }
 
-function bindCardActions(card,video,creatorName){
-  const creatorId=card.dataset.creatorId
-  card.querySelector('.creator-name').onclick=()=>openProfile(creatorId)
-  card.querySelector('.follow-btn').onclick=()=>followUser(creatorId,card.querySelector('.follow-btn'))
-  card.querySelector('.like-btn').onclick=()=>toggleLike(video.id,card.querySelector('.like-btn'))
-  card.querySelector('.comment-btn').onclick=()=>openComments(video.id)
-  card.querySelector('.share-btn').onclick=e=>toggleShare(e.currentTarget)
-  card.querySelector('.status-share').onclick=()=>showToast('Status sharing is coming soon.')
-  card.querySelector('.wa-share').onclick=()=>shareWhatsApp(video.video_url,creatorName)
+function setupVideo(card){
+  const video = card.querySelector("video")
+  let lastTap = 0
+
+  // One tap/click in the middle toggles pause/play.
+  video.addEventListener("click", e=>{
+    if(e.target !== video) return
+    const now = Date.now()
+    if(now - lastTap < 350){
+      e.preventDefault()
+      toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
+      lastTap = 0
+      return
+    }
+    lastTap = now
+    setTimeout(()=>{
+      if(lastTap === now){
+        if(video.paused) video.play().catch(()=>{})
+        else video.pause()
+      }
+    },350)
+  })
+
+  // A view is added only after the video has actually been watched to the end.
+  video.addEventListener("ended", async ()=>{
+    await registerCompletedView(card.dataset.id)
+    const viewsBtn = card.querySelector(".views-btn")
+    const current = parseInt((viewsBtn.textContent.match(/\d+/)||["0"])[0],10)
+    viewsBtn.textContent = `Views ${current + 1}`
+    const next = card.nextElementSibling
+    if(next) next.scrollIntoView({behavior:"smooth",block:"center"})
+  })
 }
 
+async function registerCompletedView(videoId){
+  if(!currentUser) return
+  // Avoid counting the same completed watch repeatedly in one page session.
+  const key = `bigula_viewed_${videoId}`
+  if(sessionStorage.getItem(key)) return
+  const {error} = await supabase.from("views").insert({
+    video_id: videoId,
+    user_id: currentUser.id
+  })
+  if(!error) sessionStorage.setItem(key,"1")
+  else console.warn("View could not be recorded:",error.message)
+}
+
+// --- Autoplay ---
 function setupAutoplay(){
-  const vids=document.querySelectorAll('.video-card video')
-  const topbar=document.getElementById('topbar')
-  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
-    const video=entry.target
-    if(entry.isIntersecting){
-      vids.forEach(v=>{if(v!==video)v.pause()})
-      video.volume=1
-      video.play().catch(()=>{})
-      topbar.style.top='-120px'
-    }else{video.pause();topbar.style.top='0'}
-  }),{threshold:.75})
+  const vids = document.querySelectorAll("#feed video")
+  const topbar = document.getElementById("topbar")
+
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const video = entry.target
+      if(entry.isIntersecting){
+        video.muted = true
+        video.play().catch(()=>{})
+      } else {
+        video.pause()
+      }
+    })
+  }, { threshold: 0.85 })
+
   vids.forEach(v=>observer.observe(v))
 }
 
-function setupVideoAutoScroll(card){
-  const video=card.querySelector('video')
-  video.addEventListener('ended',()=>card.nextElementSibling?.scrollIntoView({behavior:'smooth',block:'center'}))
-}
+// --- Swipe right through tabs ---
+let tabTouchX = null
+const feedEl = document.getElementById("feed")
+feedEl.addEventListener("touchstart", e=>{
+  if(e.touches.length === 1) tabTouchX = e.touches[0].clientX
+},{passive:true})
+feedEl.addEventListener("touchend", e=>{
+  if(tabTouchX === null) return
+  const dx = e.changedTouches[0].clientX - tabTouchX
+  tabTouchX = null
+  if(dx < 60) return
 
+  const tabs = [...document.querySelectorAll(".tab")]
+  const active = tabs.findIndex(t=>t.classList.contains("active"))
+  const next = Math.min(active + 1,tabs.length - 1)
+  if(next !== active) tabs[next].click()
+},{passive:true})
+
+// --- Share functions ---
 function toggleShare(btn){
-  document.querySelectorAll('.share-options').forEach(el=>{if(el!==btn.nextElementSibling)el.style.display='none'})
-  const options=btn.nextElementSibling
-  options.style.display=options.style.display==='flex'?'none':'flex'
-}
-
-function shareWhatsApp(url,name){
-  window.open(`https://wa.me/?text=${encodeURIComponent(`Watch this BIGULA video created by ${name}: ${url}`)}`,'_blank')
-}
-
-function openProfile(uid){
-  if(!uid || uid==='undefined' || uid==='null') return showToast('Creator profile is unavailable.')
-  location.href=`creator-profile.html?uid=${encodeURIComponent(uid)}`
-}
-
-async function toggleLike(videoId,btn){
-  if(!requireSignIn('like this video')) return
-  const countEl=btn.querySelector('span')
-  const old=Number(countEl.textContent)||0
-  btn.disabled=true
-  try{
-    const {data:existing,error:checkError}=await supabase.from('likes').select('video_id').eq('video_id',videoId).eq('user_id',currentUser.id).maybeSingle()
-    if(checkError) throw checkError
-    if(existing){
-      const {error}=await supabase.from('likes').delete().eq('video_id',videoId).eq('user_id',currentUser.id)
-      if(error) throw error
-      countEl.textContent=Math.max(0,old-1);btn.classList.remove('active-like')
-    }else{
-      const {error}=await supabase.from('likes').insert({video_id:videoId,user_id:currentUser.id})
-      if(error) throw error
-      countEl.textContent=old+1;btn.classList.add('active-like')
+  document.querySelectorAll(".share-options").forEach(el=>{
+    if(el !== btn.nextElementSibling){
+      el.style.display = "none"
     }
-  }catch(e){console.error('Like error:',e);showToast('Could not update like. Please try again.')}
-  finally{btn.disabled=false}
+  })
+
+  const options = btn.nextElementSibling
+  if(!options) return
+
+  options.style.display = 
+    options.style.display === "flex" ? "none" : "flex"
 }
 
-async function followUser(uid,btn){
-  if(!requireSignIn('follow this creator')) return
-  if(!uid || uid===currentUser.id){showToast('You cannot follow yourself.');return}
-  btn.disabled=true
-  try{
-    const {data:existing,error:checkError}=await supabase.from('followers').select('follower_id').eq('follower_id',currentUser.id).eq('following_id',uid).maybeSingle()
-    if(checkError) throw checkError
-    if(existing){
-      const {error}=await supabase.from('followers').delete().eq('follower_id',currentUser.id).eq('following_id',uid)
-      if(error) throw error
-      btn.textContent='Follow';btn.classList.remove('following');showToast('Unfollowed')
-    }else{
-      const {error}=await supabase.from('followers').insert({follower_id:currentUser.id,following_id:uid})
-      if(error) throw error
-      btn.textContent='Following';btn.classList.add('following');showToast('Following')
-    }
-  }catch(e){console.error('Follow error:',e);showToast('Could not update follow. Check your connection or permissions.')}
-  finally{btn.disabled=false}
+function encodeVideoToken(id){
+  const bytes = new TextEncoder().encode(String(id))
+  let binary = ""
+  bytes.forEach(b => binary += String.fromCharCode(b))
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"")
+}
+
+function createVideoShareUrl(videoId){
+  const token = encodeVideoToken(videoId)
+  return new URL(`video_view.html?v=${token}`, window.location.href).href
+}
+
+function shareWhatsApp(videoId, username, title){
+  const shareUrl = createVideoShareUrl(videoId)
+  const cleanTitle = String(title || "").trim()
+  const text = cleanTitle
+    ? `Watch "${cleanTitle}" by @${username} on BIGULA\n${shareUrl}`
+    : `Watch this video by @${username} on BIGULA\n${shareUrl}`
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank','noopener,noreferrer')
+}
+
+function shareStatus(videoId, username){
+  alert(`Status portal for video ${videoId} by @${username} coming soon!`)
+}
+
+// --- Actions ---
+function openProfile(uid){ location.href=`account.html?uid=${uid}` }
+
+async function toggleLike(videoId, btn){
+    const likeEl = document.getElementById(`like-${videoId}`)
+  const { data: exists } = await supabase.from('likes').select("*").eq('video_id', videoId).eq('user_id', currentUser.id)
+  if(exists && exists.length){
+    await supabase.from('likes').delete().eq('video_id', videoId).eq('user_id', currentUser.id)
+    likeEl.innerText = parseInt(likeEl.innerText)-1
+  } else {
+    await supabase.from('likes').insert({ video_id: videoId, user_id: currentUser.id })
+    likeEl.innerText = parseInt(likeEl.innerText)+1
+  }
 }
 
 async function openComments(videoId){
-  currentVideoId=videoId
-  currentCommentId=null
-  const modal=document.getElementById('commentModal')
-  const list=document.getElementById('commentList')
-  list.innerHTML='<div style="opacity:.6;text-align:center;padding:20px">Loading comments…</div>'
-  modal.style.display='flex'
-
-  const {data:comments,error}=await supabase.from('comments').select('*').eq('video_id',videoId).order('created_at',{ascending:true})
-  if(error){console.error('Comments fetch error:',error);list.innerHTML='<div style="opacity:.7;padding:20px;text-align:center">Comments could not be loaded.</div>';return}
-  if(!comments?.length){list.innerHTML='<div style="opacity:.6;text-align:center;padding:25px">No comments yet. Be the first.</div>';return}
-
-  list.innerHTML=''
-  for(const c of comments){
-    const commenter=await loadProfile(c.user_id)
-    const name=getUserName(commenter,null) || c.username || 'BIGULA user'
-    const div=document.createElement('div')
-    div.className='comment-item'
-    div.dataset.commentId=c.id || ''
-    div.innerHTML=`<div class="comment-body"><strong>${escapeHtml(name)}</strong><div>${escapeHtml(c.text||'')}</div></div>
-      <div class="comment-actions">
-        <button class="comment-like" type="button">❤️ ${Number(c.likes_count||c.like_count||0)}</button>
-        <button class="comment-reply" type="button">Reply</button>
-      </div>`
-    div.querySelector('.comment-like').onclick=()=>likeComment(c.id)
-    div.querySelector('.comment-reply').onclick=()=>replyToComment(c.id,name)
+    currentVideoId = videoId
+  const modal = document.getElementById("commentModal")
+  const list = document.getElementById("commentList")
+  list.innerHTML=""
+  modal.style.display="flex"
+  const { data: comments } = await supabase.from("comments").select("*").eq("video_id",videoId).order("created_at",{ascending:true})
+  if(comments) comments.forEach(c=>{
+    const div = document.createElement("div")
+    div.innerHTML=`<strong>${c.username}</strong>: ${c.text}`
     list.appendChild(div)
+  })
+}
+
+document.getElementById("postCommentBtn").onclick = async ()=>{
+  if(!currentUser || !currentVideoId) return
+  const text = document.getElementById("commentText").value
+  if(!text) return
+  const { data: myProfile } = await supabase
+    .from("users")
+    .select("username")
+    .eq("id", currentUser.id)
+    .maybeSingle()
+
+  await supabase.from("comments").insert({
+    video_id: currentVideoId,
+    user_id: currentUser.id,
+    username: myProfile?.username || "user",
+    text
+  })
+  document.getElementById("commentText").value=''
+  openComments(currentVideoId)
+}
+
+async function followUser(uid){
+    await supabase.from('followers').upsert({ follower_id: currentUser.id, following_id: uid }, { onConflict:['follower_id','following_id'] })
+  alert('Following!')
+}
+
+// --- Tabs ---
+document.querySelectorAll(".tab").forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"))
+    tab.classList.add("active")
+    fetchVideos(tab.dataset.feed)
   }
-}
-
-function replyToComment(commentId,name){
-  if(!requireSignIn('reply to this comment')) return
-  currentCommentId=commentId
-  const input=document.getElementById('commentText')
-  input.value=`@${name} `
-  input.focus()
-}
-
-async function likeComment(commentId){
-  if(!requireSignIn('like this comment')) return
-  if(!commentId){showToast('This comment cannot be liked yet.');return}
-  showToast('Comment likes will be enabled when comment-like storage is connected.')
-}
-
-async function postComment(){
-  if(!requireSignIn('add a comment')) return
-  if(!currentVideoId)return
-  const input=document.getElementById('commentText')
-  const text=input.value.trim()
-  if(!text)return
-  const profileName=getUserName(currentProfile,currentUser)
-  const payload={video_id:currentVideoId,user_id:currentUser.id,username:profileName,text}
-  if(currentCommentId) payload.parent_id=currentCommentId
-  const {error}=await supabase.from('comments').insert(payload)
-  if(error){
-    // If the existing comments table does not yet have parent_id, retry as a normal comment.
-    if(currentCommentId && /parent_id|column/i.test(error.message||'')){
-      delete payload.parent_id
-      const retry=await supabase.from('comments').insert(payload)
-      if(retry.error){console.error(retry.error);showToast('Could not post comment.');return}
-    }else{console.error(error);showToast('Could not post comment.');return}
-  }
-  input.value=''
-  currentCommentId=null
-  await openComments(currentVideoId)
-}
-
-document.getElementById('postCommentBtn').onclick=postComment
-document.getElementById('closeComments').onclick=()=>document.getElementById('commentModal').style.display='none'
-
-document.querySelectorAll('.tab').forEach(tab=>tab.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-  tab.classList.add('active')
-  fetchVideos(tab.dataset.feed)
 })
 
-document.querySelector('.search').onclick=()=>document.querySelector('.search-bar').style.display='block'
-document.getElementById('searchInput').addEventListener('input',e=>{
-  const term=e.target.value.toLowerCase()
-  document.querySelectorAll('.video-card').forEach(card=>card.style.display=card.innerText.toLowerCase().includes(term)?'flex':'none')
+// --- Search ---
+document.getElementById("searchInput").addEventListener("input",e=>{
+  const term=e.target.value.toLowerCase().trim()
+  document.querySelectorAll(".video-card").forEach(card=>{
+    card.style.display = card.innerText.toLowerCase().includes(term) ? "flex" : "none"
+  })
 })
 
-let deferredPrompt=null
-const installBtn=document.getElementById('installBtn')
-installBtn.style.display='none'
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'})
-installBtn.onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none'}
+// --- Install App ---
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+installBtn.style.display = 'none';
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'inline-block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
 
-// Do NOT make Home dependent on authentication. Everyone can browse/watch.
-await initUser()
-await fetchVideos()
+supabase.auth.getSession().then(({data:{session}})=>{
+  if(session?.user) fetchVideos()
+})
 </script>
-
 </body>
 </html>
+
+
