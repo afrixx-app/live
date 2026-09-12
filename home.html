@@ -6,7 +6,7 @@
 <title>BIGULA – Home</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-type:y proximity;scroll-padding-top:112px;scroll-padding-bottom:74px;}
+body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-type:y mandatory;scroll-padding-top:112px;scroll-padding-bottom:72px;}
 .topbar{position:fixed;top:0;left:0;width:100%;min-height:112px;background:linear-gradient(to bottom,#000 88%,rgba(0,0,0,.88));z-index:100;padding:10px 14px 8px;display:flex;flex-direction:column;transition:none;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 3px 18px rgba(0,0,0,.45);}
 .logo{font-size:30px;font-weight:900;letter-spacing:4px;color:#ff0000;text-shadow:0 0 20px rgba(255,0,0,.8);flex:0 0 auto;line-height:1;}
 .top-row{display:flex;align-items:center;gap:12px;width:100%;margin:0;}
@@ -30,14 +30,14 @@ body{background:#000;color:#fff;overflow-y:auto;touch-action:pan-y;scroll-snap-t
 .btn{padding:8px 16px;border-radius:25px;border:none;font-weight:800;cursor:pointer;transition:.3s;font-size:14px;min-width:80px;white-space:nowrap;}
 .upload-btn{background:#007BFF;color:#fff;display:none;}
 .upload-btn.disabled{opacity:.4;cursor:not-allowed;}
-
 .search-bar input{width:100%;padding:12px;border-radius:40px;border:1px solid #333;background:#000;color:#fff;font-size:16px;}
-.tabs{display:flex;gap:20px;margin-top:10px;}
-.tab{cursor:pointer;font-weight:700;opacity:.6;transition:.3s;font-size:16px;}
-.tab.active{opacity:1;color:#ff0000;border-bottom:2px solid #ff0000;padding-bottom:2px;}
-.feed{margin-top:112px;margin-bottom:72px;width:100%;display:flex;flex-direction:column;align-items:center;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
-.video-card{width:min(100vw,1100px);height:calc(100vh - 190px);min-height:430px;max-height:none;background:#0b0b0b;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:0 10px 38px rgba(0,0,0,.55);margin:0 0 18px;}
-.video-stage{position:relative;width:100%;height:calc(100% - 128px);min-height:290px;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.tabs{display:flex;gap:0;margin-top:10px;width:100%;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{cursor:pointer;font-weight:700;opacity:.6;transition:.3s;font-size:16px;flex:1 1 0;text-align:center;padding:7px 6px 8px;white-space:nowrap;min-width:0;}
+.tab.active{opacity:1;color:#ff0000;border-bottom:2px solid #ff0000;}
+.feed{margin-top:112px;margin-bottom:72px;width:100%;min-height:calc(100vh - 184px);display:flex;flex-direction:column;align-items:stretch;overflow:visible;scroll-snap-type:y mandatory;gap:0;}
+.video-card{width:100%;height:calc(100vh - 184px);min-height:0;max-height:none;background:#000;border-radius:0;overflow:hidden;display:flex;flex-direction:column;scroll-snap-align:center;scroll-snap-stop:always;position:relative;box-shadow:none;margin:0;}
+.video-stage{position:relative;width:100%;height:calc(100% - 128px);min-height:0;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;user-select:none;-webkit-user-select:none;background:#000;}
 .meta-overlay{position:relative;flex:0 0 128px;padding:12px 13px 13px;display:flex;flex-direction:column;gap:8px;background:linear-gradient(180deg,#151515,#090909);border-top:1px solid #242424;border-radius:0 0 20px 20px;}
 .user-row{display:flex;align-items:center;gap:10px;justify-content:flex-start;flex-wrap:nowrap;width:100%;min-width:0;}
@@ -78,12 +78,13 @@ video{width:100%;height:100%;object-fit:contain;display:block;cursor:pointer;use
     <div class="top-search">
       <input type="search" id="searchInput" placeholder="Search videos or creators..." autocomplete="off">
     </div>
-    <div class="actions"></div>
   </div>
   <div class="tabs">
     <div class="tab active" data-feed="foryou">For You</div>
     <div class="tab" data-feed="latest">Latest</div>
     <div class="tab" data-feed="viral">Viral</div>
+    <div class="tab" data-feed="live">Live</div>
+    <div class="tab" data-feed="status">Status</div>
   </div>
 </div>
 
@@ -112,6 +113,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let currentUser = null;
 let currentVideoId = null;
+
+function requireSignIn(){
+  if(currentUser) return true;
+  location.href = "signup.html";
+  return false;
+}
+
 const creatorProfiles = new Map();
 
 // --- User ---
@@ -121,17 +129,10 @@ async function initUser(){
   const { data: { session }, error } = await supabase.auth.getSession()
 
   if(error){
-    console.error("Session check failed:", error)
-    location.href = "signup.html"
-    return
+    console.warn("Session check failed:", error)
   }
 
-  if(!session?.user){
-    location.href = "signup.html"
-    return
-  }
-
-  currentUser = session.user
+  currentUser = session?.user || null
 
   const uploadBtn = document.querySelector(".upload-btn")
   const footerUpload = document.getElementById("footerUpload")
@@ -141,12 +142,12 @@ async function initUser(){
   // Everyone reaching Home has already authenticated through signup.html.
   uploadBtn.classList.remove("disabled")
   uploadBtn.onclick = () => location.href = "upload.html"
-  footerUpload.onclick = () => location.href = "upload.html"
+  footerUpload.onclick = () => { if(requireSignIn()) location.href = "upload.html" }
 
   // Login is intentionally removed from Home; signup.html is the gate.
   document.querySelector(".login-btn")?.remove()
 
-  accountBtn.onclick = () => requireSignIn("account.html")
+  accountBtn.onclick = () => { if(requireSignIn()) location.href = "account.html" }
   notifBtn.classList.remove("disabled")
   notifBtn.onclick = () => location.href = "notifications.html"
   loadNotificationBadge()
@@ -299,7 +300,8 @@ async function renderVideos(videos){
     const card = document.createElement("div")
     card.className="video-card"
     card.dataset.id = video.id
-    card.dataset.shortCode = video.short_code || video.shortCode || 
+    card.dataset.creatorId = String(video.creator_id || video.user_id || "")
+    card.dataset.shortCode = video.short_code || video.shortCode || ""
 
     const safeUrl = String(video.video_url || video.url || "").replace(/"/g,"&quot;")
     const creatorName = getCreatorName(video)
@@ -315,28 +317,50 @@ async function renderVideos(videos){
 
       <div class="meta-overlay">
         <div class="user-row">
-          <span class="username" title="${safeCreatorName}" onclick="openProfile('${creatorId}')">${safeCreatorName}</span>
+          <span class="username" title="${safeCreatorName}" data-action="profile">${safeCreatorName}</span>
         </div>
 
         <div class="video-actions">
           <button class="views-btn" type="button">Views ${counts.views}</button>
-          <div class="stat-btn" onclick="toggleLike('${video.id}', this)">Likes <span id="like-${video.id}">${counts.likes}</span></div>
-          <div class="stat-btn" onclick="openComments('${video.id}')">Comments <span id="commentCount-${video.id}">${counts.comments}</span></div>
-          <button class="follow-btn" type="button" onclick="followUser('${creatorId}', this)">Follow</button>
-          <button class="share-btn" type="button" onclick="toggleShare(this)">Share</button>
+          <div class="stat-btn" data-action="like">Likes <span id="like-${video.id}">${counts.likes}</span></div>
+          <div class="stat-btn" data-action="comments">Comments <span id="commentCount-${video.id}">${counts.comments}</span></div>
+          <button class="follow-btn" type="button" data-action="follow">Follow</button>
+          <button class="share-btn" type="button" data-action="share">Share</button>
           <div class="share-options">
-            <button type="button" onclick="shareStatus('${video.id}','${safeCreatorName}')">Bigula Status</button>
-            <button type="button" onclick="shareWhatsApp('${video.id}','${safeCreatorName}','${title.replace(/'/g,"&#39;")}')">WhatsApp</button>
+            <button type="button" data-action="status">Bigula Status</button>
+            <button type="button" data-action="whatsapp">WhatsApp</button>
           </div>
         </div>
       </div>
     `
 
     feed.appendChild(card)
+    bindCardActions(card)
     setupVideo(card)
+    const firstVideo = card.querySelector("video")
+    if(feed.children.length === 1 && firstVideo){
+      firstVideo.muted = true
+      firstVideo.play().catch(()=>{})
+    }
   }
 
   setupAutoplay()
+}
+
+function bindCardActions(card){
+  const creatorId = card.dataset.creatorId || card.querySelector(".username")?.dataset.creatorId || ""
+  const videoId = card.dataset.id
+  card.querySelector(".username")?.addEventListener("click", ()=>openProfile(creatorId))
+  card.querySelector('[data-action="like"]')?.addEventListener("click", e=>{ if(requireSignIn()) toggleLike(videoId, e.currentTarget) })
+  card.querySelector('[data-action="comments"]')?.addEventListener("click", ()=>{ if(requireSignIn()) openComments(videoId) })
+  card.querySelector('[data-action="follow"]')?.addEventListener("click", e=>{ if(requireSignIn()) followUser(creatorId, e.currentTarget) })
+  card.querySelector('[data-action="share"]')?.addEventListener("click", e=>toggleShare(e.currentTarget))
+  card.querySelector('[data-action="status"]')?.addEventListener("click", ()=>shareStatus(videoId, getCreatorNameFromCard(card)))
+  card.querySelector('[data-action="whatsapp"]')?.addEventListener("click", ()=>shareWhatsApp(videoId, getCreatorNameFromCard(card), card.querySelector(".title-overlay")?.textContent || ""))
+}
+
+function getCreatorNameFromCard(card){
+  return card.querySelector(".username")?.textContent?.trim() || "BIGULA Creator"
 }
 
 function setupVideo(card){
@@ -349,7 +373,7 @@ function setupVideo(card){
     const now = Date.now()
     if(now - lastTap < 350){
       e.preventDefault()
-      toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
+      if(requireSignIn()) toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
       lastTap = 0
       return
     }
@@ -507,7 +531,6 @@ function shareStatus(videoId, username){
 function openProfile(uid){ location.href=`account.html?uid=${uid}` }
 
 async function toggleLike(videoId, btn){
-  if(!currentUser){ location.href = 'signup.html'; return }
     const likeEl = document.getElementById(`like-${videoId}`)
   const { data: exists } = await supabase.from('likes').select("*").eq('video_id', videoId).eq('user_id', currentUser.id)
   if(exists && exists.length){
@@ -554,7 +577,6 @@ document.getElementById("postCommentBtn").onclick = async ()=>{
 }
 
 async function followUser(uid){
-  if(!currentUser){ location.href = 'signup.html'; return }
     await supabase.from('followers').upsert({ follower_id: currentUser.id, following_id: uid }, { onConflict:['follower_id','following_id'] })
   alert('Following!')
 }
@@ -572,12 +594,12 @@ document.querySelectorAll(".tab").forEach(tab=>{
 document.getElementById("searchInput").addEventListener("input",e=>{
   const term=e.target.value.toLowerCase().trim()
   document.querySelectorAll(".video-card").forEach(card=>{
-    card.style.display = card.innerText.toLowerCase().includes(term) ? "flex" : "none"
+    card.style.display = !term || card.innerText.toLowerCase().includes(term) ? "flex" : "none"
   })
 })
 
-supabase.auth.getSession().then(({data:{session}})=>{
-  if(session?.user) fetchVideos()
+initUser().finally(()=>{
+  fetchVideos("foryou")
 })
 </script>
 </body>
