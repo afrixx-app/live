@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Account</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,sans-serif}
+body{background:#0b0b0b;color:#fff}.header{position:sticky;top:0;z-index:20;background:#111;border-bottom:1px solid #222;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:24px;font-weight:900;color:#ff1744;letter-spacing:2px}.back{border:0;background:#222;color:#fff;padding:9px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+.profile{text-align:center;padding:28px 16px 22px;background:linear-gradient(#171717,#0b0b0b);border-bottom:1px solid #222}.avatar{width:105px;height:105px;border-radius:50%;object-fit:cover;border:3px solid #ff1744;background:#222}
+.name{margin-top:12px;font-size:28px;font-weight:900}.handle{color:#aaa;margin-top:3px}.bio{max-width:650px;margin:10px auto;color:#bbb;line-height:1.5}
+.stats{display:flex;justify-content:center;gap:9px;margin:20px auto;flex-wrap:wrap}.stat{min-width:105px;background:#161616;border:1px solid #292929;border-radius:14px;padding:11px 15px}.stat strong{display:block;font-size:20px}.stat span{font-size:12px;color:#999}
+.actions{display:flex;justify-content:center;gap:10px}.action{border:0;border-radius:999px;padding:11px 22px;font-weight:800;cursor:pointer}.share{background:#1683ff;color:#fff}.edit{background:#222;color:#fff;border:1px solid #444}
+.section{padding:18px 10px}.section h2{font-size:19px;margin:0 4px 14px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;max-width:900px;margin:auto}
+.card{position:relative;background:#111;aspect-ratio:9/14;overflow:hidden;cursor:pointer}.card video{width:100%;height:100%;object-fit:cover;display:block;background:#000;pointer-events:none}.overlay{position:absolute;left:0;right:0;bottom:0;padding:28px 7px 7px;background:linear-gradient(transparent,rgba(0,0,0,.8));font-size:12px;font-weight:700}
+.empty{text-align:center;color:#777;padding:45px 10px}@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr);gap:8px}.section{padding:25px}.card{border-radius:8px}}
+</style>
+</head>
+<body>
+<header class="header"><button class="back" onclick="history.back()">← Back</button><div class="logo">BIGULA</div><div style="width:62px"></div></header>
+<section class="profile"><img id="avatar" class="avatar" src="https://placehold.co/300x300" alt="Profile">
+<div id="name" class="name">Loading...</div><div id="handle" class="handle"></div><div id="bio" class="bio"></div>
+<div class="stats"><div class="stat"><strong id="followers">0</strong><span>Followers</span></div><div class="stat"><strong id="following">0</strong><span>Following</span></div><div class="stat"><strong id="videos">0</strong><span>Videos</span></div><div class="stat"><strong id="likes">0</strong><span>Total Likes</span></div></div>
+<div class="actions"><button id="shareBtn" class="action share">↗ Share Profile</button><button id="editBtn" class="action edit">✎ Edit</button></div>
+</section>
+<section class="section"><h2>My Videos</h2><div id="videoGrid" class="grid"></div></section>
+<script type="module">
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase=createClient('https://vfteiggdhthvrrlndtbs.supabase.co','sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe');
+let currentUser=null;
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function init(){
+ const {data:{session},error}=await supabase.auth.getSession();
+ if(error||!session?.user){location.href='signup.html';return}
+ currentUser=session.user;
+ document.getElementById('editBtn').onclick=()=>location.href='edit_profile.html';
+ document.getElementById('shareBtn').onclick=async()=>{if(navigator.share){try{await navigator.share({title:'My BIGULA Profile',url:location.href})}catch(e){}}else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);alert('Profile link copied')}};
+ await loadAccount();
+}
+async function loadAccount(){
+ const {data:user,error}=await supabase.from('users').select('*').eq('id',currentUser.id).maybeSingle();
+ if(error){console.error(error);return}
+ if(user){document.getElementById('name').textContent=user.name||user.full_name||user.display_name||user.username||'BIGULA User';document.getElementById('handle').textContent=user.username?'@'+user.username:'';document.getElementById('bio').textContent=user.bio||'No bio yet';if(user.avatar_url)document.getElementById('avatar').src=user.avatar_url;localStorage.setItem('bigula_user',JSON.stringify(user))}
+ const [{count:followers},{count:following},{data:videos,error:vErr}]=await Promise.all([
+  supabase.from('followers').select('id',{head:true,count:'exact'}).eq('following_id',currentUser.id),
+  supabase.from('followers').select('id',{head:true,count:'exact'}).eq('follower_id',currentUser.id),
+  supabase.from('videos').select('*').eq('creator_id',currentUser.id).order('created_at',{ascending:false})
+ ]);
+ document.getElementById('followers').textContent=followers||0;document.getElementById('following').textContent=following||0;
+ if(vErr){console.error(vErr);return}document.getElementById('videos').textContent=(videos||[]).length;await renderVideos(videos||[]);
+}
+async function renderVideos(videos){
+ const grid=document.getElementById('videoGrid');grid.innerHTML='';
+ if(!videos.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1">You have not uploaded any videos yet.</div>';return}
+ let totalLikes=0;
+ for(const v of videos){
+  const {count:likes}=await supabase.from('likes').select('id',{head:true,count:'exact'}).eq('video_id',v.id);totalLikes+=likes||0;
+  const card=document.createElement('div');card.className='card';
+  card.innerHTML=`<video src="${esc(v.video_url||v.url||'')}" preload="metadata" playsinline></video><div class="overlay">${esc(v.title||'Untitled video')} · ❤️ ${likes||0}</div>`;
+  card.addEventListener('click',()=>location.href='edit_vide.html?id='+encodeURIComponent(v.id));grid.appendChild(card);
+ }
+ document.getElementById('likes').textContent=totalLikes;
+}
+init();
+</script>
+</body></html>
