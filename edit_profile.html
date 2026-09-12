@@ -1,357 +1,1921 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIGULA — Edit Profile</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload - BIGULA</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;color:#111}
-main{max-width:620px;margin:20px auto;background:#fff;padding:22px;border-radius:16px}
-a{color:#111;text-decoration:none}
-h1{margin:16px 0 8px}
-.sub{color:#666;margin:0 0 20px}
-.photo-wrap{text-align:center;margin:18px 0 24px}
-.avatar{width:130px;height:130px;border-radius:50%;object-fit:cover;background:#eee;border:2px solid #ddd;display:block;margin:0 auto 12px}
-.photo-buttons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.photo-buttons button{width:auto;margin:0;padding:10px 16px}
-input,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;font:inherit;background:#fff}
-textarea{min-height:110px;resize:vertical}
-label{display:block;font-weight:bold;margin:17px 0 7px}
-button{border:0;border-radius:10px;background:#111;color:#fff;font-weight:bold;cursor:pointer}
-#save{width:100%;padding:14px;margin-top:22px;font-size:15px}
-button:disabled{opacity:.5;cursor:not-allowed}
-.notice{padding:12px;border-radius:9px;background:#fff3cd;margin-top:15px}
-#status{text-align:center;min-height:20px;margin-top:12px}
-.photo-status{font-size:13px;color:#666;margin-top:8px}
-#cameraBox{display:none;margin-top:15px}
-#camera{width:100%;max-height:430px;background:#000;border-radius:12px;display:block}
-.camera-actions{display:flex;gap:8px;margin-top:8px}
-.camera-actions button{flex:1;padding:11px}
-#fileInput{display:none}
+body {
+  margin:0;
+  padding:0;
+  font-family:'Segoe UI',sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  background:#000;
+  color:#fff;
+}
+
+.container {
+  width:400px;
+  margin-top:50px;
+  background:#111;
+  padding:20px;
+  border-radius:12px;
+}
+
+h1 {
+  text-align:center;
+  color:#ff0000;
+  margin-bottom:20px;
+}
+
+button {
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  background:#ff0000;
+  color:#fff;
+  cursor:pointer;
+  width:100%;
+}
+
+button.disabled {
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+input,
+select,
+textarea {
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  background:#222;
+  color:#fff;
+}
+
+video {
+  width:100%;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+#trimBar {
+  width:100%;
+  height:10px;
+  background:#222;
+  border-radius:5px;
+  margin-top:10px;
+  position:relative;
+  cursor:pointer;
+}
+
+#trimProgress {
+  height:100%;
+  width:0%;
+  background:#ff0050;
+  border-radius:5px;
+}
+
+#filterBar {
+  width:100%;
+  height:10px;
+  background:#222;
+  border-radius:5px;
+  margin-top:10px;
+  position:relative;
+  cursor:pointer;
+}
+
+#filterProgress {
+  height:100%;
+  width:0%;
+  background:#ff0050;
+  border-radius:5px;
+}
+
+.progress-bar {
+  width:100%;
+  height:8px;
+  background:#222;
+  border-radius:5px;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.progress-fill {
+  width:0%;
+  height:100%;
+  background:#ff0050;
+  transition:width .2s;
+}
+
+.message {
+  margin-top:8px;
+  font-size:14px;
+  color:#ff9999;
+  text-align:center;
+  display:none;
+}
+
+#globalUploadStatus {
+  display:none;
+  margin-top:14px;
+  padding:12px;
+  border-radius:10px;
+  background:#181818;
+  border:1px solid #333;
+}
+
+#globalUploadStatus .upload-title {
+  font-weight:700;
+  font-size:13px;
+}
+
+#globalUploadStatus .upload-percent {
+  font-size:12px;
+  color:#aaa;
+  margin-top:5px;
+}
+
+#globalUploadStatus .global-progress {
+  height:6px;
+  background:#333;
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:8px;
+}
+
+#globalUploadStatus .global-progress-fill {
+  height:100%;
+  width:0%;
+  background:#ff0050;
+  transition:width .2s;
+}
+
+section {
+  display:none;
+  flex-direction:column;
+}
+
+section.active {
+  display:flex;
+}
 </style>
 </head>
+
 <body>
-<main>
-<a href="account.html">‹ Account</a>
-<h1>Edit profile</h1>
-<p class="sub">Your profile can be edited once every 30 days.</p>
 
-<div class="photo-wrap">
-  <img id="avatar" class="avatar" src="" alt="Profile photo">
-  <div class="photo-buttons">
-    <button type="button" id="choosePhoto">Choose photo</button>
-    <button type="button" id="cameraButton">Take selfie</button>
-  </div>
-  <input id="fileInput" type="file" accept="image/*">
-  <div id="photoStatus" class="photo-status"></div>
+<div class="container">
 
-  <div id="cameraBox">
-    <video id="camera" autoplay playsinline></video>
-    <div class="camera-actions">
-      <button type="button" id="capture">Take photo</button>
-      <button type="button" id="closeCamera">Close camera</button>
+<h1>Upload Video</h1>
+
+<div id="globalUploadStatus">
+  <div class="upload-title">BIGULA upload</div>
+  <div class="upload-percent" id="globalUploadPercent">0%</div>
+
+  <div class="global-progress">
+    <div
+      class="global-progress-fill"
+      id="globalUploadFill">
     </div>
   </div>
 </div>
 
-<label for="name">Name</label>
-<input id="name" maxlength="100" placeholder="Your name">
 
-<label for="username">@Handle</label>
-<input id="username" maxlength="30" placeholder="yourhandle">
+<!-- STEP 1 -->
 
-<label for="bio">Bio</label>
-<textarea id="bio" maxlength="500" placeholder="Tell people about yourself"></textarea>
+<section id="step1" class="active">
 
-<div id="locked" class="notice" style="display:none"></div>
-<button id="save">Publish changes</button>
-<div id="status"></div>
-</main>
+  <button id="fileBtn">
+    📁 Select Video from Storage
+  </button>
 
-<script>
-const SB="https://vfteiggdhthvrrlndtbs.supabase.co";
-const KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-const H={apikey:KEY,Authorization:"Bearer "+KEY};
-const PHOTO_BUCKET="photos";
+  <button id="cameraBtn">
+    🎥 Record Video with Camera
+  </button>
 
-let me=null, oldProfile=null, pendingPhotoUrl="";
-let cameraStream=null;
+  <button
+    id="goLiveBtn"
+    class="disabled"
+    disabled>
+    🔴 Go Live
+  </button>
 
-async function req(path,options={}){
-  return fetch(SB+"/rest/v1/"+path,{
-    ...options,
-    headers:{
-      ...H,
-      "Content-Type":"application/json",
-      ...(options.headers||{})
-    }
-  });
-}
+  <video
+    id="preview"
+    muted
+    playsinline
+    preload="metadata">
+  </video>
 
-function setStatus(text){
-  document.getElementById("status").textContent=text;
-}
+  <div
+    id="msgStep1"
+    class="message">
+  </div>
 
-function setPhotoStatus(text){
-  document.getElementById("photoStatus").textContent=text;
-}
+  <button
+    id="toStep2"
+    class="disabled"
+    disabled>
+    Next: Edit Video
+  </button>
 
-function escapeHtml(s){
-  return String(s||"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
+</section>
 
-function getProfilePhoto(profile){
-  return profile.profile_photo || profile.avatar_url || profile.photo_url || "";
-}
 
-function showPhoto(url){
-  const avatar=document.getElementById("avatar");
-  avatar.src=url || "https://placehold.co/300x300?text=BIGULA";
-}
+<!-- STEP 2 -->
 
-function isLocked(profile){
-  const last=profile.profile_updated_at || profile.profile_edit_at;
-  if(!last)return false;
-  return (Date.now()-new Date(last).getTime()) < 30*86400000;
-}
+<section id="step2">
 
-function lockProfile(profile){
-  const locked=document.getElementById("locked");
-  const save=document.getElementById("save");
-  const last=profile.profile_updated_at || profile.profile_edit_at;
-  if(!last)return;
-  const days=(Date.now()-new Date(last).getTime())/86400000;
-  if(days<30){
-    locked.style.display="block";
-    locked.textContent="Profile editing is locked for "+Math.ceil(30-days)+" more day(s).";
-    save.disabled=true;
-  }
-}
+  <video
+    id="editPreview"
+    muted
+    playsinline
+    preload="metadata">
+  </video>
 
-async function uploadPhoto(file){
-  if(!file || !file.type.startsWith("image/"))return;
+  <div id="trimBar">
+    <div id="trimProgress"></div>
+  </div>
 
-  setPhotoStatus("Uploading photo…");
+  <div id="filterBar">
+    <div id="filterProgress"></div>
+  </div>
 
-  // Unique path prevents overwriting another user's image.
-  const ext=(file.name.split(".").pop()||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"")||"jpg";
-  const path=me.id+"/"+Date.now()+"-"+crypto.randomUUID()+"."+ext;
+  <div
+    style="
+      display:flex;
+      gap:5px;
+      margin-top:10px;
+    ">
 
-  const upload=await fetch(
-    SB+"/storage/v1/object/"+PHOTO_BUCKET+"/"+path,
+    <button data-filter="">
+      Normal
+    </button>
+
+    <button data-filter="grayscale(50%)">
+      B&W
+    </button>
+
+    <button data-filter="sepia(60%)">
+      Sepia
+    </button>
+
+    <button data-filter="brightness(1.3)">
+      Bright
+    </button>
+
+    <button data-filter="contrast(1.3)">
+      Contrast
+    </button>
+
+  </div>
+
+  <div
+    id="msgStep2"
+    class="message">
+  </div>
+
+  <button id="toStep3">
+    Next: Add Details
+  </button>
+
+</section>
+
+
+<!-- STEP 3 -->
+
+<section id="step3">
+
+  <input
+    type="text"
+    id="title"
+    placeholder="Title"
+    required>
+
+  <select id="category" required>
+
+    <option value="">
+      Select Category
+    </option>
+
+    <option value="music">
+      Music
+    </option>
+
+    <option value="dance">
+      Dance
+    </option>
+
+    <option value="animals">
+      Animals
+    </option>
+
+    <option value="film and animation">
+      Film & Animation
+    </option>
+
+    <option value="people and blogs">
+      People & Blogs
+    </option>
+
+    <option value="autos and vehicles">
+      Autos & Vehicles
+    </option>
+
+    <option value="sports">
+      Sports
+    </option>
+
+    <option value="comedy">
+      Comedy
+    </option>
+
+    <option value="entertainment">
+      Entertainment
+    </option>
+
+    <option value="news and politics">
+      News & Politics
+    </option>
+
+    <option value="fashion and style">
+      Fashion & Style
+    </option>
+
+    <option value="education">
+      Education
+    </option>
+
+    <option value="science and technology">
+      Science & Technology
+    </option>
+
+  </select>
+
+  <textarea
+    id="description"
+    placeholder="Description"
+    required>
+  </textarea>
+
+  <button id="uploadBtn">
+    Upload Video
+  </button>
+
+  <div class="progress-bar">
+    <div
+      class="progress-fill"
+      id="progressFill">
+    </div>
+  </div>
+
+  <div
+    id="msgStep3"
+    class="message">
+  </div>
+
+</section>
+
+<script type="module">
+
+import {
+  createClient
+} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+import * as tus
+from 'https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm'
+
+
+/* =========================================================
+   BIGULA SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  'https://vfteiggdhthvrrlndtbs.supabase.co'
+
+const SUPABASE_KEY =
+  'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe'
+
+
+const supabase =
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
     {
-      method:"POST",
-      headers:{
-        apikey:KEY,
-        Authorization:"Bearer "+KEY,
-        "Content-Type":file.type,
-        "x-upsert":"false"
-      },
-      body:file
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true,
+        flowType:"pkce"
+      }
     }
-  );
+  )
 
-  if(!upload.ok){
-    const detail=await upload.text();
-    console.error(detail);
-    setPhotoStatus("Photo upload failed. Check the storage policies.");
-    return;
-  }
 
-  // Public bucket URL.
-  pendingPhotoUrl=SB+"/storage/v1/object/public/"+PHOTO_BUCKET+"/"+path;
-  showPhoto(pendingPhotoUrl);
-  setPhotoStatus("✓ Photo uploaded.");
-}
+let selectedFile = null
+let currentUser = null
+let currentProfile = null
 
-document.getElementById("choosePhoto").onclick=()=>{
-  document.getElementById("fileInput").click();
-};
 
-document.getElementById("fileInput").onchange=e=>{
-  const file=e.target.files[0];
-  if(file)uploadPhoto(file);
-};
+/* =========================================================
+   AUTHENTICATION
+   IMPORTANT:
+   Never use the publishable key as the user's Bearer token.
+   Supabase JS manages the real access token/session.
+========================================================= */
 
-document.getElementById("cameraButton").onclick=async()=>{
-  const box=document.getElementById("cameraBox");
+async function requireUser(){
+
   try{
-    cameraStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:"user"},
-      audio:false
-    });
-    document.getElementById("camera").srcObject=cameraStream;
-    box.style.display="block";
-    setPhotoStatus("Front camera ready.");
-  }catch(err){
-    console.error(err);
-    setPhotoStatus("Camera unavailable. Allow camera access and try again.");
-  }
-};
 
-document.getElementById("capture").onclick=async()=>{
-  const video=document.getElementById("camera");
-  if(!cameraStream)return;
+    /*
+      First ask Supabase JS for the existing session.
+      This is the primary authentication check.
+    */
 
-  const canvas=document.createElement("canvas");
-  canvas.width=video.videoWidth||720;
-  canvas.height=video.videoHeight||720;
-  const ctx=canvas.getContext("2d");
+    const {
+      data:{
+        session
+      },
+      error
+    } =
+      await supabase.auth.getSession()
 
-  // Mirror the selfie naturally.
-  ctx.translate(canvas.width,0);
-  ctx.scale(-1,1);
-  ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
-  canvas.toBlob(blob=>{
-    if(!blob)return;
-    const file=new File([blob],"selfie-"+Date.now()+".jpg",{type:"image/jpeg"});
-    uploadPhoto(file);
-    stopCamera();
-  },"image/jpeg",.92);
-};
+    if(error){
 
-function stopCamera(){
-  if(cameraStream){
-    cameraStream.getTracks().forEach(t=>t.stop());
-    cameraStream=null;
-  }
-  document.getElementById("camera").srcObject=null;
-  document.getElementById("cameraBox").style.display="none";
-}
+      console.error(
+        "Supabase session error:",
+        error
+      )
 
-document.getElementById("closeCamera").onclick=()=>{
-  stopCamera();
-  setPhotoStatus("");
-};
-
-window.addEventListener("beforeunload",stopCamera);
-
-async function init(){
-  const auth=await fetch(SB+"/auth/v1/user",{headers:H});
-  if(!auth.ok){
-    location.href="signup.html";
-    return;
-  }
-
-  me=await auth.json();
-
-  const r=await req(
-    "users?id=eq."+encodeURIComponent(me.id)+
-    "&select=*"
-  );
-
-  if(!r.ok){
-    setStatus("Could not load your profile.");
-    return;
-  }
-
-  const rows=await r.json();
-  oldProfile=rows[0];
-
-  if(!oldProfile){
-    setStatus("Profile not found.");
-    return;
-  }
-
-  document.getElementById("name").value=
-    oldProfile.name || oldProfile.full_name || oldProfile.display_name || "";
-
-  document.getElementById("username").value=
-    oldProfile.username || "";
-
-  document.getElementById("bio").value=
-    oldProfile.bio || "";
-
-  pendingPhotoUrl=getProfilePhoto(oldProfile);
-  showPhoto(pendingPhotoUrl);
-
-  if(isLocked(oldProfile)){
-    lockProfile(oldProfile);
-  }
-}
-
-document.getElementById("save").onclick=async()=>{
-  if(!me || !oldProfile)return;
-
-  const save=document.getElementById("save");
-  save.disabled=true;
-  setStatus("Publishing changes…");
-
-  // Re-check the server value immediately before updating.
-  const check=await req(
-    "users?id=eq."+encodeURIComponent(me.id)+
-    "&select=profile_updated_at,profile_edit_at"
-  );
-
-  if(!check.ok){
-    save.disabled=false;
-    setStatus("Could not verify profile editing time.");
-    return;
-  }
-
-  const current=(await check.json())[0] || oldProfile;
-  const last=current.profile_updated_at || current.profile_edit_at;
-
-  if(last && (Date.now()-new Date(last).getTime())<30*86400000){
-    save.disabled=true;
-    lockProfile(current);
-    setStatus("Profile editing is locked for 30 days.");
-    return;
-  }
-
-  let handle=document.getElementById("username").value.trim()
-    .replace(/^@+/,"")
-    .toLowerCase();
-
-  if(!handle){
-    save.disabled=false;
-    setStatus("Please enter a handle.");
-    return;
-  }
-
-  const body={
-    name:document.getElementById("name").value.trim(),
-    username:handle,
-    bio:document.getElementById("bio").value.trim(),
-    profile_photo:pendingPhotoUrl,
-    profile_updated_at:new Date().toISOString()
-  };
-
-  const r=await req(
-    "users?id=eq."+encodeURIComponent(me.id),
-    {
-      method:"PATCH",
-      headers:{Prefer:"return=representation"},
-      body:JSON.stringify(body)
     }
-  );
 
-  if(!r.ok){
-    console.error(await r.text());
-    save.disabled=false;
-    setStatus("Update failed — check your users RLS policy or column names.");
-    return;
+
+    if(session?.user){
+
+      currentUser =
+        session.user
+
+    }
+
+
+    /*
+      If no session was immediately available,
+      check whether this page is returning from OAuth.
+    */
+
+    if(!currentUser){
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        )
+
+      const code =
+        params.get("code")
+
+
+      if(code){
+
+        const {
+          data,
+          error:exchangeError
+        } =
+          await supabase.auth.exchangeCodeForSession(
+            code
+          )
+
+
+        if(
+          !exchangeError &&
+          data?.session?.user
+        ){
+
+          currentUser =
+            data.session.user
+
+          /*
+            Remove OAuth code from address bar.
+          */
+
+          history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          )
+
+        }else{
+
+          console.error(
+            "OAuth session exchange failed:",
+            exchangeError
+          )
+
+        }
+
+      }
+
+    }
+
+
+    /*
+      FINAL AUTH CHECK
+    */
+
+    if(!currentUser){
+
+      console.warn(
+        "No authenticated BIGULA user found."
+      )
+
+      location.replace(
+        "signup.html"
+      )
+
+      return null
+
+    }
+
+
+    /*
+      Load the user's BIGULA profile.
+    */
+
+    const {
+      data:profile,
+      error:profileError
+    } =
+      await supabase
+        .from("users")
+        .select("*")
+        .eq("id",currentUser.id)
+        .maybeSingle()
+
+
+    if(profileError){
+
+      console.warn(
+        "Profile refresh failed:",
+        profileError.message
+      )
+
+    }
+
+
+    if(profile){
+
+      currentProfile =
+        profile
+
+      localStorage.setItem(
+        "bigula_profile",
+        JSON.stringify(profile)
+      )
+
+      localStorage.setItem(
+        "bigula_user",
+        JSON.stringify(profile)
+      )
+
+    }
+
+
+    return currentUser
+
+  }catch(error){
+
+    console.error(
+      "BIGULA authentication error:",
+      error
+    )
+
+    /*
+      Do NOT immediately redirect on a network/API error.
+      The user may still be logged in and the problem
+      may only be temporary.
+    */
+
+    const cached =
+      localStorage.getItem(
+        "bigula_profile"
+      )
+
+    if(cached){
+
+      try{
+
+        const profile =
+          JSON.parse(cached)
+
+        if(profile?.id){
+
+          currentUser = {
+            id:profile.id
+          }
+
+          currentProfile =
+            profile
+
+          return currentUser
+
+        }
+
+      }catch(e){
+
+        console.warn(
+          "Cached profile invalid:",
+          e
+        )
+
+      }
+
+    }
+
+    document.getElementById(
+      "msgStep1"
+    ).textContent =
+      "Unable to verify your BIGULA login. Please check your connection."
+
+    document.getElementById(
+      "msgStep1"
+    ).style.display =
+      "block"
+
+    return null
+
   }
 
-  const updated=(await r.json())[0] || {...oldProfile,...body};
+}
 
-  localStorage.setItem("bigula_user",JSON.stringify({
-    ...oldProfile,
-    ...updated,
-    id:me.id
-  }));
 
-  setStatus("✓ Profile published instantly.");
-  save.disabled=true;
+/* =========================================================
+   FOLLOWER COUNT
+========================================================= */
 
-  setTimeout(()=>location.href="account.html",800);
-};
+function followerCount(){
 
-init();
+  return Number(
+    currentProfile?.followers ??
+    currentProfile?.followers_count ??
+    0
+  )
+
+}
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const step1 =
+  document.getElementById("step1")
+
+const step2 =
+  document.getElementById("step2")
+
+const step3 =
+  document.getElementById("step3")
+
+const preview =
+  document.getElementById("preview")
+
+const editPreview =
+  document.getElementById("editPreview")
+
+const toStep2 =
+  document.getElementById("toStep2")
+
+const goLiveBtn =
+  document.getElementById("goLiveBtn")
+
+const trimBar =
+  document.getElementById("trimBar")
+
+const trimProgress =
+  document.getElementById("trimProgress")
+
+const filterBar =
+  document.getElementById("filterBar")
+
+const filterProgress =
+  document.getElementById("filterProgress")
+
+const msgStep1 =
+  document.getElementById("msgStep1")
+
+const msgStep2 =
+  document.getElementById("msgStep2")
+
+
+/* =========================================================
+   GO LIVE
+========================================================= */
+
+function updateGoLiveAccess(){
+
+  if(followerCount() >= 500){
+
+    goLiveBtn.disabled =
+      false
+
+    goLiveBtn.classList.remove(
+      "disabled"
+    )
+
+  }else{
+
+    goLiveBtn.disabled =
+      true
+
+    goLiveBtn.classList.add(
+      "disabled"
+    )
+
+  }
+
+}
+
+
+/* =========================================================
+   SELECT VIDEO
+========================================================= */
+
+document
+  .getElementById("fileBtn")
+  .onclick = ()=>{
+
+    const input =
+      document.createElement("input")
+
+    input.type =
+      "file"
+
+    input.accept =
+      "video/*"
+
+    input.onchange = ()=>{
+
+      const file =
+        input.files?.[0]
+
+      if(!file)
+        return
+
+      selectedFile =
+        file
+
+      preview.src =
+        URL.createObjectURL(
+          selectedFile
+        )
+
+      toStep2.disabled =
+        false
+
+      toStep2.classList.remove(
+        "disabled"
+      )
+
+    }
+
+    input.click()
+
+  }
+
+
+/* =========================================================
+   RECORD VIDEO
+========================================================= */
+
+document
+  .getElementById("cameraBtn")
+  .onclick =
+  async ()=>{
+
+    try{
+
+      const stream =
+        await navigator.mediaDevices.getUserMedia({
+          video:true,
+          audio:true
+        })
+
+
+      preview.srcObject =
+        stream
+
+
+      const recorder =
+        new MediaRecorder(
+          stream
+        )
+
+
+      let chunks = []
+
+
+      recorder.ondataavailable =
+        e=>{
+
+          if(e.data?.size){
+
+            chunks.push(
+              e.data
+            )
+
+          }
+
+        }
+
+
+      recorder.onstop =
+        ()=>{
+
+          selectedFile =
+            new Blob(
+              chunks,
+              {
+                type:
+                  "video/mp4"
+              }
+            )
+
+
+          preview.src =
+            URL.createObjectURL(
+              selectedFile
+            )
+
+          preview.srcObject =
+            null
+
+
+          try{
+
+            stream
+              .getTracks()
+              .forEach(
+                track =>
+                  track.stop()
+              )
+
+          }catch(e){}
+
+
+          toStep2.disabled =
+            false
+
+          toStep2.classList.remove(
+            "disabled"
+          )
+
+        }
+
+
+      recorder.start()
+
+
+      /*
+        Current demo limit:
+        15 seconds.
+      */
+
+      setTimeout(
+        ()=>{
+          if(
+            recorder.state !==
+            "inactive"
+          ){
+            recorder.stop()
+          }
+        },
+        15000
+      )
+
+
+    }catch(e){
+
+      console.error(e)
+
+      msgStep1.textContent =
+        "Camera access denied"
+
+      msgStep1.style.display =
+        "block"
+
+    }
+
+  }
+
+
+/* =========================================================
+   GO LIVE
+========================================================= */
+
+goLiveBtn.onclick =
+  ()=>{
+
+    if(
+      followerCount() >= 500
+    ){
+
+      location.href =
+        "live.html"
+
+    }
+
+  }
+
+
+/* =========================================================
+   STEP 2
+========================================================= */
+
+toStep2.onclick =
+  ()=>{
+
+    if(!selectedFile)
+      return
+
+    step1.classList.remove(
+      "active"
+    )
+
+    step2.classList.add(
+      "active"
+    )
+
+    editPreview.src =
+      preview.src
+
+    editPreview.onloadedmetadata =
+      ()=>{
+
+        trimProgress.style.width =
+          "0%"
+
+        filterProgress.style.width =
+          "0%"
+
+      }
+
+  }
+
+
+/* =========================================================
+   TRIM
+========================================================= */
+
+let trimming =
+  false
+
+
+trimBar.addEventListener(
+  "mousedown",
+  e=>{
+
+    trimming =
+      true
+
+    updateTrim(e)
+
+  }
+)
+
+
+window.addEventListener(
+  "mouseup",
+  ()=>{
+    trimming =
+      false
+  }
+)
+
+
+trimBar.addEventListener(
+  "mousemove",
+  e=>{
+
+    if(trimming)
+      updateTrim(e)
+
+  }
+)
+
+
+function updateTrim(e){
+
+  const rect =
+    trimBar.getBoundingClientRect()
+
+  let percent =
+    Math.min(
+      Math.max(
+        0,
+        (e.clientX -
+          rect.left) /
+        rect.width
+      ),
+      1
+    )
+
+
+  trimProgress.style.width =
+    percent * 100 + "%"
+
+
+  if(editPreview.duration){
+
+    editPreview.currentTime =
+      percent *
+      editPreview.duration
+
+  }
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+let filtering =
+  false
+
+
+filterBar.addEventListener(
+  "mousedown",
+  e=>{
+
+    filtering =
+      true
+
+    updateFilter(e)
+
+  }
+)
+
+
+window.addEventListener(
+  "mouseup",
+  ()=>{
+    filtering =
+      false
+  }
+)
+
+
+filterBar.addEventListener(
+  "mousemove",
+  e=>{
+
+    if(filtering)
+      updateFilter(e)
+
+  }
+)
+
+
+function updateFilter(e){
+
+  const rect =
+    filterBar.getBoundingClientRect()
+
+  let percent =
+    Math.min(
+      Math.max(
+        0,
+        (e.clientX -
+          rect.left) /
+        rect.width
+      ),
+      1
+    )
+
+
+  filterProgress.style.width =
+    percent * 100 + "%"
+
+
+  editPreview.style.filter =
+    `brightness(${1 + percent * 0.5})`
+
+}
+
+
+/* =========================================================
+   FILTER BUTTONS
+========================================================= */
+
+document
+  .querySelectorAll(
+    "#step2 button[data-filter]"
+  )
+  .forEach(
+    btn=>{
+
+      btn.onclick =
+        ()=>{
+
+          editPreview.style.filter =
+            btn.dataset.filter
+
+          filterProgress.style.width =
+            "100%"
+
+        }
+
+    }
+  )
+
+
+/* =========================================================
+   STEP 3
+========================================================= */
+
+document
+  .getElementById("toStep3")
+  .onclick =
+  ()=>{
+
+    step2.classList.remove(
+      "active"
+    )
+
+    step3.classList.add(
+      "active"
+    )
+
+  }
+
+
+/* =========================================================
+   GLOBAL UPLOAD STATUS
+========================================================= */
+
+const UPLOAD_STATE_KEY =
+  "bigula_upload_state_v1"
+
+
+const uploadChannel =
+  "BroadcastChannel" in window
+    ? new BroadcastChannel(
+        "bigula_uploads"
+      )
+    : null
+
+
+const globalUploadStatus =
+  document.getElementById(
+    "globalUploadStatus"
+  )
+
+
+const globalUploadPercent =
+  document.getElementById(
+    "globalUploadPercent"
+  )
+
+
+const globalUploadFill =
+  document.getElementById(
+    "globalUploadFill"
+  )
+
+
+function publishUploadState(
+  state
+){
+
+  localStorage.setItem(
+    UPLOAD_STATE_KEY,
+    JSON.stringify(state)
+  )
+
+
+  if(uploadChannel){
+
+    uploadChannel.postMessage(
+      state
+    )
+
+  }
+
+
+  renderUploadState(
+    state
+  )
+
+}
+
+
+function renderUploadState(
+  state
+){
+
+  if(
+    !state ||
+    !state.active
+  ){
+
+    globalUploadStatus.style.display =
+      "none"
+
+    return
+
+  }
+
+
+  globalUploadStatus.style.display =
+    "block"
+
+
+  const percent =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        Number(
+          state.percent || 0
+        )
+      )
+    )
+
+
+  globalUploadPercent.textContent =
+    `${state.status || "Uploading"} ${percent}%`
+
+
+  globalUploadFill.style.width =
+    percent + "%"
+
+}
+
+
+function readUploadState(){
+
+  try{
+
+    return JSON.parse(
+      localStorage.getItem(
+        UPLOAD_STATE_KEY
+      ) || "null"
+    )
+
+  }catch(e){
+
+    return null
+
+  }
+
+}
+
+
+if(uploadChannel){
+
+  uploadChannel.onmessage =
+    event =>
+      renderUploadState(
+        event.data
+      )
+
+}
+
+
+window.addEventListener(
+  "storage",
+  event=>{
+
+    if(
+      event.key ===
+      UPLOAD_STATE_KEY
+    ){
+
+      renderUploadState(
+        readUploadState()
+      )
+
+    }
+
+  }
+)
+
+
+renderUploadState(
+  readUploadState()
+)
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+document
+  .getElementById("uploadBtn")
+  .onclick =
+  async ()=>{
+
+    const msg =
+      document.getElementById(
+        "msgStep3"
+      )
+
+    const uploadBtn =
+      document.getElementById(
+        "uploadBtn"
+      )
+
+    const progressFill =
+      document.getElementById(
+        "progressFill"
+      )
+
+
+    if(!selectedFile){
+
+      msg.textContent =
+        "Select a video first"
+
+      msg.style.display =
+        "block"
+
+      return
+
+    }
+
+
+    const title =
+      document
+        .getElementById("title")
+        .value
+        .trim()
+
+
+    const category =
+      document
+        .getElementById("category")
+        .value
+
+
+    const description =
+      document
+        .getElementById("description")
+        .value
+        .trim()
+
+
+    if(
+      !title ||
+      !category ||
+      !description
+    ){
+
+      msg.textContent =
+        "Fill all fields"
+
+      msg.style.display =
+        "block"
+
+      return
+
+    }
+
+
+    /*
+      Make absolutely sure we have
+      the authenticated Supabase user.
+    */
+
+    if(!currentUser){
+
+      currentUser =
+        await requireUser()
+
+      if(!currentUser)
+        return
+
+    }
+
+
+    /*
+      Stop preview while uploading.
+    */
+
+    ;[
+      preview,
+      editPreview
+    ].forEach(
+      video=>{
+
+        try{
+          video.pause()
+        }catch(e){}
+
+        video.removeAttribute(
+          "autoplay"
+        )
+
+      }
+    )
+
+
+    uploadBtn.disabled =
+      true
+
+    uploadBtn.classList.add(
+      "disabled"
+    )
+
+
+    msg.style.display =
+      "block"
+
+    msg.textContent =
+      "Preparing upload..."
+
+
+    progressFill.style.width =
+      "0%"
+
+
+    try{
+
+      /*
+        IMPORTANT:
+        Get the REAL authenticated session.
+        Do NOT use SUPABASE_KEY as Bearer.
+      */
+
+      const {
+        data:{
+          session
+        },
+        error:sessionError
+      } =
+        await supabase.auth.getSession()
+
+
+      if(
+        sessionError ||
+        !session?.access_token ||
+        !session?.user
+      ){
+
+        throw new Error(
+          "Your BIGULA login session is not available. Please sign in again."
+        )
+
+      }
+
+
+      /*
+        Make sure the session user and
+        currentUser are the same account.
+      */
+
+      currentUser =
+        session.user
+
+
+      const originalName =
+        selectedFile.name ||
+        "video.mp4"
+
+
+      const safeName =
+        originalName.replace(
+          /[^a-zA-Z0-9._-]/g,
+          "_"
+        )
+
+
+      const filePath =
+        `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
+
+
+      const endpoint =
+        "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable"
+
+
+      publishUploadState({
+        active:true,
+        status:"Uploading video...",
+        percent:0,
+        fileName:originalName,
+        startedAt:Date.now()
+      })
+
+
+      const upload =
+        new tus.Upload(
+          selectedFile,
+          {
+
+            endpoint,
+
+            retryDelays:[
+              0,
+              3000,
+              5000,
+              10000,
+              20000
+            ],
+
+            chunkSize:
+              6 * 1024 * 1024,
+
+
+            /*
+              Use the REAL Supabase
+              access token.
+            */
+
+            headers:{
+              authorization:
+                `Bearer ${session.access_token}`,
+
+              apikey:
+                SUPABASE_KEY,
+
+              "x-upsert":
+                "false"
+            },
+
+
+            uploadDataDuringCreation:
+              true,
+
+
+            removeFingerprintOnSuccess:
+              true,
+
+
+            metadata:{
+              bucketName:
+                "videos",
+
+              objectName:
+                filePath,
+
+              contentType:
+                selectedFile.type ||
+                "video/mp4",
+
+              cacheControl:
+                "3600"
+            },
+
+
+            onError(error){
+
+              console.error(
+                "TUS upload error:",
+                error
+              )
+
+
+              const message =
+                error?.message ||
+                "Network error"
+
+
+              const bucketMissing =
+                /Bucket not found|NoSuchBucket/i
+                  .test(message)
+
+
+              msg.textContent =
+                bucketMissing
+                  ? 'Upload failed: Supabase Storage bucket "videos" does not exist.'
+                  : "Upload failed: " +
+                    message
+
+
+              progressFill.style.width =
+                "0%"
+
+
+              publishUploadState({
+                active:false,
+                status:"Upload failed",
+                percent:0,
+                error:message
+              })
+
+
+              uploadBtn.disabled =
+                false
+
+              uploadBtn.classList.remove(
+                "disabled"
+              )
+
+            },
+
+
+            onProgress(
+              bytesUploaded,
+              bytesTotal
+            ){
+
+              const percent =
+                bytesTotal
+                  ? Math.round(
+                      bytesUploaded /
+                      bytesTotal *
+                      100
+                    )
+                  : 0
+
+
+              progressFill.style.width =
+                percent + "%"
+
+
+              msg.textContent =
+                `Uploading video... ${percent}%`
+
+
+              publishUploadState({
+                active:true,
+                status:"Uploading video...",
+                percent,
+                fileName:originalName,
+                startedAt:Date.now()
+              })
+
+            },
+
+
+            onSuccess:
+              async function(){
+
+                try{
+
+                  progressFill.style.width =
+                    "100%"
+
+
+                  msg.textContent =
+                    "Upload complete. Saving video information..."
+
+
+                  publishUploadState({
+                    active:true,
+                    status:"Saving video...",
+                    percent:100,
+                    fileName:originalName
+                  })
+
+
+                  /*
+                    Get public URL.
+                  */
+
+                  const {
+                    data:publicData
+                  } =
+                    supabase
+                      .storage
+                      .from("videos")
+                      .getPublicUrl(
+                        filePath
+                      )
+
+
+                  const videoUrl =
+                    publicData.publicUrl
+
+
+                  /*
+                    Save metadata to videos.
+                  */
+
+                  const {
+                    data:videoRow,
+                    error:dbError
+                  } =
+                    await supabase
+                      .from("videos")
+                      .insert({
+
+                        user_id:
+                          currentUser.id,
+
+                        title,
+
+                        category,
+
+                        description,
+
+                        video_url:
+                          videoUrl
+
+                      })
+                      .select()
+                      .single()
+
+
+                  if(dbError){
+
+                    console.error(
+                      "videos table error:",
+                      dbError
+                    )
+
+
+                    msg.textContent =
+                      "Video uploaded, but saving it to the videos table failed: " +
+                      dbError.message
+
+
+                    publishUploadState({
+                      active:false,
+                      status:"Uploaded; database save failed",
+                      percent:100,
+                      error:dbError.message
+                    })
+
+                  }else{
+
+                    msg.textContent =
+                      "✅ Video uploaded and published successfully!"
+
+
+                    console.log(
+                      "BIGULA video:",
+                      videoRow
+                    )
+
+
+                    publishUploadState({
+                      active:false,
+                      status:"Upload complete",
+                      percent:100,
+                      fileName:originalName
+                    })
+
+                  }
+
+
+                  uploadBtn.disabled =
+                    false
+
+                  uploadBtn.classList.remove(
+                    "disabled"
+                  )
+
+                }catch(error){
+
+                  console.error(
+                    "Post-upload error:",
+                    error
+                  )
+
+
+                  msg.textContent =
+                    "Upload finished, but finalizing the video failed."
+
+
+                  publishUploadState({
+                    active:false,
+                    status:"Upload finished; finalizing failed",
+                    percent:100,
+                    error:
+                      error?.message ||
+                      "Unknown error"
+                  })
+
+
+                  uploadBtn.disabled =
+                    false
+
+                  uploadBtn.classList.remove(
+                    "disabled"
+                  )
+
+                }
+
+              }
+
+          }
+        )
+
+
+      msg.textContent =
+        "Starting resumable upload..."
+
+
+      upload.start()
+
+
+    }catch(error){
+
+      console.error(
+        "Upload setup error:",
+        error
+      )
+
+
+      msg.textContent =
+        "Upload failed: " +
+        (
+          error?.message ||
+          "Unknown error"
+        )
+
+
+      progressFill.style.width =
+        "0%"
+
+
+      publishUploadState({
+        active:false,
+        status:"Upload failed",
+        percent:0,
+        error:
+          error?.message ||
+          "Unknown error"
+      })
+
+
+      uploadBtn.disabled =
+        false
+
+      uploadBtn.classList.remove(
+        "disabled"
+      )
+
+    }
+
+  }
+
+
+/* =========================================================
+   INITIALIZE AUTH
+========================================================= */
+
+requireUser().then(
+  user=>{
+
+    if(user){
+
+      console.log(
+        "BIGULA authenticated user:",
+        user.id
+      )
+
+      updateGoLiveAccess()
+
+    }
+
+  }
+)
+
+
+/* =========================================================
+   AUTH STATE CHANGES
+========================================================= */
+
+supabase.auth.onAuthStateChange(
+  (event,session)=>{
+
+    console.log(
+      "BIGULA auth event:",
+      event
+    )
+
+
+    if(session?.user){
+
+      currentUser =
+        session.user
+
+    }else if(
+      event ===
+      "SIGNED_OUT"
+    ){
+
+      currentUser =
+        null
+
+    }
+
+  }
+)
+
 </script>
+
+</div>
 </body>
 </html>
