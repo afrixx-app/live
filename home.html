@@ -74,7 +74,7 @@ video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;user-
 .footer div{cursor:pointer;transition:.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:72px;height:58px;color:#ddd;font-size:20px;}
 .footer div::after{font-size:10px;font-weight:800;color:#aaa;letter-spacing:.2px;}
 #notifBtn{position:relative;}
-#notificationBadge{position:absolute;top:3px;right:12px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#ff1744;color:#fff;font-size:10px;font-weight:900;display:none;align-items:center;justify-content:center;border:2px solid #000;box-shadow:0 2px 8px rgba(255,23,68,.45);}
+#notificationBadge{position:absolute;top:3px;right:12px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#20c75a;color:#fff;font-size:10px;font-weight:900;display:none;align-items:center;justify-content:center;border:2px solid #000;box-shadow:0 2px 8px rgba(255,23,68,.45);}
 #footerUpload::after{content:'Upload';}
 #notifBtn::after{content:'Notifications';}
 #accountBtn::after{content:'Account';}
@@ -166,10 +166,27 @@ async function initUser(){
   // Login is intentionally removed from Home; signup.html is the gate.
   document.querySelector(".login-btn")?.remove()
 
-  accountBtn.onclick = () => { if(requireSignIn()) location.href = "account.html" }
+  // Footer navigation buttons are active.
+  footerUpload.classList.remove("disabled")
+  footerUpload.onclick = () => {
+    if(requireSignIn()) location.href = "upload.html"
+  }
+
+  accountBtn.classList.remove("disabled")
+  accountBtn.onclick = () => {
+    if(requireSignIn()) location.href = "account.html"
+  }
+
   notifBtn.classList.remove("disabled")
-  notifBtn.onclick = () => location.href = "notifications.html"
-  loadNotificationBadge()
+  notifBtn.onclick = () => {
+    if(requireSignIn()) location.href = "notifications.html"
+  }
+
+  await loadNotificationBadge()
+
+  // Refresh the green unread badge periodically while Home is open.
+  if(window.__bigulaBadgeTimer) clearInterval(window.__bigulaBadgeTimer)
+  window.__bigulaBadgeTimer = setInterval(loadNotificationBadge, 15000)
 
   // Keep the local profile as a cache only. Authentication comes from Supabase.
   try {
@@ -189,36 +206,61 @@ async function initUser(){
 
 
 
-// --- Notifications badge ---
+// --- Notifications / unread messages badge ---
 async function loadNotificationBadge(){
   const badge = document.getElementById("notificationBadge")
   if(!badge || !currentUser) return
 
-  // Count the user's notification rows. Try the common recipient column first,
-  // then fall back to user_id so the page works with either schema naming.
-  let count = null
+  let count = 0
+  let found = false
 
+  // Count unread notification rows.
   try{
-    const first = await supabase
+    const n = await supabase
       .from("notifications")
       .select("id",{count:"exact",head:true})
       .eq("user_id",currentUser.id)
+      .eq("is_read",false)
 
-    if(!first.error){
-      count = first.count || 0
+    if(!n.error){
+      count += n.count || 0
+      found = true
     }else{
-      const second = await supabase
+      const n2 = await supabase
         .from("notifications")
         .select("id",{count:"exact",head:true})
         .eq("recipient_id",currentUser.id)
+        .eq("is_read",false)
 
-      if(!second.error) count = second.count || 0
+      if(!n2.error){
+        count += n2.count || 0
+        found = true
+      }
     }
   }catch(e){
-    console.warn("Could not load notification count:",e)
+    console.warn("Notification badge query failed:",e)
   }
 
-  if(count === null) return
+  // Also count unread direct messages, when the messages table exists.
+  try{
+    const m = await supabase
+      .from("messages")
+      .select("id",{count:"exact",head:true})
+      .eq("recipient_id",currentUser.id)
+      .eq("is_read",false)
+
+    if(!m.error){
+      count += m.count || 0
+      found = true
+    }
+  }catch(e){
+    console.warn("Message badge query failed:",e)
+  }
+
+  if(!found){
+    badge.style.display = "none"
+    return
+  }
 
   badge.textContent = count > 99 ? "99+" : String(count)
   badge.style.display = count > 0 ? "flex" : "none"
@@ -745,4 +787,3 @@ initUser().then(()=>{
 </script>
 </body>
 </html>
-
