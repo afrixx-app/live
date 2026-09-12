@@ -115,7 +115,7 @@ video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;user-
 
 <div class="footer">
   <div id="footerUpload" title="Upload">＋</div>
-  <div id="notifBtn" class="disabled">🔔<span id="notificationBadge">0</span></div>
+  <div id="notifBtn">🔔<span id="notificationBadge">0</span></div>
   <div id="accountBtn">👤</div>
 </div>
 
@@ -130,18 +130,13 @@ let currentUser = null;
 let currentVideoId = null;
 
 async function requireSignIn(){
-  try{
-    const { data, error } = await supabase.auth.getSession();
-    if(!error && data?.session?.user){
-      currentUser = data.session.user;
-      return true;
-    }
-  }catch(e){
-    console.warn("Could not verify sign-in:", e);
+  const { data, error } = await supabase.auth.getSession();
+  if(!error && data?.session?.user){
+    currentUser = data.session.user;
+    return true;
   }
-
   alert("Please sign in first.");
-  location.href = "signup.html";
+  window.location.href = "signup.html";
   return false;
 }
 
@@ -168,35 +163,36 @@ async function initUser(){
   const accountBtn = document.getElementById("accountBtn")
   const notifBtn = document.getElementById("notifBtn")
 
-  // Everyone reaching Home has already authenticated through signup.html.
-  // Bottom controls are always clickable. Authentication is checked at click time.
-  uploadBtn?.classList.remove("disabled")
-  footerUpload?.classList.remove("disabled")
-  notifBtn?.classList.remove("disabled")
-  accountBtn?.classList.remove("disabled")
+  // Bottom buttons are always active. Authentication is checked on every click.
+  ;[uploadBtn, footerUpload, accountBtn, notifBtn].forEach(btn => {
+    if(btn){
+      btn.classList.remove("disabled")
+      btn.style.pointerEvents = "auto"
+      btn.style.cursor = "pointer"
+    }
+  })
 
-  uploadBtn && (uploadBtn.onclick = async () => {
-    if(await requireSignIn()) location.href = "upload.html";
-  });
+  if(uploadBtn) uploadBtn.onclick = async e => {
+    e.preventDefault()
+    if(await requireSignIn()) location.href = "upload.html"
+  }
 
-  footerUpload && (footerUpload.onclick = async (e) => {
-    e.preventDefault();
-    if(await requireSignIn()) location.href = "upload.html";
-  });
+  if(footerUpload) footerUpload.onclick = async e => {
+    e.preventDefault()
+    if(await requireSignIn()) location.href = "upload.html"
+  }
 
-  // Login is intentionally removed from Home; signup.html is the gate.
+  if(accountBtn) accountBtn.onclick = async e => {
+    e.preventDefault()
+    if(await requireSignIn()) location.href = "account.html"
+  }
+
+  if(notifBtn) notifBtn.onclick = async e => {
+    e.preventDefault()
+    if(await requireSignIn()) location.href = "notifications.html"
+  }
+
   document.querySelector(".login-btn")?.remove()
-
-  accountBtn && (accountBtn.onclick = async (e) => {
-    e.preventDefault();
-    if(await requireSignIn()) location.href = "account.html";
-  });
-
-  notifBtn && (notifBtn.onclick = async (e) => {
-    e.preventDefault();
-    if(await requireSignIn()) location.href = "notifications.html";
-  });
-
   loadNotificationBadge()
 
   // Keep the local profile as a cache only. Authentication comes from Supabase.
@@ -217,49 +213,39 @@ async function initUser(){
 
 
 
-// --- Notifications / messages unread badge ---
+// --- Notifications badge ---
 async function loadNotificationBadge(){
   const badge = document.getElementById("notificationBadge")
   if(!badge || !currentUser) return
 
-  let count = 0
+  // Count the user's notification rows. Try the common recipient column first,
+  // then fall back to user_id so the page works with either schema naming.
+  let count = null
 
   try{
-    const n1 = await supabase
+    const first = await supabase
       .from("notifications")
       .select("id",{count:"exact",head:true})
       .eq("user_id",currentUser.id)
-      .eq("is_read",false)
 
-    if(!n1.error){
-      count += n1.count || 0
+    if(!first.error){
+      count = first.count || 0
     }else{
-      const n2 = await supabase
+      const second = await supabase
         .from("notifications")
         .select("id",{count:"exact",head:true})
         .eq("recipient_id",currentUser.id)
-        .eq("is_read",false)
-      if(!n2.error) count += n2.count || 0
+
+      if(!second.error) count = second.count || 0
     }
   }catch(e){
-    console.warn("Could not load notification unread count:",e)
+    console.warn("Could not load notification count:",e)
   }
 
-  try{
-    const m = await supabase
-      .from("messages")
-      .select("id",{count:"exact",head:true})
-      .eq("recipient_id",currentUser.id)
-      .eq("is_read",false)
-
-    if(!m.error) count += m.count || 0
-  }catch(e){
-    console.warn("Could not load message unread count:",e)
-  }
+  if(count === null) return
 
   badge.textContent = count > 99 ? "99+" : String(count)
   badge.style.display = count > 0 ? "flex" : "none"
-  badge.style.background = "#16a34a"
 }
 
 // --- Fetch public videos / live counts ---
@@ -780,6 +766,27 @@ document.getElementById("searchInput").addEventListener("input",e=>{
 initUser().then(()=>{
   if(currentUser) fetchVideos("foryou")
 })
+
+// FINAL FOOTER BUTTON NAVIGATION — capture phase prevents dead/overridden buttons.
+document.addEventListener("click", async function(e){
+  const btn = e.target.closest("#footerUpload, #notifBtn, #accountBtn");
+  if(!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const { data } = await supabase.auth.getSession();
+  if(!data?.session?.user){
+    alert("Please sign in first.");
+    location.href = "signup.html";
+    return;
+  }
+
+  if(btn.id === "footerUpload") location.href = "upload.html";
+  if(btn.id === "notifBtn") location.href = "notifications.html";
+  if(btn.id === "accountBtn") location.href = "account.html";
+}, true);
+
 </script>
 </body>
 </html>
