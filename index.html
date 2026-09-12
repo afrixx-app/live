@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA – Welcome</title>
-
 <style>
 *{
   margin:0;
@@ -104,42 +103,408 @@ body{
 @media(max-width:600px){
   .splash h1{font-size:40px;}
 }
+
+
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  background:linear-gradient(135deg,#0f0f0f,#1a1a2e,#16213e);
+  color:white;
+  min-height:100dvh;
+  height:100dvh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  padding:0;
+}
+
+ .container{
+  width:min(94%,500px);
+  height:100%;
+  max-height:100dvh;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+  padding:16px 0;
+}
+
+.step{
+  display:none;
+  animation:fade 0.5s ease;
+  height:100%;
+}
+
+ .step.active{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:0;
+  overflow:hidden;
+}
+
+h1{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+p{
+  opacity:0.8;
+  margin-bottom:15px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+ .buttons{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:18px;
+  flex:0 0 auto;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:30px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.skip{
+  background:transparent;
+  color:#ccc;
+}
+
+.next{
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+  color:white;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* INTEREST STEP LAYOUT
+   The grid is the only scrolling area. The Continue button is always
+   inside the viewport and never pushed below the screen. */
+.interests-wrapper{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.interests-grid{
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  align-content:start;
+  gap:8px;
+  margin-top:8px;
+  overflow-y:auto;
+  min-height:0;
+  max-height:none;
+  padding:2px 2px 10px;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+
+.interest{
+  padding:8px;
+  border-radius:18px;
+  font-size:12px;
+  background:rgba(255,255,255,0.08);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.interest.selected{
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+}
+
+/* Continue Button */
+.finish-btn{
+  flex:0 0 46px;
+  margin-top:8px;
+  width:100%;
+  min-height:46px;
+  max-height:46px;
+  background:linear-gradient(45deg,#00f5ff,#ff00c8);
+  color:white;
+  opacity:0.4;
+  cursor:not-allowed;
+  transition:0.3s;
+}
+
+.finish-btn.active{
+  opacity:1;
+  cursor:pointer;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateX(10px);}
+  to{opacity:1; transform:translateX(0);}
+}
+
+/* Responsive / short-screen layout */
+@media(max-width:600px){
+  .container{
+    width:94%;
+    padding:10px 0;
+  }
+  .step.active{
+    justify-content:flex-start;
+  }
+  .step.active > h1{
+    flex:0 0 auto;
+  }
+  .step.active > p{
+    flex:0 0 auto;
+  }
+  .interests-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-height:650px){
+  .container{padding:8px 0;}
+  h1{font-size:20px; margin-bottom:6px;}
+  p{font-size:13px; margin-bottom:7px;}
+  .interest{font-size:11px;padding:6px;}
+  .buttons{margin-top:10px;}
+  .finish-btn{flex-basis:42px; min-height:42px; max-height:42px; margin-top:6px;}
+}
+
+@media(max-height:500px){
+  .container{padding:5px 0;}
+  h1{font-size:18px; margin-bottom:4px;}
+  p{font-size:12px; margin-bottom:4px;}
+  .interest{padding:5px;font-size:10px;}
+  .finish-btn{flex-basis:40px; min-height:40px; max-height:40px;}
+}
+
+/* Combined index + interests portal */
+body{min-height:100vh; height:100vh;}
+#splashScreen{position:absolute; inset:0; display:flex; justify-content:center; align-items:center; z-index:20;}
+#interestsPortal{position:absolute; inset:0; z-index:10; display:none; overflow:hidden;}
+#interestsPortal .container{display:flex;}
 </style>
 </head>
-
 <body>
-
+<div id="splashScreen">
 <div class="floating">
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
+  <span></span><span></span><span></span><span></span><span></span><span></span>
 </div>
-
 <div class="splash">
-  <h2>welcome to</h2>
-  <h1>BIGULA</h1>
-  <p>your stressfree home</p>
+  <h2>welcome to</h2><h1>BIGULA</h1><p>your stressfree home</p>
 </div>
+</div>
+<div id="interestsPortal">
+<div class="container" id="interestContainer">
 
+  <!-- Step 1 -->
+  <div class="step active">
+    <h1>Welcome to BIGULA </h1>
+    <p>BIGULA is your stress-free content platform. Watch, create, upload and earn from your passion.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <h1>Login & Build Your Profile </h1>
+    <p>Create your account to personalize your feed and connect with your audience.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <h1>Upload & Share </h1>
+    <p>Upload videos, share your talent, and grow your community on BIGULA.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Next</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <h1>Monetize </h1>
+    <p>Earn money by monetizing your content. Turn creativity into income.</p>
+    <div class="buttons">
+      <button class="skip">Skip</button>
+      <button class="next">Choose Interests</button>
+    </div>
+  </div>
+
+  <!-- Interests Step -->
+  <div class="step">
+    <h1>Select Your Interests</h1>
+    <p>Choose what you love. We’ll show you videos based on your preferences.</p>
+
+    <div class="interests-wrapper">
+      <div class="interests-grid">
+        <div class="interest">Entertainment</div>
+        <div class="interest">Comedy</div>
+        <div class="interest">Music</div>
+        <div class="interest">Autos & Vehicles</div>
+        <div class="interest">Animals</div>
+        <div class="interest">Cooking</div>
+        <div class="interest">Film & Animation</div>
+        <div class="interest">People & Blogs</div>
+        <div class="interest">Fashion & Style</div>
+        <div class="interest">Science & Technology</div>
+        <div class="interest">Sports</div>
+        <div class="interest">Technology</div>
+        <div class="interest">Education</div>
+        <div class="interest">Travel</div>
+        <div class="interest">Dance</div>
+        <div class="interest">Business</div>
+        <div class="interest">News & Politics</div>
+      </div>
+
+      <button class="finish-btn" disabled>Continue</button>
+    </div>
+  </div>
+
+</div>
+</div>
 <script>
-// Wait 4 seconds before checking
-setTimeout(function(){
+(function(){
+  const SPLASH_TIME = 4000;
+  const STORAGE_KEY = "userInterests";
+  const ONBOARDING_KEY = "bigulaInterestsCompleted";
 
-  const interests = localStorage.getItem("userInterests");
+  function readSavedInterests(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+    }catch(e){
+      return [];
+    }
+  }
 
-  if(!interests){
-    // First time user
-    window.location.href = "interests.html";
-  } else {
-    // Returning user
+  function hasCompletedInterests(){
+    return localStorage.getItem(ONBOARDING_KEY) === "true";
+  }
+
+  function saveInterests(interests){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(interests));
+    localStorage.setItem(ONBOARDING_KEY, "true");
+  }
+
+  function finishOnboarding(){
+    // Even Skip is a completed first-time onboarding choice.
+    // This prevents the interests screen from appearing on every visit.
+    saveInterests(readSavedInterests());
     window.location.href = "home.html";
   }
 
-}, 4000);
-</script>
+  function showInterests(){
+    const splash = document.getElementById("splashScreen");
+    const portal = document.getElementById("interestsPortal");
+    if(splash) splash.style.display = "none";
+    if(portal) portal.style.display = "flex";
+    initInterests();
+  }
 
+  function initInterests(){
+    const steps = document.querySelectorAll("#interestContainer .step");
+    const nextBtns = document.querySelectorAll("#interestContainer .next");
+    const skipBtns = document.querySelectorAll("#interestContainer .skip");
+    const interests = document.querySelectorAll("#interestContainer .interest");
+    const finishBtn = document.querySelector("#interestContainer .finish-btn");
+
+    let currentStep = 0;
+    let selectedInterests = readSavedInterests();
+
+    // Restore any locally saved choices if the onboarding screen is ever opened again.
+    interests.forEach(item=>{
+      if(selectedInterests.includes(item.innerText.trim())){
+        item.classList.add("selected");
+      }
+    });
+
+    function updateFinishButton(){
+      const hasSelection = selectedInterests.length > 0;
+      finishBtn.disabled = !hasSelection;
+      finishBtn.classList.toggle("active", hasSelection);
+    }
+
+    function showStep(index){
+      if(!steps.length) return;
+      currentStep = Math.max(0, Math.min(index, steps.length - 1));
+      steps.forEach(step => step.classList.remove("active"));
+      steps[currentStep].classList.add("active");
+    }
+
+    nextBtns.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(currentStep < steps.length - 1){
+          showStep(currentStep + 1);
+        }
+      });
+    });
+
+    skipBtns.forEach(btn=>{
+      btn.addEventListener("click", finishOnboarding);
+    });
+
+    interests.forEach(item=>{
+      item.addEventListener("click", ()=>{
+        const value = item.innerText.trim();
+        item.classList.toggle("selected");
+
+        if(item.classList.contains("selected")){
+          if(!selectedInterests.includes(value)) selectedInterests.push(value);
+        }else{
+          selectedInterests = selectedInterests.filter(i => i !== value);
+        }
+
+        // Save immediately so a refresh does not lose choices.
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedInterests));
+        updateFinishButton();
+      });
+    });
+
+    finishBtn.addEventListener("click", ()=>{
+      if(selectedInterests.length === 0) return;
+      saveInterests(selectedInterests);
+      window.location.href = "home.html";
+    });
+
+    updateFinishButton();
+  }
+
+  // Splash first. After splash:
+  // - returning user who already completed onboarding -> Home
+  // - first-time user -> Interests
+  setTimeout(function(){
+    if(hasCompletedInterests()){
+      window.location.href = "home.html";
+    }else{
+      showInterests();
+    }
+  }, SPLASH_TIME);
+})();
+</script>
 </body>
 </html>
