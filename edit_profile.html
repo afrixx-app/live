@@ -98,12 +98,12 @@ let me=null, oldProfile=null, pendingPhotoUrl="";
 let cameraStream=null;
 
 async function req(path,options={}){
-  return fetch(SB+"/rest/v1/"+path,{
+  const response=await fetch(SB+"/rest/v1/"+path,{
     ...options,
     headers:headers(options.headers||{})
   });
+  return response;
 }
-
 function setStatus(text){
   document.getElementById("status").textContent=text;
 }
@@ -275,19 +275,19 @@ async function init(){
     accessToken=session.access_token;
     me=session.user;
 
-    const r=await req(
-      "users?id=eq."+encodeURIComponent(me.id)+
-      "&select=*"
-    );
+    const {data:profileRows,error:profileError}=await supabase
+      .from("users")
+      .select("*")
+      .eq("id",me.id)
+      .limit(1);
 
-    if(!r.ok){
-      console.error(await r.text());
-      setStatus("Could not load your profile.");
+    if(profileError){
+      console.error("Profile load error:",profileError);
+      setStatus("Could not load your profile: "+profileError.message);
       return;
     }
 
-    const rows=await r.json();
-    oldProfile=rows[0];
+    oldProfile=profileRows?.[0] || null;
 
     if(!oldProfile){
       setStatus("Profile not found.");
@@ -323,18 +323,20 @@ document.getElementById("save").onclick=async()=>{
   setStatus("Publishing changes…");
 
   // Re-check the server value immediately before updating.
-  const check=await req(
-    "users?id=eq."+encodeURIComponent(me.id)+
-    "&select=profile_updated_at,profile_edit_at"
-  );
+  const {data:currentRows,error:checkError}=await supabase
+    .from("users")
+    .select("profile_updated_at,profile_edit_at")
+    .eq("id",me.id)
+    .limit(1);
 
-  if(!check.ok){
+  if(checkError){
+    console.error("Profile verification error:",checkError);
     save.disabled=false;
-    setStatus("Could not verify profile editing time.");
+    setStatus("Could not verify profile editing time: "+checkError.message);
     return;
   }
 
-  const current=(await check.json())[0] || oldProfile;
+  const current=currentRows?.[0] || oldProfile;
   const last=current.profile_updated_at || current.profile_edit_at;
 
   if(last && (Date.now()-new Date(last).getTime())<30*86400000){
@@ -362,23 +364,21 @@ document.getElementById("save").onclick=async()=>{
     profile_updated_at:new Date().toISOString()
   };
 
-  const r=await req(
-    "users?id=eq."+encodeURIComponent(me.id),
-    {
-      method:"PATCH",
-      headers:{Prefer:"return=representation"},
-      body:JSON.stringify(body)
-    }
-  );
+  const {data:updatedRows,error:updateError}=await supabase
+    .from("users")
+    .update(body)
+    .eq("id",me.id)
+    .select()
+    .limit(1);
 
-  if(!r.ok){
-    console.error(await r.text());
+  if(updateError){
+    console.error("Profile update error:",updateError);
     save.disabled=false;
-    setStatus("Update failed — check your users RLS policy or column names.");
+    setStatus("Update failed: "+updateError.message);
     return;
   }
 
-  const updated=(await r.json())[0] || {...oldProfile,...body};
+  const updated=updatedRows?.[0] || {...oldProfile,...body};
 
   localStorage.setItem("bigula_user",JSON.stringify({
     ...oldProfile,
