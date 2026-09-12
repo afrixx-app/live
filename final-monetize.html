@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA Monetization Setup</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Roboto',sans-serif;
+  background:#f5f5f5;
+  color:#111;
+}
+
+.header{
+  background:#fff;
+  padding:15px 25px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.header h1{
+  color:#ff4d4f;
+  font-size:1.3rem;
+}
+
+.container{
+  max-width:900px;
+  margin:40px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.section{
+  margin-bottom:40px;
+}
+
+.section h2{
+  margin-bottom:10px;
+}
+
+.step{
+  padding:20px;
+  border:1px solid #eee;
+  border-radius:12px;
+  margin-top:15px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:25px;
+  cursor:pointer;
+  font-weight:500;
+}
+
+.primary{
+  background:#111;
+  color:#fff;
+}
+
+.primary:disabled{
+  background:#999;
+  cursor:not-allowed;
+}
+
+.progress{
+  height:10px;
+  background:#ddd;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#ff4d4f;
+  transition:0.4s;
+}
+
+.locked{
+  opacity:0.5;
+  pointer-events:none;
+}
+
+.note{
+  font-size:13px;
+  color:#666;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>BIGULA Creator Monetization</h1>
+  <button onclick="location.href='my-dashboard.html'">Back to Dashboard</button>
+</div>
+
+<div class="container">
+
+  <!-- STEP 1 -->
+  <div class="section">
+    <h2>Step 1: Identity Verification</h2>
+    <div class="step">
+      <p>To receive payments, verify your identity.</p>
+
+      <input type="text" placeholder="Legal Full Name">
+      <input type="date">
+      <select>
+        <option>Select Country</option>
+        <option>United States</option>
+        <option>United Kingdom</option>
+        <option>Kenya</option>
+        <option>South Africa</option>
+        <option>Nigeria</option>
+        <option>India</option>
+        <option>Other</option>
+      </select>
+
+      <label>Upload Government ID (Passport / National ID / Driver's License)</label>
+      <input type="file" accept="image/*,application/pdf">
+
+      <button class="primary" onclick="verifyIdentity()">Submit Verification</button>
+      <p class="note">Verification may take up to 24 hours.</p>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="section">
+    <h2>Step 2: Earnings Threshold</h2>
+    <div class="step">
+      <p>You must earn at least <strong>$10</strong> before adding a payment method.</p>
+
+      <strong>Current Earnings: $<span id="earnings">3.75</span> / $10</strong>
+      <div class="progress">
+        <div class="progress-fill" id="earningsBar"></div>
+      </div>
+
+      <p class="note">Once you reach $10, payment options will unlock automatically.</p>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="section">
+    <h2>Step 3: Add Payment Method</h2>
+    <div class="step locked" id="paymentSection">
+
+      <select>
+        <option>Select Payment Method</option>
+        <option>Bank Transfer (SWIFT / IBAN)</option>
+        <option>PayPal</option>
+        <option>Payoneer</option>
+        <option>Wise</option>
+        <option>Mobile Money (M-Pesa, MTN, Airtel)</option>
+        <option>USDT (Crypto - TRC20/ERC20)</option>
+      </select>
+
+      <input type="text" placeholder="Account / Wallet / Phone Number">
+      <input type="text" placeholder="Account Holder Name">
+
+      <button class="primary">Save Payment Method</button>
+
+      <p class="note">Payments are processed monthly.</p>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+// DEMO earnings (replace later with Firestore)
+let earnings = 3.75;
+let threshold = 10;
+
+function updateEarnings(){
+  let percent = (earnings / threshold) * 100;
+  if(percent > 100) percent = 100;
+
+  document.getElementById("earningsBar").style.width = percent + "%";
+
+  if(earnings >= threshold){
+    document.getElementById("paymentSection").classList.remove("locked");
+  }
+}
+
+function verifyIdentity(){
+  alert("Your identity has been submitted for review.");
+}
+
+updateEarnings();
+
+</script>
+
+</body>
+</html>

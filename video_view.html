@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BIGULA • Video</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#07080b;--panel:#11131a;--panel2:#171a23;--text:#f7f7fa;--muted:#9ca3af;--line:#242833;--accent:#ff2d55;--green:#23d18b}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}body{min-height:100vh}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.top{position:fixed;top:0;left:0;right:0;height:58px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(#050609e8,transparent);pointer-events:none}.top>*{pointer-events:auto}
+.logo{font-weight:900;letter-spacing:.7px;font-size:20px}.topbtn{width:40px;height:40px;border:0;border-radius:50%;background:#ffffff12;color:#fff;font-size:20px}
+.wrap{max-width:900px;margin:auto;padding-bottom:90px}.playerShell{position:relative;background:#000;width:100%;height:min(76vh,760px);min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+video{width:100%;height:100%;object-fit:contain;background:#000}
+.centerPlay{position:absolute;width:74px;height:74px;border:0;border-radius:50%;background:#0009;color:#fff;font-size:30px;display:grid;place-items:center;backdrop-filter:blur(8px);opacity:0;transition:.2s}.playerShell.paused .centerPlay{opacity:1}
+.controls{position:absolute;left:0;right:0;bottom:0;padding:10px 12px 12px;background:linear-gradient(transparent,#000d);transition:.2s}.controls.hidden{opacity:0;pointer-events:none}
+.progress{width:100%;accent-color:var(--accent);height:4px}.ctrlrow{display:flex;align-items:center;gap:7px;margin-top:7px}.ctrl{border:0;background:#ffffff14;color:#fff;border-radius:9px;height:36px;min-width:36px;padding:0 9px}.time{font-size:12px;color:#ddd;margin-right:auto}.speed{font-size:12px}
+.info{padding:16px 16px 8px}.creatorRow{display:flex;align-items:center;gap:11px}.avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#252936;border:1px solid #303440}.creatorMeta{min-width:0;flex:1}.creatorName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.handle{color:var(--muted);font-size:13px;margin-top:2px}.follow{border:0;background:#fff;color:#08090c;font-weight:800;border-radius:9px;padding:9px 14px}.follow.following{background:#292d38;color:#fff}
+.title{font-size:20px;font-weight:850;margin:14px 0 6px;line-height:1.2}.desc{color:#d2d5dc;line-height:1.45;font-size:14px;white-space:pre-wrap}.date{color:var(--muted);font-size:12px;margin-top:8px}
+.actions{display:flex;gap:8px;overflow:auto;padding:12px 16px 5px}.action{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:12px;min-width:72px;padding:9px 10px;text-align:center}.action .ico{font-size:19px;display:block}.action small{color:var(--muted);font-size:11px}.action.active{border-color:#ff2d5555;background:#ff2d5514}.action.reuse{border-color:#23d18b44}.action:disabled{opacity:.42;cursor:not-allowed}
+.sound{margin:9px 16px 12px;background:linear-gradient(120deg,#151923,#101217);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px}.disc{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,#ddd 0 8%,#333 9% 20%,#111 21% 55%,#555 56% 60%,#111 61%);animation:spin 3s linear infinite}.disc.stop{animation-play-state:paused}.soundText{flex:1;min-width:0}.soundTitle{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.soundSub{font-size:12px;color:var(--muted);margin-top:3px}.comments{border-top:1px solid var(--line);margin-top:8px;padding:14px 16px}.sectionHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sectionHead b{font-size:16px}.commentForm{display:flex;gap:8px}.commentForm input{flex:1;min-width:0;background:#151820;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:#fff;outline:none}.send{border:0;background:var(--accent);color:#fff;font-weight:800;border-radius:11px;padding:0 15px}.comment{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid #1c1f27}.comment .avatar{width:34px;height:34px}.commentBody{flex:1}.commentTop{display:flex;gap:8px;align-items:center}.commentTop b{font-size:13px}.commentTop span{font-size:11px;color:var(--muted)}.commentText{font-size:13px;color:#e2e4e9;margin-top:4px;line-height:1.4}.empty{color:var(--muted);font-size:13px;padding:12px 0}
+.more{display:flex;flex-wrap:wrap;gap:8px;padding:5px 16px 15px}.more button{border:1px solid var(--line);background:var(--panel);color:#ddd;border-radius:10px;padding:9px 12px}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:68px;background:#090a0eeF;border-top:1px solid var(--line);display:flex;justify-content:center;gap:8px;z-index:40;backdrop-filter:blur(16px)}.nav{flex:1;max-width:180px;border:0;background:none;color:#aaa}.nav span{display:block;font-size:20px}.nav b{font-size:10px}.nav.active{color:#fff}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(15px);background:#222630;color:#fff;border:1px solid #343947;border-radius:12px;padding:11px 14px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.loading{padding:100px 20px;text-align:center;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}@media(min-width:760px){.playerShell{border-radius:0 0 16px 16px;margin-top:8px}.info,.actions,.sound,.comments,.more{padding-left:0;padding-right:0}.bottom{display:none}}
+</style>
+</head>
+<body>
+<div class="top"><div class="logo">BIGULA</div><button class="topbtn" id="moreTop">⋯</button></div>
+<main class="wrap" id="app"><div class="loading">Loading video…</div></main>
+<div class="toast" id="toast"></div>
+<nav class="bottom">
+<button class="nav active" onclick="location.href='home.html'"><span>⌂</span><b>Home</b></button>
+<button class="nav" onclick="location.href='explore.html'"><span>⌕</span><b>Explore</b></button>
+<button class="nav" onclick="location.href='upload.html'"><span>＋</span><b>Upload</b></button>
+<button class="nav" onclick="location.href='account.html'"><span>◎</span><b>Profile</b></button>
+</nav>
+
+<script>
+const SUPABASE_URL='https://vfteiggdhthvrrlndtbs.supabase.co';
+const SUPABASE_KEY='sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe';
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
+const id=new URLSearchParams(location.search).get('id');
+let video=null, me=null, owner=null, liked=false, following=false, playing=false, commentsOpen=true;
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const toast=m=>{const x=document.getElementById('toast');x.textContent=m;x.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove('show'),2200)};
+const fmt=n=>n==null?'0':Intl.NumberFormat(undefined,{notation:'compact',maximumFractionDigits:1}).format(n);
+const dateFmt=d=>d?new Intl.DateTimeFormat(undefined,{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(d)):'—';
+const avatar=u=>u?.avatar_url||u?.photo_url||u?.profile_photo||u?.avatar||'';
+function profileUrl(){return owner?.id?`creator_profile.html?id=${encodeURIComponent(owner.id)}`:'#'}
+function ownerId(v){return v?.user_id||v?.creator_id||v?.owner_id}
+async function getMe(){const {data}=await supabase.auth.getUser();me=data?.user||null}
+async function first(table, selects, filters){
+  let q=supabase.from(table).select(selects);
+  for(const [k,v] of filters) q=q.eq(k,v);
+  const {data,error}=await q.limit(1); if(error) return null; return data?.[0]||null;
+}
+async function count(table, field, value){const {count}=await supabase.from(table).select('*',{count:'exact',head:true}).eq(field,value);return count||0}
+async function load(){
+ if(!id){document.getElementById('app').innerHTML='<div class="loading">No video selected.</div>';return}
+ await getMe();
+ let r=await supabase.from('videos').select('*').eq('id',id).maybeSingle();
+ if(r.error||!r.data){document.getElementById('app').innerHTML='<div class="loading">Video not found or unavailable.</div>';return}
+ video=r.data;
+ if(video.publication_status && !['approved','published','public'].includes(String(video.publication_status).toLowerCase()) && video.user_id!==me?.id){
+   document.getElementById('app').innerHTML='<div class="loading">This video is not available.</div>';return;
+ }
+ const oid=ownerId(video);
+ owner=await first('users','*',[['id',oid]]);
+ if(me){liked=!!await first('likes','id',[['video_id',id],['user_id',me.id]]);following=!!await first('followers','id',[['follower_id',me.id],['following_id',oid]])}
+ const [likes,comments,views,followers]=await Promise.all([count('likes','video_id',id),count('comments','video_id',id),count('views','video_id',id),count('followers','following_id',oid)]);
+ render({likes,comments,views,followers});
+ loadComments();
+}
+function render(c){
+ const url=video.video_url||video.url||video.file_url;
+ const canReuse=video.allow_sound_reuse===true||video.sound_reuse_allowed===true||video.reuse_allowed===true;
+ const uname=owner?.username||owner?.user_name||owner?.name||'BIGULA creator';
+ const display=owner?.display_name||owner?.full_name||owner?.name||uname;
+ document.getElementById('app').innerHTML=`
+ <section class="playerShell paused" id="shell">
+   <video id="vid" playsinline preload="metadata" src="${esc(url)}"></video>
+   <button class="centerPlay" id="centerPlay">▶</button>
+   <div class="controls" id="controls">
+    <input class="progress" id="progress" type="range" min="0" max="1000" value="0">
+    <div class="ctrlrow">
+      <button class="ctrl" id="play">▶</button><button class="ctrl" id="mute">🔊</button>
+      <span class="time" id="time">0:00 / 0:00</span>
+      <button class="ctrl speed" id="speed">1×</button><button class="ctrl" id="pip">▣</button><button class="ctrl" id="full">⛶</button>
+    </div>
+   </div>
+ </section>
+ <section class="info">
+   <div class="creatorRow">
+    <img class="avatar" src="${esc(avatar(owner))}" onerror="this.style.display='none'">
+    <div class="creatorMeta"><div class="creatorName">${esc(display)}</div><div class="handle">@${esc(uname)} · ${fmt(c.followers)} followers</div></div>
+    ${me?.id!==ownerId(video)?`<button class="follow ${following?'following':''}" id="follow">${following?'Following':'Follow'}</button>`:''}
+   </div>
+   <div class="title">${esc(video.title||'Untitled video')}</div>
+   ${video.description?`<div class="desc">${esc(video.description)}</div>`:''}
+   <div class="date">Published ${dateFmt(video.published_at||video.created_at||video.updated_at)} · ${fmt(c.views)} views</div>
+ </section>
+ <div class="actions">
+  <button class="action ${liked?'active':''}" id="like"><span class="ico">♥</span><small id="likeTxt">${liked?'Liked':'Like'} · ${fmt(c.likes)}</small></button>
+  <button class="action" id="commentBtn"><span class="ico">💬</span><small>${fmt(c.comments)} comments</small></button>
+  <button class="action reuse" id="reuse" ${canReuse?'':'disabled'}><span class="ico">🎵</span><small>${canReuse?'Reuse sound':'Sound reuse off'}</small></button>
+  <button class="action" id="share"><span class="ico">↗</span><small>Share</small></button>
+  <button class="action" id="save"><span class="ico">🔖</span><small>Save</small></button>
+ </div>
+ <div class="sound"><div class="disc ${playing?'':'stop'}" id="disc"></div><div class="soundText"><div class="soundTitle">${esc(video.sound_title||video.sound_name||'Original sound')}</div><div class="soundSub">${canReuse?'Sound can be reused on BIGULA':'Creator has disabled sound reuse'}</div></div><button class="ctrl" id="soundInfo">ⓘ</button></div>
+ <section class="comments" id="commentsSection"><div class="sectionHead"><b>Comments</b><button class="ctrl" id="closeComments">⌃</button></div>
+  <form class="commentForm" id="commentForm"><input id="commentInput" maxlength="500" placeholder="${me?'Add a comment…':'Sign in to comment'}" ${me?'':'disabled'}><button class="send" ${me?'':'disabled'}>Post</button></form>
+  <div id="commentList"></div>
+ </section>
+ <div class="more"><button id="notInterested">Not interested</button><button id="report">Report</button><button id="copyLink">Copy link</button></div>`;
+ setupPlayer(); bindActions(canReuse); recordView();
+}
+function setupPlayer(){
+ const v=document.getElementById('vid'),shell=document.getElementById('shell'),play=document.getElementById('play');
+ const progress=document.getElementById('progress'),time=document.getElementById('time'),mute=document.getElementById('mute');
+ const fmtT=s=>{s=Math.max(0,Math.floor(s||0));return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};
+ const toggle=async()=>{if(v.paused) await v.play();else v.pause()};
+ document.getElementById('centerPlay').onclick=toggle; play.onclick=toggle;
+ v.addEventListener('play',()=>{playing=true;shell.classList.remove('paused');play.textContent='Ⅱ';document.getElementById('disc').classList.remove('stop')});
+ v.addEventListener('pause',()=>{playing=false;shell.classList.add('paused');play.textContent='▶';document.getElementById('disc').classList.add('stop')});
+ v.addEventListener('loadedmetadata',()=>time.textContent=`0:00 / ${fmtT(v.duration)}`);
+ v.addEventListener('timeupdate',()=>{progress.value=v.duration?(v.currentTime/v.duration)*1000:0;time.textContent=`${fmtT(v.currentTime)} / ${fmtT(v.duration)}`});
+ progress.oninput=()=>{if(v.duration)v.currentTime=(progress.value/1000)*v.duration};
+ mute.onclick=()=>{v.muted=!v.muted;mute.textContent=v.muted?'🔇':'🔊'};
+ document.getElementById('speed').onclick=()=>{const rates=[1,1.25,1.5,2,.75];let i=rates.indexOf(v.playbackRate);v.playbackRate=rates[(i+1)%rates.length];document.getElementById('speed').textContent=v.playbackRate+'×'};
+ document.getElementById('full').onclick=()=>shell.requestFullscreen?.();
+ document.getElementById('pip').onclick=()=>v.requestPictureInPicture?.().catch(()=>{});
+ shell.onclick=e=>{if(e.target===v)toggle()};
+ let hide; const reveal=()=>{document.getElementById('controls').classList.remove('hidden');clearTimeout(hide);hide=setTimeout(()=>{if(!v.paused)document.getElementById('controls').classList.add('hidden')},3000)};shell.addEventListener('mousemove',reveal);shell.addEventListener('touchstart',reveal,{passive:true});
+}
+async function bindActions(canReuse){
+ document.getElementById('follow')?.addEventListener('click',async()=>{
+  if(!me)return toast('Sign in to follow creators');
+  const oid=ownerId(video);
+  if(following){const {error}=await supabase.from('followers').delete().eq('follower_id',me.id).eq('following_id',oid);if(!error){following=false;}}
+  else{const {error}=await supabase.from('followers').insert({follower_id:me.id,following_id:oid});if(!error){following=true;}}
+  const b=document.getElementById('follow');b.textContent=following?'Following':'Follow';b.classList.toggle('following',following);
+ });
+ document.getElementById('like').onclick=async()=>{
+  if(!me)return toast('Sign in to like this video');
+  if(liked){const {error}=await supabase.from('likes').delete().eq('video_id',id).eq('user_id',me.id);if(!error)liked=false}
+  else{const {error}=await supabase.from('likes').insert({video_id:id,user_id:me.id});if(!error)liked=true}
+  const n=await count('likes','video_id',id);document.getElementById('like').classList.toggle('active',liked);document.getElementById('likeTxt').textContent=`${liked?'Liked':'Like'} · ${fmt(n)}`;
+ };
+ document.getElementById('reuse').onclick=()=>{if(!canReuse)return;location.href=`upload.html?sound_video=${encodeURIComponent(id)}`};
+ document.getElementById('share').onclick=async()=>{const link=location.href;if(navigator.share){try{await navigator.share({title:video.title||'BIGULA video',url:link})}catch(e){}}else{await navigator.clipboard?.writeText(link);toast('Video link copied')}};
+ document.getElementById('save').onclick=()=>toast(me?'Saved to your BIGULA collection':'Sign in to save videos');
+ document.getElementById('soundInfo').onclick=()=>toast(canReuse?'Other creators can use this sound.':'The creator has disabled sound reuse.');
+ document.getElementById('commentBtn').onclick=()=>document.getElementById('commentInput')?.focus();
+ document.getElementById('closeComments').onclick=()=>{commentsOpen=!commentsOpen;document.getElementById('commentList').style.display=commentsOpen?'block':'none'};
+ document.getElementById('commentForm').onsubmit=postComment;
+ document.getElementById('notInterested').onclick=()=>toast('We’ll show you fewer videos like this');
+ document.getElementById('report').onclick=()=>reportVideo();
+ document.getElementById('copyLink').onclick=async()=>{await navigator.clipboard?.writeText(location.href);toast('Link copied')};
+ document.getElementById('moreTop').onclick=()=>toast('More video options are below');
+}
+async function postComment(e){
+ e.preventDefault(); if(!me)return toast('Sign in to comment');
+ const input=document.getElementById('commentInput'),text=input.value.trim();if(!text)return;
+ const payload={video_id:id,user_id:me.id,comment:text,content:text,text};
+ let {error}=await supabase.from('comments').insert(payload);
+ if(error){const fallback={video_id:id,user_id:me.id,content:text};({error}=await supabase.from('comments').insert(fallback))}
+ if(error)return toast('Could not post comment');
+ input.value='';toast('Comment posted');loadComments();
+}
+async function loadComments(){
+ const box=document.getElementById('commentList');if(!box)return;
+ let {data,error}=await supabase.from('comments').select('*').eq('video_id',id).order('created_at',{ascending:false}).limit(50);
+ if(error||!data?.length){box.innerHTML='<div class="empty">No comments yet. Be the first to comment.</div>';return}
+ const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];let users=[];
+ if(ids.length){const r=await supabase.from('users').select('*').in('id',ids);users=r.data||[]}
+ box.innerHTML=data.map(c=>{const u=users.find(x=>x.id===c.user_id)||{};return `<div class="comment"><img class="avatar" src="${esc(avatar(u))}" onerror="this.style.display='none'"><div class="commentBody"><div class="commentTop"><b>${esc(u.display_name||u.username||u.name||'BIGULA user')}</b><span>${dateFmt(c.created_at)}</span></div><div class="commentText">${esc(c.comment||c.content||c.text||'')}</div></div></div>`}).join('');
+}
+async function recordView(){
+ try{
+  if(!me){await supabase.from('views').insert({video_id:id});return}
+  await supabase.from('views').insert({video_id:id,user_id:me.id});
+ }catch(e){}
+}
+async function reportVideo(){
+ const reason=prompt('Why are you reporting this video?\\n\\nExamples: harmful content, copyright, spam, harassment, other');
+ if(!reason)return;
+ if(!me)return toast('Sign in to report a video');
+ const payload={video_id:id,user_id:me.id,reason:reason.trim(),status:'open'};
+ let {error}=await supabase.from('reports').insert(payload);
+ if(error)toast('Report could not be submitted');else toast('Report submitted. Thank you.');
+}
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Creator Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+<style>
+body{
+  margin:0; padding:0; font-family:'Segoe UI',sans-serif; background:#000; color:#fff;
+}
+header{
+  background:#1a1a1a; padding:15px 20px; text-align:center; font-size:24px; font-weight:bold; color:#ff1a1a;
+  text-shadow:0 0 10px rgba(255,0,0,.6);
+}
+.dashboard{
+  max-width:900px; margin:0 auto; padding:20px;
+}
+.stats-box{
+  display:flex; justify-content:space-around; margin-bottom:20px;
+}
+.stats-box div{
+  background:#111; padding:20px; border-radius:15px; text-align:center; width:30%;
+  box-shadow:0 0 15px rgba(255,0,0,.2); transition:0.3s;
+}
+.stats-box div:hover{ transform:scale(1.05);}
+.stats-box div h3{ font-size:20px; margin-bottom:10px;}
+.stats-box div p{ font-size:16px; color:#ff1a1a;}
+
+#withdrawBtn{
+  display:block; margin:0 auto 30px auto; padding:12px 25px; font-size:16px;
+  background:#ff1a1a; color:#fff; border:none; border-radius:30px; cursor:pointer; transition:0.3s;
+}
+#withdrawBtn:disabled{opacity:.4; cursor:not-allowed;}
+#withdrawBtn:hover:not(:disabled){transform:scale(1.05);}
+
+.video-list{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:15px;
+}
+.video-card{
+  background:#111; border-radius:15px; overflow:hidden; box-shadow:0 0 10px rgba(255,0,0,.2);
+  position:relative; transition:0.3s;
+}
+.video-card:hover{transform:scale(1.02);}
+.video-card video{
+  width:100%; height:200px; object-fit:cover;
+}
+.video-info{
+  padding:10px; font-size:14px;
+}
+.video-info h4{margin-bottom:5px;}
+.video-info p{opacity:.8; margin-bottom:5px;}
+.video-stats{display:flex; justify-content:space-between; font-size:12px; color:#ff1a1a;}
+.video-stats div{display:flex; gap:5px; align-items:center;}
+</style>
+</head>
+<body>
+
+<header>BIGULA Creator Dashboard</header>
+
+<div class="dashboard">
+  <div class="stats-box">
+    <div>
+      <h3>Total Earned</h3>
+      <p>$<span id="totalEarned">0</span></p>
+    </div>
+    <div>
+      <h3>Pending Payout</h3>
+      <p>$<span id="pendingPayout">0</span></p>
+    </div>
+    <div>
+      <h3>Paid Out</h3>
+      <p>$<span id="paidOut">0</span></p>
+    </div>
+  </div>
+
+  <button id="withdrawBtn" disabled>Withdraw</button>
+
+  <h3>Your Uploaded Videos</h3>
+  <div class="video-list" id="videoList"></div>
+</div>
+
+<script>
+// ===== CONFIG =====
+const SUPABASE_URL = "https://uyuofjiiptnbbcuntbfi.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW9mamlpcHRuYmJjdW50YmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMzQ3MjcsImV4cCI6MjA4NzkxMDcyN30.-FBKM7NKTSm20qzkExueYhqrE6oaK6a6de1qCsl2nuQ";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const firebaseConfig = {
+ apiKey: "AIzaSyB8wGlVLw7ECGTQns65Ff8UyTT_on8OivY",
+  authDomain: "bigula-d8cab.firebaseapp.com",
+  projectId: "bigula-d8cab",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ===== USER STATE =====
+const userId = localStorage.getItem("userToken");
+if(!userId){
+  alert("You must be logged in to access the dashboard.");
+  window.location.href="login.html";
+}
+
+// ===== DASHBOARD =====
+const totalEl = document.getElementById("totalEarned");
+const pendingEl = document.getElementById("pendingPayout");
+const paidEl = document.getElementById("paidOut");
+const withdrawBtn = document.getElementById("withdrawBtn");
+const videoList = document.getElementById("videoList");
+
+const userRef = db.collection("userRevenue").doc(userId);
+
+userRef.onSnapshot(doc=>{
+  const data = doc.data() || {};
+  totalEl.innerText = (data.total_earned||0).toFixed(2);
+  pendingEl.innerText = (data.pending_payout||0).toFixed(2);
+  paidEl.innerText = (data.paid_out||0).toFixed(2);
+
+  withdrawBtn.disabled = (data.pending_payout||0) < 10; // minimum payout $10
+});
+
+// Withdraw button click
+withdrawBtn.onclick = async ()=>{
+  alert("Withdrawal initiated. Integrate Stripe/PayPal here.");
+  // Example: after payout
+  await userRef.update({
+    paid_out: firebase.firestore.FieldValue.increment(10), // example payout
+    pending_payout: firebase.firestore.FieldValue.increment(-10)
+  });
+}
+
+// ===== FETCH USER VIDEOS =====
+async function fetchUserVideos(){
+  const {data:errorCheck, error} = await supabase.from("videos").select("*").eq("uploader_id", userId).order("created_at",{ascending:false});
+  const videos = errorCheck || [];
+
+  videoList.innerHTML = "";
+  videos.forEach(video=>{
+    const card = document.createElement("div");
+    card.className="video-card";
+    card.innerHTML = `
+      <video src="${video.video_url}" muted loop playsinline></video>
+      <div class="video-info">
+        <h4>@${video.username}</h4>
+        <p>${video.title}</p>
+        <div class="video-stats">
+          <div>?? <span id="likes-${video.id}">0</span></div>
+          <div>?? <span id="views-${video.id}">0</span></div>
+          <div>?? <span id="comments-${video.id}">0</span></div>
+        </div>
+      </div>
+    `;
+    videoList.appendChild(card);
+    loadVideoStats(video.id);
+  });
+}
+
+// Load stats from Firestore
+async function loadVideoStats(videoId){
+  const doc = await db.collection("videoStats").doc(videoId).get();
+  if(doc.exists){
+    const d = doc.data();
+    document.getElementById(`likes-${videoId}`).innerText = d.likes||0;
+    document.getElementById(`views-${videoId}`).innerText = d.views||0;
+    document.getElementById(`comments-${videoId}`).innerText = d.comments||0;
+  }
+}
+
+// Autoplay videos
+function setupAutoplay(){
+  const videos = document.querySelectorAll("video");
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) entry.target.play();
+      else entry.target.pause();
+    });
+  }, {threshold:0.8});
+  videos.forEach(v=>observer.observe(v));
+}
+
+// Initialize
+fetchUserVideos().then(setupAutoplay);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080a0f">
+<title>BIGULA — Creator Profile</title>
+<style>
+:root{--bg:#080a0f;--surface:#11141b;--surface2:#171b23;--text:#f5f7fb;--muted:#8f97a8;--line:rgba(255,255,255,.08);--accent:#e9ff45;--danger:#ff4d5e}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{padding-bottom:76px}.top{height:62px;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(8,10,15,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.top button{width:40px;height:40px;border:0;border-radius:12px;background:none;color:white;font-size:22px}.brand{font-weight:900;font-size:20px}.brand span{color:var(--accent)}
+main{max-width:760px;margin:auto}.profile{padding:25px 17px 16px;text-align:center}.avatar{width:92px;height:92px;border-radius:50%;margin:auto;background:linear-gradient(145deg,#313846,#151820);border:3px solid #252a34;display:grid;place-items:center;font-size:34px;font-weight:900;box-shadow:0 10px 35px #0008;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}
+.username{font-size:22px;font-weight:850;margin:13px 0 3px}.handle{font-size:13px;color:var(--muted)}.bio{max-width:520px;margin:12px auto 17px;color:#c7ccd6;font-size:14px;line-height:1.45}.follow{border:0;border-radius:11px;padding:10px 28px;background:var(--text);color:#080a0f;font-weight:850;font-size:14px;cursor:pointer}.follow.following{background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 4px;margin-top:22px;gap:3px}.stat{border:0;background:transparent;color:inherit;border-radius:12px;padding:8px 3px;cursor:pointer}.stat strong{display:block;font-size:18px}.stat span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.stat.active{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--line)}.stat.active span{color:var(--text)}.stat.disabled{cursor:default;opacity:.75}
+.content{min-height:250px}.section-head{display:flex;align-items:center;justify-content:space-between;padding:18px 14px 10px}.section-title{font-size:15px;font-weight:850}.count-note{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;background:var(--bg)}.video{aspect-ratio:3/4;position:relative;background:#151922;overflow:hidden;cursor:pointer}.video img,.video video{width:100%;height:100%;object-fit:cover;display:block}.video-placeholder{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(145deg,#222735,#0d0f14)}.video:nth-child(3n+2) .video-placeholder{background:linear-gradient(145deg,#34251d,#111)}.video:nth-child(3n) .video-placeholder{background:linear-gradient(145deg,#1c3030,#101416)}.video-placeholder:before{content:"▶";width:38px;height:38px;border-radius:50%;background:#0009;display:grid;place-items:center;font-size:13px}.video-title{position:absolute;bottom:0;left:0;right:0;padding:22px 7px 7px;background:linear-gradient(transparent,#000d);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.views{position:absolute;bottom:7px;right:7px;font-size:10px;color:#fff}
+.panel{padding:0 14px 18px}.empty,.loading,.error{margin:14px 0;padding:25px 15px;border:1px solid var(--line);border-radius:15px;text-align:center;color:var(--muted);background:var(--surface)}.error{color:#ff8c97}.list{display:flex;flex-direction:column;gap:8px}.person{display:flex;align-items:center;gap:12px;padding:11px 10px;border:1px solid var(--line);background:var(--surface);border-radius:14px}.person-avatar{width:44px;height:44px;border-radius:50%;background:#252a34;display:grid;place-items:center;font-weight:800;overflow:hidden;flex:none}.person-avatar img{width:100%;height:100%;object-fit:cover}.person-info{min-width:0;flex:1}.person-name{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.person-handle{font-size:11px;color:var(--muted);margin-top:3px}.person-follow{border:1px solid var(--line);background:var(--text);color:#080a0f;border-radius:9px;padding:8px 13px;font-weight:800;font-size:12px;cursor:pointer}.person-follow.following{background:var(--surface2);color:var(--text)}
+.created{margin:13px 0 0;color:var(--muted);font-size:11px}.tabs{display:none}.bottom{position:fixed;bottom:0;left:0;right:0;height:68px;z-index:50;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(12,14,19,.97);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}.nav{border:0;background:none;color:#818999;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.nav.active{color:white}.ico{font-size:21px}
+@media(min-width:800px){.bottom{width:760px;left:50%;right:auto;transform:translateX(-50%);border-radius:17px 17px 0 0}}@media(max-width:520px){.stats{padding-left:0;padding-right:0}.stat strong{font-size:16px}.stat span{font-size:10px}}
+</style>
+</head>
+<body>
+<header class="top"><button aria-label="Back" onclick="history.back()">‹</button><div class="brand">BIGULA<span>.</span></div><button aria-label="More">⋯</button></header>
+<main>
+<section class="profile">
+<div class="avatar" id="avatar">?</div><div class="username" id="username">Loading…</div><div class="handle" id="handle"></div><p class="bio" id="bio"></p><button class="follow" id="follow">Follow</button>
+<div class="stats">
+<button class="stat" id="followersStat"><strong id="followersCount">0</strong><span>Followers</span></button>
+<button class="stat" id="followingStat"><strong id="followingCount">0</strong><span>Following</span></button>
+<button class="stat active" id="videosStat"><strong id="videosCount">0</strong><span>Videos</span></button>
+<div class="stat disabled"><strong id="likesCount">0</strong><span>Likes</span></div>
+</div><div class="created" id="createdAt"></div>
+</section>
+<section class="content" id="content"><div class="loading">Loading creator profile…</div></section>
+</main>
+<nav class="bottom"><button class="nav" onclick="location.href='home.html'"><span class="ico">⌂</span>Home</button><button class="nav"><span class="ico">◉</span>Explore</button><button class="nav" onclick="location.href='upload.html'"><span class="ico">＋</span>Upload</button><button class="nav active"><span class="ico">♙</span>Profile</button></nav>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const SUPABASE_URL='https://vfteiggdhthvrrlndtbs.supabase.co';
+const SUPABASE_KEY='sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe';
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id); const params=new URLSearchParams(location.search);
+let currentUser=null, creator=null, allVideos=[], publicVideos=[], followers=[], following=[];
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const lower=v=>String(v??'').toLowerCase();
+function formatCount(n){n=Number(n)||0;if(n>=1000000000)return (n/1e9).toFixed(n%1e9?1:0)+'B';if(n>=1000000)return (n/1e6).toFixed(n%1e6?1:0)+'M';if(n>=1000)return (n/1e3).toFixed(n%1e3?1:0)+'K';return String(n)}
+function initials(p){let s=(p?.display_name||p?.name||p?.username||p?.handle||'U').trim();return s.split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'U'}
+function avatarHtml(p,cls='person-avatar'){let u=p?.avatar_url||p?.avatar||p?.profile_image||p?.photo_url||'';return `<div class="${cls}">${u?`<img src="${esc(u)}" alt="">`:esc(initials(p))}</div>`}
+function publicVideo(v){let s=lower(v.visibility||v.status||v.public_status||v.publish_status||v.content_status);if(v.is_public===true||v.public===true)return true;if(['public','published','live'].includes(s))return true;return false}
+function profileId(){return params.get('user_id')||params.get('id')||params.get('creator_id')||params.get('uid')}
+async function getSession(){let {data}=await supabase.auth.getSession();currentUser=data.session?.user||null;return currentUser}
+async function getCreator(){let id=profileId();let {data,error}=id?await supabase.from('creator_profile').select('*').eq('user_id',id).maybeSingle():await supabase.from('creator_profile').select('*').limit(1).maybeSingle();
+ if(error)throw error;if(!data)throw new Error('Creator profile not found.');return data}
+async function findCreatorUser(c){let id=c.user_id||c.id; if(!id)return null;let {data}=await supabase.from('users').select('*').eq('id',id).maybeSingle();return data||null}
+async function getRows(table,filterColumn,filterValue){if(!filterValue)return [];let {data,error}=await supabase.from(table).select('*').eq(filterColumn,filterValue);if(error){console.warn(table,error.message);return []}return data||[]}
+async function loadCreator(){
+ creator=await getCreator();let user=await findCreatorUser(creator);creator={...user,...creator};
+ const creatorId=creator.user_id||creator.id;
+ if(!creatorId)throw new Error('Creator profile has no user ID.');
+ const [videoRes,folRes,followingRes,likeRes]=await Promise.all([
+  supabase.from('videos').select('*').eq('user_id',creatorId),
+  supabase.from('followers').select('*').eq('following_id',creatorId),
+  supabase.from('followers').select('*').eq('follower_id',creatorId),
+  supabase.from('likes').select('*').eq('creator_id',creatorId)
+ ]);
+ if(videoRes.error)throw videoRes.error;allVideos=videoRes.data||[];publicVideos=allVideos.filter(publicVideo);
+ followers=folRes.error?[]:(folRes.data||[]);following=followingRes.error?[]:(followingRes.data||[]);
+ let likeRows=likeRes.error?[]:(likeRes.data||[]);
+ $('username').textContent=creator.display_name||creator.name||creator.username||'BIGULA Creator';
+ $('handle').textContent=creator.username||creator.handle?('@'+String(creator.username||creator.handle).replace(/^@/,'')):'';
+ $('bio').innerHTML=esc(creator.bio||''); $('avatar').innerHTML=(creator.avatar_url||creator.avatar||creator.profile_image)?`<img src="${esc(creator.avatar_url||creator.avatar||creator.profile_image)}" alt="">`:esc(initials(creator));
+ $('followersCount').textContent=formatCount(followers.length);$('followingCount').textContent=formatCount(following.length);$('videosCount').textContent=formatCount(allVideos.length);$('likesCount').textContent=formatCount(likeRows.length);
+ if(creator.created_at){let d=new Date(creator.created_at);$('createdAt').textContent='Creator since '+(isNaN(d)?String(creator.created_at):d.toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}));}
+ if(currentUser&&creatorId&&currentUser.id!==creatorId){let mine=followers.some(r=>(r.follower_id||r.user_id)===currentUser.id);setFollow($('follow'),mine,async()=>toggleCreatorFollow(creatorId));}else $('follow').style.display='none';
+ renderVideos();
+}
+async function toggleCreatorFollow(creatorId){if(!currentUser)return location.href='signup.html';let existing=followers.find(r=>(r.follower_id||r.user_id)===currentUser.id);if(existing){await supabase.from('followers').delete().eq('follower_id',currentUser.id).eq('following_id',creatorId);followers=followers.filter(r=>(r.follower_id||r.user_id)!==currentUser.id)}else{let {error}=await supabase.from('followers').insert({follower_id:currentUser.id,following_id:creatorId});if(error){alert(error.message);return}followers.push({follower_id:currentUser.id,following_id:creatorId})}$('followersCount').textContent=formatCount(followers.length);setFollow($('follow'),!existing,async()=>toggleCreatorFollow(creatorId));}
+function setFollow(btn,isFollowing,fn){btn.classList.toggle('following',isFollowing);btn.textContent=isFollowing?'Following':'Follow';btn.onclick=async()=>{btn.disabled=true;try{await fn()}finally{btn.disabled=false}}}
+function renderVideos(){setActive('videosStat');$('content').innerHTML=`<div class="section-head"><div class="section-title">Public videos</div><div class="count-note">${allVideos.length} total · ${publicVideos.length} public</div></div>`+(publicVideos.length?`<section class="grid">${publicVideos.map(v=>{let thumb=v.thumbnail_url||v.thumbnail||v.cover_url||'';return `<article class="video" data-id="${esc(v.id)}">${thumb?`<img src="${esc(thumb)}" alt="">`:'<div class="video-placeholder"></div>'}<div class="video-title">${esc(v.title||'Untitled video')}</div><div class="views">▶ ${formatCount(v.views||v.view_count||0)}</div></article>`}).join('')}</section>`:'<div class="panel"><div class="empty">This creator has no public videos yet.</div></div>'}`;}
+function setActive(id){['followersStat','followingStat','videosStat'].forEach(x=>$(x).classList.toggle('active',x===id))}
+async function peopleFromRows(rows,type){let ids=rows.map(r=>type==='followers'?(r.follower_id||r.user_id):(r.following_id||r.user_id)).filter(Boolean);if(!ids.length)return[];let {data,error}=await supabase.from('creator_profile').select('*').in('user_id',ids);if(error)return rows.map(r=>({user_id:type==='followers'?r.follower_id:r.following_id}));return data||[]}
+async function renderPeople(type){setActive(type==='followers'?'followersStat':'followingStat');$('content').innerHTML='<div class="panel"><div class="loading">Loading…</div></div>';let rows=type==='followers'?followers:following;let people=await peopleFromRows(rows,type);let ids=people.map(p=>p.user_id||p.id).filter(Boolean);let mine=new Set();if(currentUser&&ids.length){let {data}=await supabase.from('followers').select('*').eq('follower_id',currentUser.id).in('following_id',ids);(data||[]).forEach(r=>mine.add(r.following_id))}
+ $('content').innerHTML=`<div class="section-head"><div class="section-title">${type==='followers'?'Followers':'Following'}</div><div class="count-note">${rows.length}</div></div><div class="panel"><div class="list">${people.length?people.map(p=>{let id=p.user_id||p.id;return `<div class="person">${avatarHtml(p)}<div class="person-info"><div class="person-name">${esc(p.display_name||p.name||p.username||'BIGULA user')}</div><div class="person-handle">${p.username?'@'+esc(String(p.username).replace(/^@/,'')):''}</div></div>${currentUser&&id!==currentUser.id?`<button class="person-follow ${mine.has(id)?'following':''}" data-user="${esc(id)}">${mine.has(id)?'Following':'Follow'}</button>`:''}</div>`}).join(''):'<div class="empty">No users to show.</div>'}</div></div>`;
+ document.querySelectorAll('.person-follow').forEach(btn=>btn.onclick=()=>togglePerson(btn));}
+async function togglePerson(btn){if(!currentUser)return location.href='signup.html';let id=btn.dataset.user;if(btn.classList.contains('following')){let {error}=await supabase.from('followers').delete().eq('follower_id',currentUser.id).eq('following_id',id);if(error){alert(error.message);return}btn.classList.remove('following');btn.textContent='Follow'}else{let {error}=await supabase.from('followers').insert({follower_id:currentUser.id,following_id:id});if(error){alert(error.message);return}btn.classList.add('following');btn.textContent='Following'}}
+$('followersStat').onclick=()=>renderPeople('followers');$('followingStat').onclick=()=>renderPeople('following');$('videosStat').onclick=renderVideos;
+(async()=>{try{await getSession();await loadCreator()}catch(e){console.error(e);$('content').innerHTML=`<div class="panel"><div class="error">${esc(e.message||'Could not load creator profile.')}</div></div>`;}})();
+</script>
+</body>
+</html>
