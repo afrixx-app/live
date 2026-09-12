@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BIGULA — Notifications</title>
+<style>*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#111;background:#fff}header{height:64px;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 16px;gap:12px}a{color:#111;text-decoration:none}h1{font-size:20px;margin:0}main{max-width:760px;margin:auto;padding:8px 12px}.item{display:flex;gap:12px;padding:15px 8px;border-bottom:1px solid #eee;align-items:center}.icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eee;font-size:20px}.body{flex:1}.time{font-size:12px;color:#777;margin-top:4px}.empty{text-align:center;color:#777;padding:50px 10px}.unread{background:#f5fff7}button{border:0;background:#111;color:#fff;border-radius:18px;padding:8px 13px}</style></head><body>
+<header><a href="home.html" style="font-size:25px">‹</a><h1>Notifications</h1></header><main id="list"><div class="empty">Loading…</div></main>
+<script>
+const SB_URL="https://vfteiggdhthvrrlndtbs.supabase.co",SB_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe",H={apikey:SB_KEY,Authorization:"Bearer "+SB_KEY};
+async function api(p,o={}){return fetch(SB_URL+"/rest/v1/"+p,{...o,headers:{...H,"Content-Type":"application/json",...(o.headers||{})}})}
+async function load(){
+ let me=await fetch(SB_URL+"/auth/v1/user",{headers:H});if(!me.ok){location.href="signup.html";return}me=await me.json();
+ // notifications table expected: user_id, actor_id, type, message, entity_id, is_read, created_at.
+ let r=await api("notifications?user_id=eq."+me.id+"&order=created_at.desc&limit=100");let rows=r.ok?await r.json():[];
+ const actorIds=[...new Set(rows.map(x=>x.actor_id).filter(Boolean))];
+ let names={};if(actorIds.length){let u=await api("users?id=in.("+actorIds.join(",")+")&select=id,name,display_name,username").then(x=>x.json());u.forEach(x=>names[x.id]=x.name||x.display_name||("@"+(x.username||"user")));}
+ let list=document.getElementById("list");if(!rows.length){list.innerHTML='<div class="empty">You have no notifications yet.</div>';return}
+ list.innerHTML=rows.map(x=>{
+  let actor=names[x.actor_id]||"Someone", type=(x.type||"").toLowerCase(), icon=type.includes("like")?"♥":type.includes("comment")?"💬":type.includes("follow")?"👤":"🔔";
+  let text=x.message|| (type.includes("like")?actor+" liked your video.":type.includes("comment")?actor+" commented on your video.":type.includes("follow")?actor+" followed you.":"You have a new notification.");
+  return '<div class="item '+(!x.is_read?"unread":"")+'"><div class="icon">'+icon+'</div><div class="body"><div>'+escapeHtml(text)+'</div><div class="time">'+new Date(x.created_at||Date.now()).toLocaleString()+'</div></div></div>'
+ }).join("");
+ let unread=rows.filter(x=>!x.is_read).map(x=>x.id);if(unread.length) await api("notifications?id=in.("+unread.join(",")+")",{method:"PATCH",headers:{Prefer:"return=minimal"},body:JSON.stringify({is_read:true})})
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}load();
+</script></body></html>
