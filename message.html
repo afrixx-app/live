@@ -1,41 +1,193 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIGULA — Messages</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA Messages</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font-family:Arial,sans-serif}
-header{height:64px;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 16px;gap:12px}
-.back{font-size:25px;text-decoration:none;color:#111}h1{font-size:20px;margin:0}main{max-width:700px;margin:auto;height:calc(100vh - 64px);display:flex;flex-direction:column}
-#messages{flex:1;overflow:auto;padding:18px 14px 12px;background:#fafafa}
-.msg{max-width:78%;padding:11px 14px;border-radius:18px;margin:8px 0;line-height:1.35;word-break:break-word}
-.mine{margin-left:auto;background:#111;color:#fff;border-bottom-right-radius:5px}.theirs{background:#e8e8e8;border-bottom-left-radius:5px}
-.meta{font-size:11px;opacity:.55;margin-top:4px}.empty{text-align:center;color:#777;margin-top:40px}
-.composer{display:flex;gap:8px;padding:10px;border-top:1px solid #ddd;background:#fff}
-textarea{flex:1;resize:none;border:1px solid #ccc;border-radius:22px;padding:12px 15px;font:inherit;height:46px;outline:none}
-button{border:0;border-radius:22px;background:#111;color:white;padding:0 20px;font-weight:bold}
-</style></head><body>
-<header><a class="back" href="account.html">‹</a><h1 id="title">Message</h1></header>
-<main><div id="messages"><div class="empty">Loading conversation…</div></div>
-<div class="composer"><textarea id="text" placeholder="Type a message…" maxlength="2000"></textarea><button id="send">Send</button></div></main>
-<script>
-const SB_URL="https://vfteiggdhthvrrlndtbs.supabase.co", SB_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-const headers={apikey:SB_KEY,Authorization:"Bearer "+SB_KEY, "Content-Type":"application/json"};
-const qs=new URLSearchParams(location.search), selected=qs.get("uid")||qs.get("user_id")||qs.get("to");
-let me=null;
-async function api(path,opts={}){return fetch(SB_URL+"/rest/v1/"+path,{...opts,headers:{...headers,...(opts.headers||{})}})}
-async function session(){const r=await fetch(SB_URL+"/auth/v1/user",{headers}); if(!r.ok) return null; return r.json();}
-async function load(){
- me=await session(); if(!me){location.href="signup.html";return;}
- if(!selected){document.getElementById("title").textContent="Messages";document.getElementById("messages").innerHTML='<div class="empty">No recipient selected.</div>';return;}
- let u=await api("users?id=eq."+encodeURIComponent(selected)+"&select=id,name,username,display_name").then(r=>r.json());
- if(u[0]) document.getElementById("title").textContent=u[0].name||u[0].display_name||("@"+(u[0].username||"user"));
- // Supports a messages table with sender_id, recipient_id, message/text, created_at.
- let r=await api("messages?or=(and(sender_id.eq."+me.id+",recipient_id.eq."+selected+"),and(sender_id.eq."+selected+",recipient_id.eq."+me.id+"))&order=created_at.asc");
- let rows=r.ok?await r.json():[]; render(rows);
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff;color:#111}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #ddd;padding:14px 16px;z-index:5}
+header strong{font-size:20px}
+#status{font-size:13px;color:#666;margin-top:4px}
+#messages{padding:16px 12px 90px;min-height:calc(100vh - 120px)}
+.msg{max-width:78%;padding:10px 13px;margin:8px 0;border-radius:16px;word-break:break-word}
+.mine{margin-left:auto;background:#111;color:#fff;border-bottom-right-radius:5px}
+.theirs{margin-right:auto;background:#eee;color:#111;border-bottom-left-radius:5px}
+.time{display:block;font-size:10px;opacity:.65;margin-top:4px}
+.empty{text-align:center;color:#777;padding:50px 15px}
+form{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;padding:10px;display:flex;gap:8px}
+#messageInput{flex:1;border:1px solid #ccc;border-radius:22px;padding:11px 14px;font-size:15px}
+button{border:0;border-radius:22px;padding:0 18px;background:#111;color:#fff;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <strong>Messages</strong>
+  <div id="status">Checking your BIGULA session…</div>
+</header>
+<div id="messages"><div class="empty">Loading…</div></div>
+
+<form id="sendForm">
+  <input id="messageInput" autocomplete="off" placeholder="Write a message…" disabled>
+  <button id="sendBtn" type="submit" disabled>Send</button>
+</form>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true }
+});
+
+const params = new URLSearchParams(location.search);
+const recipientId = params.get("uid") || params.get("user_id") || params.get("to");
+const messagesEl = document.getElementById("messages");
+const statusEl = document.getElementById("status");
+const input = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const form = document.getElementById("sendForm");
+
+let currentUser = null;
+let pollTimer = null;
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
 }
-function render(rows){const box=document.getElementById("messages");if(!rows.length){box.innerHTML='<div class="empty">Start the conversation.</div>';return;}
- box.innerHTML=rows.map(x=>{let body=x.message??x.text??"";return '<div class="msg '+(x.sender_id===me.id?"mine":"theirs")+'">'+escapeHtml(body)+'<div class="meta">'+new Date(x.created_at||Date.now()).toLocaleString()+'</div></div>'}).join("");box.scrollTop=box.scrollHeight;}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function send(){const t=document.getElementById("text"),body=t.value.trim();if(!body||!selected)return;
- let r=await api("messages",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify({sender_id:me.id,recipient_id:selected,message:body})});if(!r.ok){alert("Could not send. Create the messages table first.");return} t.value="";load();}
-document.getElementById("send").onclick=send;document.getElementById("text").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});load();
-</script></body></html>
+
+async function getLiveSession(){
+  // getSession reads the persisted Supabase session from this same origin.
+  const {data, error} = await supabase.auth.getSession();
+  if(error) console.warn("getSession:", error);
+  if(data?.session?.user) return data.session.user;
+
+  // A refresh catches an expired/stale access token without falsely treating
+  // an existing refreshable session as logged out.
+  const refreshed = await supabase.auth.refreshSession();
+  if(!refreshed.error && refreshed.data?.session?.user){
+    return refreshed.data.session.user;
+  }
+  return null;
+}
+
+function requireRecipient(){
+  if(!recipientId){
+    statusEl.textContent = "No recipient selected.";
+    messagesEl.innerHTML = '<div class="empty">Open a user profile and choose Message.</div>';
+    return false;
+  }
+  return true;
+}
+
+function renderMessages(rows){
+  if(!rows?.length){
+    messagesEl.innerHTML = '<div class="empty">No messages yet. Start the conversation.</div>';
+    return;
+  }
+
+  messagesEl.innerHTML = rows.map(m => {
+    const mine = m.sender_id === currentUser.id;
+    const body = m.message ?? m.text ?? "";
+    const date = m.created_at ? new Date(m.created_at).toLocaleString() : "";
+    return `<div class="msg ${mine ? "mine" : "theirs"}">${esc(body)}<span class="time">${esc(date)}</span></div>`;
+  }).join("");
+
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+async function loadMessages(){
+  if(!currentUser || !recipientId) return;
+
+  const {data, error} = await supabase
+    .from("messages")
+    .select("*")
+    .or(`and(sender_id.eq.${currentUser.id},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${currentUser.id})`)
+    .order("created_at",{ascending:true});
+
+  if(error){
+    console.error("Message load error:", error);
+    statusEl.textContent = "Could not load messages.";
+    return;
+  }
+
+  renderMessages(data || []);
+
+  // Mark incoming messages as read.
+  await supabase
+    .from("messages")
+    .update({is_read:true})
+    .eq("sender_id",recipientId)
+    .eq("recipient_id",currentUser.id)
+    .eq("is_read",false);
+}
+
+async function sendMessage(){
+  const body = input.value.trim();
+  if(!body || !currentUser || !recipientId) return;
+
+  sendBtn.disabled = true;
+
+  const {error} = await supabase.from("messages").insert({
+    sender_id: currentUser.id,
+    recipient_id: recipientId,
+    message: body,
+    is_read: false
+  });
+
+  if(error){
+    console.error("Message send error:", error);
+    alert("Message could not be delivered: " + error.message);
+    sendBtn.disabled = false;
+    return;
+  }
+
+  input.value = "";
+  await loadMessages();
+  sendBtn.disabled = false;
+}
+
+async function init(){
+  if(!requireRecipient()) return;
+
+  currentUser = await getLiveSession();
+
+  if(!currentUser){
+    statusEl.textContent = "Please sign in to use messages.";
+    alert("Please sign in first.");
+    location.replace("signup.html");
+    return;
+  }
+
+  statusEl.textContent = "Signed in";
+  input.disabled = false;
+  sendBtn.disabled = false;
+
+  await loadMessages();
+
+  // Keep the conversation current even without realtime.
+  pollTimer = setInterval(loadMessages, 5000);
+
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    currentUser = session?.user || null;
+    if(!currentUser){
+      clearInterval(pollTimer);
+      location.replace("signup.html");
+      return;
+    }
+    await loadMessages();
+  });
+}
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  sendMessage();
+});
+
+init();
+</script>
+</body>
+</html>
