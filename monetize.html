@@ -54,9 +54,7 @@ header{
   letter-spacing:-.8px;
 }
 
-.logo span{
-  color:var(--red);
-}
+.logo span{color:var(--red)}
 
 .nav-actions{
   display:flex;
@@ -72,19 +70,9 @@ header{
   transition:.2s;
 }
 
-.btn-light{
-  background:#f0f1f4;
-}
-
-.btn-dark{
-  background:var(--ink);
-  color:#fff;
-}
-
-.btn-red{
-  background:var(--red);
-  color:#fff;
-}
+.btn-light{background:#f0f1f4}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-red{background:var(--red);color:#fff}
 
 .btn:hover:not(:disabled){
   transform:translateY(-1px);
@@ -276,7 +264,7 @@ main{
 }
 
 /* =========================
-   IDENTITY VERIFICATION LOCK
+   VERIFICATION LOCKED
    ========================= */
 
 .verification-card.locked{
@@ -325,18 +313,61 @@ main{
   display:block;
 }
 
-/* Active verification state */
+/* =========================
+   ACTIVE VERIFICATION
+   ========================= */
 
 .verification-card.active{
   border:1px solid var(--green);
   box-shadow:0 8px 30px rgba(22,138,85,.08);
 }
 
-.verification-card.active h2{
-  color:var(--ink);
+/* =========================
+   VERIFICATION WAITING
+   ========================= */
+
+.verification-waiting{
+  text-align:center;
+  padding:28px 20px;
+  border-radius:16px;
+  background:#fff7e0;
+  border:1px solid #f0d88d;
+  color:#765400;
 }
 
-/* Disabled submit until fields complete */
+.verification-waiting .wait-icon{
+  font-size:38px;
+  margin-bottom:10px;
+}
+
+.verification-waiting h3{
+  margin:0 0 8px;
+  font-size:20px;
+}
+
+.verification-waiting p{
+  margin:0;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* =========================
+   REJECTED
+   ========================= */
+
+.rejected-box{
+  background:#fff0ef;
+  border:1px solid #f2c5c2;
+  color:#a3261f;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+  font-size:13px;
+}
+
+/* =========================
+   VERIFY BUTTON
+   ========================= */
 
 #verifyBtn{
   width:100%;
@@ -346,12 +377,6 @@ main{
   background:#bfc1c6;
   color:#777a82;
   opacity:1;
-}
-
-/* Payout */
-
-.payout-disabled{
-  opacity:.65;
 }
 
 @media(max-width:760px){
@@ -548,12 +573,49 @@ main{
 
   <p class="sub">
     Use your legal details for payout verification.
-    Your verification status is stored against your BIGULA account.
+    BIGULA will use your contact email to communicate the result of your review.
   </p>
 
   <div class="lock-message" id="verificationLockMessage">
     Complete all 3 monetization requirements before identity verification becomes available.
   </div>
+
+  <!-- Waiting screen -->
+
+  <div
+    id="verificationWaiting"
+    class="verification-waiting hidden"
+  >
+
+```
+<div class="wait-icon">
+  ⏳
+</div>
+
+<h3>
+  Files verification in progress
+</h3>
+
+<p>
+  Wait for confirmation.<br>
+  BIGULA is reviewing your submitted information and files.
+  We will contact you using the email address you provided.
+</p>
+```
+
+  </div>
+
+  <!-- Rejected message -->
+
+  <div
+    id="verificationRejected"
+    class="rejected-box hidden"
+  >
+    Your previous verification submission was not approved.
+    Please review your information and submit the required files again.
+  </div>
+
+  <!-- Verification form -->
 
   <form id="verificationForm">
 
@@ -568,6 +630,24 @@ main{
     id="legalName"
     required
     autocomplete="name"
+    disabled
+  >
+
+</div>
+
+
+<div class="field">
+
+  <label>
+    Email address for BIGULA contact
+  </label>
+
+  <input
+    id="contactEmail"
+    type="email"
+    required
+    autocomplete="email"
+    placeholder="you@example.com"
     disabled
   >
 
@@ -814,6 +894,7 @@ const sb =
 let currentUser = null;
 let earnings = 0;
 let eligibility = false;
+let verificationStatus = null;
 
 
 const $ = id =>
@@ -830,6 +911,7 @@ function msg(text,type="notice"){
     "notice " + type;
 
   el.classList.remove("hidden");
+
 }
 
 
@@ -872,7 +954,7 @@ async function init(){
 
   const {
     data:user,
-    error
+    error:userError
   } =
     await sb
       .from("users")
@@ -881,9 +963,9 @@ async function init(){
       .maybeSingle();
 
 
-  if(error){
+  if(userError){
 
-    console.warn(error);
+    console.warn(userError);
 
   }
 
@@ -896,9 +978,53 @@ async function init(){
     "Creator";
 
 
+  /*
+    IMPORTANT:
+    Check verification status BEFORE loading
+    the rest of the monetization page.
+
+    If already verified, the user never needs
+    to see this page again.
+  */
+
+  const {
+    data:monetization,
+    error:monetizationError
+  } =
+    await sb
+      .from("creator_monetization")
+      .select("*")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+
+  if(monetizationError){
+
+    console.warn(monetizationError);
+
+  }
+
+
+  verificationStatus =
+    monetization?.verification_status || null;
+
+
+  if(verificationStatus === "verified"){
+
+    location.replace("creator-earnings.html");
+
+    return;
+
+  }
+
+
+  /*
+    Load the rest of the page.
+  */
+
   await Promise.all([
     loadEligibility(),
-    loadMonetization(),
+    loadMonetization(monetization),
     loadPayout()
   ]);
 
@@ -947,9 +1073,14 @@ async function loadEligibility(){
   const c = claims?.length || 0;
 
 
-  const followersComplete = f >= 1000;
-  const videosComplete = v >= 5;
-  const copyrightComplete = c === 0;
+  const followersComplete =
+    f >= 1000;
+
+  const videosComplete =
+    v >= 5;
+
+  const copyrightComplete =
+    c === 0;
 
 
   $("followersStatus").textContent =
@@ -988,7 +1119,8 @@ async function loadEligibility(){
     (copyrightComplete ? 1 : 0);
 
 
-  eligibility = done === 3;
+  eligibility =
+    done === 3;
 
 
   $("progress").style.width =
@@ -999,21 +1131,10 @@ async function loadEligibility(){
     `${done} of 3 requirements complete`;
 
 
-  /*
-    BEFORE ELIGIBILITY:
-    Show Eligibility.
-    Lock Identity Verification.
-
-    AFTER ELIGIBILITY:
-    Hide Eligibility.
-    Unlock Identity Verification.
-  */
-
   if(eligibility){
 
     $("eligibilityCard")
       .classList.add("hidden");
-
 
     unlockVerification();
 
@@ -1021,7 +1142,6 @@ async function loadEligibility(){
 
     $("eligibilityCard")
       .classList.remove("hidden");
-
 
     lockVerification();
 
@@ -1031,7 +1151,7 @@ async function loadEligibility(){
 
 
 /* =========================================
-   LOCK IDENTITY VERIFICATION
+   LOCK VERIFICATION
    ========================================= */
 
 function lockVerification(){
@@ -1045,6 +1165,7 @@ function lockVerification(){
 
 
   $("legalName").disabled = true;
+  $("contactEmail").disabled = true;
   $("dob").disabled = true;
   $("country").disabled = true;
   $("idFile").disabled = true;
@@ -1060,10 +1181,24 @@ function lockVerification(){
 
 
 /* =========================================
-   UNLOCK IDENTITY VERIFICATION
+   UNLOCK VERIFICATION
    ========================================= */
 
 function unlockVerification(){
+
+  /*
+    If verification is pending,
+    do NOT show the form again.
+  */
+
+  if(verificationStatus === "pending"){
+
+    showVerificationWaiting();
+
+    return;
+
+  }
+
 
   const card =
     $("verificationCard");
@@ -1074,6 +1209,7 @@ function unlockVerification(){
 
 
   $("legalName").disabled = false;
+  $("contactEmail").disabled = false;
   $("dob").disabled = false;
   $("country").disabled = false;
   $("idFile").disabled = false;
@@ -1085,22 +1221,94 @@ function unlockVerification(){
 
 
 /* =========================================
-   VERIFY FORM BUTTON STATE
+   SHOW WAITING SCREEN
+   ========================================= */
+
+function showVerificationWaiting(){
+
+  const card =
+    $("verificationCard");
+
+
+  card.classList.remove("locked");
+  card.classList.add("active");
+
+
+  $("verificationForm")
+    .classList.add("hidden");
+
+
+  $("verificationRejected")
+    .classList.add("hidden");
+
+
+  $("verificationWaiting")
+    .classList.remove("hidden");
+
+
+  $("verificationLockMessage")
+    .style.display = "none";
+
+
+  $("accountBadge").textContent =
+    "Verification pending";
+
+}
+
+
+/* =========================================
+   SHOW REJECTED STATE
+   ========================================= */
+
+function showRejectedState(){
+
+  const card =
+    $("verificationCard");
+
+
+  card.classList.remove("locked");
+  card.classList.add("active");
+
+
+  $("verificationWaiting")
+    .classList.add("hidden");
+
+
+  $("verificationRejected")
+    .classList.remove("hidden");
+
+
+  $("verificationForm")
+    .classList.remove("hidden");
+
+
+  $("legalName").disabled = false;
+  $("contactEmail").disabled = false;
+  $("dob").disabled = false;
+  $("country").disabled = false;
+  $("idFile").disabled = false;
+
+
+  updateVerificationButton();
+
+
+  $("accountBadge").textContent =
+    "Verification rejected";
+
+}
+
+
+/* =========================================
+   VERIFICATION BUTTON
    ========================================= */
 
 function updateVerificationButton(){
 
-  /*
-    Button requires:
-    1. Legal name
-    2. Date of birth
-    3. Country
-    4. Government ID
-    5. Eligibility
-  */
-
   const name =
     $("legalName").value.trim();
+
+  const email =
+    $("contactEmail").value.trim();
 
   const dob =
     $("dob").value.trim();
@@ -1112,8 +1320,14 @@ function updateVerificationButton(){
     $("idFile").files[0];
 
 
+  const validEmail =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(email);
+
+
   const allFieldsComplete =
     name.length > 0 &&
+    validEmail &&
     dob.length > 0 &&
     country.length > 0 &&
     !!file;
@@ -1126,22 +1340,33 @@ function updateVerificationButton(){
 }
 
 
-/* Listen for every verification field */
+/* =========================================
+   FIELD LISTENERS
+   ========================================= */
 
 $("legalName").addEventListener(
   "input",
   updateVerificationButton
 );
 
+
+$("contactEmail").addEventListener(
+  "input",
+  updateVerificationButton
+);
+
+
 $("dob").addEventListener(
   "change",
   updateVerificationButton
 );
 
+
 $("country").addEventListener(
   "change",
   updateVerificationButton
 );
+
 
 $("idFile").addEventListener(
   "change",
@@ -1150,7 +1375,11 @@ $("idFile").addEventListener(
     const file =
       this.files[0];
 
-    if(file && file.size > 10 * 1024 * 1024){
+
+    if(
+      file &&
+      file.size > 10 * 1024 * 1024
+    ){
 
       msg(
         "Government ID must be 10 MB or smaller.",
@@ -1160,6 +1389,7 @@ $("idFile").addEventListener(
       this.value = "";
 
     }
+
 
     updateVerificationButton();
 
@@ -1171,25 +1401,36 @@ $("idFile").addEventListener(
    MONETIZATION
    ========================================= */
 
-async function loadMonetization(){
+async function loadMonetization(existingData=null){
 
-  const {data,error} =
-    await sb
-      .from("creator_monetization")
-      .select("*")
-      .eq("user_id",currentUser.id)
-      .maybeSingle();
+  let data = existingData;
 
 
-  if(error){
+  if(!data){
 
-    console.warn(error);
+    const {data:result,error} =
+      await sb
+        .from("creator_monetization")
+        .select("*")
+        .eq("user_id",currentUser.id)
+        .maybeSingle();
+
+
+    if(error)
+      console.warn(error);
+
+
+    data = result;
 
   }
 
 
   earnings =
     Number(data?.available_balance || 0);
+
+
+  verificationStatus =
+    data?.verification_status || null;
 
 
   $("accountBadge").textContent =
@@ -1203,6 +1444,11 @@ async function loadMonetization(){
       data.legal_name;
 
 
+  if(data?.contact_email)
+    $("contactEmail").value =
+      data.contact_email;
+
+
   if(data?.date_of_birth)
     $("dob").value =
       data.date_of_birth;
@@ -1214,44 +1460,71 @@ async function loadMonetization(){
 
 
   /*
-    Payout setup unlocks at $10.
+    VERIFIED:
+    Leave this page permanently.
   */
 
-  const unlocked =
+  if(verificationStatus === "verified"){
+
+    location.replace(
+      "creator-earnings.html"
+    );
+
+    return;
+
+  }
+
+
+  /*
+    PENDING:
+    Show waiting message.
+  */
+
+  if(verificationStatus === "pending"){
+
+    showVerificationWaiting();
+
+  }
+
+
+  /*
+    REJECTED:
+    Allow another submission.
+  */
+
+  if(verificationStatus === "rejected"){
+
+    showRejectedState();
+
+  }
+
+
+  /*
+    Payout unlocks at $10.
+  */
+
+  const payoutUnlocked =
     earnings >= 10;
 
 
   $("payoutLocked")
     .classList.toggle(
       "hidden",
-      unlocked
+      payoutUnlocked
     );
 
 
   $("payoutForm")
     .classList.toggle(
       "hidden",
-      !unlocked
+      !payoutUnlocked
     );
 
 
-  if(!unlocked){
+  if(!payoutUnlocked){
 
     $("payoutLocked").textContent =
       `Current eligible balance: $${money(earnings)}. Reach $10 to unlock payout setup.`;
-
-  }
-
-
-  /*
-    If verification is already pending,
-    update badge.
-  */
-
-  if(data?.verification_status === "pending"){
-
-    $("accountBadge").textContent =
-      "Verification pending";
 
   }
 
@@ -1259,7 +1532,7 @@ async function loadMonetization(){
 
 
 /* =========================================
-   LOAD SAVED PAYOUT METHOD
+   LOAD PAYOUT
    ========================================= */
 
 async function loadPayout(){
@@ -1274,11 +1547,8 @@ async function loadPayout(){
       .maybeSingle();
 
 
-  if(error){
-
+  if(error)
     console.warn(error);
-
-  }
 
 
   if(!data)
@@ -1287,6 +1557,7 @@ async function loadPayout(){
 
   $("savedPayout").className =
     "notice success";
+
 
   $("savedPayout")
     .classList.remove("hidden");
@@ -1311,7 +1582,7 @@ async function loadPayout(){
 
 
 /* =========================================
-   SUBMIT IDENTITY VERIFICATION
+   SUBMIT VERIFICATION
    ========================================= */
 
 $("verificationForm")
@@ -1321,12 +1592,6 @@ $("verificationForm")
 
       e.preventDefault();
 
-
-      /*
-        Extra security check.
-        The form cannot submit if eligibility
-        has somehow become false.
-      */
 
       if(!eligibility){
 
@@ -1340,19 +1605,38 @@ $("verificationForm")
       }
 
 
+      const name =
+        $("legalName").value.trim();
+
+      const email =
+        $("contactEmail").value.trim();
+
+      const dob =
+        $("dob").value;
+
+      const country =
+        $("country").value;
+
       const file =
         $("idFile").files[0];
 
 
+      const validEmail =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          .test(email);
+
+
       if(
-        !$("legalName").value.trim() ||
-        !$("dob").value ||
-        !$("country").value ||
+        !name ||
+        !email ||
+        !validEmail ||
+        !dob ||
+        !country ||
         !file
       ){
 
         msg(
-          "Complete all verification fields and select your Government ID.",
+          "Complete your name, email, date of birth, country, and Government ID before submitting.",
           "error"
         );
 
@@ -1380,8 +1664,9 @@ $("verificationForm")
 
       try{
 
-        let path = null;
-
+        /*
+          Upload the ID document.
+        */
 
         const ext =
           (
@@ -1392,7 +1677,7 @@ $("verificationForm")
           ).toLowerCase();
 
 
-        path =
+        const path =
           `${currentUser.id}/${crypto.randomUUID()}.${ext}`;
 
 
@@ -1415,21 +1700,26 @@ $("verificationForm")
           throw uploadError;
 
 
+        /*
+          Save verification record.
+        */
+
         const payload = {
 
           user_id:
             currentUser.id,
 
           legal_name:
-            $("legalName")
-              .value
-              .trim(),
+            name,
+
+          contact_email:
+            email,
 
           date_of_birth:
-            $("dob").value,
+            dob,
 
           country:
-            $("country").value,
+            country,
 
           verification_status:
             "pending",
@@ -1457,27 +1747,44 @@ $("verificationForm")
           throw error;
 
 
+        /*
+          IMPORTANT:
+          Change local state immediately so the
+          page does not continue displaying the form.
+        */
+
+        verificationStatus =
+          "pending";
+
+
         $("accountBadge").textContent =
           "Verification pending";
 
 
-        msg(
-          "Verification submitted successfully. BIGULA will review your submission.",
-          "success"
-        );
+        $("verificationForm")
+          .classList.add("hidden");
+
+
+        $("verificationRejected")
+          .classList.add("hidden");
+
+
+        $("verificationWaiting")
+          .classList.remove("hidden");
+
+
+        $("verificationLockMessage")
+          .style.display = "none";
 
 
         /*
-          Prevent another submission while
-          this verification is pending.
+          Explicit confirmation message.
         */
 
-        $("verifyBtn").disabled = true;
-
-        $("legalName").disabled = true;
-        $("dob").disabled = true;
-        $("country").disabled = true;
-        $("idFile").disabled = true;
+        msg(
+          "Files verification in progress. Wait for confirmation. BIGULA will contact you by email after reviewing your files.",
+          "success"
+        );
 
 
       }catch(err){
@@ -1501,7 +1808,7 @@ $("verificationForm")
 
 
 /* =========================================
-   SAVE PAYOUT METHOD
+   PAYOUT METHOD
    ========================================= */
 
 $("payoutForm")
