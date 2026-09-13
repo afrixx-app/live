@@ -141,6 +141,21 @@ body{
   cursor:pointer
 }
 
+.monetize{
+  background:#ffd54a;
+  color:#111;
+  padding:13px 28px;
+  font-size:15px;
+  border:2px solid #fff;
+  box-shadow:0 6px 22px rgba(255,213,74,.35);
+  transform:scale(1.04);
+}
+
+.monetize:hover{
+  background:#ffe27a;
+  transform:scale(1.07) translateY(-1px);
+}
+
 .share{
   background:#1683ff;
   color:#fff
@@ -362,7 +377,10 @@ alt="Profile"
 
   <div class="actions">
 
-```
+<button id="monetizeBtn" class="action monetize" type="button">
+  💰 Monetize
+</button>
+
 <button id="shareBtn" class="action share">
   ↗ Share Profile
 </button>
@@ -385,10 +403,7 @@ alt="Profile"
 
   <div class="tab-title">
     <h2>Followers</h2>
-    <div style="display:flex;gap:8px;align-items:center">
-      <button class="tab-close" onclick="location.href='monetize.html'">Monetize</button>
-      <button class="tab-close" onclick="closeTabs()">Close</button>
-    </div>
+    <button class="tab-close" onclick="closeTabs()">Close</button>
   </div>
 
   <div id="followersList" class="user-list">
@@ -545,6 +560,10 @@ async function init(){
 
     document.getElementById('editBtn').onclick=()=>{
       location.href='edit_profile.html';
+    };
+
+    document.getElementById('monetizeBtn').onclick=()=>{
+      location.href='monetize.html';
     };
 
 
