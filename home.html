@@ -130,11 +130,27 @@ let currentUser = null;
 let currentVideoId = null;
 
 async function requireSignIn(){
-  const { data, error } = await supabase.auth.getSession();
-  if(!error && data?.session?.user){
-    currentUser = data.session.user;
-    return true;
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if(code){
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if(error) throw error;
+      currentUser = data?.session?.user || null;
+      history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if(!currentUser){
+      const { data, error } = await supabase.auth.getSession();
+      if(!error) currentUser = data?.session?.user || null;
+    }
+
+    if(currentUser) return true;
+  }catch(error){
+    console.warn("Sign-in/session check failed:", error);
   }
+
   alert("Please sign in first.");
   window.location.href = "signup.html";
   return false;
@@ -144,16 +160,27 @@ const creatorProfiles = new Map();
 
 // --- User ---
 async function initUser(){
-  // Home is public. Visitors can browse without signing in.
-  // Protected actions call requireSignIn() when the user taps them.
+  // Home is public, but it must finish a Google/Supabase PKCE login
+  // when Supabase returns here as ?code=...
   currentUser = null;
 
   try{
-    const { data, error } = await supabase.auth.getSession();
-    if(error) console.warn("Session check failed:", error);
-    else currentUser = data?.session?.user || null;
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if(code){
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if(error) throw error;
+      currentUser = data?.session?.user || null;
+      history.replaceState({}, document.title, window.location.pathname);
+    }else{
+      const { data, error } = await supabase.auth.getSession();
+      if(error) console.warn("Session check failed:", error);
+      else currentUser = data?.session?.user || null;
+    }
   }catch(e){
-    console.warn("Could not check Supabase session:", e);
+    console.warn("Could not establish Supabase session:", e);
+    currentUser = null;
   }
 
   const uploadBtn = document.querySelector(".upload-btn");
@@ -458,9 +485,15 @@ function bindCardActions(card){
   const creatorId = card.dataset.creatorId || card.querySelector(".username")?.dataset.creatorId || ""
   const videoId = card.dataset.id
   card.querySelector(".username")?.addEventListener("click", ()=>openProfile(creatorId))
-  card.querySelector('[data-action="like"]')?.addEventListener("click", e=>{ if(requireSignIn()) toggleLike(videoId, e.currentTarget) })
-  card.querySelector('[data-action="comments"]')?.addEventListener("click", ()=>{ if(requireSignIn()) openComments(videoId) })
-  card.querySelector('[data-action="follow"]')?.addEventListener("click", e=>{ if(requireSignIn()) followUser(creatorId, e.currentTarget) })
+  card.querySelector('[data-action="like"]')?.addEventListener("click", async e=>{
+    if(await requireSignIn()) await toggleLike(videoId, e.currentTarget)
+  })
+  card.querySelector('[data-action="comments"]')?.addEventListener("click", async ()=>{
+    if(await requireSignIn()) await openComments(videoId)
+  })
+  card.querySelector('[data-action="follow"]')?.addEventListener("click", async e=>{
+    if(await requireSignIn()) await followUser(creatorId, e.currentTarget)
+  })
   card.querySelector('[data-action="share"]')?.addEventListener("click", e=>toggleShare(e.currentTarget))
   card.querySelector('[data-action="status"]')?.addEventListener("click", ()=>shareStatus(videoId, getCreatorNameFromCard(card)))
   card.querySelector('[data-action="whatsapp"]')?.addEventListener("click", ()=>shareWhatsApp(videoId, getCreatorNameFromCard(card), card.querySelector(".title-overlay")?.textContent || ""))
@@ -475,12 +508,12 @@ function setupVideo(card){
   let lastTap = 0
 
   // One tap/click in the middle toggles pause/play.
-  video.addEventListener("click", e=>{
+  video.addEventListener("click", async e=>{
     if(e.target !== video) return
     const now = Date.now()
     if(now - lastTap < 350){
       e.preventDefault()
-      if(requireSignIn()) toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
+      if(await requireSignIn()) await toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
       lastTap = 0
       return
     }
@@ -754,12 +787,32 @@ document.addEventListener("click", async function(e){
   e.preventDefault();
   e.stopPropagation();
 
-  const { data } = await supabase.auth.getSession();
-  if(!data?.session?.user){
+  let sessionUser = null;
+
+  try{
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    if(code){
+      const result = await supabase.auth.exchangeCodeForSession(code);
+      if(result.error) throw result.error;
+      sessionUser = result.data?.session?.user || null;
+      history.replaceState({}, document.title, window.location.pathname);
+    }else{
+      const result = await supabase.auth.getSession();
+      sessionUser = result.data?.session?.user || null;
+    }
+  }catch(error){
+    console.warn("Footer sign-in check failed:", error);
+  }
+
+  if(!sessionUser){
     alert("Please sign in first.");
     location.href = "signup.html";
     return;
   }
+
+  currentUser = sessionUser;
 
   if(btn.id === "footerUpload") location.href = "upload.html";
   if(btn.id === "notifBtn") location.href = "notifications.html";
