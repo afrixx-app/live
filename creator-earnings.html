@@ -3,188 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIGULA – Creator Dashboard</title>
-
+<title>BIGULA — Creator Earnings</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-
 <style>
-body{
-  margin:0; padding:0; font-family:'Segoe UI',sans-serif; background:#000; color:#fff;
-}
-header{
-  background:#1a1a1a; padding:15px 20px; text-align:center; font-size:24px; font-weight:bold; color:#ff1a1a;
-  text-shadow:0 0 10px rgba(255,0,0,.6);
-}
-.dashboard{
-  max-width:900px; margin:0 auto; padding:20px;
-}
-.stats-box{
-  display:flex; justify-content:space-around; margin-bottom:20px;
-}
-.stats-box div{
-  background:#111; padding:20px; border-radius:15px; text-align:center; width:30%;
-  box-shadow:0 0 15px rgba(255,0,0,.2); transition:0.3s;
-}
-.stats-box div:hover{ transform:scale(1.05);}
-.stats-box div h3{ font-size:20px; margin-bottom:10px;}
-.stats-box div p{ font-size:16px; color:#ff1a1a;}
-
-#withdrawBtn{
-  display:block; margin:0 auto 30px auto; padding:12px 25px; font-size:16px;
-  background:#ff1a1a; color:#fff; border:none; border-radius:30px; cursor:pointer; transition:0.3s;
-}
-#withdrawBtn:disabled{opacity:.4; cursor:not-allowed;}
-#withdrawBtn:hover:not(:disabled){transform:scale(1.05);}
-
-.video-list{
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:15px;
-}
-.video-card{
-  background:#111; border-radius:15px; overflow:hidden; box-shadow:0 0 10px rgba(255,0,0,.2);
-  position:relative; transition:0.3s;
-}
-.video-card:hover{transform:scale(1.02);}
-.video-card video{
-  width:100%; height:200px; object-fit:cover;
-}
-.video-info{
-  padding:10px; font-size:14px;
-}
-.video-info h4{margin-bottom:5px;}
-.video-info p{opacity:.8; margin-bottom:5px;}
-.video-stats{display:flex; justify-content:space-between; font-size:12px; color:#ff1a1a;}
-.video-stats div{display:flex; gap:5px; align-items:center;}
+:root{--red:#ff3b30;--ink:#101114;--muted:#727782;--line:#e7e8ec;--bg:#f5f6f8;--green:#168a55}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.nav{max-width:1120px;margin:auto;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}.logo{font-weight:900;font-size:22px}.logo span{color:var(--red)}.actions{display:flex;gap:9px}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:800;cursor:pointer}.light{background:#eff0f3}.red{background:var(--red);color:#fff}.dark{background:var(--ink);color:#fff}
+main{max-width:1120px;margin:auto;padding:28px 20px 60px}.hero{margin-bottom:20px}.eyebrow{font-size:12px;color:var(--red);font-weight:900;letter-spacing:1.2px;text-transform:uppercase}.hero h1{margin:5px 0;font-size:34px}.hero p{color:var(--muted);margin:0}.account{color:var(--muted);font-size:13px;margin-top:5px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px;box-shadow:0 7px 25px rgba(0,0,0,.04)}.stat .label{font-size:13px;color:var(--muted);font-weight:700}.stat .value{font-size:28px;font-weight:900;margin-top:7px}.stat.redline{border-top:4px solid var(--red)}.stat.greenline{border-top:4px solid var(--green)}
+.grid{display:grid;grid-template-columns:1.4fr .8fr;gap:16px}.panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:21px;box-shadow:0 7px 25px rgba(0,0,0,.04)}.panel h2{margin:0 0 5px;font-size:19px}.sub{font-size:13px;color:var(--muted);margin:0 0 16px}
+.video-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.video{border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#fafafa}.video video{width:100%;height:210px;object-fit:cover;display:block;background:#111}.vinfo{padding:12px}.vtitle{font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.creator{font-size:12px;color:var(--muted);margin:4px 0 9px}.vstats{display:flex;gap:12px;font-size:12px;color:var(--muted)}
+.payout-box{background:#f7f8fa;border-radius:15px;padding:15px;margin-bottom:12px}.payout-box strong{display:block;margin-bottom:5px}.payout-status{font-size:13px;color:var(--muted)}.notice{padding:13px;border-radius:12px;background:#f1f2f5;font-size:13px;margin-top:12px}.success{background:#e9f8f0;color:#146b44}.warning{background:#fff6df;color:#765400}.empty{padding:30px 12px;text-align:center;color:var(--muted);border:1px dashed #d7d9df;border-radius:15px}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}@media(max-width:560px){.nav{padding:13px 15px}.actions .light{display:none}.cards{grid-template-columns:1fr 1fr}.video-list{grid-template-columns:1fr}.hero h1{font-size:28px}.video video{height:250px}main{padding:22px 15px 45px}}
 </style>
 </head>
 <body>
-
-<header>BIGULA Creator Dashboard</header>
-
-<div class="dashboard">
-  <div class="stats-box">
-    <div>
-      <h3>Total Earned</h3>
-      <p>$<span id="totalEarned">0</span></p>
-    </div>
-    <div>
-      <h3>Pending Payout</h3>
-      <p>$<span id="pendingPayout">0</span></p>
-    </div>
-    <div>
-      <h3>Paid Out</h3>
-      <p>$<span id="paidOut">0</span></p>
-    </div>
-  </div>
-
-  <button id="withdrawBtn" disabled>Withdraw</button>
-
-  <h3>Your Uploaded Videos</h3>
-  <div class="video-list" id="videoList"></div>
+<header><div class="nav"><div class="logo">BIG<span>ULA</span></div><div class="actions"><button class="btn light" id="monetizeBtn">Monetization</button><button class="btn red" id="backBtn">Account</button></div></div></header>
+<main>
+<section class="hero"><div class="eyebrow">Creator Studio</div><h1>Earnings</h1><p>Track your BIGULA creator revenue, payout balance, and video performance.</p><div class="account" id="accountLine">Loading account…</div></section>
+<div class="cards">
+<div class="stat redline"><div class="label">Total earned</div><div class="value">$<span id="total">0.00</span></div></div>
+<div class="stat"><div class="label">Available balance</div><div class="value">$<span id="available">0.00</span></div></div>
+<div class="stat"><div class="label">Pending</div><div class="value">$<span id="pending">0.00</span></div></div>
+<div class="stat greenline"><div class="label">Paid out</div><div class="value">$<span id="paid">0.00</span></div></div>
 </div>
 
+<div class="grid">
+<section class="panel"><h2>Your videos</h2><p class="sub">Performance is read directly from your BIGULA video records.</p><div class="video-list" id="videoList"></div></section>
+<aside class="panel"><h2>Payout</h2><p class="sub">Withdrawals are subject to eligibility and your saved payout method.</p>
+<div class="payout-box"><strong>Minimum payout</strong><div class="payout-status">$10.00</div></div>
+<div class="payout-box"><strong>Payout method</strong><div class="payout-status" id="method">Not configured</div></div>
+<button class="btn red" id="withdrawBtn" style="width:100%" disabled>Request payout</button>
+<div id="payoutMsg" class="notice warning">You need at least $10.00 available to request a payout.</div>
+</aside>
+</div>
+</main>
 <script>
-// ===== CONFIG =====
-const SUPABASE_URL = "https://uyuofjiiptnbbcuntbfi.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dW9mamlpcHRuYmJjdW50YmZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIzMzQ3MjcsImV4cCI6MjA4NzkxMDcyN30.-FBKM7NKTSm20qzkExueYhqrE6oaK6a6de1qCsl2nuQ";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const firebaseConfig = {
- apiKey: "AIzaSyB8wGlVLw7ECGTQns65Ff8UyTT_on8OivY",
-  authDomain: "bigula-d8cab.firebaseapp.com",
-  projectId: "bigula-d8cab",
+const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
+let uid=null,available=0;
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toFixed(2);
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+async function init(){
+ const {data:{session}}=await sb.auth.getSession();if(!session?.user){location.href="signup.html";return} uid=session.user.id;
+ const {data:user}=await sb.from("users").select("*").eq("id",uid).maybeSingle();
+ $("accountLine").textContent=user?.username||user?.full_name||session.user.user_metadata?.full_name||session.user.email||"Creator";
+ await Promise.all([loadEarnings(),loadVideos(),loadPayout()]);
+}
+async function loadEarnings(){
+ const {data}=await sb.from("creator_earnings").select("total_earned,available_balance,pending_payout,paid_out").eq("user_id",uid).maybeSingle();
+ const d=data||{};available=Number(d.available_balance||0);$("total").textContent=money(d.total_earned);$("available").textContent=money(available);$("pending").textContent=money(d.pending_payout);$("paid").textContent=money(d.paid_out);
+ $("withdrawBtn").disabled=available<10;
+ $("payoutMsg").textContent=available>=10?"Your balance is eligible for a payout request.":"You need at least $10.00 available to request a payout.";
+ $("payoutMsg").className="notice "+(available>=10?"success":"warning");
+}
+async function loadPayout(){
+ const {data}=await sb.from("payout_methods").select("method,account_name,status").eq("user_id",uid).maybeSingle();
+ if(data) $("method").textContent=`${data.method.replaceAll("_"," ")} • ${data.account_name} • ${data.status}`;
+}
+async function loadVideos(){
+ const {data,error}=await sb.from("videos").select("id,title,video_url,thumbnail_url,views_count,likes_count,comments_count,created_at").eq("user_id",uid).order("created_at",{ascending:false});
+ const list=$("videoList");if(error){list.innerHTML='<div class="empty">Could not load your videos.</div>';return}
+ if(!data?.length){list.innerHTML='<div class="empty">No uploaded videos yet.</div>';return}
+ list.innerHTML=data.map(v=>`<article class="video"><video src="${esc(v.video_url)}" poster="${esc(v.thumbnail_url||"")}" muted loop playsinline preload="metadata"></video><div class="vinfo"><div class="vtitle">${esc(v.title||"Untitled video")}</div><div class="creator">Uploaded ${new Date(v.created_at).toLocaleDateString()}</div><div class="vstats"><span>👁 ${Number(v.views_count||0).toLocaleString()}</span><span>♥ ${Number(v.likes_count||0).toLocaleString()}</span><span>💬 ${Number(v.comments_count||0).toLocaleString()}</span></div></div></article>`).join("");
+ document.querySelectorAll(".video video").forEach(v=>{v.addEventListener("mouseenter",()=>v.play().catch(()=>{}));v.addEventListener("mouseleave",()=>v.pause())});
+}
+$("withdrawBtn").onclick=async()=>{
+ if(available<10)return;
+ $("withdrawBtn").disabled=true;
+ const {error}=await sb.from("payout_requests").insert({user_id:uid,amount:available,status:"pending"});
+ if(error){$("payoutMsg").textContent=error.message;$("payoutMsg").className="notice warning";$("withdrawBtn").disabled=false;return}
+ $("payoutMsg").textContent="Payout request submitted successfully. It will be reviewed by BIGULA.";$("payoutMsg").className="notice success";
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// ===== USER STATE =====
-const userId = localStorage.getItem("userToken");
-if(!userId){
-  alert("You must be logged in to access the dashboard.");
-  window.location.href="login.html";
-}
-
-// ===== DASHBOARD =====
-const totalEl = document.getElementById("totalEarned");
-const pendingEl = document.getElementById("pendingPayout");
-const paidEl = document.getElementById("paidOut");
-const withdrawBtn = document.getElementById("withdrawBtn");
-const videoList = document.getElementById("videoList");
-
-const userRef = db.collection("userRevenue").doc(userId);
-
-userRef.onSnapshot(doc=>{
-  const data = doc.data() || {};
-  totalEl.innerText = (data.total_earned||0).toFixed(2);
-  pendingEl.innerText = (data.pending_payout||0).toFixed(2);
-  paidEl.innerText = (data.paid_out||0).toFixed(2);
-
-  withdrawBtn.disabled = (data.pending_payout||0) < 10; // minimum payout $10
-});
-
-// Withdraw button click
-withdrawBtn.onclick = async ()=>{
-  alert("Withdrawal initiated. Integrate Stripe/PayPal here.");
-  // Example: after payout
-  await userRef.update({
-    paid_out: firebase.firestore.FieldValue.increment(10), // example payout
-    pending_payout: firebase.firestore.FieldValue.increment(-10)
-  });
-}
-
-// ===== FETCH USER VIDEOS =====
-async function fetchUserVideos(){
-  const {data:errorCheck, error} = await supabase.from("videos").select("*").eq("uploader_id", userId).order("created_at",{ascending:false});
-  const videos = errorCheck || [];
-
-  videoList.innerHTML = "";
-  videos.forEach(video=>{
-    const card = document.createElement("div");
-    card.className="video-card";
-    card.innerHTML = `
-      <video src="${video.video_url}" muted loop playsinline></video>
-      <div class="video-info">
-        <h4>@${video.username}</h4>
-        <p>${video.title}</p>
-        <div class="video-stats">
-          <div>?? <span id="likes-${video.id}">0</span></div>
-          <div>?? <span id="views-${video.id}">0</span></div>
-          <div>?? <span id="comments-${video.id}">0</span></div>
-        </div>
-      </div>
-    `;
-    videoList.appendChild(card);
-    loadVideoStats(video.id);
-  });
-}
-
-// Load stats from Firestore
-async function loadVideoStats(videoId){
-  const doc = await db.collection("videoStats").doc(videoId).get();
-  if(doc.exists){
-    const d = doc.data();
-    document.getElementById(`likes-${videoId}`).innerText = d.likes||0;
-    document.getElementById(`views-${videoId}`).innerText = d.views||0;
-    document.getElementById(`comments-${videoId}`).innerText = d.comments||0;
-  }
-}
-
-// Autoplay videos
-function setupAutoplay(){
-  const videos = document.querySelectorAll("video");
-  const observer = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting) entry.target.play();
-      else entry.target.pause();
-    });
-  }, {threshold:0.8});
-  videos.forEach(v=>observer.observe(v));
-}
-
-// Initialize
-fetchUserVideos().then(setupAutoplay);
+$("monetizeBtn").onclick=()=>location.href="monetize.html";$("backBtn").onclick=()=>location.href="account.html";
+init();
 </script>
-
 </body>
 </html>
