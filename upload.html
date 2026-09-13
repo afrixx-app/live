@@ -7,7 +7,11 @@
 <title>BIGULA — Create</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 :root{
   --bg:#070707;
@@ -34,6 +38,10 @@ button,input,textarea,select{
 button{
   border:0;
   cursor:pointer;
+}
+
+button:disabled{
+  cursor:not-allowed;
 }
 
 .topbar{
@@ -113,152 +121,166 @@ button{
   display:block;
 }
 
-.create-grid{
-  display:grid;
-  grid-template-columns:390px 1fr;
-  gap:30px;
+
+/* =========================
+   STEP 1
+========================= */
+
+.choose-panel{
+  max-width:760px;
+  margin:0 auto;
 }
 
-.preview-area{
-  display:flex;
-  justify-content:center;
+.choose-panel h2{
+  font-size:24px;
+  margin-bottom:8px;
 }
 
-.phone{
-  width:100%;
-  max-width:390px;
-  aspect-ratio:9/16;
-  background:#000;
-  border-radius:22px;
-  overflow:hidden;
-  position:relative;
-  border:1px solid #292929;
-}
-
-.phone video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  background:#000;
-}
-
-.preview-empty{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#777;
-  padding:30px;
+.choose-subtitle{
+  color:#888;
   font-size:14px;
+  margin-bottom:28px;
 }
 
-.preview-overlay{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-}
-
-.preview-title{
-  position:absolute;
-  left:18px;
-  bottom:70px;
-  font-size:16px;
-  font-weight:800;
-  text-shadow:0 2px 8px #000;
-}
-
-.preview-controls{
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:14px;
-  display:flex;
-  justify-content:space-between;
-  pointer-events:auto;
-}
-
-.round{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:rgba(0,0,0,.62);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.18);
-}
-
-.timeline{
-  position:absolute;
-  left:12px;
-  right:12px;
-  bottom:60px;
-  height:4px;
-  background:rgba(255,255,255,.25);
-  border-radius:5px;
-  overflow:hidden;
-}
-
-.timeline-fill{
-  width:0%;
-  height:100%;
-  background:#fff;
-}
-
-.editor h2{
-  font-size:20px;
-  margin-bottom:18px;
-}
-
-.upload-choice{
+.choice-list{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-bottom:24px;
+  grid-template-columns:1fr;
+  gap:13px;
 }
 
 .choice{
-  padding:15px;
-  border-radius:13px;
-  background:#1c1c1c;
+  width:100%;
+  min-height:76px;
+  padding:18px 20px;
+  border-radius:15px;
+  background:#1a1a1a;
   border:1px solid #303030;
   color:#fff;
-  font-weight:700;
+  font-weight:800;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  transition:.18s;
 }
 
 .choice:hover{
+  background:#202020;
   border-color:#555;
+  transform:translateY(-1px);
 }
 
-.field{
-  margin-bottom:18px;
+.choice-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
 
-.field label{
+.choice-icon{
+  width:42px;
+  height:42px;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#252525;
+  font-size:20px;
+}
+
+.choice-arrow{
+  color:#777;
+  font-size:20px;
+}
+
+.choice.live{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.choice.live:hover{
+  background:#1a1a1a;
+  border-color:#303030;
+  transform:none;
+}
+
+.live-lock{
+  color:#777;
+  font-size:12px;
+  font-weight:700;
+  margin-left:auto;
+  margin-right:12px;
+}
+
+.selected-file-box{
+  display:none;
+  margin-top:22px;
+  padding:16px;
+  border-radius:14px;
+  background:#151515;
+  border:1px solid #292929;
+}
+
+.selected-file-box.show{
   display:block;
-  font-size:13px;
+}
+
+.selected-file-name{
   font-weight:800;
-  margin-bottom:7px;
+  font-size:14px;
+  word-break:break-word;
 }
 
-input,textarea,select{
-  width:100%;
-  border:1px solid #303030;
-  background:#181818;
-  color:#fff;
+.selected-file-meta{
+  color:#888;
+  font-size:12px;
+  margin-top:6px;
+}
+
+.recording-box{
+  display:none;
+  margin-top:22px;
+  padding:16px;
+  border-radius:14px;
+  background:#151515;
+  border:1px solid #292929;
+  text-align:center;
+}
+
+.recording-box.show{
+  display:block;
+}
+
+.recording-dot{
+  display:inline-block;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--accent);
+  margin-right:7px;
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:.35}
+}
+
+.duration-box{
+  margin-top:18px;
+  color:#888;
+  font-size:13px;
+}
+
+.review-note{
+  margin-top:20px;
+  padding:14px;
   border-radius:12px;
-  padding:13px 14px;
-  outline:none;
-}
-
-input:focus,textarea:focus,select:focus{
-  border-color:#666;
-}
-
-textarea{
-  min-height:130px;
-  resize:vertical;
+  background:#191919;
+  border:1px solid #292929;
+  color:#aaa;
+  font-size:13px;
+  line-height:1.5;
 }
 
 .action-row{
@@ -286,7 +308,72 @@ textarea{
 
 .primary:disabled{
   opacity:.45;
-  cursor:not-allowed;
+}
+
+
+/* =========================
+   STEP 2
+========================= */
+
+.editor-preview{
+  display:flex;
+  justify-content:center;
+  margin-bottom:25px;
+}
+
+.small-phone{
+  width:260px;
+  max-width:70vw;
+  aspect-ratio:9/16;
+  background:#000;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  border:1px solid #303030;
+  box-shadow:0 15px 50px rgba(0,0,0,.45);
+}
+
+.small-phone video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  background:#000;
+}
+
+.preview-overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.preview-title{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:17px;
+  font-size:14px;
+  font-weight:800;
+  text-shadow:0 2px 8px #000;
+}
+
+.preview-controls{
+  position:absolute;
+  top:12px;
+  right:12px;
+  display:flex;
+  gap:7px;
+  pointer-events:auto;
+}
+
+.round{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:rgba(0,0,0,.65);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:13px;
 }
 
 .media-tools{
@@ -304,7 +391,7 @@ textarea{
 
 .tool-box h3{
   font-size:15px;
-  margin-bottom:12px;
+  margin-bottom:8px;
 }
 
 .tool-box p{
@@ -320,13 +407,18 @@ textarea{
 }
 
 .filter-btn{
-  min-height:70px;
+  min-height:62px;
   border-radius:10px;
   background:#222;
   color:#fff;
   border:1px solid #303030;
   font-size:12px;
   font-weight:700;
+}
+
+.filter-btn:hover,
+.effect-btn:hover{
+  background:#292929;
 }
 
 .filter-btn.active{
@@ -351,43 +443,52 @@ textarea{
 
 .effect-btn.active{
   border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
 }
 
-.range{
-  width:100%;
-  accent-color:var(--accent);
+
+/* =========================
+   STEP 3
+========================= */
+
+.field{
+  margin-bottom:18px;
 }
 
-.thumbnail-box{
-  display:flex;
-  gap:15px;
-  align-items:center;
-}
-
-.thumbnail{
-  width:105px;
-  height:105px;
-  object-fit:cover;
-  border-radius:12px;
-  background:#222;
-  border:1px solid #333;
-}
-
-.small-btn{
-  padding:10px 13px;
-  border-radius:9px;
-  background:#292929;
-  color:#fff;
-  font-weight:700;
-}
-
-.message{
-  min-height:20px;
-  margin-top:12px;
-  text-align:center;
+.field label{
+  display:block;
   font-size:13px;
-  color:#aaa;
+  font-weight:800;
+  margin-bottom:7px;
 }
+
+input,
+textarea,
+select{
+  width:100%;
+  border:1px solid #303030;
+  background:#181818;
+  color:#fff;
+  border-radius:12px;
+  padding:13px 14px;
+  outline:none;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#666;
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+
+/* =========================
+   GLOBAL UPLOAD
+========================= */
 
 .global-upload{
   display:none;
@@ -431,32 +532,33 @@ textarea{
   transition:width .2s;
 }
 
-.review-note{
-  margin-top:15px;
-  padding:14px;
-  border-radius:12px;
-  background:#191919;
-  border:1px solid #292929;
-  color:#aaa;
+.message{
+  min-height:20px;
+  margin-top:12px;
+  text-align:center;
   font-size:13px;
-  line-height:1.5;
+  color:#aaa;
 }
 
-@media(max-width:800px){
-  .create-grid{
-    grid-template-columns:1fr;
-  }
 
-  .phone{
-    max-width:330px;
-  }
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
 
   .media-tools{
     grid-template-columns:1fr;
   }
+
+  .small-phone{
+    width:230px;
+  }
+
 }
 
 @media(max-width:500px){
+
   .page{
     width:96%;
     margin-top:18px;
@@ -471,9 +573,22 @@ textarea{
     font-size:27px;
   }
 
+  .choose-panel h2{
+    font-size:22px;
+  }
+
   .filter-grid{
     grid-template-columns:repeat(3,1fr);
   }
+
+  .effect-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .small-phone{
+    width:210px;
+  }
+
 }
 </style>
 </head>
@@ -485,6 +600,7 @@ textarea{
   <a class="back" href="home.html">Cancel</a>
 </header>
 
+
 <main class="page">
 
   <div class="header">
@@ -492,99 +608,224 @@ textarea{
     <p>Make it yours, then send it to BIGULA for review.</p>
   </div>
 
+
   <div class="steps">
     <div class="step active" id="stepIndicator1"></div>
     <div class="step" id="stepIndicator2"></div>
     <div class="step" id="stepIndicator3"></div>
   </div>
 
+
+  <!-- GLOBAL UPLOAD STATUS -->
+
   <div class="global-upload" id="globalUpload">
+
     <div class="upload-head">
       <span id="globalTitle">BIGULA upload</span>
       <span id="globalPercent">0%</span>
     </div>
-    <div class="upload-sub" id="globalStatus">Preparing...</div>
-    <div class="progress">
-      <div class="progress-fill" id="globalFill"></div>
+
+    <div class="upload-sub" id="globalStatus">
+      Preparing...
     </div>
+
+    <div class="progress">
+      <div
+        class="progress-fill"
+        id="globalFill">
+      </div>
+    </div>
+
   </div>
 
-  <!-- STEP 1 -->
-  <section class="panel active" id="panel1">
 
-    <div class="create-grid">
+  <!-- =====================================================
+       STEP 1 — CHOOSE
+  ====================================================== -->
 
-      <div class="preview-area">
-        <div class="phone">
+  <section
+    class="panel active"
+    id="panel1">
 
-          <video
-            id="preview"
-            muted
-            playsinline
-            preload="metadata">
-          </video>
+    <div class="choose-panel">
 
-          <div class="preview-empty" id="previewEmpty">
-            Choose a video or record one with your camera.
-          </div>
+      <h2>Choose how you want to create</h2>
 
-          <div class="preview-overlay">
+      <p class="choose-subtitle">
+        Select a video, record one with your camera,
+        or go live when you reach 100 followers.
+      </p>
 
-            <div class="preview-title" id="previewTitle"></div>
 
-            <div class="timeline">
-              <div class="timeline-fill" id="timelineFill"></div>
-            </div>
+      <div class="choice-list">
 
-            <div class="preview-controls">
-              <button class="round" id="playBtn">▶</button>
-              <button class="round" id="muteBtn">🔇</button>
-            </div>
+        <!-- CHOOSE VIDEO -->
 
-          </div>
+        <button
+          class="choice"
+          id="selectBtn">
 
-        </div>
+          <span class="choice-left">
+
+            <span class="choice-icon">
+              📁
+            </span>
+
+            <span>
+              Choose Video
+            </span>
+
+          </span>
+
+          <span class="choice-arrow">
+            ›
+          </span>
+
+        </button>
+
+
+        <!-- RECORD VIDEO -->
+
+        <button
+          class="choice"
+          id="cameraBtn">
+
+          <span class="choice-left">
+
+            <span class="choice-icon">
+              🎥
+            </span>
+
+            <span>
+              Record Video
+            </span>
+
+          </span>
+
+          <span class="choice-arrow">
+            ›
+          </span>
+
+        </button>
+
+
+        <!-- GO LIVE -->
+
+        <button
+          class="choice live"
+          id="liveBtn"
+          disabled>
+
+          <span class="choice-left">
+
+            <span class="choice-icon">
+              🔴
+            </span>
+
+            <span>
+              Go Live
+            </span>
+
+          </span>
+
+          <span class="live-lock">
+            100 followers required
+          </span>
+
+          <span class="choice-arrow">
+            🔒
+          </span>
+
+        </button>
+
       </div>
 
-      <div class="editor">
 
-        <h2>Choose your video</h2>
+      <input
+        id="fileInput"
+        type="file"
+        accept="video/*"
+        hidden>
 
-        <div class="upload-choice">
-          <button class="choice" id="selectBtn">📁 Choose video</button>
-          <button class="choice" id="cameraBtn">🎥 Record video</button>
+
+      <!-- SELECTED FILE -->
+
+      <div
+        class="selected-file-box"
+        id="selectedFileBox">
+
+        <div
+          class="selected-file-name"
+          id="selectedFileName">
+          Video selected
         </div>
 
-        <input
-          id="fileInput"
-          type="file"
-          accept="video/*"
-          hidden>
-
-        <div class="field">
-          <label>Video duration</label>
-          <div id="durationText" style="color:#888;font-size:13px">
-            No video selected
-          </div>
+        <div
+          class="selected-file-meta"
+          id="selectedFileMeta">
+          Ready for editing
         </div>
 
-        <div class="review-note">
-          Your video will first be uploaded privately. BIGULA will then
-          check it for copyright claims and policy violations before you
-          decide whether to make it public.
+      </div>
+
+
+      <!-- RECORDING STATUS -->
+
+      <div
+        class="recording-box"
+        id="recordingBox">
+
+        <div>
+          <span class="recording-dot"></span>
+          <strong id="recordingText">
+            Recording...
+          </strong>
         </div>
 
-        <div class="action-row">
-          <button
-            class="primary"
-            id="next1"
-            disabled>
-            Continue
-          </button>
+        <div
+          style="color:#888;font-size:12px;margin-top:7px"
+          id="recordingTimer">
+          15 seconds maximum
         </div>
 
-        <div class="message" id="message1"></div>
+      </div>
 
+
+      <div class="duration-box">
+        <strong>Duration:</strong>
+        <span id="durationText">
+          No video selected
+        </span>
+      </div>
+
+
+      <div class="review-note">
+
+        Your video will first be uploaded privately.
+        BIGULA will then check it for copyright claims
+        and policy violations before you decide whether
+        to make it public.
+
+      </div>
+
+
+      <div class="action-row">
+
+        <button
+          class="primary"
+          id="next1"
+          disabled>
+
+          Continue
+
+        </button>
+
+      </div>
+
+
+      <div
+        class="message"
+        id="message1">
       </div>
 
     </div>
@@ -592,101 +833,60 @@ textarea{
   </section>
 
 
-  <!-- STEP 2 -->
-  <section class="panel" id="panel2">
+  <!-- =====================================================
+       STEP 2 — EDIT
+  ====================================================== -->
 
-    <h2>Make it yours</h2>
+  <section
+    class="panel"
+    id="panel2">
 
-    <div class="media-tools">
+    <h2 style="font-size:24px;margin-bottom:8px">
+      Make it yours
+    </h2>
 
-      <div class="tool-box">
-        <h3>Filters</h3>
-        <p>Preview different looks before publishing.</p>
-
-        <div class="filter-grid">
-
-          <button class="filter-btn active" data-filter="none">
-            Original
-          </button>
-
-          <button class="filter-btn" data-filter="cinematic">
-            Cinematic
-          </button>
-
-          <button class="filter-btn" data-filter="vivid">
-            Vivid
-          </button>
-
-          <button class="filter-btn" data-filter="warm">
-            Warm
-          </button>
-
-          <button class="filter-btn" data-filter="cool">
-            Cool
-          </button>
-
-          <button class="filter-btn" data-filter="film">
-            Film
-          </button>
-
-          <button class="filter-btn" data-filter="retro">
-            Retro
-          </button>
-
-          <button class="filter-btn" data-filter="dream">
-            Dream
-          </button>
-
-          <button class="filter-btn" data-filter="noir">
-            Noir
-          </button>
-
-          <button class="filter-btn" data-filter="faded">
-            Faded
-          </button>
-
-          <button class="filter-btn" data-filter="moody">
-            Moody
-          </button>
-
-          <button class="filter-btn" data-filter="sunset">
-            Sunset
-          </button>
-
-        </div>
-      </div>
+    <p style="color:#888;font-size:13px;margin-bottom:22px">
+      Preview filters and effects before sending your video.
+    </p>
 
 
-      <div class="tool-box">
+    <!-- SMALL VIDEO PREVIEW -->
 
-        <h3>Effects</h3>
-        <p>Add a visual touch to your preview.</p>
+    <div class="editor-preview">
 
-        <div class="effect-grid">
+      <div class="small-phone">
 
-          <button class="effect-btn active" data-effect="none">
-            None
-          </button>
+        <video
+          id="preview"
+          muted
+          playsinline
+          preload="metadata">
+        </video>
 
-          <button class="effect-btn" data-effect="glow">
-            Soft Glow
-          </button>
 
-          <button class="effect-btn" data-effect="vintage">
-            Vintage
-          </button>
+        <div class="preview-overlay">
 
-          <button class="effect-btn" data-effect="dramatic">
-            Dramatic
-          </button>
+          <div
+            class="preview-controls">
 
-          <button class="effect-btn" data-effect="pop">
-            Pop
-          </button>
+            <button
+              class="round"
+              id="playBtn">
+              ▶
+            </button>
 
-          <button class="effect-btn" data-effect="fade">
-            Fade
-          </button>
+            <button
+              class="round"
+              id="muteBtn">
+              🔇
+            </button>
+
+          </div>
+
+          <div
+            class="preview-title"
+            id="previewTitle">
+          </div>
 
         </div>
 
@@ -695,22 +895,153 @@ textarea{
     </div>
 
 
-    <div class="tool-box" style="margin-top:20px">
+    <!-- FILTERS + EFFECTS -->
 
-      <h3>Trim preview</h3>
+    <div class="media-tools">
 
-      <p>
-        Choose where the video preview should start.
-        The original uploaded file is not altered by this preview control.
-      </p>
 
-      <input
-        id="trimRange"
-        class="range"
-        type="range"
-        min="0"
-        max="100"
-        value="0">
+      <!-- FILTERS -->
+
+      <div class="tool-box">
+
+        <h3>Filters</h3>
+
+        <p>
+          Choose a look for your video.
+        </p>
+
+
+        <div class="filter-grid">
+
+          <button
+            class="filter-btn active"
+            data-filter="none">
+            Original
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="cinematic">
+            Cinematic
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="vivid">
+            Vivid
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="warm">
+            Warm
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="cool">
+            Cool
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="film">
+            Film
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="retro">
+            Retro
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="dream">
+            Dream
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="noir">
+            Noir
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="faded">
+            Faded
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="moody">
+            Moody
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="sunset">
+            Sunset
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- EFFECTS -->
+
+      <div class="tool-box">
+
+        <h3>Effects</h3>
+
+        <p>
+          Add a visual touch to your preview.
+        </p>
+
+
+        <div class="effect-grid">
+
+          <button
+            class="effect-btn active"
+            data-effect="none">
+            None
+          </button>
+
+          <button
+            class="effect-btn"
+            data-effect="glow">
+            Soft Glow
+          </button>
+
+          <button
+            class="effect-btn"
+            data-effect="vintage">
+            Vintage
+          </button>
+
+          <button
+            class="effect-btn"
+            data-effect="dramatic">
+            Dramatic
+          </button>
+
+          <button
+            class="effect-btn"
+            data-effect="pop">
+            Pop
+          </button>
+
+          <button
+            class="effect-btn"
+            data-effect="fade">
+            Fade
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
 
@@ -731,15 +1062,27 @@ textarea{
 
     </div>
 
-    <div class="message" id="message2"></div>
+
+    <div
+      class="message"
+      id="message2">
+    </div>
 
   </section>
 
 
-  <!-- STEP 3 -->
-  <section class="panel" id="panel3">
+  <!-- =====================================================
+       STEP 3 — DETAILS
+  ====================================================== -->
 
-    <h2>Tell people about it</h2>
+  <section
+    class="panel"
+    id="panel3">
+
+    <h2 style="font-size:24px;margin-bottom:22px">
+      Tell people about it
+    </h2>
+
 
     <div class="field">
 
@@ -767,89 +1110,27 @@ textarea{
           Select category
         </option>
 
-        <option value="Entertainment">
-          Entertainment
-        </option>
-
-        <option value="Comedy">
-          Comedy
-        </option>
-
-        <option value="Music">
-          Music
-        </option>
-
-        <option value="Dance">
-          Dance
-        </option>
-
-        <option value="Sports">
-          Sports
-        </option>
-
-        <option value="Gaming">
-          Gaming
-        </option>
-
-        <option value="Education">
-          Education
-        </option>
-
-        <option value="Technology">
-          Technology
-        </option>
-
-        <option value="News">
-          News
-        </option>
-
-        <option value="Lifestyle">
-          Lifestyle
-        </option>
-
-        <option value="Travel">
-          Travel
-        </option>
-
-        <option value="Food">
-          Food
-        </option>
-
-        <option value="Fashion">
-          Fashion
-        </option>
-
-        <option value="Beauty">
-          Beauty
-        </option>
-
-        <option value="Health & Fitness">
-          Health & Fitness
-        </option>
-
-        <option value="Business">
-          Business
-        </option>
-
-        <option value="Art">
-          Art
-        </option>
-
-        <option value="Animals & Nature">
-          Animals & Nature
-        </option>
-
-        <option value="People & Blogs">
-          People & Blogs
-        </option>
-
-        <option value="Cars & Vehicles">
-          Cars & Vehicles
-        </option>
-
-        <option value="Other">
-          Other
-        </option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Comedy">Comedy</option>
+        <option value="Music">Music</option>
+        <option value="Dance">Dance</option>
+        <option value="Sports">Sports</option>
+        <option value="Gaming">Gaming</option>
+        <option value="Education">Education</option>
+        <option value="Technology">Technology</option>
+        <option value="News">News</option>
+        <option value="Lifestyle">Lifestyle</option>
+        <option value="Travel">Travel</option>
+        <option value="Food">Food</option>
+        <option value="Fashion">Fashion</option>
+        <option value="Beauty">Beauty</option>
+        <option value="Health & Fitness">Health & Fitness</option>
+        <option value="Business">Business</option>
+        <option value="Art">Art</option>
+        <option value="Animals & Nature">Animals & Nature</option>
+        <option value="People & Blogs">People & Blogs</option>
+        <option value="Cars & Vehicles">Cars & Vehicles</option>
+        <option value="Other">Other</option>
 
       </select>
 
@@ -870,50 +1151,14 @@ textarea{
     </div>
 
 
-    <div class="tool-box">
-
-      <h3>Thumbnail</h3>
-
-      <p>
-        BIGULA will automatically create a thumbnail from your video,
-        or you can choose your own image.
-      </p>
-
-      <div class="thumbnail-box">
-
-        <img
-          class="thumbnail"
-          id="thumbnailPreview"
-          alt="Video thumbnail">
-
-        <div>
-
-          <button
-            class="small-btn"
-            id="thumbnailBtn">
-            Choose thumbnail
-          </button>
-
-          <input
-            type="file"
-            id="thumbnailInput"
-            accept="image/*"
-            hidden>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
     <div class="review-note">
 
       <strong>Before your video becomes public</strong><br>
 
-      BIGULA will review the uploaded video for copyright matches,
-      including matching video segments, and policy violations.
-      Your video remains private while this review is pending.
+      BIGULA will review the uploaded video for copyright
+      matches, including matching video segments, and policy
+      violations. Your video remains private while this review
+      is pending.
 
     </div>
 
@@ -934,7 +1179,11 @@ textarea{
 
     </div>
 
-    <div class="message" id="message3"></div>
+
+    <div
+      class="message"
+      id="message3">
+    </div>
 
   </section>
 
@@ -948,12 +1197,12 @@ import {
 } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 import * as tus
-from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
+  from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
 
 
-/* =========================
+/* =========================================================
    BIGULA SUPABASE
-========================= */
+========================================================= */
 
 const SUPABASE_URL =
   "https://vfteiggdhthvrrlndtbs.supabase.co";
@@ -977,18 +1226,22 @@ const supabase =
   );
 
 
-/* =========================
-   CURRENT USER
-========================= */
+/* =========================================================
+   STATE
+========================================================= */
 
 let currentUser = null;
 let selectedFile = null;
-let selectedThumbnail = null;
+let mediaStream = null;
+let mediaRecorder = null;
+
+let selectedFilter = "none";
+let selectedEffect = "none";
 
 
-/* =========================
+/* =========================================================
    ELEMENTS
-========================= */
+========================================================= */
 
 const panels = [
   document.getElementById("panel1"),
@@ -1005,23 +1258,11 @@ const indicators = [
 const preview =
   document.getElementById("preview");
 
-const previewEmpty =
-  document.getElementById("previewEmpty");
-
 const durationText =
   document.getElementById("durationText");
 
-const timelineFill =
-  document.getElementById("timelineFill");
-
 const previewTitle =
   document.getElementById("previewTitle");
-
-const trimRange =
-  document.getElementById("trimRange");
-
-const thumbnailPreview =
-  document.getElementById("thumbnailPreview");
 
 const globalUpload =
   document.getElementById("globalUpload");
@@ -1035,37 +1276,77 @@ const globalStatus =
 const globalFill =
   document.getElementById("globalFill");
 
+const selectedFileBox =
+  document.getElementById("selectedFileBox");
 
-/* =========================
+const selectedFileName =
+  document.getElementById("selectedFileName");
+
+const selectedFileMeta =
+  document.getElementById("selectedFileMeta");
+
+const recordingBox =
+  document.getElementById("recordingBox");
+
+const recordingText =
+  document.getElementById("recordingText");
+
+const recordingTimer =
+  document.getElementById("recordingTimer");
+
+const next1 =
+  document.getElementById("next1");
+
+
+/* =========================================================
    STEP NAVIGATION
-========================= */
+========================================================= */
 
 function showStep(number){
 
-  panels.forEach((panel,index)=>{
-    panel.classList.toggle(
-      "active",
-      index === number-1
-    );
-  });
+  panels.forEach(
+    (panel,index)=>{
+      panel.classList.toggle(
+        "active",
+        index === number - 1
+      );
+    }
+  );
 
-  indicators.forEach((indicator,index)=>{
-    indicator.classList.toggle(
-      "active",
-      index <= number-1
-    );
-  });
+
+  indicators.forEach(
+    (indicator,index)=>{
+      indicator.classList.toggle(
+        "active",
+        index <= number - 1
+      );
+    }
+  );
+
+
+  /*
+    Step 2 is the FIRST place where the video
+    preview is loaded.
+  */
+
+  if(number === 2){
+
+    loadEditorPreview();
+
+  }
+
 
   window.scrollTo({
     top:0,
     behavior:"smooth"
   });
+
 }
 
 
-/* =========================
+/* =========================================================
    AUTH
-========================= */
+========================================================= */
 
 async function requireUser(){
 
@@ -1077,16 +1358,24 @@ async function requireUser(){
   } =
     await supabase.auth.getSession();
 
+
   if(error){
+
     console.error(
       "Session error:",
       error
     );
+
   }
 
+
   if(session?.user){
-    currentUser = session.user;
+
+    currentUser =
+      session.user;
+
     return currentUser;
+
   }
 
 
@@ -1094,6 +1383,7 @@ async function requireUser(){
     new URLSearchParams(
       location.search
     );
+
 
   const code =
     params.get("code");
@@ -1106,6 +1396,7 @@ async function requireUser(){
         code
       );
 
+
     if(
       !result.error &&
       result.data.session?.user
@@ -1114,14 +1405,18 @@ async function requireUser(){
       currentUser =
         result.data.session.user;
 
+
       history.replaceState(
         {},
         document.title,
         location.pathname
       );
 
+
       return currentUser;
+
     }
+
   }
 
 
@@ -1129,13 +1424,127 @@ async function requireUser(){
     "signup.html"
   );
 
+
   return null;
+
 }
 
 
-/* =========================
+/* =========================================================
+   GO LIVE — 100 FOLLOWER CHECK
+========================================================= */
+
+async function checkLiveEligibility(){
+
+  const liveBtn =
+    document.getElementById("liveBtn");
+
+
+  if(!currentUser){
+
+    liveBtn.disabled = true;
+    liveBtn.classList.add("live");
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+      BIGULA follower relationship:
+      follower_id = the person following
+      following_id = the creator being followed
+
+      We count rows where the current user
+      is the account being followed.
+    */
+
+    const {
+      count,
+      error
+    } =
+      await supabase
+        .from("followers")
+        .select(
+          "*",
+          {
+            count:"exact",
+            head:true
+          }
+        )
+        .eq(
+          "following_id",
+          currentUser.id
+        );
+
+
+    if(error){
+
+      console.warn(
+        "Follower count unavailable:",
+        error
+      );
+
+      /*
+        Fail closed:
+        Go Live stays disabled if the count
+        cannot safely be verified.
+      */
+
+      liveBtn.disabled = true;
+      liveBtn.classList.add("live");
+
+      return;
+
+    }
+
+
+    const followers =
+      Number(count || 0);
+
+
+    if(followers >= 100){
+
+      liveBtn.disabled = false;
+      liveBtn.classList.remove("live");
+
+      liveBtn.querySelector(
+        ".live-lock"
+      ).textContent =
+        "Ready";
+
+      liveBtn.querySelector(
+        ".choice-arrow"
+      ).textContent =
+        "›";
+
+    }else{
+
+      liveBtn.disabled = true;
+      liveBtn.classList.add("live");
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Live eligibility error:",
+      error
+    );
+
+    liveBtn.disabled = true;
+    liveBtn.classList.add("live");
+
+  }
+
+}
+
+
+/* =========================================================
    SELECT VIDEO
-========================= */
+========================================================= */
 
 document.getElementById(
   "selectBtn"
@@ -1155,197 +1564,370 @@ document.getElementById(
   const file =
     event.target.files?.[0];
 
+
   if(!file)return;
 
-  selectedFile = file;
 
-  preview.src =
-    URL.createObjectURL(file);
-
-  previewEmpty.style.display =
-    "none";
-
-  document.getElementById(
-    "next1"
-  ).disabled = false;
-
-  preview.load();
-
-};
+  selectedFile =
+    file;
 
 
-/* =========================
-   VIDEO METADATA
-========================= */
+  selectedFileBox.classList.add(
+    "show"
+  );
 
-preview.onloadedmetadata = ()=>{
 
-  if(!selectedFile)return;
+  selectedFileName.textContent =
+    file.name;
 
-  const seconds =
-    Math.round(
-      preview.duration
-    );
+
+  selectedFileMeta.textContent =
+    formatFileSize(file.size);
+
+
+  next1.disabled =
+    false;
+
+
+  /*
+    IMPORTANT:
+    NO PREVIEW IS CREATED HERE.
+    Step 1 deliberately has no video preview.
+  */
 
   durationText.textContent =
-    `${seconds} seconds`;
+    "Reading duration...";
 
-  trimRange.max =
-    Math.max(
-      1,
-      Math.floor(preview.duration)
+
+  const metadataVideo =
+    document.createElement("video");
+
+
+  metadataVideo.preload =
+    "metadata";
+
+
+  metadataVideo.onloadedmetadata =
+    ()=>{
+
+      const seconds =
+        Math.round(
+          metadataVideo.duration
+        );
+
+
+      durationText.textContent =
+        `${seconds} seconds`;
+
+
+      URL.revokeObjectURL(
+        metadataVideo.src
+      );
+
+    };
+
+
+  metadataVideo.onerror =
+    ()=>{
+
+      durationText.textContent =
+        "Duration unavailable";
+
+    };
+
+
+  metadataVideo.src =
+    URL.createObjectURL(file);
+
+};
+
+
+/* =========================================================
+   FILE SIZE
+========================================================= */
+
+function formatFileSize(bytes){
+
+  if(!bytes)return "0 B";
+
+
+  const units =
+    ["B","KB","MB","GB"];
+
+
+  const index =
+    Math.floor(
+      Math.log(bytes) /
+      Math.log(1024)
     );
 
-  trimRange.value = 0;
 
-  createAutomaticThumbnail();
-
-};
-
-
-/* =========================
-   VIDEO CONTROLS
-========================= */
-
-document.getElementById(
-  "playBtn"
-).onclick = ()=>{
-
-  if(preview.paused){
-    preview.play().catch(()=>{});
-  }else{
-    preview.pause();
-  }
-
-};
+  const value =
+    bytes /
+    Math.pow(
+      1024,
+      index
+    );
 
 
-document.getElementById(
-  "muteBtn"
-).onclick = ()=>{
+  return (
+    value.toFixed(
+      index === 0 ? 0 : 1
+    ) +
+    " " +
+    units[index]
+  );
 
-  preview.muted =
-    !preview.muted;
-
-  document.getElementById(
-    "muteBtn"
-  ).textContent =
-    preview.muted
-      ? "🔇"
-      : "🔊";
-
-};
+}
 
 
-preview.ontimeupdate = ()=>{
-
-  if(!preview.duration)return;
-
-  const percent =
-    (
-      preview.currentTime /
-      preview.duration
-    ) * 100;
-
-  timelineFill.style.width =
-    percent + "%";
-
-};
-
-
-/* =========================
-   CAMERA RECORDING
-========================= */
+/* =========================================================
+   RECORD VIDEO
+========================================================= */
 
 document.getElementById(
   "cameraBtn"
 ).onclick =
 async ()=>{
 
+  const message =
+    document.getElementById(
+      "message1"
+    );
+
+
   try{
 
-    const stream =
+    /*
+      The camera stream is NEVER displayed
+      in the page.
+
+      BIGULA simply records it.
+    */
+
+    mediaStream =
       await navigator.mediaDevices.getUserMedia({
         video:true,
         audio:true
       });
 
 
-    preview.srcObject =
-      stream;
+    const mimeTypes = [
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm"
+    ];
 
-    previewEmpty.style.display =
-      "none";
 
-    const recorder =
+    let mimeType = "";
+
+
+    for(
+      const type of mimeTypes
+    ){
+
+      if(
+        MediaRecorder.isTypeSupported(
+          type
+        )
+      ){
+
+        mimeType =
+          type;
+
+        break;
+
+      }
+
+    }
+
+
+    mediaRecorder =
       new MediaRecorder(
-        stream
+        mediaStream,
+        mimeType
+          ? {mimeType}
+          : undefined
       );
+
 
     const chunks = [];
 
 
-    recorder.ondataavailable =
+    mediaRecorder.ondataavailable =
       event=>{
 
-        if(event.data.size){
+        if(event.data?.size){
+
           chunks.push(
             event.data
           );
+
         }
 
       };
 
 
-    recorder.onstop = ()=>{
+    mediaRecorder.onstop =
+      ()=>{
 
-      selectedFile =
-        new Blob(
-          chunks,
-          {
-            type:
-              recorder.mimeType ||
-              "video/webm"
+        selectedFile =
+          new Blob(
+            chunks,
+            {
+              type:
+                mediaRecorder.mimeType ||
+                "video/webm"
+            }
+          );
+
+
+        if(mediaStream){
+
+          mediaStream
+            .getTracks()
+            .forEach(
+              track =>
+                track.stop()
+            );
+
+        }
+
+
+        mediaStream =
+          null;
+
+
+        recordingBox.classList.remove(
+          "show"
+        );
+
+
+        selectedFileBox.classList.add(
+          "show"
+        );
+
+
+        selectedFileName.textContent =
+          "Recorded video";
+
+
+        selectedFileMeta.textContent =
+          formatFileSize(
+            selectedFile.size
+          );
+
+
+        durationText.textContent =
+          "15 seconds maximum";
+
+
+        next1.disabled =
+          false;
+
+
+        message.textContent =
+          "✓ Recording complete. Continue to edit your video.";
+
+      };
+
+
+    mediaRecorder.onerror =
+      event=>{
+
+        console.error(
+          "Recorder error:",
+          event.error
+        );
+
+
+        if(mediaStream){
+
+          mediaStream
+            .getTracks()
+            .forEach(
+              track =>
+                track.stop()
+            );
+
+        }
+
+
+        mediaStream =
+          null;
+
+
+        recordingBox.classList.remove(
+          "show"
+        );
+
+
+        message.textContent =
+          "Recording failed. Please try again.";
+
+      };
+
+
+    recordingBox.classList.add(
+      "show"
+    );
+
+
+    recordingText.textContent =
+      "Recording...";
+
+
+    recordingTimer.textContent =
+      "15 seconds maximum";
+
+
+    message.textContent =
+      "";
+
+
+    mediaRecorder.start();
+
+
+    let remaining = 15;
+
+
+    const countdown =
+      setInterval(
+        ()=>{
+
+          remaining--;
+
+
+          recordingTimer.textContent =
+            `${remaining} second${remaining === 1 ? "" : "s"} remaining`;
+
+
+          if(remaining <= 0){
+
+            clearInterval(
+              countdown
+            );
+
           }
-        );
 
-      preview.srcObject =
-        null;
+        },
+        1000
+      );
 
-      preview.src =
-        URL.createObjectURL(
-          selectedFile
-        );
-
-      stream
-        .getTracks()
-        .forEach(
-          track =>
-            track.stop()
-        );
-
-      document.getElementById(
-        "next1"
-      ).disabled = false;
-
-    };
-
-
-    recorder.start();
-
-    document.getElementById(
-      "message1"
-    ).textContent =
-      "Recording for 15 seconds...";
 
     setTimeout(
       ()=>{
+
         if(
-          recorder.state ===
+          mediaRecorder &&
+          mediaRecorder.state ===
           "recording"
         ){
-          recorder.stop();
+
+          mediaRecorder.stop();
+
         }
+
       },
       15000
     );
@@ -1353,21 +1935,119 @@ async ()=>{
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Camera error:",
+      error
+    );
 
-    document.getElementById(
-      "message1"
-    ).textContent =
-      "Camera access was denied.";
+
+    if(mediaStream){
+
+      mediaStream
+        .getTracks()
+        .forEach(
+          track =>
+            track.stop()
+        );
+
+    }
+
+
+    mediaStream =
+      null;
+
+
+    recordingBox.classList.remove(
+      "show"
+    );
+
+
+    message.textContent =
+      "Camera access was denied or unavailable.";
 
   }
 
 };
 
 
-/* =========================
+/* =========================================================
+   STEP 2 PREVIEW
+========================================================= */
+
+function loadEditorPreview(){
+
+  if(!selectedFile)return;
+
+
+  const objectUrl =
+    URL.createObjectURL(
+      selectedFile
+    );
+
+
+  /*
+    Release previous object URL if one exists.
+  */
+
+  if(preview.dataset.objectUrl){
+
+    try{
+
+      URL.revokeObjectURL(
+        preview.dataset.objectUrl
+      );
+
+    }catch(e){}
+
+  }
+
+
+  preview.dataset.objectUrl =
+    objectUrl;
+
+
+  preview.src =
+    objectUrl;
+
+
+  preview.load();
+
+
+  preview.onloadedmetadata =
+    ()=>{
+
+      /*
+        Small preview begins playing automatically
+        once Step 2 is reached.
+      */
+
+      preview.play().catch(
+        ()=>{}
+      );
+
+    };
+
+
+  preview.onended =
+    ()=>{
+
+      preview.currentTime = 0;
+
+      preview.play().catch(
+        ()=>{}
+      );
+
+    };
+
+
+  applyVisualStyle();
+
+}
+
+
+/* =========================================================
    FILTERS
-========================= */
+========================================================= */
 
 const filterStyles = {
 
@@ -1406,21 +2086,18 @@ const filterStyles = {
 
   sunset:
     "sepia(.18) saturate(1.5) hue-rotate(-8deg)"
+
 };
 
 
 document
-  .querySelectorAll(
-    ".filter-btn"
-  )
+  .querySelectorAll(".filter-btn")
   .forEach(button=>{
 
     button.onclick = ()=>{
 
       document
-        .querySelectorAll(
-          ".filter-btn"
-        )
+        .querySelectorAll(".filter-btn")
         .forEach(
           b =>
             b.classList.remove(
@@ -1428,36 +2105,35 @@ document
             )
         );
 
+
       button.classList.add(
         "active"
       );
 
-      preview.style.filter =
-        filterStyles[
-          button.dataset.filter
-        ] || "none";
+
+      selectedFilter =
+        button.dataset.filter;
+
+
+      applyVisualStyle();
 
     };
 
   });
 
 
-/* =========================
+/* =========================================================
    EFFECTS
-========================= */
+========================================================= */
 
 document
-  .querySelectorAll(
-    ".effect-btn"
-  )
+  .querySelectorAll(".effect-btn")
   .forEach(button=>{
 
     button.onclick = ()=>{
 
       document
-        .querySelectorAll(
-          ".effect-btn"
-        )
+        .querySelectorAll(".effect-btn")
         .forEach(
           b =>
             b.classList.remove(
@@ -1465,211 +2141,230 @@ document
             )
         );
 
+
       button.classList.add(
         "active"
       );
 
-      const effect =
+
+      selectedEffect =
         button.dataset.effect;
 
-      let filter =
-        preview.style.filter || "none";
 
-
-      if(effect === "glow"){
-        preview.style.boxShadow =
-          "0 0 35px rgba(255,255,255,.35)";
-      }else{
-        preview.style.boxShadow =
-          "none";
-      }
-
-
-      if(effect === "vintage"){
-        preview.style.filter =
-          "sepia(.3) contrast(1.1)";
-      }
-
-      if(effect === "dramatic"){
-        preview.style.filter =
-          "contrast(1.35) saturate(.9)";
-      }
-
-      if(effect === "pop"){
-        preview.style.filter =
-          "contrast(1.18) saturate(1.5)";
-      }
-
-      if(effect === "fade"){
-        preview.style.filter =
-          "brightness(1.08) contrast(.85)";
-      }
-
-      if(effect === "none"){
-        preview.style.filter =
-          "none";
-      }
+      applyVisualStyle();
 
     };
 
   });
 
 
-/* =========================
-   TRIM PREVIEW
-========================= */
+/* =========================================================
+   COMBINED FILTER + EFFECT PREVIEW
+========================================================= */
 
-trimRange.oninput = ()=>{
+function applyVisualStyle(){
+
+  if(!preview)return;
+
+
+  const baseFilter =
+    filterStyles[selectedFilter] ||
+    "none";
+
+
+  let effectFilter =
+    "none";
+
+
+  switch(selectedEffect){
+
+    case "vintage":
+
+      effectFilter =
+        "sepia(.3) contrast(1.1)";
+
+      break;
+
+
+    case "dramatic":
+
+      effectFilter =
+        "contrast(1.35) saturate(.9)";
+
+      break;
+
+
+    case "pop":
+
+      effectFilter =
+        "contrast(1.18) saturate(1.5)";
+
+      break;
+
+
+    case "fade":
+
+      effectFilter =
+        "brightness(1.08) contrast(.85)";
+
+      break;
+
+
+    default:
+
+      effectFilter =
+        "none";
+
+  }
+
 
   if(
-    !preview.duration ||
-    !isFinite(preview.duration)
-  )return;
+    baseFilter === "none" &&
+    effectFilter === "none"
+  ){
 
-  preview.currentTime =
-    Number(
-      trimRange.value
-    );
+    preview.style.filter =
+      "none";
 
-};
+  }else{
+
+    preview.style.filter =
+      `${baseFilter} ${effectFilter}`;
+
+  }
 
 
-/* =========================
-   AUTOMATIC THUMBNAIL
-========================= */
-
-function createAutomaticThumbnail(){
+  /*
+    Glow is implemented separately because it
+    is a visual shadow rather than a video filter.
+  */
 
   if(
-    !preview.videoWidth ||
-    !preview.videoHeight
-  )return;
+    selectedEffect === "glow"
+  ){
 
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
+    preview.style.boxShadow =
+      "0 0 35px rgba(255,255,255,.35)";
 
-  canvas.width =
-    preview.videoWidth;
+  }else{
 
-  canvas.height =
-    preview.videoHeight;
+    preview.style.boxShadow =
+      "none";
 
-  const context =
-    canvas.getContext(
-      "2d"
-    );
-
-
-  const originalTime =
-    preview.currentTime;
-
-  const targetTime =
-    Math.min(
-      preview.duration * .15,
-      3
-    );
-
-
-  preview.currentTime =
-    targetTime;
-
-
-  preview.onseeked = ()=>{
-
-    context.drawImage(
-      preview,
-      0,
-      0,
-      canvas.width,
-      canvas.height
-    );
-
-
-    thumbnailPreview.src =
-      canvas.toDataURL(
-        "image/jpeg",
-        .88
-      );
-
-
-    preview.currentTime =
-      originalTime;
-
-  };
+  }
 
 }
 
 
-/* =========================
-   CUSTOM THUMBNAIL
-========================= */
+/* =========================================================
+   PREVIEW CONTROLS
+========================================================= */
 
 document.getElementById(
-  "thumbnailBtn"
+  "playBtn"
 ).onclick = ()=>{
 
-  document.getElementById(
-    "thumbnailInput"
-  ).click();
+  if(!preview.src)return;
+
+
+  if(preview.paused){
+
+    preview.play().catch(
+      ()=>{}
+    );
+
+
+    document.getElementById(
+      "playBtn"
+    ).textContent =
+      "❚❚";
+
+  }else{
+
+    preview.pause();
+
+
+    document.getElementById(
+      "playBtn"
+    ).textContent =
+      "▶";
+
+  }
 
 };
+
+
+preview.onplay =
+  ()=>{
+
+    document.getElementById(
+      "playBtn"
+    ).textContent =
+      "❚❚";
+
+  };
+
+
+preview.onpause =
+  ()=>{
+
+    document.getElementById(
+      "playBtn"
+    ).textContent =
+      "▶";
+
+  };
 
 
 document.getElementById(
-  "thumbnailInput"
-).onchange =
-event=>{
+  "muteBtn"
+).onclick = ()=>{
 
-  const file =
-    event.target.files?.[0];
+  preview.muted =
+    !preview.muted;
 
-  if(!file)return;
 
-  selectedThumbnail =
-    file;
-
-  thumbnailPreview.src =
-    URL.createObjectURL(
-      file
-    );
+  document.getElementById(
+    "muteBtn"
+  ).textContent =
+    preview.muted
+      ? "🔇"
+      : "🔊";
 
 };
 
 
-/* =========================
+/* =========================================================
    TITLE PREVIEW
-========================= */
+========================================================= */
 
 document.getElementById(
   "title"
 ).oninput = event=>{
 
   previewTitle.textContent =
-    event.target.value
-      .trim();
+    event.target.value.trim();
 
 };
 
 
-/* =========================
+/* =========================================================
    NAVIGATION
-========================= */
+========================================================= */
 
-document.getElementById(
-  "next1"
-).onclick = ()=>{
+next1.onclick = ()=>{
 
   if(!selectedFile){
 
     document.getElementById(
       "message1"
     ).textContent =
-      "Choose a video first.";
+      "Choose or record a video first.";
 
     return;
+
   }
+
 
   showStep(2);
 
@@ -1679,27 +2374,33 @@ document.getElementById(
 document.getElementById(
   "back2"
 ).onclick = ()=>{
+
   showStep(1);
+
 };
 
 
 document.getElementById(
   "next2"
 ).onclick = ()=>{
+
   showStep(3);
+
 };
 
 
 document.getElementById(
   "back3"
 ).onclick = ()=>{
+
   showStep(2);
+
 };
 
 
-/* =========================
+/* =========================================================
    GLOBAL UPLOAD STATE
-========================= */
+========================================================= */
 
 const UPLOAD_STATE_KEY =
   "bigula_upload_state_v1";
@@ -1722,11 +2423,15 @@ function publishUploadState(
     JSON.stringify(state)
   );
 
+
   if(uploadChannel){
+
     uploadChannel.postMessage(
       state
     );
+
   }
+
 
   renderUploadState(
     state
@@ -1773,9 +2478,11 @@ function renderUploadState(
   globalPercent.textContent =
     percent + "%";
 
+
   globalStatus.textContent =
     state.status ||
     "Uploading...";
+
 
   globalFill.style.width =
     percent + "%";
@@ -1823,9 +2530,9 @@ window.addEventListener(
 );
 
 
-/* =========================
+/* =========================================================
    UPLOAD
-========================= */
+========================================================= */
 
 document.getElementById(
   "uploadBtn"
@@ -1836,6 +2543,7 @@ async ()=>{
     document.getElementById(
       "uploadBtn"
     );
+
 
   const message =
     document.getElementById(
@@ -1892,6 +2600,7 @@ async ()=>{
     currentUser =
       await requireUser();
 
+
     if(!currentUser)return;
 
   }
@@ -1923,6 +2632,7 @@ async ()=>{
   button.disabled =
     true;
 
+
   message.textContent =
     "Preparing private upload...";
 
@@ -1950,13 +2660,20 @@ async ()=>{
 
 
     publishUploadState({
+
       active:true,
-      status:"Uploading video...",
+
+      status:
+        "Uploading video...",
+
       percent:0,
+
       fileName:
         originalName,
+
       startedAt:
         Date.now()
+
     });
 
 
@@ -2133,14 +2850,8 @@ async ()=>{
 
 
               /*
-                IMPORTANT:
-                The row is created after the
-                private storage upload.
-
-                If your videos table uses
-                creator_id instead of user_id,
-                change ONLY the column name
-                after confirming the schema.
+                The uploaded file remains private
+                from the BIGULA publication workflow.
               */
 
               const {
@@ -2181,103 +2892,6 @@ async ()=>{
 
               }
 
-
-              /*
-                Thumbnail upload is optional.
-                It is attempted only when a custom
-                thumbnail was selected.
-
-                The videos table must have a
-                thumbnail_url column for this
-                update to persist.
-              */
-
-              if(
-                selectedThumbnail &&
-                videoRow?.id
-              ){
-
-                try{
-
-                  const thumbnailPath =
-                    `${currentUser.id}/thumbnails/${crypto.randomUUID()}.jpg`;
-
-
-                  const {
-                    error:
-                      thumbnailError
-                  } =
-                    await supabase
-                      .storage
-                      .from("videos")
-                      .upload(
-                        thumbnailPath,
-                        selectedThumbnail,
-                        {
-                          contentType:
-                            selectedThumbnail.type ||
-                            "image/jpeg",
-                          upsert:false
-                        }
-                      );
-
-
-                  if(!thumbnailError){
-
-                    const {
-                      data:
-                        thumbnailPublic
-                    } =
-                      supabase
-                        .storage
-                        .from("videos")
-                        .getPublicUrl(
-                          thumbnailPath
-                        );
-
-
-                    /*
-                      Try to save thumbnail_url.
-                      If the column doesn't exist,
-                      the video itself remains saved.
-                    */
-
-                    await supabase
-                      .from("videos")
-                      .update({
-                        thumbnail_url:
-                          thumbnailPublic.publicUrl
-                      })
-                      .eq(
-                        "id",
-                        videoRow.id
-                      );
-
-                  }
-
-                }catch(
-                  thumbnailError
-                ){
-
-                  console.warn(
-                    "Thumbnail save skipped:",
-                    thumbnailError
-                  );
-
-                }
-
-              }
-
-
-              /*
-                IMPORTANT:
-                The video is NOT made public here.
-
-                Redirect to uploaded.html so the
-                creator can see copyright/policy
-                review information before deciding
-                whether to publish.
-              */
 
               publishUploadState({
 
@@ -2402,9 +3016,9 @@ async ()=>{
 };
 
 
-/* =========================
+/* =========================================================
    INITIALIZE
-========================= */
+========================================================= */
 
 renderUploadState(
   (()=>{
@@ -2427,11 +3041,24 @@ renderUploadState(
 );
 
 
-requireUser();
+(async()=>{
 
+  const user =
+    await requireUser();
+
+
+  if(user){
+
+    await checkLiveEligibility();
+
+  }
+
+})();
 
 </script>
 
 </body>
 </html>
 ```
+
+This version now matches the three-step design you described. One important point: **the Step 1 screen contains no `<video>` preview at all**; the preview element exists only in Step 2.
