@@ -1,2150 +1,1804 @@
+```html
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BIGULA — Create</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --red:#ff1744;
-  --pink:#ff2d72;
-  --purple:#8b5cf6;
   --bg:#070707;
-  --panel:#111;
-  --panel2:#171717;
-  --line:rgba(255,255,255,.10);
+  --card:#111;
+  --card2:#171717;
+  --line:#292929;
+  --text:#fff;
   --muted:#999;
-  --white:#fff;
-}
-
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-  background:#000;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --accent:#ff0050;
+  --accent2:#ff2d75;
 }
 
 body{
+  font-family:Inter,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
   min-height:100vh;
-  overflow-x:hidden;
 }
 
-button,
-input,
-textarea,
-select{
+button,input,textarea,select{
   font:inherit;
 }
 
 button{
   border:0;
-}
-
-.app{
-  width:100%;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 50% -10%,rgba(255,23,68,.12),transparent 35%),
-    #070707;
+  cursor:pointer;
 }
 
 .topbar{
-  position:sticky;
-  top:0;
-  z-index:50;
   height:64px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 16px;
-  background:rgba(7,7,7,.88);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--line);
+  padding:0 22px;
+  border-bottom:1px solid #202020;
+  background:rgba(7,7,7,.96);
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
-.top-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.back{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#151515;
-  color:#fff;
-  text-decoration:none;
-  font-size:24px;
-}
-
-.brand{
-  font-size:21px;
-  font-weight:900;
-  letter-spacing:-.8px;
-}
-
-.brand span{
-  background:linear-gradient(90deg,#fff,#ff2d72,#8b5cf6);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-.step-counter{
-  font-size:12px;
-  color:#aaa;
-  font-weight:700;
-}
-
-/* MAIN */
-
-.creator{
-  width:min(1100px,100%);
-  margin:auto;
-  padding:18px 14px 40px;
-}
-
-.screen{
-  display:none;
-}
-
-.screen.active{
-  display:block;
-}
-
-.screen-title{
-  text-align:center;
-  margin:8px 0 4px;
-  font-size:28px;
+.logo{
+  font-size:22px;
   font-weight:900;
   letter-spacing:-1px;
 }
 
-.screen-subtitle{
-  text-align:center;
-  color:#8d8d8d;
-  font-size:13px;
-  margin-bottom:20px;
+.logo span{
+  color:var(--accent);
 }
 
-/* STEP 1 */
-
-.pick-layout{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-}
-
-@media(min-width:760px){
-  .pick-layout{
-    grid-template-columns:1fr 1fr;
-  }
-}
-
-.pick-card{
-  position:relative;
-  min-height:190px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:25px;
-  overflow:hidden;
-  cursor:pointer;
-  background:
-    linear-gradient(145deg,#171717,#0d0d0d);
-  transition:.2s ease;
-}
-
-.pick-card:hover{
-  transform:translateY(-2px);
-  border-color:rgba(255,255,255,.22);
-}
-
-.pick-card:active{
-  transform:scale(.985);
-}
-
-.pick-card.camera{
-  background:
-    radial-gradient(circle at 80% 10%,rgba(255,23,68,.25),transparent 40%),
-    linear-gradient(145deg,#171717,#0c0c0c);
-}
-
-.pick-icon{
-  width:60px;
-  height:60px;
-  display:grid;
-  place-items:center;
-  border-radius:18px;
-  background:#222;
-  font-size:28px;
-  margin-bottom:18px;
-}
-
-.camera .pick-icon{
-  background:linear-gradient(135deg,#ff1744,#8b5cf6);
-}
-
-.pick-card h2{
-  margin:0 0 7px;
-  font-size:19px;
-}
-
-.pick-card p{
-  margin:0;
-  color:#929292;
-  font-size:13px;
-  line-height:1.5;
-}
-
-.live-card{
-  margin-top:14px;
-  border:1px solid #292929;
-  background:#111;
-  border-radius:18px;
-  padding:16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.live-info{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.live-dot{
-  width:11px;
-  height:11px;
-  border-radius:50%;
-  background:#555;
-}
-
-.live-info strong{
-  display:block;
+.back{
+  color:#aaa;
+  text-decoration:none;
   font-size:14px;
 }
 
-.live-info span{
-  color:#777;
-  font-size:11px;
+.page{
+  width:min(1050px,94%);
+  margin:28px auto 60px;
 }
 
-.live-btn{
-  width:auto;
-  padding:10px 15px;
-  border-radius:12px;
-  background:#202020;
-  color:#666;
-  font-weight:800;
-  font-size:12px;
+.header{
+  margin-bottom:26px;
 }
 
-/* VIDEO PREVIEW */
-
-.preview-shell{
-  width:min(520px,100%);
-  margin:auto;
+.header h1{
+  font-size:32px;
+  font-weight:900;
 }
 
-.video-stage{
-  position:relative;
-  width:100%;
-  aspect-ratio:9/16;
-  max-height:70vh;
-  background:#000;
-  border-radius:24px;
-  overflow:hidden;
-  border:1px solid #242424;
-  box-shadow:0 20px 60px rgba(0,0,0,.55);
+.header p{
+  color:var(--muted);
+  margin-top:7px;
 }
 
-.video-stage video{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:contain;
-  background:#000;
-  transition:filter .25s ease;
-}
-
-.video-top-gradient{
-  position:absolute;
-  left:0;
-  right:0;
-  top:0;
-  height:100px;
-  background:linear-gradient(#0009,transparent);
-  pointer-events:none;
-}
-
-.video-badge{
-  position:absolute;
-  top:14px;
-  left:14px;
-  padding:7px 10px;
-  border-radius:20px;
-  background:#000b;
-  backdrop-filter:blur(10px);
-  font-size:11px;
-  font-weight:800;
-}
-
-.video-time{
-  position:absolute;
-  right:14px;
-  top:14px;
-  padding:7px 10px;
-  border-radius:20px;
-  background:#000b;
-  font-size:11px;
-  font-weight:800;
-}
-
-.play-overlay{
-  position:absolute;
-  inset:0;
-  display:grid;
-  place-items:center;
-  pointer-events:none;
-}
-
-.play-circle{
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#0009;
-  border:1px solid #ffffff33;
-  font-size:24px;
-  opacity:0;
-  transition:.2s;
-}
-
-.video-stage.paused .play-circle{
-  opacity:1;
-}
-
-/* CONTROLS */
-
-.control-panel{
-  margin-top:14px;
-  background:#111;
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:15px;
-}
-
-.control-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
-
-.control-title strong{
-  font-size:14px;
-}
-
-.control-title span{
-  color:#777;
-  font-size:11px;
-}
-
-.timeline{
-  height:8px;
-  border-radius:10px;
-  background:#292929;
-  overflow:hidden;
-  cursor:pointer;
-  position:relative;
-}
-
-.timeline-fill{
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:0;
-  background:linear-gradient(90deg,#ff1744,#ff2d72,#8b5cf6);
-}
-
-.time-row{
-  display:flex;
-  justify-content:space-between;
-  color:#777;
-  font-size:10px;
-  margin-top:6px;
-}
-
-.tool-row{
+.steps{
   display:flex;
   gap:8px;
-  margin-top:14px;
+  margin-bottom:24px;
 }
 
-.tool{
+.step{
   flex:1;
-  padding:11px 8px;
-  border-radius:12px;
-  background:#1c1c1c;
-  color:#ddd;
-  font-weight:800;
-  font-size:11px;
+  height:6px;
+  border-radius:10px;
+  background:#292929;
 }
 
-.tool.active{
-  background:#fff;
-  color:#000;
+.step.active{
+  background:var(--accent);
 }
 
-/* FILTERS */
-
-.filter-section{
-  margin-top:16px;
-}
-
-.filter-heading{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:10px;
-}
-
-.filter-heading strong{
-  font-size:14px;
-}
-
-.filter-heading span{
-  font-size:11px;
-  color:#777;
-}
-
-.filters{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:2px 2px 8px;
-  scrollbar-width:none;
-}
-
-.filters::-webkit-scrollbar{
+.panel{
   display:none;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
 }
 
-.filter{
-  flex:0 0 72px;
-  cursor:pointer;
+.panel.active{
+  display:block;
 }
 
-.filter-thumb{
-  height:88px;
-  border-radius:14px;
-  background:#222;
+.create-grid{
+  display:grid;
+  grid-template-columns:390px 1fr;
+  gap:30px;
+}
+
+.preview-area{
+  display:flex;
+  justify-content:center;
+}
+
+.phone{
+  width:100%;
+  max-width:390px;
+  aspect-ratio:9/16;
+  background:#000;
+  border-radius:22px;
   overflow:hidden;
-  border:2px solid transparent;
+  position:relative;
+  border:1px solid #292929;
 }
 
-.filter.active .filter-thumb{
-  border-color:#fff;
-}
-
-.filter-thumb video{
+.phone video{
   width:100%;
   height:100%;
   object-fit:cover;
+  display:block;
+  background:#000;
+}
+
+.preview-empty{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#777;
+  padding:30px;
+  font-size:14px;
+}
+
+.preview-overlay{
+  position:absolute;
+  inset:0;
   pointer-events:none;
 }
 
-.filter-name{
-  text-align:center;
-  font-size:10px;
-  color:#aaa;
-  margin-top:6px;
-  white-space:nowrap;
-}
-
-.filter.active .filter-name{
-  color:#fff;
+.preview-title{
+  position:absolute;
+  left:18px;
+  bottom:70px;
+  font-size:16px;
   font-weight:800;
+  text-shadow:0 2px 8px #000;
 }
 
-/* EFFECTS */
-
-.effects{
+.preview-controls{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:14px;
   display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding-bottom:4px;
+  justify-content:space-between;
+  pointer-events:auto;
 }
 
-.effect{
-  flex:0 0 auto;
-  padding:10px 13px;
-  border-radius:20px;
-  background:#1b1b1b;
-  color:#bbb;
-  border:1px solid #292929;
-  font-size:11px;
-  font-weight:800;
-}
-
-.effect.active{
+.round{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:rgba(0,0,0,.62);
   color:#fff;
-  border-color:#fff;
-  background:#242424;
+  border:1px solid rgba(255,255,255,.18);
 }
 
-/* STEP BUTTONS */
+.timeline{
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:60px;
+  height:4px;
+  background:rgba(255,255,255,.25);
+  border-radius:5px;
+  overflow:hidden;
+}
 
-.bottom-actions{
+.timeline-fill{
+  width:0%;
+  height:100%;
+  background:#fff;
+}
+
+.editor h2{
+  font-size:20px;
+  margin-bottom:18px;
+}
+
+.upload-choice{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:24px;
+}
+
+.choice{
+  padding:15px;
+  border-radius:13px;
+  background:#1c1c1c;
+  border:1px solid #303030;
+  color:#fff;
+  font-weight:700;
+}
+
+.choice:hover{
+  border-color:#555;
+}
+
+.field{
+  margin-bottom:18px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+input,textarea,select{
+  width:100%;
+  border:1px solid #303030;
+  background:#181818;
+  color:#fff;
+  border-radius:12px;
+  padding:13px 14px;
+  outline:none;
+}
+
+input:focus,textarea:focus,select:focus{
+  border-color:#666;
+}
+
+textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.action-row{
   display:flex;
   gap:10px;
-  margin-top:18px;
-}
-
-.secondary{
-  flex:0 0 100px;
-  padding:14px;
-  border-radius:14px;
-  background:#1a1a1a;
-  color:#fff;
-  font-weight:800;
+  margin-top:20px;
 }
 
 .primary{
   flex:1;
   padding:14px;
-  border-radius:14px;
-  background:linear-gradient(100deg,#ff1744,#ff2d72);
+  border-radius:12px;
+  background:var(--accent);
   color:#fff;
   font-weight:900;
-  box-shadow:0 8px 25px rgba(255,23,68,.20);
+}
+
+.secondary{
+  padding:14px 20px;
+  border-radius:12px;
+  background:#242424;
+  color:#fff;
+  font-weight:800;
 }
 
 .primary:disabled{
-  opacity:.35;
-  box-shadow:none;
+  opacity:.45;
+  cursor:not-allowed;
 }
 
-/* DETAILS */
-
-.details-card{
-  max-width:700px;
-  margin:auto;
-  background:#111;
-  border:1px solid var(--line);
-  border-radius:22px;
-  padding:18px;
-}
-
-.field{
-  margin-bottom:16px;
-}
-
-.field label{
-  display:block;
-  font-size:12px;
-  color:#aaa;
-  font-weight:800;
-  margin-bottom:7px;
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  color:#fff;
-  background:#191919;
-  border:1px solid #2b2b2b;
-  border-radius:13px;
-  padding:13px;
-  outline:none;
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:#777;
-}
-
-.field textarea{
-  min-height:130px;
-  resize:vertical;
-}
-
-.field select option{
-  background:#111;
-}
-
-/* THUMBNAIL */
-
-.thumbnail-area{
+.media-tools{
   display:grid;
-  grid-template-columns:120px 1fr;
-  gap:14px;
-  align-items:center;
-  padding:13px;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.tool-box{
+  background:#151515;
   border:1px solid #292929;
-  border-radius:15px;
-  background:#161616;
-}
-
-.thumbnail-preview{
-  width:120px;
-  height:160px;
-  border-radius:12px;
-  overflow:hidden;
-  background:#080808;
-  border:1px solid #333;
-}
-
-.thumbnail-preview img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.thumb-info strong{
-  display:block;
-  font-size:13px;
-  margin-bottom:5px;
-}
-
-.thumb-info span{
-  color:#777;
-  display:block;
-  font-size:11px;
-  line-height:1.5;
-}
-
-.thumb-button{
-  margin-top:10px;
-  padding:9px 12px;
-  border-radius:10px;
-  background:#252525;
-  color:#fff;
-  font-weight:800;
-  font-size:11px;
-}
-
-/* UPLOAD */
-
-.upload-card{
-  max-width:700px;
-  margin:20px auto 0;
-  padding:20px;
-  border-radius:20px;
-  background:#111;
-  border:1px solid var(--line);
-}
-
-.upload-status{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-size:13px;
-  font-weight:800;
-}
-
-.upload-percent{
-  color:#ff4b76;
-}
-
-.progress{
-  height:8px;
-  margin-top:12px;
-  border-radius:10px;
-  overflow:hidden;
-  background:#292929;
-}
-
-.progress-fill{
-  width:0;
-  height:100%;
-  background:linear-gradient(90deg,#ff1744,#ff2d72,#8b5cf6);
-  transition:width .2s;
-}
-
-.status-message{
-  text-align:center;
-  color:#999;
-  font-size:12px;
-  margin-top:10px;
-  min-height:18px;
-}
-
-/* GLOBAL */
-
-#globalUploadStatus{
-  display:none;
-  position:fixed;
-  z-index:100;
-  left:12px;
-  right:12px;
-  bottom:14px;
-  padding:12px 14px;
-  background:#151515ee;
-  border:1px solid #333;
   border-radius:16px;
-  backdrop-filter:blur(18px);
-  box-shadow:0 10px 40px #000b;
+  padding:17px;
 }
 
-.global-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.tool-box h3{
+  font-size:15px;
+  margin-bottom:12px;
+}
+
+.tool-box p{
+  color:#888;
   font-size:12px;
-  font-weight:800;
+  margin-bottom:12px;
 }
 
-.global-percent{
-  color:#ff4776;
+.filter-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
 }
 
-.global-progress{
-  height:5px;
-  margin-top:8px;
-  background:#303030;
+.filter-btn{
+  min-height:70px;
   border-radius:10px;
-  overflow:hidden;
+  background:#222;
+  color:#fff;
+  border:1px solid #303030;
+  font-size:12px;
+  font-weight:700;
 }
 
-.global-fill{
-  width:0;
-  height:100%;
-  background:linear-gradient(90deg,#ff1744,#8b5cf6);
+.filter-btn.active{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent);
+}
+
+.effect-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.effect-btn{
+  padding:12px 5px;
+  border-radius:10px;
+  background:#222;
+  color:#fff;
+  border:1px solid #303030;
+  font-size:12px;
+}
+
+.effect-btn.active{
+  border-color:var(--accent);
+}
+
+.range{
+  width:100%;
+  accent-color:var(--accent);
+}
+
+.thumbnail-box{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.thumbnail{
+  width:105px;
+  height:105px;
+  object-fit:cover;
+  border-radius:12px;
+  background:#222;
+  border:1px solid #333;
+}
+
+.small-btn{
+  padding:10px 13px;
+  border-radius:9px;
+  background:#292929;
+  color:#fff;
+  font-weight:700;
 }
 
 .message{
-  display:none;
+  min-height:20px;
   margin-top:12px;
-  padding:11px;
-  border-radius:12px;
-  background:#181818;
-  border:1px solid #2b2b2b;
-  color:#aaa;
-  font-size:12px;
   text-align:center;
+  font-size:13px;
+  color:#aaa;
 }
 
-.hidden-input{
+.global-upload{
   display:none;
+  margin-bottom:20px;
+  padding:15px;
+  background:#141414;
+  border:1px solid #292929;
+  border-radius:14px;
 }
 
-@media(max-width:480px){
-  .creator{
-    padding-left:10px;
-    padding-right:10px;
+.global-upload.show{
+  display:block;
+}
+
+.upload-head{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:800;
+}
+
+.upload-sub{
+  color:#888;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.progress{
+  width:100%;
+  height:7px;
+  background:#292929;
+  border-radius:8px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.progress-fill{
+  width:0%;
+  height:100%;
+  background:var(--accent);
+  transition:width .2s;
+}
+
+.review-note{
+  margin-top:15px;
+  padding:14px;
+  border-radius:12px;
+  background:#191919;
+  border:1px solid #292929;
+  color:#aaa;
+  font-size:13px;
+  line-height:1.5;
+}
+
+@media(max-width:800px){
+  .create-grid{
+    grid-template-columns:1fr;
   }
 
-  .screen-title{
-    font-size:25px;
+  .phone{
+    max-width:330px;
   }
 
-  .video-stage{
-    border-radius:18px;
+  .media-tools{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:500px){
+  .page{
+    width:96%;
+    margin-top:18px;
   }
 
-  .thumbnail-area{
-    grid-template-columns:95px 1fr;
+  .panel{
+    padding:15px;
+    border-radius:15px;
   }
 
-  .thumbnail-preview{
-    width:95px;
-    height:130px;
+  .header h1{
+    font-size:27px;
+  }
+
+  .filter-grid{
+    grid-template-columns:repeat(3,1fr);
   }
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="app">
-
 <header class="topbar">
-  <div class="top-left">
-    <a class="back" href="home.html">‹</a>
-    <div class="brand">BIGULA <span>CREATE</span></div>
-  </div>
-  <div class="step-counter" id="stepCounter">1 / 3</div>
+  <div class="logo">BIGULA<span>.</span></div>
+  <a class="back" href="home.html">Cancel</a>
 </header>
 
-<main class="creator">
+<main class="page">
 
-<!-- =========================================================
-     STEP 1
-========================================================= -->
-
-<section id="step1" class="screen active">
-
-  <h1 class="screen-title">Create something great</h1>
-  <div class="screen-subtitle">
-    Choose a video to start your BIGULA post.
+  <div class="header">
+    <h1>Create a video</h1>
+    <p>Make it yours, then send it to BIGULA for review.</p>
   </div>
 
-  <div class="pick-layout">
-
-```
-<div class="pick-card" id="selectVideo">
-  <div class="pick-icon">＋</div>
-  <h2>Choose from device</h2>
-  <p>
-    Select a video from your phone, tablet or computer.
-  </p>
-</div>
-
-<div class="pick-card camera" id="recordVideo">
-  <div class="pick-icon">●</div>
-  <h2>Record now</h2>
-  <p>
-    Open your camera and capture something new.
-  </p>
-</div>
-```
-
+  <div class="steps">
+    <div class="step active" id="stepIndicator1"></div>
+    <div class="step" id="stepIndicator2"></div>
+    <div class="step" id="stepIndicator3"></div>
   </div>
 
-  <div class="live-card">
-    <div class="live-info">
-      <div class="live-dot"></div>
-      <div>
-        <strong>BIGULA LIVE</strong>
-        <span>Available when your account reaches 500 followers</span>
+  <div class="global-upload" id="globalUpload">
+    <div class="upload-head">
+      <span id="globalTitle">BIGULA upload</span>
+      <span id="globalPercent">0%</span>
+    </div>
+    <div class="upload-sub" id="globalStatus">Preparing...</div>
+    <div class="progress">
+      <div class="progress-fill" id="globalFill"></div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="panel active" id="panel1">
+
+    <div class="create-grid">
+
+      <div class="preview-area">
+        <div class="phone">
+
+          <video
+            id="preview"
+            muted
+            playsinline
+            preload="metadata">
+          </video>
+
+          <div class="preview-empty" id="previewEmpty">
+            Choose a video or record one with your camera.
+          </div>
+
+          <div class="preview-overlay">
+
+            <div class="preview-title" id="previewTitle"></div>
+
+            <div class="timeline">
+              <div class="timeline-fill" id="timelineFill"></div>
+            </div>
+
+            <div class="preview-controls">
+              <button class="round" id="playBtn">▶</button>
+              <button class="round" id="muteBtn">🔇</button>
+            </div>
+
+          </div>
+
+        </div>
       </div>
-    </div>
 
-```
-<button class="live-btn" id="liveBtn" disabled>Go Live</button>
-```
+      <div class="editor">
 
-  </div>
+        <h2>Choose your video</h2>
 
-<input
-id="videoInput"
-class="hidden-input"
-type="file"
-accept="video/*"
+        <div class="upload-choice">
+          <button class="choice" id="selectBtn">📁 Choose video</button>
+          <button class="choice" id="cameraBtn">🎥 Record video</button>
+        </div>
 
->
+        <input
+          id="fileInput"
+          type="file"
+          accept="video/*"
+          hidden>
 
-  <div id="step1Message" class="message"></div>
+        <div class="field">
+          <label>Video duration</label>
+          <div id="durationText" style="color:#888;font-size:13px">
+            No video selected
+          </div>
+        </div>
 
-</section>
+        <div class="review-note">
+          Your video will first be uploaded privately. BIGULA will then
+          check it for copyright claims and policy violations before you
+          decide whether to make it public.
+        </div>
 
-<!-- =========================================================
-     STEP 2
-========================================================= -->
+        <div class="action-row">
+          <button
+            class="primary"
+            id="next1"
+            disabled>
+            Continue
+          </button>
+        </div>
 
-<section id="step2" class="screen">
+        <div class="message" id="message1"></div>
 
-  <h1 class="screen-title">Make it yours</h1>
-  <div class="screen-subtitle">
-    Preview your video and choose a BIGULA look.
-  </div>
-
-  <div class="preview-shell">
-
-```
-<div class="video-stage paused" id="videoStage">
-
-  <video
-    id="editPreview"
-    playsinline
-    preload="metadata"
-  ></video>
-
-  <div class="video-top-gradient"></div>
-
-  <div class="video-badge">PREVIEW</div>
-
-  <div class="video-time" id="videoTime">0:00</div>
-
-  <div class="play-overlay">
-    <div class="play-circle">▶</div>
-  </div>
-
-</div>
-
-<div class="control-panel">
-
-  <div class="control-title">
-    <strong>Timeline</strong>
-    <span>Tap to preview</span>
-  </div>
-
-  <div class="timeline" id="timeline">
-    <div class="timeline-fill" id="timelineFill"></div>
-  </div>
-
-  <div class="time-row">
-    <span id="currentTime">0:00</span>
-    <span id="duration">0:00</span>
-  </div>
-
-  <div class="tool-row">
-    <button class="tool active" id="playBtn">▶ Play</button>
-    <button class="tool" id="muteBtn">🔊 Sound</button>
-    <button class="tool" id="restartBtn">↻ Restart</button>
-  </div>
-
-</div>
-
-
-<!-- FILTERS -->
-
-<div class="filter-section">
-
-  <div class="filter-heading">
-    <strong>Filters</strong>
-    <span id="selectedFilterName">Original</span>
-  </div>
-
-  <div class="filters" id="filters">
-
-    <div class="filter active" data-filter="none" data-name="Original">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
       </div>
-      <div class="filter-name">Original</div>
+
     </div>
 
-    <div class="filter" data-filter="cinematic" data-name="Cinematic">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
+  </section>
+
+
+  <!-- STEP 2 -->
+  <section class="panel" id="panel2">
+
+    <h2>Make it yours</h2>
+
+    <div class="media-tools">
+
+      <div class="tool-box">
+        <h3>Filters</h3>
+        <p>Preview different looks before publishing.</p>
+
+        <div class="filter-grid">
+
+          <button class="filter-btn active" data-filter="none">
+            Original
+          </button>
+
+          <button class="filter-btn" data-filter="cinematic">
+            Cinematic
+          </button>
+
+          <button class="filter-btn" data-filter="vivid">
+            Vivid
+          </button>
+
+          <button class="filter-btn" data-filter="warm">
+            Warm
+          </button>
+
+          <button class="filter-btn" data-filter="cool">
+            Cool
+          </button>
+
+          <button class="filter-btn" data-filter="film">
+            Film
+          </button>
+
+          <button class="filter-btn" data-filter="retro">
+            Retro
+          </button>
+
+          <button class="filter-btn" data-filter="dream">
+            Dream
+          </button>
+
+          <button class="filter-btn" data-filter="noir">
+            Noir
+          </button>
+
+          <button class="filter-btn" data-filter="faded">
+            Faded
+          </button>
+
+          <button class="filter-btn" data-filter="moody">
+            Moody
+          </button>
+
+          <button class="filter-btn" data-filter="sunset">
+            Sunset
+          </button>
+
+        </div>
       </div>
-      <div class="filter-name">Cinematic</div>
-    </div>
 
-    <div class="filter" data-filter="vivid" data-name="Vivid">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
+
+      <div class="tool-box">
+
+        <h3>Effects</h3>
+        <p>Add a visual touch to your preview.</p>
+
+        <div class="effect-grid">
+
+          <button class="effect-btn active" data-effect="none">
+            None
+          </button>
+
+          <button class="effect-btn" data-effect="glow">
+            Soft Glow
+          </button>
+
+          <button class="effect-btn" data-effect="vintage">
+            Vintage
+          </button>
+
+          <button class="effect-btn" data-effect="dramatic">
+            Dramatic
+          </button>
+
+          <button class="effect-btn" data-effect="pop">
+            Pop
+          </button>
+
+          <button class="effect-btn" data-effect="fade">
+            Fade
+          </button>
+
+        </div>
+
       </div>
-      <div class="filter-name">Vivid</div>
+
     </div>
 
-    <div class="filter" data-filter="warm" data-name="Warm">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Warm</div>
-    </div>
 
-    <div class="filter" data-filter="cool" data-name="Cool">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Cool</div>
-    </div>
+    <div class="tool-box" style="margin-top:20px">
 
-    <div class="filter" data-filter="film" data-name="Film">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Film</div>
-    </div>
+      <h3>Trim preview</h3>
 
-    <div class="filter" data-filter="retro" data-name="Retro">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Retro</div>
-    </div>
-
-    <div class="filter" data-filter="dream" data-name="Dream">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Dream</div>
-    </div>
-
-    <div class="filter" data-filter="noir" data-name="Noir">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Noir</div>
-    </div>
-
-    <div class="filter" data-filter="faded" data-name="Faded">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Faded</div>
-    </div>
-
-    <div class="filter" data-filter="moody" data-name="Moody">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Moody</div>
-    </div>
-
-    <div class="filter" data-filter="sunset" data-name="Sunset">
-      <div class="filter-thumb">
-        <video muted playsinline></video>
-      </div>
-      <div class="filter-name">Sunset</div>
-    </div>
-
-  </div>
-</div>
-
-
-<!-- EFFECTS -->
-
-<div class="filter-section">
-
-  <div class="filter-heading">
-    <strong>Effects</strong>
-    <span>Preview</span>
-  </div>
-
-  <div class="effects">
-
-    <button class="effect active" data-effect="none">None</button>
-    <button class="effect" data-effect="soft">Soft Glow</button>
-    <button class="effect" data-effect="vintage">Vintage</button>
-    <button class="effect" data-effect="dramatic">Dramatic</button>
-    <button class="effect" data-effect="pop">Pop</button>
-    <button class="effect" data-effect="fade">Fade</button>
-
-  </div>
-
-</div>
-
-
-<div id="step2Message" class="message"></div>
-
-<div class="bottom-actions">
-  <button class="secondary" id="backStep1">Back</button>
-  <button class="primary" id="toStep3">Continue</button>
-</div>
-```
-
-  </div>
-
-</section>
-
-<!-- =========================================================
-     STEP 3
-========================================================= -->
-
-<section id="step3" class="screen">
-
-  <h1 class="screen-title">Tell people about it</h1>
-
-  <div class="screen-subtitle">
-    Add the details viewers will see on BIGULA.
-  </div>
-
-  <div class="details-card">
-
-```
-<div class="field">
-  <label for="title">VIDEO TITLE</label>
-  <input
-    id="title"
-    maxlength="150"
-    placeholder="Give your video a great title"
-  >
-</div>
-
-
-<div class="field">
-  <label for="category">CATEGORY</label>
-
-  <select id="category">
-    <option value="">Select category</option>
-    <option value="music">Music</option>
-    <option value="dance">Dance</option>
-    <option value="animals">Animals</option>
-    <option value="film and animation">Film & Animation</option>
-    <option value="people and blogs">People & Blogs</option>
-    <option value="autos and vehicles">Autos & Vehicles</option>
-    <option value="sports">Sports</option>
-    <option value="comedy">Comedy</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="news and politics">News & Politics</option>
-    <option value="fashion and style">Fashion & Style</option>
-    <option value="education">Education</option>
-    <option value="science and technology">Science & Technology</option>
-  </select>
-</div>
-
-
-<div class="field">
-  <label for="description">DESCRIPTION</label>
-
-  <textarea
-    id="description"
-    maxlength="5000"
-    placeholder="Tell viewers what your video is about..."
-  ></textarea>
-</div>
-
-
-<!-- THUMBNAIL -->
-
-<div class="field">
-
-  <label>THUMBNAIL</label>
-
-  <div class="thumbnail-area">
-
-    <div class="thumbnail-preview">
-      <img id="thumbnailPreview" alt="Video thumbnail">
-    </div>
-
-    <div class="thumb-info">
-      <strong>Choose your cover</strong>
-
-      <span>
-        Select a frame from your video or upload your own image.
-      </span>
-
-      <button class="thumb-button" id="chooseThumbnail">
-        Choose image
-      </button>
+      <p>
+        Choose where the video preview should start.
+        The original uploaded file is not altered by this preview control.
+      </p>
 
       <input
-        id="thumbnailInput"
-        class="hidden-input"
-        type="file"
-        accept="image/*"
-      >
+        id="trimRange"
+        class="range"
+        type="range"
+        min="0"
+        max="100"
+        value="0">
+
     </div>
 
-  </div>
 
-</div>
+    <div class="action-row">
+
+      <button
+        class="secondary"
+        id="back2">
+        Back
+      </button>
+
+      <button
+        class="primary"
+        id="next2">
+        Continue
+      </button>
+
+    </div>
+
+    <div class="message" id="message2"></div>
+
+  </section>
 
 
-<div class="bottom-actions">
+  <!-- STEP 3 -->
+  <section class="panel" id="panel3">
 
-  <button class="secondary" id="backStep2">
-    Back
-  </button>
+    <h2>Tell people about it</h2>
 
-  <button class="primary" id="uploadBtn">
-    Upload to BIGULA
-  </button>
+    <div class="field">
 
-</div>
-```
+      <label for="title">
+        Title
+      </label>
 
-  </div>
+      <input
+        id="title"
+        maxlength="150"
+        placeholder="Give your video a title">
 
-  <!-- UPLOAD PROGRESS -->
+    </div>
 
-  <div class="upload-card" id="uploadCard" style="display:none">
 
-```
-<div class="upload-status">
-  <span id="uploadStatusText">Preparing upload…</span>
-  <span class="upload-percent" id="uploadPercent">0%</span>
-</div>
+    <div class="field">
 
-<div class="progress">
-  <div class="progress-fill" id="progressFill"></div>
-</div>
+      <label for="category">
+        Category
+      </label>
 
-<div class="status-message" id="uploadMessage"></div>
-```
+      <select id="category">
 
-  </div>
+        <option value="">
+          Select category
+        </option>
 
-</section>
+        <option value="Entertainment">
+          Entertainment
+        </option>
+
+        <option value="Comedy">
+          Comedy
+        </option>
+
+        <option value="Music">
+          Music
+        </option>
+
+        <option value="Dance">
+          Dance
+        </option>
+
+        <option value="Sports">
+          Sports
+        </option>
+
+        <option value="Gaming">
+          Gaming
+        </option>
+
+        <option value="Education">
+          Education
+        </option>
+
+        <option value="Technology">
+          Technology
+        </option>
+
+        <option value="News">
+          News
+        </option>
+
+        <option value="Lifestyle">
+          Lifestyle
+        </option>
+
+        <option value="Travel">
+          Travel
+        </option>
+
+        <option value="Food">
+          Food
+        </option>
+
+        <option value="Fashion">
+          Fashion
+        </option>
+
+        <option value="Beauty">
+          Beauty
+        </option>
+
+        <option value="Health & Fitness">
+          Health & Fitness
+        </option>
+
+        <option value="Business">
+          Business
+        </option>
+
+        <option value="Art">
+          Art
+        </option>
+
+        <option value="Animals & Nature">
+          Animals & Nature
+        </option>
+
+        <option value="People & Blogs">
+          People & Blogs
+        </option>
+
+        <option value="Cars & Vehicles">
+          Cars & Vehicles
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="field">
+
+      <label for="description">
+        Description
+      </label>
+
+      <textarea
+        id="description"
+        maxlength="5000"
+        placeholder="Describe your video"></textarea>
+
+    </div>
+
+
+    <div class="tool-box">
+
+      <h3>Thumbnail</h3>
+
+      <p>
+        BIGULA will automatically create a thumbnail from your video,
+        or you can choose your own image.
+      </p>
+
+      <div class="thumbnail-box">
+
+        <img
+          class="thumbnail"
+          id="thumbnailPreview"
+          alt="Video thumbnail">
+
+        <div>
+
+          <button
+            class="small-btn"
+            id="thumbnailBtn">
+            Choose thumbnail
+          </button>
+
+          <input
+            type="file"
+            id="thumbnailInput"
+            accept="image/*"
+            hidden>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="review-note">
+
+      <strong>Before your video becomes public</strong><br>
+
+      BIGULA will review the uploaded video for copyright matches,
+      including matching video segments, and policy violations.
+      Your video remains private while this review is pending.
+
+    </div>
+
+
+    <div class="action-row">
+
+      <button
+        class="secondary"
+        id="back3">
+        Back
+      </button>
+
+      <button
+        class="primary"
+        id="uploadBtn">
+        Upload for review
+      </button>
+
+    </div>
+
+    <div class="message" id="message3"></div>
+
+  </section>
 
 </main>
 
-<!-- GLOBAL UPLOAD -->
-
-<div id="globalUploadStatus">
-
-  <div class="global-top">
-    <span id="globalUploadText">BIGULA upload</span>
-    <span class="global-percent" id="globalUploadPercent">0%</span>
-  </div>
-
-  <div class="global-progress">
-    <div class="global-fill" id="globalUploadFill"></div>
-  </div>
-
-</div>
-
-</div>
 
 <script type="module">
 
-import { createClient } from
-'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import {
+  createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-import * as tus from
-'https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm';
+import * as tus
+from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
 
 
-/* =========================================================
-   BIGULA CONFIG
-========================================================= */
+/* =========================
+   BIGULA SUPABASE
+========================= */
 
 const SUPABASE_URL =
-  'https://vfteiggdhthvrrlndtbs.supabase.co';
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
 
 const SUPABASE_KEY =
-  'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe';
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
 
-/*
- * IMPORTANT:
- * Your actual BIGULA Storage bucket is "bigula".
- */
-const STORAGE_BUCKET = 'bigula';
-
-
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true,
-      flowType:'pkce'
-    }
-  }
-);
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentUser = null;
-let currentProfile = null;
-let selectedFile = null;
-let thumbnailFile = null;
-let thumbnailUrl = null;
-let videoObjectUrl = null;
-
-let selectedFilter = 'none';
-let selectedEffect = 'none';
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const step1 =
-  document.getElementById('step1');
-
-const step2 =
-  document.getElementById('step2');
-
-const step3 =
-  document.getElementById('step3');
-
-const stepCounter =
-  document.getElementById('stepCounter');
-
-const videoInput =
-  document.getElementById('videoInput');
-
-const editPreview =
-  document.getElementById('editPreview');
-
-const videoStage =
-  document.getElementById('videoStage');
-
-const playBtn =
-  document.getElementById('playBtn');
-
-const muteBtn =
-  document.getElementById('muteBtn');
-
-const restartBtn =
-  document.getElementById('restartBtn');
-
-const timeline =
-  document.getElementById('timeline');
-
-const timelineFill =
-  document.getElementById('timelineFill');
-
-const currentTimeEl =
-  document.getElementById('currentTime');
-
-const durationEl =
-  document.getElementById('duration');
-
-const videoTime =
-  document.getElementById('videoTime');
-
-const thumbnailPreview =
-  document.getElementById('thumbnailPreview');
-
-
-/* =========================================================
-   AUTH
-========================================================= */
-
-async function requireUser(){
-
-  const {
-    data:{session},
-    error
-  } =
-  await supabase.auth.getSession();
-
-  if(error){
-    console.error('BIGULA auth error:',error);
-  }
-
-  /*
-   * Handle OAuth callback if necessary.
-   */
-  if(!session){
-
-    const code =
-      new URLSearchParams(location.search).get('code');
-
-    if(code){
-
-      const result =
-        await supabase.auth.exchangeCodeForSession(code);
-
-      if(
-        !result.error &&
-        result.data.session
-      ){
-
-        currentUser =
-          result.data.session.user;
-
-        history.replaceState(
-          {},
-          document.title,
-          location.pathname
-        );
-
-      }else{
-
-        console.error(
-          'OAuth exchange failed:',
-          result.error
-        );
+const supabase =
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true,
+        flowType:"pkce"
       }
     }
-  }
+  );
 
 
-  if(!currentUser){
+/* =========================
+   CURRENT USER
+========================= */
 
-    const {
-      data:{session:latestSession}
-    } =
-    await supabase.auth.getSession();
-
-    if(latestSession?.user){
-      currentUser =
-        latestSession.user;
-    }
-  }
+let currentUser = null;
+let selectedFile = null;
+let selectedThumbnail = null;
 
 
-  if(!currentUser){
+/* =========================
+   ELEMENTS
+========================= */
 
-    location.replace('signup.html');
-    return null;
-  }
+const panels = [
+  document.getElementById("panel1"),
+  document.getElementById("panel2"),
+  document.getElementById("panel3")
+];
+
+const indicators = [
+  document.getElementById("stepIndicator1"),
+  document.getElementById("stepIndicator2"),
+  document.getElementById("stepIndicator3")
+];
+
+const preview =
+  document.getElementById("preview");
+
+const previewEmpty =
+  document.getElementById("previewEmpty");
+
+const durationText =
+  document.getElementById("durationText");
+
+const timelineFill =
+  document.getElementById("timelineFill");
+
+const previewTitle =
+  document.getElementById("previewTitle");
+
+const trimRange =
+  document.getElementById("trimRange");
+
+const thumbnailPreview =
+  document.getElementById("thumbnailPreview");
+
+const globalUpload =
+  document.getElementById("globalUpload");
+
+const globalPercent =
+  document.getElementById("globalPercent");
+
+const globalStatus =
+  document.getElementById("globalStatus");
+
+const globalFill =
+  document.getElementById("globalFill");
 
 
-  /*
-   * Refresh BIGULA profile.
-   */
-  const {
-    data:profile,
-    error:profileError
-  } =
-  await supabase
-    .from('users')
-    .select('*')
-    .eq('id',currentUser.id)
-    .maybeSingle();
-
-
-  if(profileError){
-
-    console.warn(
-      'Profile refresh failed:',
-      profileError.message
-    );
-
-  }else if(profile){
-
-    currentProfile = profile;
-
-    localStorage.setItem(
-      'bigula_profile',
-      JSON.stringify(profile)
-    );
-  }
-
-
-  return currentUser;
-}
-
-
-/* =========================================================
-   STEPS
-========================================================= */
+/* =========================
+   STEP NAVIGATION
+========================= */
 
 function showStep(number){
 
-  [step1,step2,step3].forEach(
-    x=>x.classList.remove('active')
-  );
+  panels.forEach((panel,index)=>{
+    panel.classList.toggle(
+      "active",
+      index === number-1
+    );
+  });
 
-  if(number===1)
-    step1.classList.add('active');
-
-  if(number===2)
-    step2.classList.add('active');
-
-  if(number===3)
-    step3.classList.add('active');
-
-  stepCounter.textContent =
-    number + ' / 3';
+  indicators.forEach((indicator,index)=>{
+    indicator.classList.toggle(
+      "active",
+      index <= number-1
+    );
+  });
 
   window.scrollTo({
     top:0,
-    behavior:'smooth'
+    behavior:"smooth"
   });
 }
 
 
-/* =========================================================
-   VIDEO SELECT
-========================================================= */
+/* =========================
+   AUTH
+========================= */
 
-document
-  .getElementById('selectVideo')
-  .onclick=()=>videoInput.click();
+async function requireUser(){
 
+  const {
+    data:{
+      session
+    },
+    error
+  } =
+    await supabase.auth.getSession();
 
-videoInput.onchange=()=>{
-
-  const file =
-    videoInput.files?.[0];
-
-  if(!file)
-    return;
-
-  if(!file.type.startsWith('video/')){
-
-    showMessage(
-      'step1Message',
-      'Please choose a video file.'
+  if(error){
+    console.error(
+      "Session error:",
+      error
     );
-
-    return;
   }
 
-  selectedFile = file;
+  if(session?.user){
+    currentUser = session.user;
+    return currentUser;
+  }
 
-  if(videoObjectUrl)
-    URL.revokeObjectURL(videoObjectUrl);
 
-  videoObjectUrl =
-    URL.createObjectURL(file);
+  const params =
+    new URLSearchParams(
+      location.search
+    );
 
-  editPreview.src =
-    videoObjectUrl;
+  const code =
+    params.get("code");
 
-  editPreview.load();
 
-  editPreview.onloadedmetadata=()=>{
+  if(code){
 
-    durationEl.textContent =
-      formatTime(editPreview.duration);
+    const result =
+      await supabase.auth.exchangeCodeForSession(
+        code
+      );
 
-    /*
-     * Generate an automatic thumbnail
-     * from approximately 15% into the video.
-     */
-    createAutomaticThumbnail();
+    if(
+      !result.error &&
+      result.data.session?.user
+    ){
 
-    prepareFilterPreviews();
+      currentUser =
+        result.data.session.user;
 
-    showStep(2);
-  };
+      history.replaceState(
+        {},
+        document.title,
+        location.pathname
+      );
+
+      return currentUser;
+    }
+  }
+
+
+  location.replace(
+    "signup.html"
+  );
+
+  return null;
+}
+
+
+/* =========================
+   SELECT VIDEO
+========================= */
+
+document.getElementById(
+  "selectBtn"
+).onclick = ()=>{
+
+  document.getElementById(
+    "fileInput"
+  ).click();
+
 };
 
 
-/* =========================================================
-   CAMERA
-========================================================= */
+document.getElementById(
+  "fileInput"
+).onchange = event=>{
 
-document
-  .getElementById('recordVideo')
-  .onclick=async()=>{
+  const file =
+    event.target.files?.[0];
+
+  if(!file)return;
+
+  selectedFile = file;
+
+  preview.src =
+    URL.createObjectURL(file);
+
+  previewEmpty.style.display =
+    "none";
+
+  document.getElementById(
+    "next1"
+  ).disabled = false;
+
+  preview.load();
+
+};
+
+
+/* =========================
+   VIDEO METADATA
+========================= */
+
+preview.onloadedmetadata = ()=>{
+
+  if(!selectedFile)return;
+
+  const seconds =
+    Math.round(
+      preview.duration
+    );
+
+  durationText.textContent =
+    `${seconds} seconds`;
+
+  trimRange.max =
+    Math.max(
+      1,
+      Math.floor(preview.duration)
+    );
+
+  trimRange.value = 0;
+
+  createAutomaticThumbnail();
+
+};
+
+
+/* =========================
+   VIDEO CONTROLS
+========================= */
+
+document.getElementById(
+  "playBtn"
+).onclick = ()=>{
+
+  if(preview.paused){
+    preview.play().catch(()=>{});
+  }else{
+    preview.pause();
+  }
+
+};
+
+
+document.getElementById(
+  "muteBtn"
+).onclick = ()=>{
+
+  preview.muted =
+    !preview.muted;
+
+  document.getElementById(
+    "muteBtn"
+  ).textContent =
+    preview.muted
+      ? "🔇"
+      : "🔊";
+
+};
+
+
+preview.ontimeupdate = ()=>{
+
+  if(!preview.duration)return;
+
+  const percent =
+    (
+      preview.currentTime /
+      preview.duration
+    ) * 100;
+
+  timelineFill.style.width =
+    percent + "%";
+
+};
+
+
+/* =========================
+   CAMERA RECORDING
+========================= */
+
+document.getElementById(
+  "cameraBtn"
+).onclick =
+async ()=>{
 
   try{
 
     const stream =
-      await navigator.mediaDevices
-      .getUserMedia({
+      await navigator.mediaDevices.getUserMedia({
         video:true,
         audio:true
       });
 
+
+    preview.srcObject =
+      stream;
+
+    previewEmpty.style.display =
+      "none";
+
     const recorder =
-      new MediaRecorder(stream);
+      new MediaRecorder(
+        stream
+      );
 
-    const chunks=[];
-
-    recorder.ondataavailable=e=>{
-
-      if(e.data.size)
-        chunks.push(e.data);
-    };
+    const chunks = [];
 
 
-    recorder.onstop=()=>{
+    recorder.ondataavailable =
+      event=>{
 
-      const blob =
+        if(event.data.size){
+          chunks.push(
+            event.data
+          );
+        }
+
+      };
+
+
+    recorder.onstop = ()=>{
+
+      selectedFile =
         new Blob(
           chunks,
           {
-            type:recorder.mimeType ||
-              'video/webm'
+            type:
+              recorder.mimeType ||
+              "video/webm"
           }
         );
 
-      selectedFile =
-        new File(
-          [blob],
-          'bigula-recording.webm',
-          {
-            type:blob.type
-          }
+      preview.srcObject =
+        null;
+
+      preview.src =
+        URL.createObjectURL(
+          selectedFile
         );
 
       stream
         .getTracks()
-        .forEach(track=>track.stop());
+        .forEach(
+          track =>
+            track.stop()
+        );
 
+      document.getElementById(
+        "next1"
+      ).disabled = false;
 
-      if(videoObjectUrl)
-        URL.revokeObjectURL(videoObjectUrl);
-
-      videoObjectUrl =
-        URL.createObjectURL(selectedFile);
-
-      editPreview.src =
-        videoObjectUrl;
-
-      editPreview.load();
-
-      editPreview.onloadedmetadata=()=>{
-
-        durationEl.textContent =
-          formatTime(editPreview.duration);
-
-        createAutomaticThumbnail();
-
-        prepareFilterPreviews();
-
-        showStep(2);
-      };
     };
 
 
     recorder.start();
 
-    /*
-     * Five-minute maximum recording.
-     * User can stop from browser/system controls.
-     */
-    setTimeout(()=>{
+    document.getElementById(
+      "message1"
+    ).textContent =
+      "Recording for 15 seconds...";
 
-      if(recorder.state!=='inactive')
-        recorder.stop();
-
-    },5*60*1000);
+    setTimeout(
+      ()=>{
+        if(
+          recorder.state ===
+          "recording"
+        ){
+          recorder.stop();
+        }
+      },
+      15000
+    );
 
 
   }catch(error){
 
     console.error(error);
 
-    showMessage(
-      'step1Message',
-      'Camera access was denied or is unavailable on this device.'
-    );
+    document.getElementById(
+      "message1"
+    ).textContent =
+      "Camera access was denied.";
+
   }
+
 };
 
 
-/* =========================================================
-   VIDEO PLAYBACK
-========================================================= */
+/* =========================
+   FILTERS
+========================= */
 
-editPreview.onclick=()=>{
-
-  if(editPreview.paused){
-
-    editPreview.play();
-
-  }else{
-
-    editPreview.pause();
-  }
-};
-
-
-editPreview.onplay=()=>{
-
-  videoStage.classList.remove('paused');
-
-  playBtn.textContent =
-    'Ⅱ Pause';
-};
-
-
-editPreview.onpause=()=>{
-
-  videoStage.classList.add('paused');
-
-  playBtn.textContent =
-    '▶ Play';
-};
-
-
-playBtn.onclick=()=>{
-
-  if(editPreview.paused)
-    editPreview.play();
-  else
-    editPreview.pause();
-};
-
-
-muteBtn.onclick=()=>{
-
-  editPreview.muted =
-    !editPreview.muted;
-
-  muteBtn.textContent =
-    editPreview.muted
-      ? '🔇 Muted'
-      : '🔊 Sound';
-};
-
-
-restartBtn.onclick=()=>{
-
-  editPreview.currentTime=0;
-
-  editPreview.play();
-};
-
-
-editPreview.ontimeupdate=()=>{
-
-  if(!editPreview.duration)
-    return;
-
-  const percent =
-    (editPreview.currentTime /
-      editPreview.duration)*100;
-
-  timelineFill.style.width =
-    percent+'%';
-
-  currentTimeEl.textContent =
-    formatTime(editPreview.currentTime);
-
-  videoTime.textContent =
-    formatTime(editPreview.currentTime);
-};
-
-
-timeline.onclick=e=>{
-
-  if(!editPreview.duration)
-    return;
-
-  const rect =
-    timeline.getBoundingClientRect();
-
-  const percent =
-    Math.max(
-      0,
-      Math.min(
-        1,
-        (e.clientX-rect.left)/
-        rect.width
-      )
-    );
-
-  editPreview.currentTime =
-    percent*editPreview.duration;
-};
-
-
-/* =========================================================
-   FILTER ENGINE
-========================================================= */
-
-const FILTERS={
+const filterStyles = {
 
   none:
-    'none',
+    "none",
 
   cinematic:
-    'contrast(1.12) saturate(.88) brightness(.92)',
+    "contrast(1.12) saturate(.88) brightness(.92)",
 
   vivid:
-    'contrast(1.12) saturate(1.55) brightness(1.03)',
+    "contrast(1.12) saturate(1.45)",
 
   warm:
-    'sepia(.18) saturate(1.25) contrast(1.05) brightness(1.04)',
+    "sepia(.18) saturate(1.2) contrast(1.05)",
 
   cool:
-    'saturate(.92) contrast(1.05) hue-rotate(10deg) brightness(1.03)',
+    "saturate(.9) hue-rotate(12deg) brightness(1.03)",
 
   film:
-    'contrast(1.08) saturate(.78) sepia(.12) brightness(.96)',
+    "contrast(1.18) saturate(.82) sepia(.08)",
 
   retro:
-    'sepia(.38) saturate(.82) contrast(1.08) brightness(.96)',
+    "sepia(.28) contrast(1.08) saturate(.85)",
 
   dream:
-    'brightness(1.08) saturate(.78) contrast(.92) blur(.15px)',
+    "brightness(1.08) contrast(.88) saturate(.95)",
 
   noir:
-    'grayscale(1) contrast(1.35) brightness(.88)',
+    "grayscale(1) contrast(1.35)",
 
   faded:
-    'saturate(.55) contrast(.86) brightness(1.08)',
+    "contrast(.82) saturate(.72) brightness(1.06)",
 
   moody:
-    'contrast(1.25) saturate(.72) brightness(.78)',
+    "brightness(.82) contrast(1.2) saturate(.85)",
 
   sunset:
-    'sepia(.24) saturate(1.4) contrast(1.08) brightness(1.02)'
+    "sepia(.18) saturate(1.5) hue-rotate(-8deg)"
 };
 
 
 document
-  .querySelectorAll('.filter')
-  .forEach(filter=>{
-
-    filter.onclick=()=>{
-
-      document
-        .querySelectorAll('.filter')
-        .forEach(x=>
-          x.classList.remove('active')
-        );
-
-      filter.classList.add('active');
-
-      selectedFilter =
-        filter.dataset.filter;
-
-      document
-        .getElementById('selectedFilterName')
-        .textContent =
-          filter.dataset.name;
-
-      applyVisualStyle();
-    };
-  });
-
-
-/* =========================================================
-   EFFECT ENGINE
-========================================================= */
-
-const EFFECTS={
-
-  none:
-    '',
-
-  soft:
-    'brightness(1.04) contrast(.94) saturate(.92)',
-
-  vintage:
-    'sepia(.20) contrast(1.05) saturate(.75)',
-
-  dramatic:
-    'contrast(1.28) brightness(.88) saturate(.82)',
-
-  pop:
-    'contrast(1.18) saturate(1.38) brightness(1.03)',
-
-  fade:
-    'contrast(.84) brightness(1.08) saturate(.78)'
-};
-
-
-document
-  .querySelectorAll('.effect')
+  .querySelectorAll(
+    ".filter-btn"
+  )
   .forEach(button=>{
 
-    button.onclick=()=>{
+    button.onclick = ()=>{
 
       document
-        .querySelectorAll('.effect')
-        .forEach(x=>
-          x.classList.remove('active')
+        .querySelectorAll(
+          ".filter-btn"
+        )
+        .forEach(
+          b =>
+            b.classList.remove(
+              "active"
+            )
         );
 
-      button.classList.add('active');
+      button.classList.add(
+        "active"
+      );
 
-      selectedEffect =
-        button.dataset.effect;
+      preview.style.filter =
+        filterStyles[
+          button.dataset.filter
+        ] || "none";
 
-      applyVisualStyle();
     };
+
   });
 
 
-function applyVisualStyle(){
+/* =========================
+   EFFECTS
+========================= */
 
-  const filter =
-    FILTERS[selectedFilter] ||
-    FILTERS.none;
+document
+  .querySelectorAll(
+    ".effect-btn"
+  )
+  .forEach(button=>{
 
-  const effect =
-    EFFECTS[selectedEffect] ||
-    '';
+    button.onclick = ()=>{
 
-  editPreview.style.filter =
-    filter === 'none'
-      ? effect
-      : filter + ' ' + effect;
-}
+      document
+        .querySelectorAll(
+          ".effect-btn"
+        )
+        .forEach(
+          b =>
+            b.classList.remove(
+              "active"
+            )
+        );
 
+      button.classList.add(
+        "active"
+      );
 
-/* =========================================================
-   FILTER PREVIEW THUMBNAILS
-========================================================= */
+      const effect =
+        button.dataset.effect;
 
-function prepareFilterPreviews(){
-
-  document
-    .querySelectorAll('.filter-thumb video')
-    .forEach(video=>{
-
-      video.src =
-        videoObjectUrl;
-
-      video.currentTime=0;
-
-      video.style.filter =
-        FILTERS[
-          video
-            .closest('.filter')
-            .dataset.filter
-        ] || 'none';
-
-      video.muted=true;
-    });
-}
+      let filter =
+        preview.style.filter || "none";
 
 
-/* =========================================================
+      if(effect === "glow"){
+        preview.style.boxShadow =
+          "0 0 35px rgba(255,255,255,.35)";
+      }else{
+        preview.style.boxShadow =
+          "none";
+      }
+
+
+      if(effect === "vintage"){
+        preview.style.filter =
+          "sepia(.3) contrast(1.1)";
+      }
+
+      if(effect === "dramatic"){
+        preview.style.filter =
+          "contrast(1.35) saturate(.9)";
+      }
+
+      if(effect === "pop"){
+        preview.style.filter =
+          "contrast(1.18) saturate(1.5)";
+      }
+
+      if(effect === "fade"){
+        preview.style.filter =
+          "brightness(1.08) contrast(.85)";
+      }
+
+      if(effect === "none"){
+        preview.style.filter =
+          "none";
+      }
+
+    };
+
+  });
+
+
+/* =========================
+   TRIM PREVIEW
+========================= */
+
+trimRange.oninput = ()=>{
+
+  if(
+    !preview.duration ||
+    !isFinite(preview.duration)
+  )return;
+
+  preview.currentTime =
+    Number(
+      trimRange.value
+    );
+
+};
+
+
+/* =========================
    AUTOMATIC THUMBNAIL
-========================================================= */
+========================= */
 
-async function createAutomaticThumbnail(){
+function createAutomaticThumbnail(){
 
-  if(!editPreview.duration)
-    return;
+  if(
+    !preview.videoWidth ||
+    !preview.videoHeight
+  )return;
 
   const canvas =
-    document.createElement('canvas');
+    document.createElement(
+      "canvas"
+    );
 
-  const width =
-    editPreview.videoWidth || 720;
+  canvas.width =
+    preview.videoWidth;
 
-  const height =
-    editPreview.videoHeight || 1280;
+  canvas.height =
+    preview.videoHeight;
 
-  canvas.width=width;
-  canvas.height=height;
+  const context =
+    canvas.getContext(
+      "2d"
+    );
 
-  const ctx =
-    canvas.getContext('2d');
 
-  const target =
+  const originalTime =
+    preview.currentTime;
+
+  const targetTime =
     Math.min(
-      editPreview.duration*.15,
+      preview.duration * .15,
       3
     );
 
-  const oldTime =
-    editPreview.currentTime;
 
-  await new Promise(resolve=>{
-
-    const handler=()=>{
-
-      editPreview.removeEventListener(
-        'seeked',
-        handler
-      );
-
-      resolve();
-    };
-
-    editPreview.addEventListener(
-      'seeked',
-      handler
-    );
-
-    editPreview.currentTime =
-      target;
-  });
+  preview.currentTime =
+    targetTime;
 
 
-  try{
+  preview.onseeked = ()=>{
 
-    ctx.drawImage(
-      editPreview,
+    context.drawImage(
+      preview,
       0,
       0,
-      width,
-      height
+      canvas.width,
+      canvas.height
     );
 
-    thumbnailUrl =
+
+    thumbnailPreview.src =
       canvas.toDataURL(
-        'image/jpeg',
+        "image/jpeg",
         .88
       );
 
-    thumbnailPreview.src =
-      thumbnailUrl;
 
-  }catch(error){
+    preview.currentTime =
+      originalTime;
 
-    console.warn(
-      'Automatic thumbnail failed:',
-      error
-    );
-  }
+  };
 
-
-  editPreview.currentTime =
-    oldTime || 0;
 }
 
 
-/* =========================================================
+/* =========================
    CUSTOM THUMBNAIL
-========================================================= */
+========================= */
 
-document
-  .getElementById('chooseThumbnail')
-  .onclick=()=>{
+document.getElementById(
+  "thumbnailBtn"
+).onclick = ()=>{
 
-    document
-      .getElementById('thumbnailInput')
-      .click();
-  };
+  document.getElementById(
+    "thumbnailInput"
+  ).click();
 
-
-document
-  .getElementById('thumbnailInput')
-  .onchange=e=>{
-
-    const file =
-      e.target.files?.[0];
-
-    if(!file)
-      return;
-
-    if(!file.type.startsWith('image/'))
-      return;
-
-    thumbnailFile=file;
-
-    if(thumbnailUrl)
-      URL.revokeObjectURL(thumbnailUrl);
-
-    thumbnailUrl =
-      URL.createObjectURL(file);
-
-    thumbnailPreview.src =
-      thumbnailUrl;
-  };
+};
 
 
-/* =========================================================
+document.getElementById(
+  "thumbnailInput"
+).onchange =
+event=>{
+
+  const file =
+    event.target.files?.[0];
+
+  if(!file)return;
+
+  selectedThumbnail =
+    file;
+
+  thumbnailPreview.src =
+    URL.createObjectURL(
+      file
+    );
+
+};
+
+
+/* =========================
+   TITLE PREVIEW
+========================= */
+
+document.getElementById(
+  "title"
+).oninput = event=>{
+
+  previewTitle.textContent =
+    event.target.value
+      .trim();
+
+};
+
+
+/* =========================
    NAVIGATION
-========================================================= */
+========================= */
 
-document
-  .getElementById('backStep1')
-  .onclick=()=>showStep(1);
+document.getElementById(
+  "next1"
+).onclick = ()=>{
 
+  if(!selectedFile){
 
-document
-  .getElementById('toStep3')
-  .onclick=()=>{
+    document.getElementById(
+      "message1"
+    ).textContent =
+      "Choose a video first.";
 
-    if(!selectedFile){
+    return;
+  }
 
-      showMessage(
-        'step2Message',
-        'Choose a video first.'
-      );
+  showStep(2);
 
-      return;
-    }
-
-    editPreview.pause();
-
-    showStep(3);
-  };
+};
 
 
-document
-  .getElementById('backStep2')
-  .onclick=()=>showStep(2);
+document.getElementById(
+  "back2"
+).onclick = ()=>{
+  showStep(1);
+};
 
 
-/* =========================================================
-   UPLOAD STATE
-========================================================= */
+document.getElementById(
+  "next2"
+).onclick = ()=>{
+  showStep(3);
+};
+
+
+document.getElementById(
+  "back3"
+).onclick = ()=>{
+  showStep(2);
+};
+
+
+/* =========================
+   GLOBAL UPLOAD STATE
+========================= */
 
 const UPLOAD_STATE_KEY =
-  'bigula_upload_state_v1';
+  "bigula_upload_state_v1";
+
 
 const uploadChannel =
-  'BroadcastChannel' in window
-    ? new BroadcastChannel('bigula_uploads')
+  "BroadcastChannel" in window
+    ? new BroadcastChannel(
+        "bigula_uploads"
+      )
     : null;
 
-const globalStatus =
-  document.getElementById(
-    'globalUploadStatus'
-  );
 
-const globalText =
-  document.getElementById(
-    'globalUploadText'
-  );
-
-const globalPercent =
-  document.getElementById(
-    'globalUploadPercent'
-  );
-
-const globalFill =
-  document.getElementById(
-    'globalUploadFill'
-  );
-
-
-function publishUploadState(state){
+function publishUploadState(
+  state
+){
 
   localStorage.setItem(
     UPLOAD_STATE_KEY,
     JSON.stringify(state)
   );
 
-  if(uploadChannel)
-    uploadChannel.postMessage(state);
+  if(uploadChannel){
+    uploadChannel.postMessage(
+      state
+    );
+  }
 
-  renderUploadState(state);
+  renderUploadState(
+    state
+  );
+
 }
 
 
-function renderUploadState(state){
+function renderUploadState(
+  state
+){
 
-  if(!state || !state.active){
+  if(
+    !state ||
+    !state.active
+  ){
 
-    globalStatus.style.display='none';
+    globalUpload.classList.remove(
+      "show"
+    );
 
     return;
+
   }
 
-  globalStatus.style.display='block';
+
+  globalUpload.classList.add(
+    "show"
+  );
+
 
   const percent =
     Math.max(
       0,
       Math.min(
         100,
-        Number(state.percent||0)
+        Number(
+          state.percent || 0
+        )
       )
     );
 
-  globalText.textContent =
-    state.status ||
-    'Uploading to BIGULA';
 
   globalPercent.textContent =
-    percent+'%';
+    percent + "%";
+
+  globalStatus.textContent =
+    state.status ||
+    "Uploading...";
 
   globalFill.style.width =
-    percent+'%';
-}
+    percent + "%";
 
-
-function readUploadState(){
-
-  try{
-
-    return JSON.parse(
-      localStorage.getItem(
-        UPLOAD_STATE_KEY
-      ) || 'null'
-    );
-
-  }catch{
-
-    return null;
-  }
 }
 
 
 if(uploadChannel){
 
   uploadChannel.onmessage =
-    event=>
+    event=>{
+
       renderUploadState(
         event.data
       );
+
+    };
+
 }
 
 
 window.addEventListener(
-  'storage',
+  "storage",
   event=>{
 
     if(
@@ -2152,117 +1806,84 @@ window.addEventListener(
       UPLOAD_STATE_KEY
     ){
 
-      renderUploadState(
-        readUploadState()
-      );
+      try{
+
+        renderUploadState(
+          JSON.parse(
+            event.newValue ||
+            "null"
+          )
+        );
+
+      }catch(e){}
+
     }
+
   }
 );
 
 
-renderUploadState(
-  readUploadState()
-);
-
-
-/* =========================================================
+/* =========================
    UPLOAD
-========================================================= */
+========================= */
 
-document
-  .getElementById('uploadBtn')
-  .onclick=async()=>{
+document.getElementById(
+  "uploadBtn"
+).onclick =
+async ()=>{
 
-  const uploadBtn =
+  const button =
     document.getElementById(
-      'uploadBtn'
+      "uploadBtn"
     );
 
-  const uploadCard =
+  const message =
     document.getElementById(
-      'uploadCard'
-    );
-
-  const progressFill =
-    document.getElementById(
-      'progressFill'
-    );
-
-  const uploadStatusText =
-    document.getElementById(
-      'uploadStatusText'
-    );
-
-  const uploadPercent =
-    document.getElementById(
-      'uploadPercent'
-    );
-
-  const uploadMessage =
-    document.getElementById(
-      'uploadMessage'
+      "message3"
     );
 
 
   if(!selectedFile){
 
-    uploadMessage.textContent =
-      'Choose a video first.';
-
-    uploadCard.style.display='block';
+    message.textContent =
+      "Choose a video first.";
 
     return;
+
   }
 
 
   const title =
     document
-      .getElementById('title')
+      .getElementById("title")
       .value
       .trim();
+
 
   const category =
     document
-      .getElementById('category')
+      .getElementById("category")
       .value;
+
 
   const description =
     document
-      .getElementById('description')
+      .getElementById("description")
       .value
       .trim();
 
 
-  if(!title){
+  if(
+    !title ||
+    !category ||
+    !description
+  ){
 
-    uploadCard.style.display='block';
-
-    uploadMessage.textContent =
-      'Please enter a video title.';
-
-    return;
-  }
-
-
-  if(!category){
-
-    uploadCard.style.display='block';
-
-    uploadMessage.textContent =
-      'Please select a category.';
+    message.textContent =
+      "Please complete the title, category and description.";
 
     return;
-  }
 
-
-  if(!description){
-
-    uploadCard.style.display='block';
-
-    uploadMessage.textContent =
-      'Please enter a description.';
-
-    return;
   }
 
 
@@ -2271,104 +1892,69 @@ document
     currentUser =
       await requireUser();
 
-    if(!currentUser)
-      return;
+    if(!currentUser)return;
+
   }
 
 
-  /*
-   * Prevent playback while uploading.
-   */
-  editPreview.pause();
+  const {
+    data:{
+      session
+    },
+    error:
+      sessionError
+  } =
+    await supabase.auth.getSession();
 
 
-  uploadBtn.disabled=true;
+  if(
+    sessionError ||
+    !session?.access_token
+  ){
 
-  uploadBtn.textContent =
-    'Uploading…';
+    message.textContent =
+      "Your BIGULA session expired. Please sign in again.";
 
-  uploadCard.style.display='block';
+    return;
 
-  progressFill.style.width='0%';
+  }
 
-  uploadPercent.textContent='0%';
 
-  uploadStatusText.textContent =
-    'Preparing upload…';
+  button.disabled =
+    true;
+
+  message.textContent =
+    "Preparing private upload...";
 
 
   try{
 
-    const {
-      data:{session},
-      error:sessionError
-    } =
-    await supabase.auth.getSession();
-
-
-    if(
-      sessionError ||
-      !session?.access_token
-    ){
-
-      throw new Error(
-        'Your BIGULA login session is unavailable. Please sign in again.'
-      );
-    }
-
-
-    /*
-     * Secure filename.
-     */
     const originalName =
       selectedFile.name ||
-      'video.mp4';
+      "video.mp4";
+
 
     const safeName =
-      originalName
-        .replace(
-          /[^a-zA-Z0-9._-]/g,
-          '_'
-        );
+      originalName.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
+      );
 
 
-    /*
-     * Each creator gets a private folder.
-     */
     const filePath =
-      `${currentUser.id}/${
-        crypto.randomUUID()
-      }_${safeName}`;
+      `${currentUser.id}/${crypto.randomUUID()}_${safeName}`;
 
 
-    /*
-     * Supabase resumable endpoint.
-     */
     const endpoint =
-      SUPABASE_URL
-        .replace(
-          'https://',
-          'https://'
-        )
-        .replace(
-          '.supabase.co',
-          '.storage.supabase.co'
-        ) +
-      '/storage/v1/upload/resumable';
+      "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable";
 
 
     publishUploadState({
-
       active:true,
-
-      status:
-        'Uploading video…',
-
+      status:"Uploading video...",
       percent:0,
-
       fileName:
         originalName,
-
       startedAt:
         Date.now()
     });
@@ -2390,20 +1976,19 @@ document
           ],
 
           chunkSize:
-            6*1024*1024,
+            6 * 1024 * 1024,
 
           headers:{
 
             authorization:
-              `Bearer ${
-                session.access_token
-              }`,
+              `Bearer ${session.access_token}`,
 
             apikey:
               SUPABASE_KEY,
 
-            'x-upsert':
-              'false'
+            "x-upsert":
+              "false"
+
           },
 
           uploadDataDuringCreation:
@@ -2415,57 +2000,56 @@ document
           metadata:{
 
             bucketName:
-              STORAGE_BUCKET,
+              "videos",
 
             objectName:
               filePath,
 
             contentType:
               selectedFile.type ||
-              'video/mp4',
+              "video/mp4",
 
             cacheControl:
-              '3600'
+              "3600"
+
           },
 
 
           onError(error){
 
             console.error(
-              'BIGULA TUS error:',
+              "TUS upload error:",
               error
             );
 
-            const message =
+
+            const text =
               error?.message ||
-              'Network error';
+              "Network error";
 
 
-            uploadStatusText.textContent =
-              'Upload failed';
+            message.textContent =
+              "Upload failed: " +
+              text;
 
-            uploadMessage.textContent =
-              message;
-
-            progressFill.style.width='0%';
 
             publishUploadState({
 
               active:false,
 
               status:
-                'Upload failed',
+                "Upload failed",
 
               percent:0,
 
-              error:message
+              error:text
+
             });
 
 
-            uploadBtn.disabled=false;
+            button.disabled =
+              false;
 
-            uploadBtn.textContent =
-              'Try upload again';
           },
 
 
@@ -2477,26 +2061,16 @@ document
             const percent =
               bytesTotal
                 ? Math.round(
-                    bytesUploaded /
-                    bytesTotal *
-                    100
+                    (
+                      bytesUploaded /
+                      bytesTotal
+                    ) * 100
                   )
                 : 0;
 
 
-            progressFill.style.width =
-              percent+'%';
-
-            uploadPercent.textContent =
-              percent+'%';
-
-            uploadStatusText.textContent =
-              'Uploading video…';
-
-            uploadMessage.textContent =
-              `${formatBytes(bytesUploaded)} of ${
-                formatBytes(bytesTotal)
-              }`;
+            message.textContent =
+              `Uploading video... ${percent}%`;
 
 
             publishUploadState({
@@ -2504,7 +2078,7 @@ document
               active:true,
 
               status:
-                'Uploading video…',
+                "Uploading video...",
 
               percent,
 
@@ -2513,26 +2087,19 @@ document
 
               startedAt:
                 Date.now()
+
             });
+
           },
 
 
           onSuccess:
-          async function(){
+          async ()=>{
 
             try{
 
-              progressFill.style.width =
-                '100%';
-
-              uploadPercent.textContent =
-                '100%';
-
-              uploadStatusText.textContent =
-                'Finalizing…';
-
-              uploadMessage.textContent =
-                'Saving your BIGULA video…';
+              message.textContent =
+                "Upload complete. Saving video...";
 
 
               publishUploadState({
@@ -2540,29 +2107,25 @@ document
                 active:true,
 
                 status:
-                  'Saving video…',
+                  "Saving video...",
 
                 percent:100,
 
                 fileName:
                   originalName
+
               });
 
 
-              /*
-               * Public Storage URL.
-               * IMPORTANT:
-               * This does NOT make the video public
-               * in BIGULA's publishing system.
-               * uploaded.html will handle review/publication.
-               */
               const {
-                data:publicData
+                data:
+                  publicData
               } =
-              supabase
-                .storage
-                .from(STORAGE_BUCKET)
-                .getPublicUrl(filePath);
+                supabase.storage
+                  .from("videos")
+                  .getPublicUrl(
+                    filePath
+                  );
 
 
               const videoUrl =
@@ -2570,352 +2133,305 @@ document
 
 
               /*
-               * Save the video record.
-               *
-               * We intentionally do not mark it as
-               * published here.
-               */
+                IMPORTANT:
+                The row is created after the
+                private storage upload.
+
+                If your videos table uses
+                creator_id instead of user_id,
+                change ONLY the column name
+                after confirming the schema.
+              */
+
               const {
-                data:videoRow,
-                error:dbError
+                data:
+                  videoRow,
+                error:
+                  dbError
               } =
-              await supabase
-                .from('videos')
-                .insert({
+                await supabase
+                  .from("videos")
+                  .insert({
 
-                  user_id:
-                    currentUser.id,
+                    user_id:
+                      currentUser.id,
 
-                  title,
+                    title,
 
-                  category,
+                    category,
 
-                  description,
+                    description,
 
-                  video_url:
-                    videoUrl
+                    video_url:
+                      videoUrl
 
-                })
-                .select()
-                .single();
+                  })
+                  .select()
+                  .single();
 
 
               if(dbError){
 
                 console.error(
-                  'BIGULA videos insert failed:',
+                  "Database save error:",
                   dbError
                 );
 
-                throw new Error(
-                  'Video uploaded, but BIGULA could not save its information: ' +
-                  dbError.message
-                );
+                throw dbError;
+
               }
 
 
               /*
-               * Optional thumbnail upload.
-               *
-               * The thumbnail is uploaded after
-               * the video itself succeeds.
-               */
+                Thumbnail upload is optional.
+                It is attempted only when a custom
+                thumbnail was selected.
+
+                The videos table must have a
+                thumbnail_url column for this
+                update to persist.
+              */
+
               if(
-                thumbnailFile
+                selectedThumbnail &&
+                videoRow?.id
               ){
 
                 try{
 
-                  const thumbPath =
-                    `${currentUser.id}/thumbnails/${
-                      crypto.randomUUID()
-                    }.jpg`;
+                  const thumbnailPath =
+                    `${currentUser.id}/thumbnails/${crypto.randomUUID()}.jpg`;
 
 
                   const {
-                    error:thumbError
+                    error:
+                      thumbnailError
                   } =
-                  await supabase
-                    .storage
-                    .from(STORAGE_BUCKET)
-                    .upload(
-                      thumbPath,
-                      thumbnailFile,
-                      {
-                        contentType:
-                          thumbnailFile.type ||
-                          'image/jpeg',
+                    await supabase
+                      .storage
+                      .from("videos")
+                      .upload(
+                        thumbnailPath,
+                        selectedThumbnail,
+                        {
+                          contentType:
+                            selectedThumbnail.type ||
+                            "image/jpeg",
+                          upsert:false
+                        }
+                      );
 
-                        upsert:false
-                      }
-                    );
 
-
-                  if(thumbError){
-
-                    console.warn(
-                      'Thumbnail upload failed:',
-                      thumbError
-                    );
-
-                  }else{
+                  if(!thumbnailError){
 
                     const {
-                      data:thumbData
+                      data:
+                        thumbnailPublic
                     } =
-                    supabase
-                      .storage
-                      .from(STORAGE_BUCKET)
-                      .getPublicUrl(
-                        thumbPath
-                      );
+                      supabase
+                        .storage
+                        .from("videos")
+                        .getPublicUrl(
+                          thumbnailPath
+                        );
 
 
                     /*
-                     * Only update thumbnail if
-                     * your videos table has thumbnail_url.
-                     *
-                     * We intentionally attempt it and
-                     * leave the video intact if the
-                     * column is not present yet.
-                     */
-                    const {
-                      error:updateThumbError
-                    } =
+                      Try to save thumbnail_url.
+                      If the column doesn't exist,
+                      the video itself remains saved.
+                    */
+
                     await supabase
-                      .from('videos')
+                      .from("videos")
                       .update({
                         thumbnail_url:
-                          thumbData.publicUrl
+                          thumbnailPublic.publicUrl
                       })
                       .eq(
-                        'id',
+                        "id",
                         videoRow.id
                       );
 
-
-                    if(updateThumbError){
-
-                      console.warn(
-                        'Thumbnail database update skipped:',
-                        updateThumbError.message
-                      );
-                    }
                   }
 
-                }catch(thumbnailError){
+                }catch(
+                  thumbnailError
+                ){
 
                   console.warn(
-                    'Thumbnail processing failed:',
+                    "Thumbnail save skipped:",
                     thumbnailError
                   );
+
                 }
+
               }
 
 
               /*
-               * Upload complete.
-               */
+                IMPORTANT:
+                The video is NOT made public here.
+
+                Redirect to uploaded.html so the
+                creator can see copyright/policy
+                review information before deciding
+                whether to publish.
+              */
+
               publishUploadState({
 
                 active:false,
 
                 status:
-                  'Upload complete',
+                  "Upload complete",
 
                 percent:100,
 
                 fileName:
-                  originalName,
+                  originalName
 
-                videoId:
-                  videoRow.id
               });
 
 
-              /*
-               * IMPORTANT:
-               *
-               * Do NOT send the user directly
-               * to Home.
-               *
-               * The uploaded video must first go
-               * through copyright/policy review.
-               */
-              location.href =
-                'uploaded.html?id=' +
-                encodeURIComponent(
-                  videoRow.id
-                );
+              message.textContent =
+                "✓ Uploaded privately. Opening review...";
+
+
+              setTimeout(
+                ()=>{
+
+                  location.href =
+                    "uploaded.html?id=" +
+                    encodeURIComponent(
+                      videoRow.id
+                    );
+
+                },
+                500
+              );
 
 
             }catch(error){
 
               console.error(
-                'BIGULA finalization error:',
+                "Finalization error:",
                 error
               );
 
-              uploadStatusText.textContent =
-                'Finalization failed';
 
-              uploadMessage.textContent =
-                error.message ||
-                'Unable to finalize your video.';
+              message.textContent =
+                "The video uploaded, but saving its information failed: " +
+                (
+                  error?.message ||
+                  "Unknown error"
+                );
+
 
               publishUploadState({
 
                 active:false,
 
                 status:
-                  'Finalization failed',
+                  "Upload finished; database save failed",
 
                 percent:100,
 
                 error:
-                  error.message
+                  error?.message ||
+                  "Unknown error"
+
               });
 
 
-              uploadBtn.disabled=false;
+              button.disabled =
+                false;
 
-              uploadBtn.textContent =
-                'Try again';
             }
+
           }
+
         }
       );
 
 
-      uploadStatusText.textContent =
-        'Starting secure upload…';
+    message.textContent =
+      "Starting secure resumable upload...";
 
-      upload.start();
+
+    upload.start();
 
 
   }catch(error){
 
     console.error(
-      'BIGULA upload setup error:',
+      "Upload setup error:",
       error
     );
 
-    uploadCard.style.display='block';
 
-    uploadStatusText.textContent =
-      'Upload failed';
+    message.textContent =
+      "Upload failed: " +
+      (
+        error?.message ||
+        "Unknown error"
+      );
 
-    uploadMessage.textContent =
-      error.message ||
-      'Unknown upload error';
-
-    progressFill.style.width='0%';
 
     publishUploadState({
 
       active:false,
 
       status:
-        'Upload failed',
+        "Upload failed",
 
       percent:0,
 
       error:
-        error.message
+        error?.message ||
+        "Unknown error"
+
     });
 
 
-    uploadBtn.disabled=false;
+    button.disabled =
+      false;
 
-    uploadBtn.textContent =
-      'Try upload again';
   }
+
 };
 
 
-/* =========================================================
-   HELPERS
-========================================================= */
+/* =========================
+   INITIALIZE
+========================= */
 
-function formatTime(seconds){
+renderUploadState(
+  (()=>{
 
-  if(!Number.isFinite(seconds))
-    return '0:00';
+    try{
 
-  const minutes =
-    Math.floor(seconds/60);
+      return JSON.parse(
+        localStorage.getItem(
+          UPLOAD_STATE_KEY
+        ) || "null"
+      );
 
-  const secs =
-    Math.floor(seconds%60)
-      .toString()
-      .padStart(2,'0');
+    }catch(e){
 
-  return `${minutes}:${secs}`;
-}
+      return null;
 
+    }
 
-function formatBytes(bytes){
-
-  if(!bytes)
-    return '0 MB';
-
-  const mb =
-    bytes /
-    (1024*1024);
-
-  if(mb<1024)
-    return mb.toFixed(1)+' MB';
-
-  return (
-    mb/1024
-  ).toFixed(2)+' GB';
-}
-
-
-function showMessage(
-  elementId,
-  text
-){
-
-  const element =
-    document.getElementById(
-      elementId
-    );
-
-  element.textContent=text;
-
-  element.style.display='block';
-
-  setTimeout(
-    ()=>{
-      element.style.display='none';
-    },
-    5000
-  );
-}
-
-
-/* =========================================================
-   AUTH LISTENER
-========================================================= */
-
-supabase.auth.onAuthStateChange(
-  (event,session)=>{
-
-    if(session?.user)
-      currentUser=session.user;
-
-  }
+  })()
 );
 
 
-/* =========================================================
-   START
-========================================================= */
-
 requireUser();
+
 
 </script>
 
 </body>
 </html>
+```
