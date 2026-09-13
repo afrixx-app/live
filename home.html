@@ -844,7 +844,7 @@ function shareStatus(videoId, username){
 }
 
 // --- Actions ---
-function openProfile(uid){ if(!uid) return; location.href=`creator-profile.html?uid=${encodeURIComponent(uid)}` }
+function openProfile(uid){ if(!uid) return; location.href=`creator_profile.html?uid=${encodeURIComponent(uid)}` }
 
 async function toggleLike(videoId, btn){
     const likeEl = document.getElementById(`like-${videoId}`)
