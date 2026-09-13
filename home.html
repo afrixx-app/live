@@ -144,73 +144,51 @@ const creatorProfiles = new Map();
 
 // --- User ---
 async function initUser(){
-  // Home is an authenticated-only page.
-  // Signup.html is responsible for creating the anonymous Supabase session.
-  const { data: { session }, error } = await supabase.auth.getSession()
+  // Home is public. Visitors can browse without signing in.
+  // Protected actions call requireSignIn() when the user taps them.
+  currentUser = null;
 
-  if(error){
-    console.warn("Session check failed:", error)
+  try{
+    const { data, error } = await supabase.auth.getSession();
+    if(error) console.warn("Session check failed:", error);
+    else currentUser = data?.session?.user || null;
+  }catch(e){
+    console.warn("Could not check Supabase session:", e);
   }
 
-  currentUser = session?.user || null
-  if(!currentUser){
-    location.replace("signup.html")
-    return
-  }
+  const uploadBtn = document.querySelector(".upload-btn");
+  const footerUpload = document.getElementById("footerUpload");
+  const accountBtn = document.getElementById("accountBtn");
+  const notifBtn = document.getElementById("notifBtn");
 
-  const uploadBtn = document.querySelector(".upload-btn")
-  const footerUpload = document.getElementById("footerUpload")
-  const accountBtn = document.getElementById("accountBtn")
-  const notifBtn = document.getElementById("notifBtn")
-
-  // Bottom buttons are always active. Authentication is checked on every click.
   ;[uploadBtn, footerUpload, accountBtn, notifBtn].forEach(btn => {
     if(btn){
-      btn.classList.remove("disabled")
-      btn.style.pointerEvents = "auto"
-      btn.style.cursor = "pointer"
+      btn.classList.remove("disabled");
+      btn.style.pointerEvents = "auto";
+      btn.style.cursor = "pointer";
     }
-  })
+  });
 
-  if(uploadBtn) uploadBtn.onclick = async e => {
-    e.preventDefault()
-    if(await requireSignIn()) location.href = "upload.html"
-  }
+  document.querySelector(".login-btn")?.remove();
 
-  if(footerUpload) footerUpload.onclick = async e => {
-    e.preventDefault()
-    if(await requireSignIn()) location.href = "upload.html"
-  }
-
-  if(accountBtn) accountBtn.onclick = async e => {
-    e.preventDefault()
-    if(await requireSignIn()) location.href = "account.html"
-  }
-
-  if(notifBtn) notifBtn.onclick = async e => {
-    e.preventDefault()
-    if(await requireSignIn()) location.href = "notifications.html"
-  }
-
-  document.querySelector(".login-btn")?.remove()
-  loadNotificationBadge()
-
-  // Keep the local profile as a cache only. Authentication comes from Supabase.
-  try {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .maybeSingle()
-
-    if(profile){
-      localStorage.setItem("bigula_user", JSON.stringify(profile))
+  if(currentUser){
+    loadNotificationBadge();
+    try{
+      const { data: profile, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+      if(error) console.warn("Could not refresh local profile cache:", error);
+      else if(profile) localStorage.setItem("bigula_user", JSON.stringify(profile));
+    }catch(e){
+      console.warn("Could not refresh local profile cache:", e);
     }
-  } catch(e) {
-    console.warn("Could not refresh local profile cache:", e)
   }
+
+  // Never redirect during Home startup. The feed is public.
+  return true;
 }
-
 
 
 // --- Notifications badge ---
@@ -764,7 +742,8 @@ document.getElementById("searchInput").addEventListener("input",e=>{
 })
 
 initUser().then(()=>{
-  if(currentUser) fetchVideos("foryou")
+  // Home is public: always load the For You feed.
+  fetchVideos("foryou")
 })
 
 // FINAL FOOTER BUTTON NAVIGATION — capture phase prevents dead/overridden buttons.
