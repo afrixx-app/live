@@ -835,10 +835,7 @@ async function openTab(tab){
 
   if(tab==='videos'){
 
-    await renderVideos(
-      myVideos,
-      'videoGrid'
-    );
+    await loadMyVideos();
 
   }
 
@@ -1156,6 +1153,42 @@ function renderUsers(users,list){
    MY VIDEOS
 --------------------------------- */
 
+async function loadMyVideos(){
+
+  const grid = document.getElementById('videoGrid');
+
+  grid.innerHTML =
+    '<div class="loading">Loading your videos...</div>';
+
+  const {
+    data: videos,
+    error
+  } = await supabase
+    .from('videos')
+    .select('*')
+    .eq('creator_id', currentUser.id)
+    .order('created_at', {ascending:false});
+
+  if(error){
+
+    console.error('MY VIDEOS ERROR:', error);
+
+    grid.innerHTML =
+      '<div class="error">Unable to load your videos: ' +
+      esc(error.message || 'Database error') +
+      '</div>';
+
+    return;
+  }
+
+  myVideos = videos || [];
+
+  document.getElementById('videos').textContent =
+    myVideos.length;
+
+  await renderVideos(myVideos, 'videoGrid');
+}
+
 async function renderVideos(videos,targetId){
 
   const grid =
@@ -1214,7 +1247,7 @@ async function renderVideos(videos,targetId){
     card.addEventListener('click',()=>{
 
       location.href =
-        'edit_vide.html?id='+
+        'edit_video.html?id='+
         encodeURIComponent(v.id);
 
     });
