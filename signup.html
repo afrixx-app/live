@@ -1,282 +1,193 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>BIGULA — Sign Up</title>
-<meta name="theme-color" content="#07070b">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Sign Up</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 html,body{
-  margin:0;
-  min-height:100%;
-  background:#050507;
-  color:#fff;
-  font-family:Arial,Helvetica,sans-serif;
+    width:100%;
+    min-height:100%;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#000;
+    color:#fff;
 }
 
 body{
-  min-height:100vh;
-  min-height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px 18px;
-  overflow-x:hidden;
-  position:relative;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  width:430px;
-  height:430px;
-  top:-190px;
-  left:-150px;
-  background:radial-gradient(
-    circle,
-    rgba(111,76,255,.30) 0%,
-    rgba(111,76,255,.10) 35%,
-    transparent 70%
-  );
-  pointer-events:none;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  width:430px;
-  height:430px;
-  right:-180px;
-  bottom:-190px;
-  background:radial-gradient(
-    circle,
-    rgba(0,210,255,.20) 0%,
-    rgba(0,210,255,.07) 35%,
-    transparent 70%
-  );
-  pointer-events:none;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
 .container{
-  width:100%;
-  max-width:430px;
-  position:relative;
-  z-index:1;
-}
-
-.brand{
-  text-align:center;
-  margin-bottom:26px;
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:30px 22px;
 }
 
 .logo{
-  display:inline-block;
-  font-size:40px;
-  line-height:1;
-  font-weight:950;
-  letter-spacing:5px;
-  background:linear-gradient(
-    100deg,
-    #ffffff 5%,
-    #bdafff 42%,
-    #63eaff 100%
-  );
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-  text-shadow:0 0 35px rgba(105,90,255,.18);
+    width:90px;
+    height:90px;
+    border-radius:22px;
+    object-fit:cover;
+    margin-bottom:20px;
+}
+
+.brand{
+    font-size:36px;
+    font-weight:900;
+    letter-spacing:2px;
+    margin-bottom:8px;
 }
 
 .subtitle{
-  margin-top:9px;
-  color:#85858f;
-  font-size:13px;
-  letter-spacing:.2px;
+    color:#aaa;
+    font-size:15px;
+    text-align:center;
+    margin-bottom:35px;
 }
 
 .card{
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.055),
-      rgba(255,255,255,.018)
-    );
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:24px;
-  padding:30px 23px 25px;
-  box-shadow:
-    0 25px 80px rgba(0,0,0,.58),
-    0 0 50px rgba(88,70,255,.06);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
+    width:100%;
+    background:#111;
+    border:1px solid #252525;
+    border-radius:20px;
+    padding:25px 20px;
 }
 
-h1{
-  text-align:center;
-  font-size:26px;
-  line-height:1.2;
-  margin:0 0 10px;
-  font-weight:850;
-  letter-spacing:-.4px;
+.card h2{
+    text-align:center;
+    font-size:23px;
+    margin-bottom:8px;
 }
 
-.desc{
-  text-align:center;
-  color:#9999a5;
-  font-size:14px;
-  line-height:1.55;
-  margin:0 0 25px;
+.card p{
+    text-align:center;
+    color:#999;
+    font-size:14px;
+    line-height:1.5;
+    margin-bottom:25px;
 }
 
-button{
-  width:100%;
-  height:55px;
-  border:0;
-  border-radius:14px;
-  font-size:15px;
-  font-weight:800;
-  cursor:pointer;
-  margin-top:12px;
-  transition:
-    transform .15s ease,
-    opacity .15s ease,
-    box-shadow .15s ease;
+.google-btn{
+    width:100%;
+    height:54px;
+    border:none;
+    border-radius:12px;
+    background:#fff;
+    color:#111;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    transition:.2s;
 }
 
-button:active{
-  transform:scale(.985);
+.google-btn:hover{
+    transform:translateY(-1px);
 }
 
-.google{
-  position:relative;
-  background:#fff;
-  color:#15151a;
-  box-shadow:0 8px 25px rgba(0,0,0,.30);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:11px;
-}
-
-.google:hover{
-  box-shadow:0 10px 30px rgba(90,75,255,.18);
+.google-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
 }
 
 .google-icon{
-  width:20px;
-  height:20px;
-  flex:none;
-}
-
-.google:disabled{
-  opacity:.55;
-  cursor:wait;
-  transform:none;
-}
-
-.divider{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  color:#555560;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:1px;
-  margin:22px 0 4px;
-}
-
-.divider:before,
-.divider:after{
-  content:"";
-  height:1px;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    #292930,
-    transparent
-  );
-  flex:1;
-}
-
-.phone{
-  background:#15151a;
-  color:#60606a;
-  border:1px solid #292930;
-  cursor:not-allowed;
-}
-
-.phone:hover{
-  opacity:1;
+    width:22px;
+    height:22px;
 }
 
 .status{
-  display:none;
-  margin-top:16px;
-  padding:13px 14px;
-  border-radius:12px;
-  background:#101015;
-  border:1px solid #24242c;
-  font-size:13px;
-  line-height:1.45;
-  text-align:center;
-  white-space:pre-line;
-}
-
-.status.show{
-  display:block;
+    min-height:22px;
+    margin-top:18px;
+    text-align:center;
+    font-size:14px;
+    line-height:1.4;
 }
 
 .status.error{
-  color:#ff9d9d;
-  border-color:rgba(255,80,100,.22);
-  background:rgba(120,20,35,.12);
-}
-
-.status.info{
-  color:#aaaab5;
+    color:#ff5b5b;
 }
 
 .status.success{
-  color:#9fffc9;
-  border-color:rgba(50,220,140,.20);
-  background:rgba(20,100,65,.10);
+    color:#58d68d;
 }
 
-.note{
-  text-align:center;
-  color:#656570;
-  font-size:11px;
-  line-height:1.5;
-  margin-top:17px;
+.status.info{
+    color:#aaa;
+}
+
+.terms{
+    margin-top:20px;
+    text-align:center;
+    color:#777;
+    font-size:11px;
+    line-height:1.5;
 }
 
 .footer{
-  text-align:center;
-  color:#45454e;
-  font-size:10px;
-  letter-spacing:2px;
-  font-weight:700;
-  margin-top:21px;
+    margin-top:25px;
+    color:#666;
+    font-size:12px;
+    text-align:center;
 }
 
-@media(max-width:380px){
-  body{
-    padding:18px 14px;
-  }
+.loading{
+    display:inline-block;
+    width:15px;
+    height:15px;
+    border:2px solid #555;
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    vertical-align:middle;
+    margin-right:7px;
+}
 
-  .logo{
-    font-size:35px;
-  }
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
 
-  .card{
-    padding:26px 18px 22px;
-  }
+@media(max-width:360px){
+    .container{
+        padding:20px 16px;
+    }
+
+    .logo{
+        width:75px;
+        height:75px;
+    }
+
+    .brand{
+        font-size:31px;
+    }
+
+    .card{
+        padding:22px 16px;
+    }
 }
 </style>
 </head>
@@ -285,695 +196,728 @@ button:active{
 
 <div class="container">
 
-  <div class="brand">
-    <div class="logo">BIGULA</div>
-    <div class="subtitle">Your stressfree home</div>
-  </div>
+    <!--
+        Replace this image with your final BIGULA logo if needed.
+    -->
+    <img
+        class="logo"
+        src="https://afrixx-app.github.io/live/logo.png"
+        alt="BIGULA"
+        onerror="this.style.display='none'"
+    >
 
-  <div class="card">
+    <div class="brand">BIGULA</div>
 
-    <h1>Create your account</h1>
-
-    <p class="desc">
-      Join BIGULA and discover a world of short videos, creators and stories.
-    </p>
-
-    <button id="googleBtn" class="google" type="button">
-      <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="#4285F4" d="M21.35 12.23c0-.79-.07-1.55-.22-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z"/>
-        <path fill="#34A853" d="M12 21.5c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.75 9.75 0 0 0 12 21.5z"/>
-        <path fill="#FBBC05" d="M6.54 13.59A5.86 5.86 0 0 1 6.23 12c0-.55.11-1.09.31-1.59V7.88H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.06 1.05 4.38l3.24-2.79z"/>
-        <path fill="#EA4335" d="M12 6.38c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.84 3.29 14.63 2.5 12 2.5a9.75 9.75 0 0 0-8.7 5.38l3.24 2.53C7.31 8.1 9.46 6.38 12 6.38z"/>
-      </svg>
-      <span id="googleText">Continue with Google</span>
-    </button>
-
-    <div class="divider">OR</div>
-
-    <button class="phone" type="button" disabled>
-      Continue with phone number
-    </button>
-
-    <div id="status" class="status"></div>
-
-    <div class="note">
-      Phone sign-up is coming soon. It will be enabled after phone authentication is configured.
+    <div class="subtitle">
+        Watch. Create. Share. Earn.
     </div>
 
-  </div>
+    <div class="card">
 
-  <div class="footer">BIGULA</div>
+        <h2>Welcome to BIGULA</h2>
+
+        <p>
+            Sign in with your Google account to continue to BIGULA.
+        </p>
+
+        <button
+            id="googleBtn"
+            class="google-btn"
+            type="button"
+        >
+            <svg
+                class="google-icon"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    fill="#4285F4"
+                    d="M23.49 12.27c0-.79-.07-1.55-.2-2.27H12v4.3h6.45a5.5 5.5 0 0 1-2.39 3.61v3h3.87c2.27-2.09 3.56-5.17 3.56-8.64z"
+                />
+                <path
+                    fill="#34A853"
+                    d="M12 24c3.24 0 5.95-1.07 7.93-2.91l-3.87-3c-1.07.72-2.44 1.15-4.06 1.15-3.12 0-5.76-2.11-6.71-4.95H1.29v3.09A12 12 0 0 0 12 24z"
+                />
+                <path
+                    fill="#FBBC05"
+                    d="M5.29 14.29A7.2 7.2 0 0 1 4.91 12c0-.79.14-1.56.38-2.29V6.62H1.29A12 12 0 0 0 0 12c0 1.94.46 3.77 1.29 5.38l4-3.09z"
+                />
+                <path
+                    fill="#EA4335"
+                    d="M12 4.76c1.76 0 3.34.61 4.59 1.81l3.44-3.44C17.94 1.12 15.24 0 12 0A12 12 0 0 0 1.29 6.62l4 3.09C6.24 6.87 8.88 4.76 12 4.76z"
+                />
+            </svg>
+
+            Continue with Google
+        </button>
+
+        <div id="status" class="status"></div>
+
+        <div class="terms">
+            By continuing, you agree to use BIGULA responsibly
+            and follow the BIGULA community rules.
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © BIGULA
+    </div>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-(function () {
-  "use strict";
 
-  /*
-   * ============================================================
-   * BIGULA SUPABASE CONFIGURATION
-   * ============================================================
-   */
-  const SUPABASE_URL =
+/* =========================================================
+   BIGULA SUPABASE CONFIGURATION
+   ========================================================= */
+
+const SUPABASE_URL =
     "https://vfteiggdhthvrrlndtbs.supabase.co";
 
-  const SUPABASE_KEY =
+const SUPABASE_KEY =
     "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-  /*
-   * ============================================================
-   * OAUTH REDIRECTS
-   * ============================================================
-   *
-   * Website:
-   *   https://afrixx-app.github.io/live/home.html
-   *
-   * Capacitor Android:
-   *   com.bigula.app://auth/callback
-   */
-  const WEB_REDIRECT_URL =
+
+/* =========================================================
+   REDIRECT URLS
+   ========================================================= */
+
+const WEB_REDIRECT_URL =
     "https://afrixx-app.github.io/live/home.html";
 
-  const HOME_URL = "https://afrixx-app.github.io/live/home.html";
-  const APP_REDIRECT_URL =
+const HOME_URL =
+    "https://afrixx-app.github.io/live/home.html";
+
+const APP_REDIRECT_URL =
     "com.bigula.app://auth/callback";
 
-  const googleBtn = document.getElementById("googleBtn");
-  const googleText = document.getElementById("googleText");
-  const statusBox = document.getElementById("status");
 
-  let loginFinishing = false;
+/* =========================================================
+   SUPABASE CLIENT
+   IMPORTANT:
+   detectSessionInUrl MUST remain FALSE here.
 
-  function status(message, type) {
-    statusBox.textContent = message || "";
-    statusBox.className = "status show " + (type || "info");
-  }
+   Google OAuth is started from signup.html but the callback
+   goes to home.html.
 
-  function isCapacitorApp() {
-    try {
-      if (window.Capacitor) {
-        if (typeof window.Capacitor.isNativePlatform === "function") {
-          return window.Capacitor.isNativePlatform();
-        }
+   This prevents signup.html from trying to consume the
+   one-time PKCE authorization code.
+   ========================================================= */
 
-        if (typeof window.Capacitor.getPlatform === "function") {
-          return window.Capacitor.getPlatform() !== "web";
-        }
-      }
-    } catch (e) {
-      console.warn("Capacitor detection failed:", e);
-    }
-
-    return false;
-  }
-
-  function getRedirectURL() {
-    return isCapacitorApp()
-      ? APP_REDIRECT_URL
-      : WEB_REDIRECT_URL;
-  }
-
-  const client = window.supabase.createClient(
+const client = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY,
     {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: "pkce"
-      }
-    }
-  );
-
-  function googleName(user) {
-    const m = user.user_metadata || {};
-
-    return (
-      m.name ||
-      m.full_name ||
-      m.display_name ||
-      [m.given_name, m.family_name].filter(Boolean).join(" ") ||
-      (user.email ? user.email.split("@")[0] : "BIGULA User")
-    ).trim();
-  }
-
-  function googleAvatar(user) {
-    const m = user.user_metadata || {};
-    return m.avatar_url || m.picture || null;
-  }
-
-  function makeUsername(user, name) {
-    let base = name
-      .toLowerCase()
-      .replace(/[^a-z0-9_]/g, "")
-      .slice(0, 15);
-
-    if (!base) base = "user";
-
-    return base + "_" +
-      user.id.replace(/-/g, "").slice(0, 8).toLowerCase();
-  }
-
-  async function saveUser(user) {
-
-    if (!user || !user.id) {
-      throw new Error(
-        "Google login succeeded, but no user ID was received."
-      );
-    }
-
-    const name = googleName(user);
-    const avatar = googleAvatar(user);
-    const username = makeUsername(user, name);
-
-    console.log("BIGULA AUTH USER:", user);
-    console.log("BIGULA USER ID:", user.id);
-    console.log("BIGULA NAME:", name);
-    console.log("BIGULA USERNAME:", username);
-
-    /*
-     * IMPORTANT:
-     * public.users.id is the real Supabase Auth UUID.
-     */
-    const existing = await client
-      .from("users")
-      .select("id,username,name,avatar_url,short_link")
-      .eq("id", user.id)
-      .limit(1);
-
-    if (existing.error) {
-      throw new Error(
-        "USERS SELECT FAILED\n" +
-        "Code: " + (existing.error.code || "none") + "\n" +
-        "Message: " + (existing.error.message || "none")
-      );
-    }
-
-    /*
-     * Existing BIGULA user.
-     */
-    if (existing.data && existing.data.length > 0) {
-
-      const profile = existing.data[0];
-
-      localStorage.setItem(
-        "bigula_profile",
-        JSON.stringify(profile)
-      );
-
-      localStorage.setItem(
-        "bigula_user_name",
-        profile.name || name
-      );
-
-      localStorage.setItem(
-        "supabase_auth_user_id",
-        user.id
-      );
-
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("loggedIn", "true");
-
-      return profile;
-    }
-
-    /*
-     * New BIGULA user.
-     */
-    const payload = {
-      id: user.id,
-      username: username,
-      name: name
-    };
-
-    if (avatar) {
-      payload.avatar_url = avatar;
-    }
-
-    const inserted = await client
-      .from("users")
-      .insert(payload)
-      .select("id,username,name,avatar_url,short_link")
-      .limit(1);
-
-    if (inserted.error) {
-
-      console.error(
-        "BIGULA SUPABASE INSERT ERROR:",
-        inserted.error
-      );
-
-      throw new Error(
-        "USERS INSERT FAILED\n\n" +
-        "Code: " + (inserted.error.code || "none") + "\n" +
-        "Message: " + (inserted.error.message || "none") + "\n" +
-        "Details: " + (inserted.error.details || "none") + "\n" +
-        "Hint: " + (inserted.error.hint || "none")
-      );
-    }
-
-    if (!inserted.data || !inserted.data.length) {
-      throw new Error(
-        "INSERT reported success, but Supabase returned no user row."
-      );
-    }
-
-    const profile = inserted.data[0];
-
-    localStorage.setItem(
-      "bigula_profile",
-      JSON.stringify(profile)
-    );
-
-    localStorage.setItem(
-      "bigula_user_name",
-      profile.name || name
-    );
-
-    localStorage.setItem(
-      "supabase_auth_user_id",
-      user.id
-    );
-
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("loggedIn", "true");
-
-    return profile;
-  }
-
-  async function finishLogin(session) {
-
-    if (!session || !session.user) {
-      return;
-    }
-
-    /*
-     * Prevent the same OAuth result from being processed twice
-     * by INITIAL_SESSION + SIGNED_IN + callback handling.
-     */
-    if (loginFinishing) {
-      return;
-    }
-
-    loginFinishing = true;
-
-    googleBtn.disabled = true;
-    googleText.textContent = "Signing you in...";
-    status("Creating your BIGULA account...", "info");
-
-    try {
-
-      await saveUser(session.user);
-
-      // Confirm Supabase has persisted the session before leaving signup.
-      let confirmedSession = null;
-      for (let attempt = 0; attempt < 10; attempt++) {
-        const check = await client.auth.getSession();
-        if (check.data && check.data.session && check.data.session.user) {
-          confirmedSession = check.data.session;
-          break;
+        auth:{
+            persistSession:true,
+            autoRefreshToken:true,
+            detectSessionInUrl:false,
+            flowType:"pkce"
         }
-        await new Promise(resolve => setTimeout(resolve, 200));
-      }
-
-      if (!confirmedSession) {
-        throw new Error("Google sign-in succeeded, but the BIGULA session was not ready yet. Please try again.");
-      }
-
-      status("Account created successfully!", "success");
-
-      // In the Capacitor app use a relative URL so navigation stays inside
-      // the same WebView/storage context. On the normal website use GitHub Pages.
-      setTimeout(function () {
-        window.location.replace(isCapacitorApp() ? "home.html" : HOME_URL);
-      }, 150);
-
-    } catch (error) {
-
-      console.error("BIGULA SIGNUP FAILURE:", error);
-
-      loginFinishing = false;
-
-      googleBtn.disabled = false;
-      googleText.textContent = "Continue with Google";
-
-      status(
-        error && error.message
-          ? error.message
-          : "Could not create your BIGULA account.",
-        "error"
-      );
     }
-  }
+);
 
-  /*
-   * ============================================================
-   * ANDROID / CAPACITOR OAUTH CALLBACK
-   * ============================================================
-   *
-   * Android receives:
-   *
-   *   com.bigula.app://auth/callback?code=XXXX
-   *
-   * MainActivity.java forwards that URL to this page through:
-   *
-   *   bigulaOAuthCallback
-   *
-   * The Capacitor App plugin is also supported as a second
-   * callback path. This makes the page resilient to whether
-   * the native callback arrives through MainActivity or the
-   * Capacitor App plugin.
-   */
-  async function handleOAuthCallback(callbackUrl) {
 
-    if (!callbackUrl) {
-      return false;
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const googleBtn =
+    document.getElementById("googleBtn");
+
+const statusEl =
+    document.getElementById("status");
+
+
+/* =========================================================
+   STATUS MESSAGE
+   ========================================================= */
+
+function setStatus(message, type="info"){
+
+    statusEl.className = "status " + type;
+
+    statusEl.innerHTML = message;
+}
+
+
+/* =========================================================
+   GET CORRECT OAUTH REDIRECT
+   ========================================================= */
+
+function getRedirectUrl(){
+
+    /*
+       When BIGULA is running inside the Capacitor/native
+       application, use the custom app callback.
+
+       On the normal website, send Google back to Home.
+    */
+
+    const isNative =
+        window.location.protocol === "capacitor:" ||
+        window.location.protocol === "ionic:" ||
+        window.location.protocol === "file:";
+
+    if(isNative){
+        return APP_REDIRECT_URL;
     }
 
-    console.log("BIGULA OAUTH CALLBACK:", callbackUrl);
+    return WEB_REDIRECT_URL;
+}
 
-    let parsed;
 
-    try {
-      parsed = new URL(callbackUrl);
-    } catch (error) {
-      console.error("Invalid OAuth callback URL:", error);
-      status("Invalid Google sign-in callback.", "error");
-      return false;
+/* =========================================================
+   SAVE USER PROFILE
+   ========================================================= */
+
+async function saveUser(user){
+
+    if(!user){
+        return null;
     }
 
-    if (
-      parsed.protocol !== "com.bigula.app:" ||
-      parsed.hostname !== "auth" ||
-      parsed.pathname !== "/callback"
-    ) {
-      console.warn("Ignoring unrelated callback:", callbackUrl);
-      return false;
-    }
+    try{
 
-    const oauthError =
-      parsed.searchParams.get("error") ||
-      parsed.searchParams.get("error_code");
+        const metadata =
+            user.user_metadata || {};
 
-    const oauthErrorDescription =
-      parsed.searchParams.get("error_description");
+        const googleName =
+            metadata.name ||
+            metadata.full_name ||
+            metadata.display_name ||
+            [
+                metadata.given_name,
+                metadata.family_name
+            ]
+            .filter(Boolean)
+            .join(" ");
 
-    if (oauthError) {
+        const avatar =
+            metadata.avatar_url ||
+            metadata.picture ||
+            null;
 
-      console.error(
-        "GOOGLE OAUTH ERROR:",
-        oauthError,
-        oauthErrorDescription
-      );
+        /*
+           The database trigger normally creates the public.users
+           row automatically.
 
-      status(
-        oauthErrorDescription
-          ? decodeURIComponent(oauthErrorDescription.replace(/\+/g, " "))
-          : "Google sign-in was cancelled or failed.",
-        "error"
-      );
+           We only update useful Google profile information here.
+        */
 
-      googleBtn.disabled = false;
-      googleText.textContent = "Continue with Google";
+        const profileData = {
+            id:user.id
+        };
 
-      return false;
-    }
-
-    const code = parsed.searchParams.get("code");
-
-    if (!code) {
-      status(
-        "Google sign-in returned without an authorization code.",
-        "error"
-      );
-
-      googleBtn.disabled = false;
-      googleText.textContent = "Continue with Google";
-
-      return false;
-    }
-
-    googleBtn.disabled = true;
-    googleText.textContent = "Finishing sign-in...";
-    status("Finishing Google sign-in...", "info");
-
-    try {
-
-      /*
-       * PKCE REQUIREMENT:
-       * The authorization code must be exchanged on the same
-       * device/browser context that started the login.
-       */
-      const result =
-        await client.auth.exchangeCodeForSession(code);
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      if (
-        !result.data ||
-        !result.data.session ||
-        !result.data.session.user
-      ) {
-        throw new Error(
-          "Google sign-in completed, but BIGULA did not receive a session."
-        );
-      }
-
-      await finishLogin(result.data.session);
-
-      return true;
-
-    } catch (error) {
-
-      console.error(
-        "BIGULA OAUTH EXCHANGE FAILURE:",
-        error
-      );
-
-      loginFinishing = false;
-
-      googleBtn.disabled = false;
-      googleText.textContent = "Continue with Google";
-
-      status(
-        "Google sign-in could not be completed.\n\n" +
-        (error && error.message
-          ? error.message
-          : "Unknown authentication error."),
-        "error"
-      );
-
-      return false;
-    }
-  }
-
-  /*
-   * Expose callback for MainActivity.java.
-   */
-  window.bigulaHandleOAuthCallback = handleOAuthCallback;
-
-  /*
-   * MainActivity.java dispatches this event.
-   */
-  window.addEventListener(
-    "bigulaOAuthCallback",
-    function (event) {
-
-      const callbackUrl =
-        event &&
-        event.detail &&
-        event.detail.url
-          ? event.detail.url
-          : null;
-
-      if (callbackUrl) {
-        handleOAuthCallback(callbackUrl);
-      }
-    }
-  );
-
-  /*
-   * Capacitor App plugin callback.
-   */
-  async function registerCapacitorCallback() {
-
-    try {
-
-      if (
-        !window.Capacitor ||
-        !window.Capacitor.Plugins ||
-        !window.Capacitor.Plugins.App
-      ) {
-        return;
-      }
-
-      const App = window.Capacitor.Plugins.App;
-
-      await App.addListener(
-        "appUrlOpen",
-        function (event) {
-
-          if (event && event.url) {
-            handleOAuthCallback(event.url);
-          }
+        if(googleName){
+            profileData.name = googleName;
+            profileData.username = googleName;
         }
-      );
 
-      console.log("BIGULA Capacitor OAuth listener ready.");
+        if(avatar){
+            profileData.avatar_url = avatar;
+        }
 
-    } catch (error) {
+        const { data, error } =
+            await client
+                .from("users")
+                .upsert(
+                    profileData,
+                    {
+                        onConflict:"id"
+                    }
+                )
+                .select()
+                .single();
 
-      console.warn(
-        "Capacitor App listener unavailable:",
-        error
-      );
-    }
-  }
+        if(error){
 
-  /*
-   * ============================================================
-   * GOOGLE BUTTON
-   * ============================================================
-   */
-  googleBtn.addEventListener(
-    "click",
-    async function () {
+            console.warn(
+                "Could not update public profile:",
+                error
+            );
 
-      if (loginFinishing) {
-        return;
-      }
+            /*
+               Do not block login if the auth session itself
+               was successfully created.
+            */
 
-      googleBtn.disabled = true;
-      googleText.textContent = "Opening Google...";
-      status("Connecting to Google...", "info");
+            return null;
+        }
 
-      try {
+        /*
+           Cache profile locally for quick UI loading.
+        */
 
-        const redirectTo = getRedirectURL();
+        try{
+            localStorage.setItem(
+                "bigula_user",
+                JSON.stringify(data)
+            );
+        }catch(e){
+            console.warn(
+                "Could not cache BIGULA profile",
+                e
+            );
+        }
 
-        console.log(
-          "BIGULA OAuth redirect:",
-          redirectTo
+        return data;
+
+    }catch(error){
+
+        console.warn(
+            "saveUser error:",
+            error
         );
 
-        const result =
-          await client.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-              redirectTo: redirectTo,
-              skipBrowserRedirect: false
-            }
-          });
+        return null;
+    }
+}
 
-        if (result.error) {
-          throw result.error;
-        }
 
-      } catch (error) {
+/* =========================================================
+   FINISH LOGIN
+   ========================================================= */
 
-        console.error("BIGULA GOOGLE ERROR:", error);
+async function finishLogin(session){
+
+    if(!session || !session.user){
+
+        setStatus(
+            "No active session was found.",
+            "error"
+        );
 
         googleBtn.disabled = false;
-        googleText.textContent = "Continue with Google";
 
-        status(
-          error && error.message
-            ? error.message
-            : "Google sign-in could not be started.",
-          "error"
-        );
-      }
-    }
-  );
-
-  /*
-   * ============================================================
-   * WEB CALLBACK
-   * ============================================================
-   *
-   * On the normal website, Supabase's PKCE callback is:
-   *
-   *   home.html?code=...
-   *
-   * This signup page does not need to exchange that web code.
-   * The Home page already handles its own web callback.
-   */
-
-  /*
-   * ============================================================
-   * EXISTING SESSION
-   * ============================================================
-   */
-  async function checkSession() {
-
-    try {
-
-      const result = await client.auth.getSession();
-
-      if (result.error) {
-        console.error(
-          "BIGULA SESSION ERROR:",
-          result.error
-        );
         return;
-      }
-
-      if (
-        result.data &&
-        result.data.session &&
-        result.data.session.user
-      ) {
-        await finishLogin(result.data.session);
-      }
-
-    } catch (error) {
-
-      console.error(
-        "BIGULA CHECK SESSION ERROR:",
-        error
-      );
     }
-  }
 
-  /*
-   * Supabase auth events.
-   *
-   * INITIAL_SESSION is enough for an already-existing session.
-   * SIGNED_IN handles normal browser auth completion.
-   */
-  client.auth.onAuthStateChange(
-    function (event, session) {
+    setStatus(
+        '<span class="loading"></span>Signing you in...',
+        "info"
+    );
 
-      console.log(
-        "BIGULA AUTH EVENT:",
-        event
-      );
+    googleBtn.disabled = true;
 
-      if (
-        (event === "SIGNED_IN" ||
-         event === "INITIAL_SESSION") &&
-        session &&
-        session.user
-      ) {
-        finishLogin(session);
-      }
+    /*
+       Save/refresh public profile.
+    */
+
+    await saveUser(session.user);
+
+    /*
+       Store basic session information locally.
+       Supabase remains the source of truth.
+    */
+
+    try{
+
+        localStorage.setItem(
+            "bigula_auth_user",
+            JSON.stringify({
+                id:session.user.id,
+                email:session.user.email || null,
+                name:
+                    session.user.user_metadata?.name ||
+                    session.user.user_metadata?.full_name ||
+                    session.user.user_metadata?.display_name ||
+                    null,
+                avatar:
+                    session.user.user_metadata?.avatar_url ||
+                    session.user.user_metadata?.picture ||
+                    null
+            })
+        );
+
+    }catch(e){
+        console.warn(
+            "Could not cache auth user",
+            e
+        );
     }
-  );
 
-  /*
-   * Start native callback listener first, then check session.
-   */
-  registerCapacitorCallback();
-  checkSession();
+    setStatus(
+        "Login successful. Opening BIGULA...",
+        "success"
+    );
+
+    /*
+       Small delay so the user can see the success message.
+    */
+
+    setTimeout(() => {
+
+        window.location.replace(HOME_URL);
+
+    }, 300);
+
+}
+
+
+/* =========================================================
+   GOOGLE SIGN-IN
+   ========================================================= */
+
+async function signInWithGoogle(){
+
+    if(googleBtn.disabled){
+        return;
+    }
+
+    googleBtn.disabled = true;
+
+    setStatus(
+        '<span class="loading"></span>Connecting to Google...',
+        "info"
+    );
+
+    try{
+
+        /*
+           Make sure there is no stale OAuth callback data
+           sitting on signup.html.
+        */
+
+        const redirectTo =
+            getRedirectUrl();
+
+        const { data, error } =
+            await client.auth.signInWithOAuth({
+                provider:"google",
+
+                options:{
+                    redirectTo:redirectTo,
+
+                    /*
+                       Let Supabase perform the browser redirect.
+                    */
+
+                    skipBrowserRedirect:false
+                }
+            });
+
+        if(error){
+
+            console.error(
+                "Google sign-in error:",
+                error
+            );
+
+            setStatus(
+                "Google sign-in could not be started. " +
+                error.message,
+                "error"
+            );
+
+            googleBtn.disabled = false;
+
+            return;
+        }
+
+        /*
+           Normally the browser immediately leaves this page.
+        */
+
+        console.log(
+            "Google OAuth started:",
+            data
+        );
+
+    }catch(error){
+
+        console.error(
+            "Google OAuth exception:",
+            error
+        );
+
+        setStatus(
+            "Google sign-in could not be completed. " +
+            (error.message || "Please try again."),
+            "error"
+        );
+
+        googleBtn.disabled = false;
+    }
+}
+
+
+/* =========================================================
+   GOOGLE BUTTON
+   ========================================================= */
+
+googleBtn.addEventListener(
+    "click",
+    signInWithGoogle
+);
+
+
+/* =========================================================
+   AUTH STATE LISTENER
+   ========================================================= */
+
+client.auth.onAuthStateChange(
+    async (event, session) => {
+
+        console.log(
+            "BIGULA auth event:",
+            event
+        );
+
+        /*
+           If an existing session is already available,
+           send the user to Home.
+
+           Do NOT process URL OAuth codes here.
+           Home owns the web callback.
+        */
+
+        if(
+            event === "SIGNED_IN" &&
+            session
+        ){
+
+            await finishLogin(session);
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CHECK EXISTING SESSION
+   ========================================================= */
+
+async function checkExistingSession(){
+
+    try{
+
+        const {
+            data,
+            error
+        } = await client.auth.getSession();
+
+        if(error){
+
+            console.warn(
+                "Session check error:",
+                error
+            );
+
+            return;
+        }
+
+        const session =
+            data?.session;
+
+        if(session){
+
+            /*
+               User is already logged in.
+               There is no reason to display signup again.
+            */
+
+            await finishLogin(session);
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Existing session check failed:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   NATIVE CAPACITOR CALLBACK
+   =========================================================
+
+   This section is only for:
+
+   com.bigula.app://auth/callback?code=...
+
+   The normal website callback is NOT handled here.
+
+   The native callback can be handled if signup.html is
+   opened inside the Capacitor application.
+   ========================================================= */
+
+async function handleOAuthCallback(callbackUrl){
+
+    try{
+
+        if(!callbackUrl){
+            return false;
+        }
+
+        const url =
+            new URL(callbackUrl);
+
+        const code =
+            url.searchParams.get("code");
+
+        if(!code){
+            return false;
+        }
+
+        setStatus(
+            '<span class="loading"></span>Completing Google sign-in...',
+            "info"
+        );
+
+        googleBtn.disabled = true;
+
+        /*
+           Exchange the one-time authorization code exactly once.
+        */
+
+        const {
+            data,
+            error
+        } =
+            await client.auth.exchangeCodeForSession(
+                code
+            );
+
+        if(error){
+
+            console.error(
+                "Native OAuth exchange error:",
+                error
+            );
+
+            setStatus(
+                "Google sign-in could not be completed. " +
+                error.message,
+                "error"
+            );
+
+            googleBtn.disabled = false;
+
+            return true;
+        }
+
+        if(data?.session){
+
+            await finishLogin(
+                data.session
+            );
+
+            return true;
+        }
+
+        setStatus(
+            "Google sign-in completed but no session was returned.",
+            "error"
+        );
+
+        googleBtn.disabled = false;
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "Native callback error:",
+            error
+        );
+
+        setStatus(
+            "Google sign-in could not be completed.",
+            "error"
+        );
+
+        googleBtn.disabled = false;
+
+        return true;
+    }
+}
+
+
+/* =========================================================
+   HANDLE NATIVE APP URL
+   ========================================================= */
+
+async function checkNativeCallback(){
+
+    /*
+       Capacitor may expose the callback through the app URL.
+    */
+
+    try{
+
+        if(
+            window.location.protocol === "capacitor:" ||
+            window.location.protocol === "ionic:"
+        ){
+
+            const handled =
+                await handleOAuthCallback(
+                    window.location.href
+                );
+
+            if(handled){
+                return true;
+            }
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Native callback detection failed:",
+            error
+        );
+    }
+
+    return false;
+}
+
+
+/* =========================================================
+   START PAGE
+   ========================================================= */
+
+(async function init(){
+
+    console.log(
+        "BIGULA signup page started"
+    );
+
+    /*
+       IMPORTANT:
+
+       We intentionally do NOT call
+       exchangeCodeForSession() for normal web URLs here.
+
+       Google redirects the website to:
+
+       home.html?code=...
+
+       Home handles that code exactly once.
+    */
+
+    const nativeHandled =
+        await checkNativeCallback();
+
+    if(nativeHandled){
+        return;
+    }
+
+    /*
+       If an authenticated session already exists,
+       go directly to Home.
+    */
+
+    await checkExistingSession();
 
 })();
+
 </script>
 
 </body>
 </html>
+```
