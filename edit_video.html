@@ -1,1542 +1,209 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIGULA – Account</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Edit Video</title>
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Segoe UI,sans-serif
-}
-
-body{
-  background:#0b0b0b;
-  color:#fff;
-  padding-bottom:30px
-}
-
-.header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#111;
-  border-bottom:1px solid #222;
-  padding:12px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between
-}
-
-.logo{
-  font-size:24px;
-  font-weight:900;
-  color:#ff1744;
-  letter-spacing:2px
-}
-
-.back{
-  border:0;
-  background:#222;
-  color:#fff;
-  padding:9px 14px;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer
-}
-
-.profile{
-  text-align:center;
-  padding:28px 16px 22px;
-  background:linear-gradient(#171717,#0b0b0b);
-  border-bottom:1px solid #222
-}
-
-.avatar{
-  width:105px;
-  height:105px;
-  border-radius:50%;
-  object-fit:cover;
-  border:3px solid #ff1744;
-  background:#222
-}
-
-.name{
-  margin-top:12px;
-  font-size:28px;
-  font-weight:900
-}
-
-.handle{
-  color:#aaa;
-  margin-top:3px
-}
-
-.bio{
-  max-width:650px;
-  margin:10px auto;
-  color:#bbb;
-  line-height:1.5
-}
-
-/* STAT BUTTONS */
-.stats{
-  display:flex;
-  justify-content:center;
-  gap:9px;
-  margin:20px auto;
-  flex-wrap:wrap
-}
-
-.stat{
-  min-width:105px;
-  background:#161616;
-  border:1px solid #292929;
-  border-radius:14px;
-  padding:11px 15px;
-  color:#fff;
-  cursor:pointer;
-  transition:.2s;
-  font:inherit
-}
-
-.stat:hover{
-  background:#202020;
-  border-color:#ff1744;
-  transform:translateY(-2px)
-}
-
-.stat.active{
-  background:#251116;
-  border-color:#ff1744;
-  box-shadow:0 0 0 1px rgba(255,23,68,.25)
-}
-
-.stat strong{
-  display:block;
-  font-size:20px
-}
-
-.stat span{
-  font-size:12px;
-  color:#999
-}
-
-.actions{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap
-}
-
-.action{
-  border:0;
-  border-radius:999px;
-  padding:11px 22px;
-  font-weight:800;
-  cursor:pointer
-}
-
-.share{
-  background:#1683ff;
-  color:#fff
-}
-
-.edit{
-  background:#222;
-  color:#fff;
-  border:1px solid #444
-}
-
-.logout{
-  background:#ff1744;
-  color:#fff;
-  box-shadow:0 5px 18px rgba(255,23,68,.25)
-}
-
-.logout:hover{
-  background:#ff3159
-}
-
-/* BOTTOM TAB AREA */
-.tab-panel{
-  display:none;
-  padding:20px 10px 30px;
-  max-width:950px;
-  margin:0 auto
-}
-
-.tab-panel.active{
-  display:block
-}
-
-.tab-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:14px;
-  padding:0 4px
-}
-
-.tab-title h2{
-  font-size:20px
-}
-
-.tab-close{
-  border:0;
-  background:#222;
-  color:#aaa;
-  border-radius:8px;
-  padding:7px 11px;
-  cursor:pointer
-}
-
-/* USERS */
-.user-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px
-}
-
-.user-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#151515;
-  border:1px solid #292929;
-  padding:10px 12px;
-  border-radius:13px
-}
-
-.user-row img{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#222
-}
-
-.user-info{
-  flex:1;
-  min-width:0
-}
-
-.user-name{
-  font-weight:800;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
-}
-
-.user-handle{
-  color:#888;
-  font-size:13px;
-  margin-top:2px
-}
-
-/* VIDEO GRIDS */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:4px;
-  max-width:900px;
-  margin:auto
-}
-
-.card{
-  position:relative;
-  background:#111;
-  aspect-ratio:9/14;
-  overflow:hidden;
-  cursor:pointer
-}
-
-.card video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  background:#000;
-  pointer-events:none
-}
-
-.overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:28px 7px 7px;
-  background:linear-gradient(transparent,rgba(0,0,0,.8));
-  font-size:12px;
-  font-weight:700
-}
-
-.empty{
-  text-align:center;
-  color:#777;
-  padding:45px 10px;
-  grid-column:1/-1
-}
-
-.loading{
-  text-align:center;
-  color:#888;
-  padding:35px 10px;
-  grid-column:1/-1
-}
-
-.error{
-  text-align:center;
-  color:#ff6b6b;
-  padding:30px 10px;
-  grid-column:1/-1
-}
-
-@media(min-width:700px){
-  .grid{
-    grid-template-columns:repeat(4,1fr);
-    gap:8px
-  }
-
-  .section{
-    padding:25px
-  }
-
-  .card{
-    border-radius:8px
-  }
-}
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;margin:0;background:#f7f7f7;color:#111}
+main{max-width:700px;margin:20px auto;background:#fff;padding:20px;border-radius:16px}
+a{color:#111;text-decoration:none}
+h1{margin:16px 0 18px}
+.preview{width:100%;background:#000;border-radius:14px;overflow:hidden;margin-bottom:22px}
+.preview video{display:block;width:100%;max-height:520px;object-fit:contain;background:#000}
+.preview-note{text-align:center;font-size:12px;color:#777;margin-top:7px}
+label{display:block;font-weight:bold;margin:18px 0 7px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:130px;resize:vertical}
+button{margin-top:22px;width:100%;padding:14px;border:0;border-radius:10px;background:#111;color:#fff;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+#status{margin-top:12px;text-align:center;min-height:20px}
+.loading{text-align:center;color:#777;padding:30px}
 </style>
-
 </head>
-
 <body>
+<main>
+<a href="account.html">‹ Account</a>
+<h1>Edit video</h1>
 
-<header class="header">
-  <button class="back" onclick="history.back()">← Back</button>
-  <div class="logo">BIGULA</div>
-  <div style="width:62px"></div>
-</header>
+<div id="loading" class="loading">Loading video…</div>
 
-<section class="profile">
-
-<img
-id="avatar"
-class="avatar"
-src="https://placehold.co/300x300"
-alt="Profile"
-
->
-
-  <div id="name" class="name">Loading...</div>
-  <div id="handle" class="handle"></div>
-  <div id="bio" class="bio"></div>
-
-  <div class="stats">
-
-```
-<button id="followersStat" class="stat" type="button">
-  <strong id="followers">0</strong>
-  <span>Followers</span>
-</button>
-
-<button id="followingStat" class="stat" type="button">
-  <strong id="following">0</strong>
-  <span>Following</span>
-</button>
-
-<button id="videosStat" class="stat" type="button">
-  <strong id="videos">0</strong>
-  <span>Videos</span>
-</button>
-
-<button id="likesStat" class="stat" type="button">
-  <strong id="likes">0</strong>
-  <span>Total Likes</span>
-</button>
-```
-
+<section id="editor" style="display:none">
+  <div class="preview">
+    <video id="preview" controls playsinline preload="metadata"></video>
   </div>
+  <div class="preview-note">Preview — tap play to watch</div>
 
-  <div class="actions">
+  <label for="title">Title</label>
+  <input id="title" maxlength="150" placeholder="Change your video title">
 
-```
-<button id="shareBtn" class="action share">
-  ↗ Share Profile
-</button>
+  <label for="category">Category</label>
+  <select id="category">
+    <option value="">Select a category</option>
+    <option value="Entertainment">Entertainment</option>
+    <option value="Comedy">Comedy</option>
+    <option value="Music">Music</option>
+    <option value="Dance">Dance</option>
+    <option value="Sports">Sports</option>
+    <option value="Gaming">Gaming</option>
+    <option value="Education">Education</option>
+    <option value="Technology">Technology</option>
+    <option value="News">News</option>
+    <option value="Lifestyle">Lifestyle</option>
+    <option value="Travel">Travel</option>
+    <option value="Food">Food</option>
+    <option value="Fashion">Fashion</option>
+    <option value="Beauty">Beauty</option>
+    <option value="Health & Fitness">Health & Fitness</option>
+    <option value="Business">Business</option>
+    <option value="Art">Art</option>
+    <option value="Animals & Nature">Animals & Nature</option>
+    <option value="People & Blogs">People & Blogs</option>
+    <option value="Cars & Vehicles">Cars & Vehicles</option>
+    <option value="Other">Other</option>
+  </select>
 
-<button id="editBtn" class="action edit">
-  ✎ Edit
-</button>
+  <label for="description">Description</label>
+  <textarea id="description" maxlength="5000" placeholder="Change your video description"></textarea>
 
-<button id="logoutBtn" class="action logout">
-  ⇥ Logout
-</button>
-```
-
-  </div>
-
+  <button id="save">Save changes</button>
+  <div id="status"></div>
 </section>
+</main>
 
-<!-- BOTTOM CONTENT AREA -->
+<script>
+const SB="https://vfteiggdhthvrrlndtbs.supabase.co";
+const KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const H={apikey:KEY,Authorization:"Bearer "+KEY};
+const id=new URLSearchParams(location.search).get("id");
 
-<section id="followersPanel" class="tab-panel">
-
-  <div class="tab-title">
-    <h2>Followers</h2>
-    <button class="tab-close" onclick="closeTabs()">Close</button>
-  </div>
-
-  <div id="followersList" class="user-list">
-    <div class="loading">Loading followers...</div>
-  </div>
-
-</section>
-
-<section id="followingPanel" class="tab-panel">
-
-  <div class="tab-title">
-    <h2>Following</h2>
-    <button class="tab-close" onclick="closeTabs()">Close</button>
-  </div>
-
-  <div id="followingList" class="user-list">
-    <div class="loading">Loading following...</div>
-  </div>
-
-</section>
-
-<section id="videosPanel" class="tab-panel">
-
-  <div class="tab-title">
-    <h2>My Videos</h2>
-    <button class="tab-close" onclick="closeTabs()">Close</button>
-  </div>
-
-  <div id="videoGrid" class="grid">
-    <div class="loading">Loading videos...</div>
-  </div>
-
-</section>
-
-<section id="likesPanel" class="tab-panel">
-
-  <div class="tab-title">
-    <h2>Liked Videos</h2>
-    <button class="tab-close" onclick="closeTabs()">Close</button>
-  </div>
-
-  <div id="likesGrid" class="grid">
-    <div class="loading">Loading liked videos...</div>
-  </div>
-
-</section>
-
-<script type="module">
-
-import {
-  createClient
-} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-
-/* BIGULA SUPABASE */
-const supabase = createClient(
-  'https://vfteiggdhthvrrlndtbs.supabase.co',
-  'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe',
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true,
-      flowType:'pkce'
+async function req(path,options={}){
+  return fetch(SB+"/rest/v1/"+path,{
+    ...options,
+    headers:{
+      ...H,
+      "Content-Type":"application/json",
+      ...(options.headers||{})
     }
-  }
-);
-
-
-let currentUser = null;
-let myVideos = [];
-
-
-/* ESCAPE HTML */
-function esc(v){
-  return String(v ?? '').replace(
-    /[&<>"']/g,
-    c => ({
-      '&':'&amp;',
-      '<':'&lt;',
-      '>':'&gt;',
-      '"':'&quot;',
-      "'":'&#39;'
-    }[c])
-  );
+  });
 }
 
-
-/* ---------------------------------
-   AUTH / GOOGLE PKCE
---------------------------------- */
+function setStatus(text){
+  document.getElementById("status").textContent=text;
+}
 
 async function init(){
-
-  try{
-
-    /*
-      Google/Supabase can return:
-
-      home.html?code=xxxxx
-
-      Exchange that code before calling getSession().
-    */
-
-    const params = new URLSearchParams(location.search);
-    const code = params.get('code');
-
-    if(code){
-
-      const {
-        error:exchangeError
-      } = await supabase.auth.exchangeCodeForSession(code);
-
-      if(exchangeError){
-
-        console.error(
-          'AUTH CODE EXCHANGE FAILED:',
-          exchangeError
-        );
-
-        location.href='signup.html';
-        return;
-      }
-
-      /*
-        Remove ?code from browser URL.
-      */
-
-      history.replaceState(
-        {},
-        document.title,
-        location.pathname + location.hash
-      );
-    }
-
-
-    const {
-      data:{session},
-      error
-    } = await supabase.auth.getSession();
-
-
-    if(error || !session?.user){
-
-      location.href='signup.html';
-      return;
-    }
-
-
-    currentUser=session.user;
-
-
-    /* BUTTONS */
-
-    document.getElementById('editBtn').onclick=()=>{
-      location.href='edit_profile.html';
-    };
-
-
-    document.getElementById('shareBtn').onclick=async()=>{
-
-      if(navigator.share){
-
-        try{
-
-          await navigator.share({
-            title:'My BIGULA Profile',
-            url:location.href
-          });
-
-        }catch(e){}
-
-      }else if(navigator.clipboard){
-
-        await navigator.clipboard.writeText(location.href);
-
-        alert('Profile link copied');
-      }
-
-    };
-
-
-    document.getElementById('logoutBtn').onclick=logout;
-
-
-    /* STAT BUTTONS */
-
-    document.getElementById('followersStat').onclick=()=>{
-      openTab('followers');
-    };
-
-    document.getElementById('followingStat').onclick=()=>{
-      openTab('following');
-    };
-
-    document.getElementById('videosStat').onclick=()=>{
-      openTab('videos');
-    };
-
-    document.getElementById('likesStat').onclick=()=>{
-      openTab('likes');
-    };
-
-
-    await loadAccount();
-
-  }catch(err){
-
-    console.error('ACCOUNT INIT ERROR:',err);
-
-    alert('Unable to load your account.');
-
-  }
-
-}
-
-
-/* ---------------------------------
-   LOAD ACCOUNT
---------------------------------- */
-
-async function loadAccount(){
-
-  const {
-    data:user,
-    error:userError
-  } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id',currentUser.id)
-    .maybeSingle();
-
-
-  if(userError){
-
-    console.error(
-      'USER LOAD ERROR:',
-      userError
-    );
-
-  }
-
-
-  if(user){
-
-    document.getElementById('name').textContent =
-      user.name ||
-      user.full_name ||
-      user.display_name ||
-      user.username ||
-      'BIGULA User';
-
-
-    document.getElementById('handle').textContent =
-      user.username
-        ? '@'+user.username
-        : '';
-
-
-    document.getElementById('bio').textContent =
-      user.bio || 'No bio yet';
-
-
-    if(user.avatar_url){
-
-      document.getElementById('avatar').src =
-        user.avatar_url;
-
-    }
-
-
-    /*
-      Cache profile only.
-      This does NOT replace the Supabase account/session.
-    */
-
-    localStorage.setItem(
-      'bigula_user',
-      JSON.stringify(user)
-    );
-
-  }
-
-
-  /* LOAD FOLLOWER / FOLLOWING COUNTS */
-
-  const [
-    followersResult,
-    followingResult,
-    videosResult
-  ] = await Promise.all([
-
-    supabase
-      .from('followers')
-      .select('id',{head:true,count:'exact'})
-      .eq('following_id',currentUser.id),
-
-    supabase
-      .from('followers')
-      .select('id',{head:true,count:'exact'})
-      .eq('follower_id',currentUser.id),
-
-    supabase
-      .from('videos')
-      .select('*')
-      .eq('creator_id',currentUser.id)
-      .order('created_at',{ascending:false})
-
-  ]);
-
-
-  const followers =
-    followersResult.count || 0;
-
-  const following =
-    followingResult.count || 0;
-
-
-  document.getElementById('followers').textContent =
-    followers;
-
-  document.getElementById('following').textContent =
-    following;
-
-
-  if(videosResult.error){
-
-    console.error(
-      'VIDEOS LOAD ERROR:',
-      videosResult.error
-    );
-
-    myVideos=[];
-
-  }else{
-
-    myVideos=videosResult.data || [];
-
-  }
-
-
-  /*
-    IMPORTANT:
-
-    Videos count is the user's TOTAL uploaded videos,
-    not only public videos.
-  */
-
-  document.getElementById('videos').textContent =
-    myVideos.length;
-
-
-  await calculateTotalLikes();
-
-}
-
-
-/* ---------------------------------
-   TOTAL LIKES ON MY VIDEOS
---------------------------------- */
-
-async function calculateTotalLikes(){
-
-  if(!myVideos.length){
-
-    document.getElementById('likes').textContent='0';
-
+  const auth=await fetch(SB+"/auth/v1/user",{headers:H});
+  if(!auth.ok){
+    location.href="signup.html";
     return;
   }
 
+  const me=await auth.json();
 
-  let totalLikes=0;
-
-
-  for(const video of myVideos){
-
-    const {
-      count,
-      error
-    } = await supabase
-      .from('likes')
-      .select('id',{
-        head:true,
-        count:'exact'
-      })
-      .eq('video_id',video.id);
-
-
-    if(!error){
-
-      totalLikes += count || 0;
-
-    }
-
-  }
-
-
-  document.getElementById('likes').textContent =
-    totalLikes;
-}
-
-
-/* ---------------------------------
-   OPEN TAB
---------------------------------- */
-
-async function openTab(tab){
-
-  closeTabs(false);
-
-
-  const panel =
-    document.getElementById(tab+'Panel');
-
-
-  if(!panel) return;
-
-
-  panel.classList.add('active');
-
-
-  const button =
-    document.getElementById(tab+'Stat');
-
-
-  if(button){
-
-    button.classList.add('active');
-
-  }
-
-
-  if(tab==='followers'){
-
-    await loadFollowers();
-
-  }
-
-  if(tab==='following'){
-
-    await loadFollowing();
-
-  }
-
-  if(tab==='videos'){
-
-    await loadMyVideos();
-
-  }
-
-  if(tab==='likes'){
-
-    await loadLikedVideos();
-
-  }
-
-
-  /*
-    Move the selected content into view.
-  */
-
-  panel.scrollIntoView({
-    behavior:'smooth',
-    block:'start'
-  });
-
-}
-
-
-/* ---------------------------------
-   CLOSE TABS
---------------------------------- */
-
-function closeTabs(clearActive=true){
-
-  document
-    .querySelectorAll('.tab-panel')
-    .forEach(panel=>{
-      panel.classList.remove('active');
-    });
-
-
-  document
-    .querySelectorAll('.stat')
-    .forEach(button=>{
-      button.classList.remove('active');
-    });
-
-}
-
-
-/* ---------------------------------
-   FOLLOWERS
---------------------------------- */
-
-async function loadFollowers(){
-
-  const list =
-    document.getElementById('followersList');
-
-
-  list.innerHTML =
-    '<div class="loading">Loading followers...</div>';
-
-
-  const {
-    data:relations,
-    error
-  } = await supabase
-    .from('followers')
-    .select('follower_id')
-    .eq('following_id',currentUser.id);
-
-
-  if(error){
-
-    console.error(
-      'FOLLOWERS ERROR:',
-      error
-    );
-
-    list.innerHTML =
-      '<div class="empty">Unable to load followers.</div>';
-
+  if(!id){
+    document.getElementById("loading").textContent="Missing video ID.";
     return;
   }
 
-
-  if(!relations?.length){
-
-    list.innerHTML =
-      '<div class="empty">You have no followers yet.</div>';
-
-    return;
-  }
-
-
-  const ids =
-    relations
-      .map(row=>row.follower_id)
-      .filter(Boolean);
-
-
-  if(!ids.length){
-
-    list.innerHTML =
-      '<div class="empty">You have no followers yet.</div>';
-
-    return;
-  }
-
-
-  const {
-    data:users,
-    error:userError
-  } = await supabase
-    .from('users')
-    .select('id,username,name,avatar_url,bio')
-    .in('id',ids);
-
-
-  if(userError){
-
-    console.error(
-      'FOLLOWER USERS ERROR:',
-      userError
-    );
-
-    list.innerHTML =
-      '<div class="error">Unable to load follower profiles.</div>';
-
-    return;
-  }
-
-
-  renderUsers(users || [],list);
-
-}
-
-
-/* ---------------------------------
-   FOLLOWING
---------------------------------- */
-
-async function loadFollowing(){
-
-  const list =
-    document.getElementById('followingList');
-
-
-  list.innerHTML =
-    '<div class="loading">Loading following...</div>';
-
-
-  const {
-    data:relations,
-    error
-  } = await supabase
-    .from('followers')
-    .select('following_id')
-    .eq('follower_id',currentUser.id);
-
-
-  if(error){
-
-    console.error(
-      'FOLLOWING ERROR:',
-      error
-    );
-
-    list.innerHTML =
-      '<div class="empty">Unable to load following.</div>';
-
-    return;
-  }
-
-
-  if(!relations?.length){
-
-    list.innerHTML =
-      '<div class="empty">You are not following anyone yet.</div>';
-
-    return;
-  }
-
-
-  const ids =
-    relations
-      .map(row=>row.following_id)
-      .filter(Boolean);
-
-
-  if(!ids.length){
-
-    list.innerHTML =
-      '<div class="empty">You are not following anyone yet.</div>';
-
-    return;
-  }
-
-
-  const {
-    data:users,
-    error:userError
-  } = await supabase
-    .from('users')
-    .select('id,username,name,avatar_url,bio')
-    .in('id',ids);
-
-
-  if(userError){
-
-    console.error(
-      'FOLLOWING USERS ERROR:',
-      userError
-    );
-
-    list.innerHTML =
-      '<div class="error">Unable to load following profiles.</div>';
-
-    return;
-  }
-
-
-  renderUsers(users || [],list);
-
-}
-
-
-/* ---------------------------------
-   RENDER USERS
---------------------------------- */
-
-function renderUsers(users,list){
-
-  list.innerHTML='';
-
-
-  if(!users.length){
-
-    list.innerHTML =
-      '<div class="empty">No users found.</div>';
-
-    return;
-  }
-
-
-  users.forEach(user=>{
-
-    const row =
-      document.createElement('div');
-
-
-    row.className='user-row';
-
-
-    const avatar =
-      user.avatar_url ||
-      'https://placehold.co/100x100';
-
-
-    const displayName =
-      user.name ||
-      user.username ||
-      'BIGULA User';
-
-
-    row.innerHTML=`
-
-      <img
-        src="${esc(avatar)}"
-        alt=""
-      >
-
-      <div class="user-info">
-
-        <div class="user-name">
-          ${esc(displayName)}
-        </div>
-
-        <div class="user-handle">
-          ${user.username
-            ? '@'+esc(user.username)
-            : ''}
-        </div>
-
-      </div>
-
-    `;
-
-
-    /*
-      Open profile if you later have a public
-      profile page. For now the row remains safe.
-    */
-
-    row.style.cursor='pointer';
-
-
-    row.addEventListener('click',()=>{
-
-      /*
-        Change this later if your public profile
-        page uses another URL.
-      */
-
-      location.href =
-        'profile.html?id='+
-        encodeURIComponent(user.id);
-
-    });
-
-
-    list.appendChild(row);
-
-  });
-
-}
-
-
-/* ---------------------------------
-   MY VIDEOS
---------------------------------- */
-
-async function loadMyVideos(){
-
-  const grid = document.getElementById('videoGrid');
-
-  grid.innerHTML =
-    '<div class="loading">Loading your videos...</div>';
-
-  const {
-    data: videos,
-    error
-  } = await supabase
-    .from('videos')
-    .select('*')
-    .eq('creator_id', currentUser.id)
-    .order('created_at', {ascending:false});
-
-  if(error){
-
-    console.error('MY VIDEOS ERROR:', error);
-
-    grid.innerHTML =
-      '<div class="error">Unable to load your videos: ' +
-      esc(error.message || 'Database error') +
-      '</div>';
-
-    return;
-  }
-
-  myVideos = videos || [];
-
-  document.getElementById('videos').textContent =
-    myVideos.length;
-
-  await renderVideos(myVideos, 'videoGrid');
-}
-
-async function renderVideos(videos,targetId){
-
-  const grid =
-    document.getElementById(targetId);
-
-
-  grid.innerHTML='';
-
-
-  if(!videos.length){
-
-    grid.innerHTML =
-      '<div class="empty">You have not uploaded any videos yet.</div>';
-
-    return;
-  }
-
-
-  for(const v of videos){
-
-    const {
-      count:likes,
-      error
-    } = await supabase
-      .from('likes')
-      .select('id',{
-        head:true,
-        count:'exact'
-      })
-      .eq('video_id',v.id);
-
-
-    const card =
-      document.createElement('div');
-
-
-    card.className='card';
-
-
-    card.innerHTML=`
-
-      <video
-        src="${esc(v.video_url || v.url || '')}"
-        preload="metadata"
-        playsinline>
-      </video>
-
-      <div class="overlay">
-        ${esc(v.title || 'Untitled video')}
-        · ❤️ ${likes || 0}
-      </div>
-
-    `;
-
-
-    card.addEventListener('click',()=>{
-
-      location.href =
-        'edit_video.html?id='+
-        encodeURIComponent(v.id);
-
-    });
-
-
-    grid.appendChild(card);
-
-  }
-
-}
-
-
-/* ---------------------------------
-   LIKED VIDEOS
---------------------------------- */
-
-async function loadLikedVideos(){
-
-  const grid =
-    document.getElementById('likesGrid');
-
-
-  grid.innerHTML =
-    '<div class="loading">Loading liked videos...</div>';
-
-
-  const {
-    data:likes,
-    error
-  } = await supabase
-    .from('likes')
-    .select('video_id,created_at')
-    .eq('user_id',currentUser.id)
-    .order('created_at',{ascending:false});
-
-
-  if(error){
-
-    console.error(
-      'LIKED VIDEOS ERROR:',
-      error
-    );
-
-    grid.innerHTML =
-      '<div class="error">Unable to load liked videos.</div>';
-
-    return;
-  }
-
-
-  if(!likes?.length){
-
-    grid.innerHTML =
-      '<div class="empty">You have not liked any videos yet.</div>';
-
-    return;
-  }
-
-
-  const ids =
-    likes
-      .map(row=>row.video_id)
-      .filter(Boolean);
-
-
-  if(!ids.length){
-
-    grid.innerHTML =
-      '<div class="empty">You have not liked any videos yet.</div>';
-
-    return;
-  }
-
-
-  const {
-    data:videos,
-    error:videoError
-  } = await supabase
-    .from('videos')
-    .select('*')
-    .in('id',ids);
-
-
-  if(videoError){
-
-    console.error(
-      'LIKED VIDEO LOAD ERROR:',
-      videoError
-    );
-
-    grid.innerHTML =
-      '<div class="error">Unable to load liked videos.</div>';
-
-    return;
-  }
-
-
-  /*
-    Keep the order in which the user liked them.
-  */
-
-  const videoMap =
-    new Map(
-      (videos || []).map(video=>[
-        String(video.id),
-        video
-      ])
-    );
-
-
-  const orderedVideos =
-    ids
-      .map(id=>videoMap.get(String(id)))
-      .filter(Boolean);
-
-
-  await renderLikedVideos(
-    orderedVideos,
-    grid
+  const r=await req(
+    "videos?id=eq."+encodeURIComponent(id)+
+    "&select=id,creator_id,title,category,description,video_url,url,file_url,storage_path"
   );
 
-}
-
-
-/* ---------------------------------
-   RENDER LIKED VIDEOS
---------------------------------- */
-
-async function renderLikedVideos(videos,grid){
-
-  grid.innerHTML='';
-
-
-  if(!videos.length){
-
-    grid.innerHTML =
-      '<div class="empty">The liked videos are no longer available.</div>';
-
+  if(!r.ok){
+    document.getElementById("loading").textContent="Could not load this video.";
     return;
   }
 
+  const rows=await r.json();
+  const v=rows[0];
 
-  for(const v of videos){
-
-    const {
-      count:likes
-    } = await supabase
-      .from('likes')
-      .select('id',{
-        head:true,
-        count:'exact'
-      })
-      .eq('video_id',v.id);
-
-
-    const card =
-      document.createElement('div');
-
-
-    card.className='card';
-
-
-    card.innerHTML=`
-
-      <video
-        src="${esc(v.video_url || v.url || '')}"
-        preload="metadata"
-        playsinline>
-      </video>
-
-      <div class="overlay">
-        ${esc(v.title || 'Untitled video')}
-        · ❤️ ${likes || 0}
-      </div>
-
-    `;
-
-
-    card.addEventListener('click',()=>{
-
-      /*
-        Use your video viewing page here.
-        Change video_view.html if your actual
-        video page uses another filename.
-      */
-
-      location.href =
-        'video_view.html?id='+
-        encodeURIComponent(v.id);
-
-    });
-
-
-    grid.appendChild(card);
-
+  if(!v){
+    document.getElementById("loading").textContent="Video not found.";
+    return;
   }
 
+  if(v.creator_id!==me.id){
+    document.getElementById("loading").textContent="You can only edit your own video.";
+    return;
+  }
+
+  const videoUrl=v.video_url||v.url||v.file_url||"";
+
+  if(!videoUrl && v.storage_path){
+    const publicUrl=SB+"/storage/v1/object/public/bigula/"+v.storage_path;
+    document.getElementById("preview").src=publicUrl;
+  }else{
+    document.getElementById("preview").src=videoUrl;
+  }
+
+  document.getElementById("title").value=v.title||"";
+  document.getElementById("description").value=v.description||"";
+
+  const select=document.getElementById("category");
+  const current=v.category||"";
+
+  // Preserve an existing category even if it isn't in the standard list.
+  if(current && ![...select.options].some(o=>o.value===current)){
+    const option=document.createElement("option");
+    option.value=current;
+    option.textContent=current;
+    select.appendChild(option);
+  }
+  select.value=current;
+
+  window.video=v;
+  window.me=me;
+
+  document.getElementById("loading").style.display="none";
+  document.getElementById("editor").style.display="block";
 }
 
+document.getElementById("save").onclick=async()=>{
+  if(!window.video)return;
 
-/* ---------------------------------
-   LOGOUT
---------------------------------- */
+  const save=document.getElementById("save");
+  save.disabled=true;
+  setStatus("Saving…");
 
-async function logout(){
+  const body={
+    title:document.getElementById("title").value.trim(),
+    category:document.getElementById("category").value,
+    description:document.getElementById("description").value.trim()
+  };
 
-  const confirmed =
-    confirm(
-      'Are you sure you want to log out of BIGULA?'
-    );
-
-
-  if(!confirmed) return;
-
-
-  try{
-
-    /*
-      IMPORTANT:
-
-      signOut ONLY removes the authenticated
-      session.
-
-      It does NOT delete:
-      - users
-      - videos
-      - likes
-      - comments
-      - followers
-      - following
-      - views
-      - earnings
-    */
-
-    const {
-      error
-    } = await supabase.auth.signOut();
-
-
-    if(error){
-
-      console.error(
-        'LOGOUT ERROR:',
-        error
-      );
-
-      alert(
-        'Unable to log out. Please try again.'
-      );
-
-      return;
+  const r=await req(
+    "videos?id=eq."+encodeURIComponent(window.video.id)+
+    "&creator_id=eq."+encodeURIComponent(window.me.id),
+    {
+      method:"PATCH",
+      headers:{Prefer:"return=representation"},
+      body:JSON.stringify(body)
     }
+  );
 
-
-    /*
-      Remove only the cached profile.
-      Supabase database records remain untouched.
-    */
-
-    localStorage.removeItem('bigula_user');
-
-
-    /*
-      Send logged-out user to signup.
-    */
-
-    location.replace('signup.html');
-
-
-  }catch(err){
-
-    console.error(
-      'LOGOUT FAILED:',
-      err
-    );
-
-    alert(
-      'Logout failed. Please try again.'
-    );
-
+  if(!r.ok){
+    save.disabled=false;
+    setStatus("Update failed — check your videos RLS policy.");
+    return;
   }
 
-}
+  const updated=await r.json();
 
+  if(updated[0]){
+    window.video={...window.video,...updated[0]};
+  }else{
+    window.video={...window.video,...body};
+  }
 
-/* START */
+  // Keep the edited values immediately available if the account page uses the cache.
+  setStatus("✓ Video updated instantly.");
+  setTimeout(()=>location.href="account.html",700);
+};
+
 init();
-
 </script>
-
 </body>
 </html>
