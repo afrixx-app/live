@@ -81,6 +81,97 @@ video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;user-
 .footer div.disabled{opacity:.4;}
 .footer div:hover:not(.disabled){color:#ff0000;}
 .footer div:hover:not(.disabled)::after{color:#ff0000;}
+/* --- Premium signed-in / signed-out footer states --- */
+#accountBtn{
+  position:relative;
+  min-width:92px;
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:.2px;
+  border-radius:16px;
+  padding:5px 9px;
+}
+#accountBtn .account-icon{
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(145deg,#202020,#080808);
+  border:1px solid #444;
+  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 4px 14px rgba(0,0,0,.45);
+  font-size:16px;
+}
+#accountBtn .account-label{
+  max-width:82px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10px;
+  line-height:1.1;
+  font-weight:900;
+  color:#aaa;
+}
+#accountBtn.signed-in{
+  background:linear-gradient(180deg,rgba(255,0,0,.10),rgba(0,0,0,.05));
+  border:1px solid rgba(255,0,0,.35);
+  box-shadow:0 0 16px rgba(255,0,0,.08);
+}
+#accountBtn.signed-in .account-icon{
+  border-color:#ff3030;
+  background:linear-gradient(145deg,#ff3030,#700000);
+  box-shadow:0 0 12px rgba(255,0,0,.35);
+}
+#accountBtn.signed-in .account-label{
+  color:#fff;
+}
+#accountBtn.signed-out .account-icon{
+  background:linear-gradient(145deg,#222,#0b0b0b);
+  border-color:#555;
+}
+#accountBtn.signed-out .account-label{
+  color:#ff3030;
+}
+#footerUpload{
+  position:relative;
+  min-width:82px;
+}
+#footerUpload .upload-icon{
+  width:38px;
+  height:38px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  font-weight:900;
+  line-height:1;
+  color:#fff;
+  background:linear-gradient(145deg,#ff3030,#a00000 58%,#520000);
+  border:1px solid #ff5555;
+  box-shadow:0 5px 18px rgba(255,0,0,.30),inset 0 1px 0 rgba(255,255,255,.22);
+  transform:translateY(-1px);
+}
+#footerUpload:hover .upload-icon{
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 7px 22px rgba(255,0,0,.42),inset 0 1px 0 rgba(255,255,255,.25);
+}
+#footerUpload.signed-out .upload-icon{
+  background:linear-gradient(145deg,#242424,#0b0b0b);
+  border-color:#555;
+  box-shadow:0 4px 13px rgba(0,0,0,.5);
+}
+#footerUpload::after{content:'Create';}
+#footerUpload.signed-out::after{content:'Upload';}
+#accountBtn::after{content:none;}
+@media(max-width:620px){
+  #accountBtn{min-width:72px;padding:4px 5px;}
+  #accountBtn .account-label{max-width:62px;}
+  #footerUpload{min-width:64px;}
+}
+
 .share-options{display:none;position:absolute;bottom:50px;right:10px;background:#000;padding:10px;border-radius:10px;flex-direction:column;gap:5px;}
 .share-options button{background:#333;color:#fff;padding:5px 10px;border-radius:10px;cursor:pointer;}
 </style>
@@ -114,9 +205,14 @@ video{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;user-
 </div>
 
 <div class="footer">
-  <div id="footerUpload" title="Upload">＋</div>
+  <div id="footerUpload" class="signed-out" title="Create / Upload">
+    <span class="upload-icon" aria-hidden="true">↑</span>
+  </div>
   <div id="notifBtn">🔔<span id="notificationBadge">0</span></div>
-  <div id="accountBtn">👤</div>
+  <div id="accountBtn" class="signed-out" title="Signup">
+    <span class="account-icon" aria-hidden="true">👤</span>
+    <span class="account-label">Signup</span>
+  </div>
 </div>
 
 <script type="module">
@@ -158,6 +254,48 @@ async function requireSignIn(){
 
 const creatorProfiles = new Map();
 
+// --- Premium footer state ---
+function updateFooterUserState(){
+  const upload = document.getElementById("footerUpload");
+  const account = document.getElementById("accountBtn");
+  if(!upload || !account) return;
+
+  if(currentUser){
+    const cached = localStorage.getItem("bigula_user");
+    let profile = {};
+    try{ profile = cached ? JSON.parse(cached) : {}; }catch(_){}
+
+    const username = String(
+      profile?.username ||
+      profile?.name ||
+      currentUser.user_metadata?.user_name ||
+      currentUser.user_metadata?.preferred_username ||
+      currentUser.user_metadata?.name ||
+      "Account"
+    ).trim();
+
+    account.classList.remove("signed-out");
+    account.classList.add("signed-in");
+    account.title = username;
+    const label = account.querySelector(".account-label");
+    if(label) label.textContent = username;
+
+    upload.classList.remove("signed-out");
+    upload.classList.add("signed-in");
+    upload.title = "Create / Upload";
+  }else{
+    account.classList.remove("signed-in");
+    account.classList.add("signed-out");
+    account.title = "Signup";
+    const label = account.querySelector(".account-label");
+    if(label) label.textContent = "Signup";
+
+    upload.classList.remove("signed-in");
+    upload.classList.add("signed-out");
+    upload.title = "Sign up to upload";
+  }
+}
+
 // --- User ---
 async function initUser(){
   // Home is public, but it must finish a Google/Supabase PKCE login
@@ -197,6 +335,7 @@ async function initUser(){
   });
 
   document.querySelector(".login-btn")?.remove();
+  updateFooterUserState();
 
   if(currentUser){
     loadNotificationBadge();
@@ -207,7 +346,10 @@ async function initUser(){
         .eq("id", currentUser.id)
         .maybeSingle();
       if(error) console.warn("Could not refresh local profile cache:", error);
-      else if(profile) localStorage.setItem("bigula_user", JSON.stringify(profile));
+      else if(profile){
+        localStorage.setItem("bigula_user", JSON.stringify(profile));
+        updateFooterUserState();
+      }
     }catch(e){
       console.warn("Could not refresh local profile cache:", e);
     }
@@ -755,6 +897,11 @@ async function followUser(uid){
   alert('Following!')
 }
 
+supabase.auth.onAuthStateChange((_event, session)=>{
+  currentUser = session?.user || null;
+  updateFooterUserState();
+});
+
 // --- Tabs ---
 document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
@@ -778,6 +925,8 @@ initUser().then(()=>{
   // Home is public: always load the For You feed.
   fetchVideos("foryou")
 })
+
+updateFooterUserState();
 
 // FINAL FOOTER BUTTON NAVIGATION — capture phase prevents dead/overridden buttons.
 document.addEventListener("click", async function(e){
@@ -807,12 +956,19 @@ document.addEventListener("click", async function(e){
   }
 
   if(!sessionUser){
-    alert("Please sign in first.");
+    // Account/Signup is the entry point for visitors; Upload also explains
+    // that authentication is required before sending them to signup.
+    if(btn.id === "accountBtn"){
+      location.href = "signup.html";
+      return;
+    }
+    alert("Please sign in first to upload videos.");
     location.href = "signup.html";
     return;
   }
 
   currentUser = sessionUser;
+  updateFooterUserState();
 
   if(btn.id === "footerUpload") location.href = "upload.html";
   if(btn.id === "notifBtn") location.href = "notifications.html";
