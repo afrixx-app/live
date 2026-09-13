@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,13 +30,11 @@ body{
   position:relative;
 }
 
-/* BACKGROUND */
 .bg{
   position:fixed;
   inset:0;
   overflow:hidden;
   pointer-events:none;
-  z-index:0;
 }
 
 .glow{
@@ -68,7 +67,6 @@ body{
   opacity:.08;
 }
 
-/* CARD */
 .signup-card{
   position:relative;
   z-index:2;
@@ -76,7 +74,7 @@ body{
   padding:42px 30px 30px;
   border:1px solid rgba(255,255,255,.10);
   border-radius:30px;
-  background:rgba(15,15,18,.78);
+  background:rgba(15,15,18,.82);
   backdrop-filter:blur(25px);
   -webkit-backdrop-filter:blur(25px);
   box-shadow:
@@ -84,7 +82,6 @@ body{
     inset 0 1px 0 rgba(255,255,255,.06);
 }
 
-/* LOGO */
 .logo-wrap{
   width:92px;
   height:92px;
@@ -103,7 +100,6 @@ body{
   display:block;
 }
 
-/* TEXT */
 .brand{
   text-align:center;
   font-size:34px;
@@ -116,7 +112,6 @@ body{
   margin-top:9px;
   color:#a8a8b2;
   font-size:15px;
-  line-height:1.5;
 }
 
 .tagline{
@@ -126,7 +121,6 @@ body{
   color:#777780;
 }
 
-/* GOOGLE BUTTON */
 .google-btn{
   width:100%;
   height:58px;
@@ -142,16 +136,12 @@ body{
   align-items:center;
   justify-content:center;
   gap:12px;
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    opacity .18s ease;
+  transition:.18s ease;
   box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
 .google-btn:hover{
   transform:translateY(-2px);
-  box-shadow:0 15px 35px rgba(0,0,0,.35);
 }
 
 .google-btn:active{
@@ -169,40 +159,6 @@ body{
   height:21px;
 }
 
-/* DIVIDER */
-.divider{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:25px 0 20px;
-  color:#65656e;
-  font-size:12px;
-}
-
-.divider span{
-  flex:1;
-  height:1px;
-  background:rgba(255,255,255,.08);
-}
-
-/* TERMS */
-.terms{
-  text-align:center;
-  color:#686872;
-  font-size:11px;
-  line-height:1.6;
-}
-
-.terms a{
-  color:#aaaab4;
-  text-decoration:none;
-}
-
-.terms a:hover{
-  text-decoration:underline;
-}
-
-/* STATUS */
 .status{
   display:none;
   margin-top:18px;
@@ -229,7 +185,33 @@ body{
   background:rgba(0,220,120,.08);
 }
 
-/* FOOTER */
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:25px 0 20px;
+  color:#65656e;
+  font-size:11px;
+}
+
+.divider span{
+  flex:1;
+  height:1px;
+  background:rgba(255,255,255,.08);
+}
+
+.terms{
+  text-align:center;
+  color:#686872;
+  font-size:11px;
+  line-height:1.6;
+}
+
+.terms a{
+  color:#aaaab4;
+  text-decoration:none;
+}
+
 .footer{
   margin-top:27px;
   text-align:center;
@@ -237,7 +219,6 @@ body{
   font-size:11px;
 }
 
-/* SMALL SCREENS */
 @media(max-width:480px){
   body{
     align-items:flex-start;
@@ -269,8 +250,7 @@ body{
   <div class="logo-wrap">
     <img
       src="https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/photos/icon.png"
-      alt="BIGULA"
-    >
+      alt="BIGULA">
   </div>
 
   <div class="brand">BIGULA</div>
@@ -283,7 +263,8 @@ body{
     Watch. Create. Earn.
   </div>
 
-  <button id="googleBtn" class="google-btn">
+  <button id="googleBtn" class="google-btn" type="button">
+
     <svg class="google-icon" viewBox="0 0 24 24">
       <path fill="#4285F4"
         d="M21.35 12.23c0-.72-.06-1.41-.18-2.08H12v3.94h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.25z"/>
@@ -296,6 +277,7 @@ body{
     </svg>
 
     <span id="googleText">Continue with Google</span>
+
   </button>
 
   <div id="status" class="status"></div>
@@ -321,50 +303,100 @@ body{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+/* =========================================================
+   BIGULA AUTH CONFIG
+========================================================= */
+
 const SUPABASE_URL =
   "https://vfteiggdhthvrrlndtbs.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:false,
-      flowType:"pkce"
-    }
+
+/* =========================================================
+   NATIVE DETECTION
+========================================================= */
+
+function isNativeApp(){
+
+  if(
+    window.Capacitor &&
+    typeof window.Capacitor.isNativePlatform === "function"
+  ){
+    return window.Capacitor.isNativePlatform();
   }
-);
 
-const googleBtn = document.getElementById("googleBtn");
-const googleText = document.getElementById("googleText");
-const statusBox = document.getElementById("status");
+  return false;
+}
 
+const NATIVE = isNativeApp();
+
+
+/* =========================================================
+   SUPABASE CLIENT
+
+   WEB  = PKCE
+   APP  = implicit
+
+   This prevents the Android deep-link flow from depending
+   on a browser PKCE verifier.
+========================================================= */
+
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+
+        detectSessionInUrl:false,
+
+        flowType:NATIVE
+          ? "implicit"
+          : "pkce"
+      }
+    }
+  );
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const googleBtn =
+  document.getElementById("googleBtn");
+
+const googleText =
+  document.getElementById("googleText");
+
+const statusBox =
+  document.getElementById("status");
+
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 function showStatus(message,type=""){
+
   statusBox.textContent = message;
-  statusBox.className = "status show " + type;
+
+  statusBox.className =
+    "status show " + type;
 }
 
 
-/* Detect Capacitor Android/iOS */
-function isNativeApp(){
-  return !!(
-    window.Capacitor &&
-    typeof window.Capacitor.isNativePlatform === "function" &&
-    window.Capacitor.isNativePlatform()
-  );
-}
+/* =========================================================
+   GOOGLE PROFILE
+========================================================= */
 
-
-/* Google profile name */
 function getGoogleName(user){
 
-  const meta = user?.user_metadata || {};
+  const meta =
+    user?.user_metadata || {};
 
   return (
     meta.name ||
@@ -378,138 +410,257 @@ function getGoogleName(user){
 }
 
 
-/* Make sure BIGULA profile exists */
+/* =========================================================
+   CREATE / UPDATE BIGULA PROFILE
+========================================================= */
+
 async function ensureProfile(user){
 
   if(!user) return;
 
-  const meta = user.user_metadata || {};
+  const meta =
+    user.user_metadata || {};
 
-  const name = getGoogleName(user);
+  const name =
+    getGoogleName(user);
 
   const avatar =
     meta.avatar_url ||
     meta.picture ||
     null;
 
-  const { error } = await supabase
-    .from("users")
-    .upsert({
-      id:user.id,
-      username:name,
-      name:name,
-      avatar_url:avatar
-    },{
-      onConflict:"id"
-    });
+  const {error} =
+    await supabase
+      .from("users")
+      .upsert(
+        {
+          id:user.id,
+          username:name,
+          name:name,
+          avatar_url:avatar
+        },
+        {
+          onConflict:"id"
+        }
+      );
 
   if(error){
-    console.error("Profile error:",error);
+    console.error(
+      "BIGULA profile error:",
+      error
+    );
   }
 }
 
 
-/* Finish login */
-async function finishLogin(){
+/* =========================================================
+   GO HOME
+========================================================= */
+
+async function goHome(){
 
   const {
     data:{
       session
     }
-  } = await supabase.auth.getSession();
+  } =
+    await supabase.auth.getSession();
 
-  if(!session || !session.user){
+  if(!session?.user){
     return false;
   }
 
-  await ensureProfile(session.user);
+  await ensureProfile(
+    session.user
+  );
 
   window.location.replace(
-    new URL("home.html",window.location.href).href
+    "https://afrixx-app.github.io/home.html"
   );
 
   return true;
 }
 
 
-/* OAuth callback */
-async function processOAuthCallback(callbackUrl){
+/* =========================================================
+   ANDROID CALLBACK
+========================================================= */
+
+async function handleNativeCallback(callbackUrl){
 
   try{
 
-    const url = new URL(callbackUrl);
+    console.log(
+      "BIGULA callback:",
+      callbackUrl
+    );
 
-    const code = url.searchParams.get("code");
+    const url =
+      new URL(callbackUrl);
 
-    if(!code){
-      return false;
-    }
 
-    googleBtn.disabled = true;
-    googleText.textContent = "Signing you in...";
-    showStatus("Completing Google sign in...");
+    /* OAuth error */
 
-    const {
-      data,
-      error
-    } = await supabase.auth.exchangeCodeForSession(code);
+    const error =
+      url.searchParams.get("error");
 
     if(error){
-      console.error(error);
+
+      const description =
+        url.searchParams.get(
+          "error_description"
+        );
 
       showStatus(
-        "Google sign-in could not be completed. Please try again.",
+        description ||
+        "Google sign-in was cancelled.",
         "error"
       );
 
       googleBtn.disabled = false;
-      googleText.textContent = "Continue with Google";
+      googleText.textContent =
+        "Continue with Google";
 
-      return false;
+      return;
     }
 
-    if(data?.session?.user){
 
-      await ensureProfile(data.session.user);
+    /* =====================================================
+       IMPLICIT FLOW
 
-      showStatus("Welcome to BIGULA!","success");
+       Tokens are returned after the #
+       ===================================================== */
 
-      window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
+    const hash =
+      url.hash
+        ? url.hash.substring(1)
+        : "";
+
+    const params =
+      new URLSearchParams(hash);
+
+    const accessToken =
+      params.get("access_token");
+
+    const refreshToken =
+      params.get("refresh_token");
+
+
+    if(accessToken && refreshToken){
+
+      googleBtn.disabled = true;
+      googleText.textContent =
+        "Signing you in...";
+
+      showStatus(
+        "Completing Google sign in..."
       );
 
-      setTimeout(()=>{
-        window.location.replace(
-          new URL("home.html",window.location.href).href
-        );
-      },250);
 
-      return true;
+      const {
+        data,
+        error:sessionError
+      } =
+        await supabase.auth.setSession({
+          access_token:accessToken,
+          refresh_token:refreshToken
+        });
+
+
+      if(sessionError){
+        throw sessionError;
+      }
+
+
+      if(data?.session?.user){
+
+        await ensureProfile(
+          data.session.user
+        );
+
+        showStatus(
+          "Welcome to BIGULA!",
+          "success"
+        );
+
+        setTimeout(
+          goHome,
+          250
+        );
+
+        return;
+      }
     }
+
+
+    /* =====================================================
+       FALLBACK: if callback contains ?code=
+       ===================================================== */
+
+    const code =
+      url.searchParams.get("code");
+
+    if(code){
+
+      const {
+        data,
+        error:codeError
+      } =
+        await supabase.auth
+          .exchangeCodeForSession(code);
+
+      if(codeError){
+        throw codeError;
+      }
+
+      if(data?.session?.user){
+
+        await ensureProfile(
+          data.session.user
+        );
+
+        setTimeout(
+          goHome,
+          250
+        );
+
+        return;
+      }
+    }
+
+
+    console.warn(
+      "BIGULA: No OAuth session found."
+    );
 
   }catch(error){
 
-    console.error("OAuth callback error:",error);
+    console.error(
+      "BIGULA OAuth callback error:",
+      error
+    );
 
     showStatus(
-      "Something went wrong during sign in.",
+      error?.message ||
+      "Google sign-in could not be completed.",
       "error"
     );
 
     googleBtn.disabled = false;
-    googleText.textContent = "Continue with Google";
-  }
 
-  return false;
+    googleText.textContent =
+      "Continue with Google";
+  }
 }
 
 
-/* Native Capacitor OAuth listener */
+/* =========================================================
+   CAPACITOR APP DEEP LINK
+========================================================= */
+
 async function setupNativeOAuth(){
 
-  if(!isNativeApp()){
+  if(!NATIVE){
     return;
   }
 
@@ -517,25 +668,44 @@ async function setupNativeOAuth(){
     window.Capacitor?.Plugins?.App;
 
   if(!App){
-    console.warn("Capacitor App plugin unavailable.");
+
+    console.error(
+      "BIGULA: Capacitor App plugin unavailable."
+    );
+
+    showStatus(
+      "BIGULA app authentication is not available.",
+      "error"
+    );
+
     return;
   }
 
-  App.addListener(
+
+  /* -----------------------------------------------
+     App receives callback while already running
+  ------------------------------------------------ */
+
+  await App.addListener(
     "appUrlOpen",
     async ({url}) => {
 
-      console.log("BIGULA OAuth callback:",url);
-
       if(
         url &&
-        url.startsWith("com.bigula.app://auth/callback")
+        url.startsWith(
+          "com.bigula.app://auth/callback"
+        )
       ){
-        await processOAuthCallback(url);
-      }
 
+        await handleNativeCallback(url);
+      }
     }
   );
+
+
+  /* -----------------------------------------------
+     App was launched by callback
+  ------------------------------------------------ */
 
   try{
 
@@ -548,48 +718,84 @@ async function setupNativeOAuth(){
         "com.bigula.app://auth/callback"
       )
     ){
-      await processOAuthCallback(launch.url);
+
+      await handleNativeCallback(
+        launch.url
+      );
     }
 
   }catch(error){
-    console.warn("Launch URL error:",error);
+
+    console.error(
+      "BIGULA launch URL error:",
+      error
+    );
   }
 }
 
 
-/* Google sign in */
+/* =========================================================
+   GOOGLE LOGIN
+========================================================= */
+
 async function signInWithGoogle(){
 
   try{
 
     googleBtn.disabled = true;
-    googleText.textContent = "Opening Google...";
-    showStatus("Connecting to Google...");
 
-    const redirectTo = isNativeApp()
+    googleText.textContent =
+      "Opening Google...";
+
+    showStatus(
+      "Connecting to Google..."
+    );
+
+
+    const redirectTo = NATIVE
+
       ? "com.bigula.app://auth/callback"
-      : new URL(
-          "home.html",
-          window.location.href
-        ).href;
+
+      : "https://afrixx-app.github.io/home.html";
+
+
+    console.log(
+      "BIGULA OAuth redirect:",
+      redirectTo
+    );
+
 
     const {
+      data,
       error
-    } = await supabase.auth.signInWithOAuth({
-      provider:"google",
-      options:{
-        redirectTo:redirectTo,
-        skipBrowserRedirect:false
-      }
-    });
+    } =
+      await supabase.auth.signInWithOAuth({
+        provider:"google",
+
+        options:{
+          redirectTo:redirectTo,
+
+          skipBrowserRedirect:false
+        }
+      });
+
 
     if(error){
       throw error;
     }
 
+
+    console.log(
+      "BIGULA OAuth started:",
+      data
+    );
+
   }catch(error){
 
-    console.error("Google sign-in error:",error);
+    console.error(
+      "BIGULA Google error:",
+      error
+    );
 
     showStatus(
       error?.message ||
@@ -598,73 +804,115 @@ async function signInWithGoogle(){
     );
 
     googleBtn.disabled = false;
-    googleText.textContent = "Continue with Google";
+
+    googleText.textContent =
+      "Continue with Google";
   }
 }
 
 
-/* Button */
+/* =========================================================
+   BUTTON
+========================================================= */
+
 googleBtn.addEventListener(
   "click",
   signInWithGoogle
 );
 
 
-/* START */
+/* =========================================================
+   STARTUP
+========================================================= */
+
 (async function(){
 
   /*
-    Android/iOS:
-    Wait for Capacitor deep-link listener.
+     IMPORTANT:
+     Install the native listener BEFORE
+     checking for an incoming callback.
   */
+
   await setupNativeOAuth();
 
 
   /*
-    GitHub Pages:
-    Manually process ?code= once.
+     If already signed in,
+     go directly Home.
   */
-  if(!isNativeApp()){
+
+  const {
+    data:{
+      session
+    }
+  } =
+    await supabase.auth.getSession();
+
+
+  if(session?.user){
+
+    await ensureProfile(
+      session.user
+    );
+
+    window.location.replace(
+      "https://afrixx-app.github.io/home.html"
+    );
+
+    return;
+  }
+
+
+  /*
+     WEB CALLBACK
+     Only used for GitHub Pages.
+  */
+
+  if(!NATIVE){
 
     const url =
-      new URL(window.location.href);
+      new URL(
+        window.location.href
+      );
+
+
+    /* Error returned by OAuth */
+
+    const error =
+      url.searchParams.get("error");
+
+    if(error){
+
+      showStatus(
+        url.searchParams.get(
+          "error_description"
+        ) ||
+        "Google sign-in failed.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /* PKCE code */
 
     const code =
       url.searchParams.get("code");
 
     if(code){
 
-      await processOAuthCallback(
+      googleBtn.disabled = true;
+
+      googleText.textContent =
+        "Signing you in...";
+
+      await handleNativeCallback(
         window.location.href
       );
 
       return;
     }
-  }
-
-
-  /*
-    Already signed in?
-    Send directly to Home.
-  */
-  const {
-    data:{
-      session
-    }
-  } = await supabase.auth.getSession();
-
-  if(session?.user){
-
-    await ensureProfile(session.user);
-
-    window.location.replace(
-      new URL(
-        "home.html",
-        window.location.href
-      ).href
-    );
-
-    return;
   }
 
 })();
