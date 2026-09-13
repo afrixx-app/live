@@ -694,7 +694,7 @@ async function loadAccount(){
     supabase
       .from('videos')
       .select('*')
-      .eq('creator_id',currentUser.id)
+      .eq('user_id',currentUser.id)
       .order('created_at',{ascending:false})
 
   ]);
@@ -1166,7 +1166,7 @@ async function loadMyVideos(){
   } = await supabase
     .from('videos')
     .select('*')
-    .eq('creator_id', currentUser.id)
+    .eq('user_id', currentUser.id)
     .order('created_at', {ascending:false});
 
   if(error){
