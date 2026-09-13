@@ -589,11 +589,28 @@ button:active{
 
       await saveUser(session.user);
 
+      // Confirm Supabase has persisted the session before leaving signup.
+      let confirmedSession = null;
+      for (let attempt = 0; attempt < 10; attempt++) {
+        const check = await client.auth.getSession();
+        if (check.data && check.data.session && check.data.session.user) {
+          confirmedSession = check.data.session;
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+
+      if (!confirmedSession) {
+        throw new Error("Google sign-in succeeded, but the BIGULA session was not ready yet. Please try again.");
+      }
+
       status("Account created successfully!", "success");
 
+      // In the Capacitor app use a relative URL so navigation stays inside
+      // the same WebView/storage context. On the normal website use GitHub Pages.
       setTimeout(function () {
-        window.location.replace(HOME_URL);
-      }, 500);
+        window.location.replace(isCapacitorApp() ? "home.html" : HOME_URL);
+      }, 150);
 
     } catch (error) {
 
