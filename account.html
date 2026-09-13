@@ -338,7 +338,6 @@ alt="Profile"
 
   <div class="stats">
 
-```
 <button id="followersStat" class="stat" type="button">
   <strong id="followers">0</strong>
   <span>Followers</span>
@@ -358,7 +357,6 @@ alt="Profile"
   <strong id="likes">0</strong>
   <span>Total Likes</span>
 </button>
-```
 
   </div>
 
@@ -376,7 +374,6 @@ alt="Profile"
 <button id="logoutBtn" class="action logout">
   ⇥ Logout
 </button>
-```
 
   </div>
 
@@ -388,7 +385,10 @@ alt="Profile"
 
   <div class="tab-title">
     <h2>Followers</h2>
-    <button class="tab-close" onclick="closeTabs()">Close</button>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="tab-close" onclick="location.href='monetize.html'">Monetize</button>
+      <button class="tab-close" onclick="closeTabs()">Close</button>
+    </div>
   </div>
 
   <div id="followersList" class="user-list">
@@ -1136,7 +1136,7 @@ function renderUsers(users,list){
       */
 
       location.href =
-        'profile.html?id='+
+        'creator_profile.html?id='+
         encodeURIComponent(user.id);
 
     });
