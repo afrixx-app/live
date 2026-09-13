@@ -1166,7 +1166,7 @@ async function loadMyVideos(){
   } = await supabase
     .from('videos')
     .select('*')
-    .eq('user_id', currentUser.id)
+    .eq('creator_id', currentUser.id)
     .order('created_at', {ascending:false});
 
   if(error){
@@ -1514,7 +1514,7 @@ async function logout(){
       Send logged-out user to signup.
     */
 
-    location.replace('signup.html');
+    location.replace('home.html');
 
 
   }catch(err){
