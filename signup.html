@@ -369,21 +369,8 @@ button:active{
   const SUPABASE_KEY =
     "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-  const WEB_REDIRECT_URL =
+  const HOME_URL =
     "https://afrixx-app.github.io/live/home.html";
-
-  const APP_REDIRECT_URL =
-    "com.bigula.app://auth/callback";
-
-
-  /* =========================================================
-     SUPABASE
-  ========================================================= */
-
-  if (!window.supabase || !window.supabase.createClient) {
-    console.error("Supabase JS failed to load.");
-    return;
-  }
 
   const client = window.supabase.createClient(
     SUPABASE_URL,
@@ -398,1085 +385,294 @@ button:active{
     }
   );
 
+  const googleBtn = document.getElementById("googleBtn");
+  const googleText = document.getElementById("googleText");
+  const statusBox = document.getElementById("status");
 
-  /* =========================================================
-     ELEMENTS
-  ========================================================= */
-
-  const googleBtn =
-    document.getElementById("googleBtn");
-
-  const googleText =
-    document.getElementById("googleText");
-
-  const statusBox =
-    document.getElementById("status");
-
-
-  /* =========================================================
-     STATUS
-  ========================================================= */
-
-  function showStatus(message, type) {
-
-    if (!statusBox) {
-      console.log(message);
-      return;
-    }
-
+  function status(message, type) {
     statusBox.textContent = message;
-
-    statusBox.className =
-      "status show " + (type || "info");
+    statusBox.className = "status show " + (type || "info");
   }
 
-
-  /* =========================================================
-     CAPACITOR DETECTION
-  ========================================================= */
-
-  function isNativeApp() {
-
-    try {
-
-      if (!window.Capacitor) {
-        return false;
-      }
-
-      if (
-        typeof window.Capacitor.isNativePlatform ===
-        "function"
-      ) {
-        return window.Capacitor.isNativePlatform();
-      }
-
-      if (
-        typeof window.Capacitor.getPlatform ===
-        "function"
-      ) {
-        return (
-          window.Capacitor.getPlatform() !== "web"
-        );
-      }
-
-    } catch (error) {
-      console.warn(
-        "Could not detect Capacitor:",
-        error
-      );
-    }
-
-    return false;
-  }
-
-
-  function getRedirectURL() {
-
-    if (isNativeApp()) {
-      return APP_REDIRECT_URL;
-    }
-
-    return WEB_REDIRECT_URL;
-  }
-
-
-  /* =========================================================
-     GOOGLE PROFILE INFORMATION
-  ========================================================= */
-
-  function getGoogleName(user) {
-
-    const metadata =
-      user && user.user_metadata
-        ? user.user_metadata
-        : {};
-
-    let name =
-      metadata.name ||
-      metadata.full_name ||
-      metadata.display_name ||
-      "";
-
-    if (!name) {
-
-      const first =
-        metadata.given_name || "";
-
-      const last =
-        metadata.family_name || "";
-
-      name =
-        (first + " " + last).trim();
-    }
-
-    if (!name && user.email) {
-
-      name =
-        user.email.split("@")[0];
-    }
-
-    if (!name) {
-      name = "BIGULA User";
-    }
-
-    return String(name).trim();
-  }
-
-
-  function getGoogleAvatar(user) {
-
-    const metadata =
-      user && user.user_metadata
-        ? user.user_metadata
-        : {};
+  function googleName(user) {
+    const m = user.user_metadata || {};
 
     return (
-      metadata.avatar_url ||
-      metadata.picture ||
-      null
-    );
+      m.name ||
+      m.full_name ||
+      m.display_name ||
+      [m.given_name, m.family_name].filter(Boolean).join(" ") ||
+      (user.email ? user.email.split("@")[0] : "BIGULA User")
+    ).trim();
   }
 
+  function googleAvatar(user) {
+    const m = user.user_metadata || {};
+    return m.avatar_url || m.picture || null;
+  }
 
-  /* =========================================================
-     USERNAME
-     
-     IMPORTANT:
-     username must NOT simply equal the Google name.
-
-     Example:
-     Google name = Jeff
-
-     First Jeff:
-       jeff
-
-     Another Jeff:
-       jeff_f9aa99
-
-     This prevents username collisions.
-  ========================================================= */
-
-  function makeUsernameBase(user, name) {
-
-    const metadata =
-      user && user.user_metadata
-        ? user.user_metadata
-        : {};
-
-    let base =
-      metadata.user_name ||
-      metadata.preferred_username ||
-      metadata.username ||
-      "";
-
-
-    if (!base) {
-      base = name;
-    }
-
-
-    base = String(base)
+  /*
+   * Create a simple unique username.
+   * We do NOT perform a username SELECT first.
+   */
+  function makeUsername(user, name) {
+    let base = name
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, "")
-      .slice(0, 20);
+      .slice(0, 15);
 
+    if (!base) base = "user";
 
-    if (!base) {
-      base = "user";
-    }
-
-
-    return base;
+    return base + "_" +
+      user.id.replace(/-/g, "").slice(0, 8).toLowerCase();
   }
 
-
-  async function createUniqueUsername(user, name) {
-
-    const base =
-      makeUsernameBase(user, name);
-
-
-    /*
-      First try the clean username.
-    */
-
-    let candidate = base;
-
-
-    let result = await client
-      .from("users")
-      .select("id")
-      .eq("username", candidate)
-      .limit(1);
-
-
-    if (result.error) {
-      throw result.error;
-    }
-
-
-    if (
-      !result.data ||
-      result.data.length === 0
-    ) {
-      return candidate;
-    }
-
-
-    /*
-      Username exists.
-
-      Add part of the Auth UUID.
-    */
-
-    candidate =
-      base +
-      "_" +
-      user.id
-        .replace(/-/g, "")
-        .slice(0, 6)
-        .toLowerCase();
-
-
-    result = await client
-      .from("users")
-      .select("id")
-      .eq("username", candidate)
-      .limit(1);
-
-
-    if (result.error) {
-      throw result.error;
-    }
-
-
-    if (
-      !result.data ||
-      result.data.length === 0
-    ) {
-      return candidate;
-    }
-
-
-    /*
-      Final guaranteed-style fallback.
-    */
-
-    return (
-      "user_" +
-      user.id
-        .replace(/-/g, "")
-        .slice(0, 8)
-        .toLowerCase()
-    );
-  }
-
-
-  /* =========================================================
-     SYNC USER PROFILE
-     
-     ACTUAL SCHEMA:
-
-       id
-       username
-       avatar_url
-       bio
-       created_at
-       last_edit
-       name
-       short_link
-       profile_updated_at
-
-     We only write fields that signup should control.
-
-     We DO NOT manually write:
-
-       bio
-       created_at
-       last_edit
-       short_link
-       profile_updated_at
-
-     Those should remain database-controlled.
-  ========================================================= */
-
-  async function syncUserProfile(user) {
+  async function saveUser(user) {
 
     if (!user || !user.id) {
-
-      throw new Error(
-        "No authenticated BIGULA user was found."
-      );
+      throw new Error("Google login succeeded, but no user ID was received.");
     }
 
+    const name = googleName(user);
+    const avatar = googleAvatar(user);
+    const username = makeUsername(user, name);
 
-    const name =
-      getGoogleName(user);
-
-    const avatar =
-      getGoogleAvatar(user);
-
+    console.log("AUTH USER:", user);
+    console.log("USER ID:", user.id);
+    console.log("NAME:", name);
+    console.log("USERNAME:", username);
 
     /*
-      STEP 1
-      Look for the Auth UUID.
+     * First check whether this exact Auth user already
+     * exists in public.users.
+     */
+    const existing = await client
+      .from("users")
+      .select("id,username,name,avatar_url,short_link")
+      .eq("id", user.id)
+      .limit(1);
 
-      This is much safer than blindly upserting.
-    */
+    if (existing.error) {
+      throw new Error(
+        "USERS SELECT FAILED\n" +
+        "Code: " + (existing.error.code || "none") + "\n" +
+        "Message: " + existing.error.message
+      );
+    }
 
-    const lookup =
-      await client
-        .from("users")
-        .select("*")
-        .eq("id", user.id)
-        .limit(1);
+    /*
+     * EXISTING USER
+     */
+    if (existing.data && existing.data.length > 0) {
 
+      const profile = existing.data[0];
 
-    if (lookup.error) {
+      localStorage.setItem(
+        "bigula_profile",
+        JSON.stringify(profile)
+      );
+
+      localStorage.setItem(
+        "bigula_user_name",
+        profile.name || name
+      );
+
+      localStorage.setItem(
+        "supabase_auth_user_id",
+        user.id
+      );
+
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("loggedIn", "true");
+
+      return profile;
+    }
+
+    /*
+     * NEW USER
+     */
+    const payload = {
+      id: user.id,
+      username: username,
+      name: name
+    };
+
+    if (avatar) {
+      payload.avatar_url = avatar;
+    }
+
+    console.log("INSERTING USER:", payload);
+
+    const inserted = await client
+      .from("users")
+      .insert(payload)
+      .select("id,username,name,avatar_url,short_link")
+      .limit(1);
+
+    /*
+     * THIS IS THE IMPORTANT PART.
+     * We expose the REAL Supabase error.
+     */
+    if (inserted.error) {
 
       console.error(
-        "Users lookup error:",
-        lookup.error
+        "SUPABASE INSERT ERROR:",
+        inserted.error
       );
 
-      throw lookup.error;
-    }
-
-
-    let profile =
-      lookup.data &&
-      lookup.data.length
-        ? lookup.data[0]
-        : null;
-
-
-    /* =======================================================
-       EXISTING USER
-    ======================================================= */
-
-    if (profile) {
-
-      /*
-        User already exists.
-
-        Do NOT change username.
-        Do NOT change bio.
-        Do NOT change short_link.
-
-        Only synchronize Google name/avatar.
-      */
-
-      const updatePayload = {
-        name: name
-      };
-
-
-      if (avatar) {
-        updatePayload.avatar_url = avatar;
-      }
-
-
-      const updated =
-        await client
-          .from("users")
-          .update(updatePayload)
-          .eq("id", user.id)
-          .select("*")
-          .limit(1);
-
-
-      if (updated.error) {
-
-        console.error(
-          "Users update error:",
-          updated.error
-        );
-
-        throw updated.error;
-      }
-
-
-      if (
-        updated.data &&
-        updated.data.length
-      ) {
-        profile =
-          updated.data[0];
-      }
-
-
-    } else {
-
-
-      /* =====================================================
-         NEW USER
-      ===================================================== */
-
-      const username =
-        await createUniqueUsername(
-          user,
-          name
-        );
-
-
-      /*
-        IMPORTANT:
-
-        We only insert these known fields:
-
-          id
-          username
-          name
-          avatar_url
-
-        We do NOT send database-managed fields.
-      */
-
-      const insertPayload = {
-
-        id: user.id,
-
-        username: username,
-
-        name: name
-
-      };
-
-
-      if (avatar) {
-
-        insertPayload.avatar_url =
-          avatar;
-      }
-
-
-      console.log(
-        "Creating BIGULA user:",
-        insertPayload
+      throw new Error(
+        "USERS INSERT FAILED\n\n" +
+        "Code: " + (inserted.error.code || "none") + "\n" +
+        "Message: " + (inserted.error.message || "none") + "\n" +
+        "Details: " + (inserted.error.details || "none") + "\n" +
+        "Hint: " + (inserted.error.hint || "none")
       );
-
-
-      const inserted =
-        await client
-          .from("users")
-          .insert(insertPayload)
-          .select("*")
-          .limit(1);
-
-
-      if (inserted.error) {
-
-        console.error(
-          "Users INSERT failed:",
-          inserted.error
-        );
-
-        throw inserted.error;
-      }
-
-
-      if (
-        !inserted.data ||
-        !inserted.data.length
-      ) {
-
-        throw new Error(
-          "BIGULA created the account but returned no profile."
-        );
-      }
-
-
-      profile =
-        inserted.data[0];
     }
 
+    if (!inserted.data || !inserted.data.length) {
+      throw new Error(
+        "INSERT reported success, but Supabase returned no user row."
+      );
+    }
 
-    /* =======================================================
-       LOCAL CACHE
-    ======================================================= */
+    const profile = inserted.data[0];
 
     localStorage.setItem(
       "bigula_profile",
       JSON.stringify(profile)
     );
 
-
     localStorage.setItem(
       "bigula_user_name",
       profile.name || name
     );
-
 
     localStorage.setItem(
       "supabase_auth_user_id",
       user.id
     );
 
-
-    localStorage.setItem(
-      "isLoggedIn",
-      "true"
-    );
-
-
-    localStorage.setItem(
-      "loggedIn",
-      "true"
-    );
-
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("loggedIn", "true");
 
     return profile;
   }
 
-
-  /* =========================================================
-     LOGIN FINISH
-  ========================================================= */
-
-  let redirecting = false;
-
-
   async function finishLogin(session) {
 
-    if (
-      !session ||
-      !session.user
-    ) {
-      return false;
+    if (!session || !session.user) {
+      return;
     }
 
-
-    if (redirecting) {
-      return true;
-    }
-
-
-    redirecting = true;
-
-
-    if (googleBtn) {
-      googleBtn.disabled = true;
-    }
-
-
-    if (googleText) {
-      googleText.textContent =
-        "Signing in...";
-    }
-
-
-    showStatus(
-      "Setting up your BIGULA profile...",
-      "info"
-    );
-
+    googleBtn.disabled = true;
+    googleText.textContent = "Creating account...";
+    status("Creating your BIGULA account...", "info");
 
     try {
 
-      /*
-        IMPORTANT:
+      await saveUser(session.user);
 
-        We now WAIT for the users table
-        operation to succeed.
-
-        The old page redirected even when
-        profile creation failed.
-      */
-
-      await syncUserProfile(
-        session.user
-      );
-
-
-      showStatus(
-        "Welcome to BIGULA!",
-        "success"
-      );
-
+      status("Account created successfully!", "success");
 
       setTimeout(function () {
-
-        window.location.replace(
-          WEB_REDIRECT_URL
-        );
-
-      }, 350);
-
-
-      return true;
-
+        window.location.replace(HOME_URL);
+      }, 500);
 
     } catch (error) {
 
-      console.error(
-        "BIGULA profile synchronization failed:",
-        error
-      );
+      console.error("BIGULA SIGNUP FAILURE:", error);
 
+      googleBtn.disabled = false;
+      googleText.textContent = "Continue with Google";
 
-      redirecting = false;
-
-
-      if (googleBtn) {
-        googleBtn.disabled = false;
-      }
-
-
-      if (googleText) {
-        googleText.textContent =
-          "Continue with Google";
-      }
-
-
-      let message =
-        error && error.message
-          ? error.message
-          : "Could not save your BIGULA profile.";
-
-
-      /*
-        Give useful messages for common
-        Supabase errors.
-      */
-
-      if (
-        /row-level security|permission denied|rls/i
-          .test(message)
-      ) {
-
-        message =
-          "BIGULA could not save your profile because database access is blocked. Check the users table RLS policies.";
-
-      } else if (
-        /duplicate key|unique constraint|already exists/i
-          .test(message)
-      ) {
-
-        message =
-          "A BIGULA username conflict occurred. Please try Google sign-in again.";
-
-      } else if (
-        /null value.*not-null/i
-          .test(message)
-      ) {
-
-        message =
-          "The BIGULA users table has a required field without a database default.";
-
-      }
-
-
-      showStatus(
-        message,
+      status(
+        error.message ||
+        "Could not create your BIGULA account.",
         "error"
       );
-
-
-      /*
-        Also print complete Supabase
-        diagnostic information to console.
-      */
-
-      if (error) {
-
-        console.error(
-          "Supabase error message:",
-          error.message
-        );
-
-        console.error(
-          "Supabase error code:",
-          error.code
-        );
-
-        console.error(
-          "Supabase error details:",
-          error.details
-        );
-
-        console.error(
-          "Supabase error hint:",
-          error.hint
-        );
-      }
-
-
-      return false;
     }
   }
 
+  /*
+   * Google button
+   */
+  googleBtn.addEventListener("click", async function () {
 
-  /* =========================================================
-     NATIVE OAUTH CALLBACK
-  ========================================================= */
-
-  async function handleOAuthCallback(
-    callbackUrl
-  ) {
-
-    if (!callbackUrl) {
-      return false;
-    }
-
+    googleBtn.disabled = true;
+    googleText.textContent = "Opening Google...";
+    status("Connecting to Google...", "info");
 
     try {
 
-      const parsed =
-        new URL(callbackUrl);
-
-
-      if (
-        parsed.protocol !==
-          "com.bigula.app:" ||
-        parsed.hostname !== "auth" ||
-        parsed.pathname !== "/callback"
-      ) {
-        return false;
-      }
-
-
-      const oauthError =
-        parsed.searchParams.get(
-          "error"
-        );
-
-
-      const errorDescription =
-        parsed.searchParams.get(
-          "error_description"
-        );
-
-
-      if (oauthError) {
-
-        throw new Error(
-          errorDescription ||
-          oauthError ||
-          "Google authentication failed."
-        );
-      }
-
-
-      const code =
-        parsed.searchParams.get(
-          "code"
-        );
-
-
-      if (!code) {
-
-        throw new Error(
-          "Google returned without an authorization code."
-        );
-      }
-
-
-      if (googleBtn) {
-        googleBtn.disabled = true;
-      }
-
-
-      if (googleText) {
-        googleText.textContent =
-          "Finishing sign-in...";
-      }
-
-
-      showStatus(
-        "Finishing Google sign-in...",
-        "info"
-      );
-
-
-      const result =
-        await client.auth
-          .exchangeCodeForSession(code);
-
+      const result = await client.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: HOME_URL
+        }
+      });
 
       if (result.error) {
         throw result.error;
       }
 
-
-      if (
-        !result.data ||
-        !result.data.session
-      ) {
-
-        throw new Error(
-          "Google sign-in completed, but no BIGULA session was created."
-        );
-      }
-
-
-      await finishLogin(
-        result.data.session
-      );
-
-
-      return true;
-
-
     } catch (error) {
 
-      console.error(
-        "OAuth callback error:",
-        error
-      );
+      console.error("GOOGLE ERROR:", error);
 
+      googleBtn.disabled = false;
+      googleText.textContent = "Continue with Google";
 
-      if (googleBtn) {
-        googleBtn.disabled = false;
-      }
-
-
-      if (googleText) {
-        googleText.textContent =
-          "Continue with Google";
-      }
-
-
-      showStatus(
-        error && error.message
-          ? error.message
-          : "Google sign-in could not be completed.",
+      status(
+        error.message ||
+        "Google sign-in could not be started.",
         "error"
       );
-
-
-      return false;
     }
-  }
+  });
 
-
-  /* =========================================================
-     CAPACITOR CALLBACK SUPPORT
-  ========================================================= */
-
-  window.addEventListener(
-    "bigulaOAuthCallback",
-    function (event) {
-
-      const callbackUrl =
-        event &&
-        event.detail
-          ? event.detail.url
-          : null;
-
-
-      if (callbackUrl) {
-
-        handleOAuthCallback(
-          callbackUrl
-        );
-      }
-    }
-  );
-
-
-  window.bigulaHandleOAuthCallback =
-    handleOAuthCallback;
-
-
-  /* =========================================================
-     EXISTING SESSION
-  ========================================================= */
-
-  async function checkExistingSession() {
+  /*
+   * Check for an existing session after returning
+   * from Google.
+   */
+  async function checkSession() {
 
     try {
 
-      const result =
-        await client.auth.getSession();
-
+      const result = await client.auth.getSession();
 
       if (result.error) {
-
-        console.error(
-          "Session check error:",
-          result.error
-        );
-
+        console.error("SESSION ERROR:", result.error);
         return;
       }
 
-
-      const session =
-        result.data
-          ? result.data.session
-          : null;
-
-
       if (
-        session &&
-        session.user
+        result.data &&
+        result.data.session &&
+        result.data.session.user
       ) {
-
-        await finishLogin(
-          session
-        );
+        await finishLogin(result.data.session);
       }
-
 
     } catch (error) {
-
-      console.error(
-        "Existing session error:",
-        error
-      );
+      console.error("CHECK SESSION ERROR:", error);
     }
   }
 
+  client.auth.onAuthStateChange(function (event, session) {
 
-  /* =========================================================
-     AUTH STATE CHANGES
-     
-     Do NOT sync on TOKEN_REFRESHED.
-     
-     Otherwise every access-token refresh could
-     unnecessarily write to public.users.
-  ========================================================= */
+    console.log("AUTH EVENT:", event);
 
-  client.auth.onAuthStateChange(
-    function (event, session) {
-
-      console.log(
-        "BIGULA Auth event:",
-        event
-      );
-
-
-      if (
-        session &&
-        session.user &&
-        (
-          event === "SIGNED_IN" ||
-          event === "INITIAL_SESSION"
-        )
-      ) {
-
-        finishLogin(session);
-      }
+    if (
+      (event === "SIGNED_IN" ||
+       event === "INITIAL_SESSION") &&
+      session &&
+      session.user
+    ) {
+      finishLogin(session);
     }
-  );
+  });
 
-
-  /* =========================================================
-     GOOGLE SIGN-IN BUTTON
-  ========================================================= */
-
-  if (googleBtn) {
-
-    googleBtn.addEventListener(
-      "click",
-      async function () {
-
-        if (redirecting) {
-          return;
-        }
-
-
-        googleBtn.disabled = true;
-
-
-        if (googleText) {
-          googleText.textContent =
-            "Opening Google...";
-        }
-
-
-        showStatus(
-          "Connecting to Google...",
-          "info"
-        );
-
-
-        try {
-
-          const result =
-            await client.auth
-              .signInWithOAuth({
-
-                provider: "google",
-
-                options: {
-
-                  redirectTo:
-                    getRedirectURL(),
-
-                  skipBrowserRedirect:
-                    false
-                }
-              });
-
-
-          if (result.error) {
-            throw result.error;
-          }
-
-
-        } catch (error) {
-
-          console.error(
-            "Google OAuth error:",
-            error
-          );
-
-
-          let message =
-            error && error.message
-              ? error.message
-              : "Google sign-in could not be started.";
-
-
-          if (
-            /provider.*not enabled|unsupported provider/i
-              .test(message)
-          ) {
-
-            message =
-              "Google is not enabled in Supabase Authentication.";
-
-          } else if (
-            /redirect/i.test(message)
-          ) {
-
-            message =
-              "The Google/Supabase redirect URL is not configured correctly.";
-
-          } else if (
-            /api.?key/i.test(message)
-          ) {
-
-            message =
-              "The BIGULA Supabase API key is invalid.";
-          }
-
-
-          googleBtn.disabled = false;
-
-
-          if (googleText) {
-            googleText.textContent =
-              "Continue with Google";
-          }
-
-
-          showStatus(
-            message,
-            "error"
-          );
-        }
-      }
-    );
-  }
-
-
-  /* =========================================================
-     START
-  ========================================================= */
-
-  checkExistingSession();
+  checkSession();
 
 })();
 </script></body>
