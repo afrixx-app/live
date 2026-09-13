@@ -1,160 +1,1654 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIGULA — Monetization</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--red:#ff3b30;--ink:#101114;--muted:#70747d;--line:#e7e8ec;--bg:#f5f6f8;--green:#168a55;--gold:#c98900}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.nav{max-width:1080px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}
-.logo{font-size:22px;font-weight:900;letter-spacing:-.8px}.logo span{color:var(--red)}
-.nav-actions{display:flex;gap:9px}.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:750;cursor:pointer}.btn-light{background:#f0f1f4}.btn-dark{background:var(--ink);color:#fff}.btn-red{background:var(--red);color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed}
-main{max-width:1080px;margin:0 auto;padding:28px 20px 60px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:22px}.eyebrow{color:var(--red);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.2px}.hero h1{font-size:34px;margin:6px 0}.hero p{color:var(--muted);margin:0;max-width:680px}
-.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 28px rgba(16,17,20,.05);margin-bottom:16px}.card h2{margin:0 0 6px;font-size:19px}.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
-.progress-wrap{background:#eef0f3;border-radius:999px;height:12px;overflow:hidden;margin:12px 0 8px}.progress{height:100%;width:0;background:var(--red);transition:width .35s}.progress-meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
-.requirements{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.req{border:1px solid var(--line);border-radius:16px;padding:16px}.req strong{display:block;font-size:15px}.status{margin-top:8px;font-weight:800;font-size:14px}.ok{color:var(--green)}.bad{color:var(--red)}.pending{color:var(--gold)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.field{margin-bottom:14px}.field label{display:block;font-size:13px;font-weight:750;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #d9dbe0;border-radius:11px;padding:12px;background:#fff;font:inherit}.field input:focus,.field select:focus{outline:2px solid rgba(255,59,48,.18);border-color:var(--red)}
-.notice{padding:12px 14px;border-radius:12px;background:#fff7e0;color:#765400;font-size:13px;margin-bottom:14px}.success{background:#e9f8f0;color:#146b44}.error{background:#fff0ef;color:#a3261f}.hidden{display:none!important}
-.userline{font-size:13px;color:var(--muted);margin-top:4px}.badge{display:inline-flex;padding:6px 9px;border-radius:999px;background:#f0f1f4;font-size:12px;font-weight:800}.footer-note{font-size:12px;color:var(--muted);line-height:1.5}
-@media(max-width:760px){.hero{display:block}.hero .nav-actions{margin-top:16px}.requirements,.grid{grid-template-columns:1fr}.nav{padding:13px 15px}main{padding:22px 15px 45px}.hero h1{font-size:28px}}
+:root{
+  --red:#ff3b30;
+  --ink:#101114;
+  --muted:#70747d;
+  --line:#e7e8ec;
+  --bg:#f5f6f8;
+  --green:#168a55;
+  --gold:#c98900;
+  --disabled:#e3e4e7;
+  --disabledText:#9699a1;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+
+.nav{
+  max-width:1080px;
+  margin:auto;
+  padding:15px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-.8px;
+}
+
+.logo span{
+  color:var(--red);
+}
+
+.nav-actions{
+  display:flex;
+  gap:9px;
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 16px;
+  font-weight:750;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btn-light{
+  background:#f0f1f4;
+}
+
+.btn-dark{
+  background:var(--ink);
+  color:#fff;
+}
+
+.btn-red{
+  background:var(--red);
+  color:#fff;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+main{
+  max-width:1080px;
+  margin:0 auto;
+  padding:28px 20px 60px;
+}
+
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:22px;
+}
+
+.eyebrow{
+  color:var(--red);
+  font-weight:800;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+}
+
+.hero h1{
+  font-size:34px;
+  margin:6px 0;
+}
+
+.hero p{
+  color:var(--muted);
+  margin:0;
+  max-width:680px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 8px 28px rgba(16,17,20,.05);
+  margin-bottom:16px;
+}
+
+.card h2{
+  margin:0 0 6px;
+  font-size:19px;
+}
+
+.sub{
+  color:var(--muted);
+  font-size:14px;
+  margin:0 0 18px;
+}
+
+.progress-wrap{
+  background:#eef0f3;
+  border-radius:999px;
+  height:12px;
+  overflow:hidden;
+  margin:12px 0 8px;
+}
+
+.progress{
+  height:100%;
+  width:0;
+  background:var(--red);
+  transition:width .35s;
+}
+
+.progress-meta{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.requirements{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.req{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+}
+
+.req strong{
+  display:block;
+  font-size:15px;
+}
+
+.status{
+  margin-top:8px;
+  font-weight:800;
+  font-size:14px;
+}
+
+.ok{color:var(--green)}
+.bad{color:var(--red)}
+.pending{color:var(--gold)}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.field{
+  margin-bottom:14px;
+}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:750;
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+  border:1px solid #d9dbe0;
+  border-radius:11px;
+  padding:12px;
+  background:#fff;
+  font:inherit;
+}
+
+.field input:focus,
+.field select:focus{
+  outline:2px solid rgba(255,59,48,.18);
+  border-color:var(--red);
+}
+
+.notice{
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fff7e0;
+  color:#765400;
+  font-size:13px;
+  margin-bottom:14px;
+}
+
+.success{
+  background:#e9f8f0;
+  color:#146b44;
+}
+
+.error{
+  background:#fff0ef;
+  color:#a3261f;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.userline{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.badge{
+  display:inline-flex;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#f0f1f4;
+  font-size:12px;
+  font-weight:800;
+}
+
+.footer-note{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+/* =========================
+   IDENTITY VERIFICATION LOCK
+   ========================= */
+
+.verification-card.locked{
+  background:#e9eaed;
+  border-color:#d6d7db;
+  box-shadow:none;
+}
+
+.verification-card.locked h2,
+.verification-card.locked .sub,
+.verification-card.locked label,
+.verification-card.locked .footer-note{
+  color:var(--disabledText);
+}
+
+.verification-card.locked input,
+.verification-card.locked select{
+  background:var(--disabled);
+  color:var(--disabledText);
+  border-color:#d3d4d8;
+  cursor:not-allowed;
+}
+
+.verification-card.locked input[type="file"]{
+  opacity:.55;
+}
+
+.verification-card.locked button{
+  background:#bfc1c6;
+  color:#777a82;
+  cursor:not-allowed;
+}
+
+.lock-message{
+  display:none;
+  padding:12px 14px;
+  border-radius:12px;
+  background:#dfe1e5;
+  color:#6f727a;
+  font-size:13px;
+  font-weight:650;
+  margin-bottom:16px;
+}
+
+.verification-card.locked .lock-message{
+  display:block;
+}
+
+/* Active verification state */
+
+.verification-card.active{
+  border:1px solid var(--green);
+  box-shadow:0 8px 30px rgba(22,138,85,.08);
+}
+
+.verification-card.active h2{
+  color:var(--ink);
+}
+
+/* Disabled submit until fields complete */
+
+#verifyBtn{
+  width:100%;
+}
+
+#verifyBtn:disabled{
+  background:#bfc1c6;
+  color:#777a82;
+  opacity:1;
+}
+
+/* Payout */
+
+.payout-disabled{
+  opacity:.65;
+}
+
+@media(max-width:760px){
+
+  .hero{
+    display:block;
+  }
+
+  .hero .nav-actions{
+    margin-top:16px;
+  }
+
+  .requirements,
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .nav{
+    padding:13px 15px;
+  }
+
+  main{
+    padding:22px 15px 45px;
+  }
+
+  .hero h1{
+    font-size:28px;
+  }
+}
 </style>
+
 </head>
+
 <body>
-<header><div class="nav"><div class="logo">BIG<span>ULA</span></div><div class="nav-actions"><button class="btn btn-light" id="backBtn">Back</button><button class="btn btn-dark" id="earningsBtn">Creator earnings</button></div></div></header>
+
+<header>
+  <div class="nav">
+
+```
+<div class="logo">
+  BIG<span>ULA</span>
+</div>
+
+<div class="nav-actions">
+  <button class="btn btn-light" id="backBtn">
+    Back
+  </button>
+
+  <button class="btn btn-dark" id="earningsBtn">
+    Creator earnings
+  </button>
+</div>
+```
+
+  </div>
+</header>
 
 <main>
+
 <section class="hero">
-  <div><div class="eyebrow">Creator Studio</div><h1>Monetization</h1><p>Complete your creator requirements, submit verification, and add a payout method when your balance reaches the payout threshold.</p><div class="userline" id="userLine">Loading account…</div></div>
-  <span class="badge" id="accountBadge">Checking</span>
+
+  <div>
+
+```
+<div class="eyebrow">
+  Creator Studio
+</div>
+
+<h1>
+  Monetization
+</h1>
+
+<p>
+  Complete your creator requirements, verify your identity,
+  and add a payout method when your account becomes eligible.
+</p>
+
+<div class="userline" id="userLine">
+  Loading account…
+</div>
+```
+
+  </div>
+
+  <span class="badge" id="accountBadge">
+    Checking
+  </span>
+
 </section>
 
 <div id="message" class="notice hidden"></div>
 
-<section class="card">
-  <h2>Eligibility</h2><p class="sub">Your progress is calculated from your BIGULA account and published content.</p>
-  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
-  <div class="progress-meta"><span id="progressText">Checking…</span><span>3 requirements</span></div>
-  <div class="requirements" style="margin-top:16px">
-    <div class="req"><strong>Followers</strong><div class="status bad" id="followersStatus">Checking…</div><small>Target: 1,000 followers</small></div>
-    <div class="req"><strong>Published videos</strong><div class="status bad" id="videosStatus">Checking…</div><small>Target: 5 videos</small></div>
-    <div class="req"><strong>Copyright</strong><div class="status pending" id="copyrightStatus">Checking…</div><small>No active copyright claims</small></div>
+<!-- =========================
+     ELIGIBILITY
+     ========================= -->
+
+<section class="card" id="eligibilityCard">
+
+  <h2>
+    Eligibility
+  </h2>
+
+  <p class="sub">
+    Complete all three requirements to unlock identity verification.
+  </p>
+
+  <div class="progress-wrap">
+    <div class="progress" id="progress"></div>
   </div>
+
+  <div class="progress-meta">
+
+```
+<span id="progressText">
+  Checking…
+</span>
+
+<span>
+  3 requirements
+</span>
+```
+
+  </div>
+
+  <div class="requirements" style="margin-top:16px">
+
+```
+<div class="req">
+
+  <strong>
+    Followers
+  </strong>
+
+  <div class="status bad" id="followersStatus">
+    Checking…
+  </div>
+
+  <small>
+    Target: 1,000 followers
+  </small>
+
+</div>
+
+
+<div class="req">
+
+  <strong>
+    Published videos
+  </strong>
+
+  <div class="status bad" id="videosStatus">
+    Checking…
+  </div>
+
+  <small>
+    Target: 5 videos
+  </small>
+
+</div>
+
+
+<div class="req">
+
+  <strong>
+    Copyright
+  </strong>
+
+  <div class="status pending" id="copyrightStatus">
+    Checking…
+  </div>
+
+  <small>
+    No active copyright claims
+  </small>
+
+</div>
+```
+
+  </div>
+
 </section>
 
 <div class="grid">
-<section class="card">
-  <h2>Identity verification</h2><p class="sub">Use your legal details for payout verification. Your verification status is stored against your BIGULA account.</p>
+
+<!-- =========================
+     IDENTITY VERIFICATION
+     ========================= -->
+
+<section class="card verification-card locked" id="verificationCard">
+
+  <h2>
+    Identity verification
+  </h2>
+
+  <p class="sub">
+    Use your legal details for payout verification.
+    Your verification status is stored against your BIGULA account.
+  </p>
+
+  <div class="lock-message" id="verificationLockMessage">
+    Complete all 3 monetization requirements before identity verification becomes available.
+  </div>
+
   <form id="verificationForm">
-    <div class="field"><label>Legal full name</label><input id="legalName" required autocomplete="name"></div>
-    <div class="field"><label>Date of birth</label><input id="dob" type="date" required></div>
-    <div class="field"><label>Country</label><select id="country" required><option value="">Select country</option><option>Uganda</option><option>Kenya</option><option>Nigeria</option><option>South Africa</option><option>United States</option><option>United Kingdom</option><option>India</option><option value="other">Other</option></select></div>
-    <div class="field"><label>Government ID</label><input id="idFile" type="file" accept="image/*,application/pdf"></div>
-    <button class="btn btn-dark" type="submit" id="verifyBtn">Submit verification</button>
+
+```
+<div class="field">
+
+  <label>
+    Legal full name
+  </label>
+
+  <input
+    id="legalName"
+    required
+    autocomplete="name"
+    disabled
+  >
+
+</div>
+
+
+<div class="field">
+
+  <label>
+    Date of birth
+  </label>
+
+  <input
+    id="dob"
+    type="date"
+    required
+    disabled
+  >
+
+</div>
+
+
+<div class="field">
+
+  <label>
+    Country
+  </label>
+
+  <select
+    id="country"
+    required
+    disabled
+  >
+
+    <option value="">
+      Select country
+    </option>
+
+    <option value="Uganda">
+      Uganda
+    </option>
+
+    <option value="Kenya">
+      Kenya
+    </option>
+
+    <option value="Nigeria">
+      Nigeria
+    </option>
+
+    <option value="South Africa">
+      South Africa
+    </option>
+
+    <option value="United States">
+      United States
+    </option>
+
+    <option value="United Kingdom">
+      United Kingdom
+    </option>
+
+    <option value="India">
+      India
+    </option>
+
+    <option value="other">
+      Other
+    </option>
+
+  </select>
+
+</div>
+
+
+<div class="field">
+
+  <label>
+    Government ID
+  </label>
+
+  <input
+    id="idFile"
+    type="file"
+    accept="image/*,application/pdf"
+    required
+    disabled
+  >
+
+</div>
+
+
+<button
+  class="btn btn-dark"
+  type="submit"
+  id="verifyBtn"
+  disabled
+>
+  Submit verification
+</button>
+```
+
   </form>
-  <p class="footer-note">Verification can remain pending while BIGULA reviews the submission. Do not upload passwords, payment-card details, or unrelated documents.</p>
+
+  <p class="footer-note">
+    Verification can remain pending while BIGULA reviews the submission.
+    Do not upload passwords, payment-card details, or unrelated documents.
+  </p>
+
 </section>
 
-<section class="card">
-  <h2>Payout method</h2><p class="sub">A payout method becomes available after the account reaches the $10 threshold and eligibility is complete.</p>
-  <div id="payoutLocked" class="notice">Reach the payout threshold to unlock this section.</div>
+<!-- =========================
+     PAYOUT METHOD
+     ========================= -->
+
+<section class="card" id="payoutCard">
+
+  <h2>
+    Payout method
+  </h2>
+
+  <p class="sub">
+    A payout method becomes available after the account reaches
+    the $10 threshold and eligibility is complete.
+  </p>
+
+  <div id="payoutLocked" class="notice">
+    Reach the payout threshold to unlock this section.
+  </div>
+
   <form id="payoutForm" class="hidden">
-    <div class="field"><label>Payment method</label><select id="paymentMethod" required><option value="">Select method</option><option value="bank_transfer">Bank transfer</option><option value="paypal">PayPal</option><option value="payoneer">Payoneer</option><option value="wise">Wise</option><option value="mobile_money">Mobile Money</option></select></div>
-    <div class="field"><label>Account holder name</label><input id="accountName" required autocomplete="name"></div>
-    <div class="field"><label>Account / phone / email</label><input id="accountNumber" required autocomplete="off"></div>
-    <button class="btn btn-red" type="submit" id="savePayoutBtn">Save payout method</button>
-  </form>
-  <div id="savedPayout" class="hidden"></div>
-</section>
+
+```
+<div class="field">
+
+  <label>
+    Payment method
+  </label>
+
+  <select id="paymentMethod" required>
+
+    <option value="">
+      Select method
+    </option>
+
+    <option value="bank_transfer">
+      Bank transfer
+    </option>
+
+    <option value="paypal">
+      PayPal
+    </option>
+
+    <option value="payoneer">
+      Payoneer
+    </option>
+
+    <option value="wise">
+      Wise
+    </option>
+
+    <option value="mobile_money">
+      Mobile Money
+    </option>
+
+  </select>
+
 </div>
+
+
+<div class="field">
+
+  <label>
+    Account holder name
+  </label>
+
+  <input
+    id="accountName"
+    required
+    autocomplete="name"
+  >
+
+</div>
+
+
+<div class="field">
+
+  <label>
+    Account / phone / email
+  </label>
+
+  <input
+    id="accountNumber"
+    required
+    autocomplete="off"
+  >
+
+</div>
+
+
+<button
+  class="btn btn-red"
+  type="submit"
+  id="savePayoutBtn"
+>
+  Save payout method
+</button>
+```
+
+  </form>
+
+  <div id="savedPayout" class="hidden"></div>
+
+</section>
+
+</div>
+
 </main>
 
 <script>
-const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
-const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
-let currentUser=null, earnings=0, eligibility=false;
 
-const $=id=>document.getElementById(id);
-function msg(text,type="notice"){const el=$("message");el.textContent=text;el.className="notice "+type;el.classList.remove("hidden");}
-function money(n){return Number(n||0).toFixed(2)}
-function go(path){location.href=path}
+const SUPABASE_URL =
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+
+const sb =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true,
+        flowType:"pkce"
+      }
+    }
+  );
+
+
+let currentUser = null;
+let earnings = 0;
+let eligibility = false;
+
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function msg(text,type="notice"){
+
+  const el = $("message");
+
+  el.textContent = text;
+
+  el.className =
+    "notice " + type;
+
+  el.classList.remove("hidden");
+}
+
+
+function money(n){
+
+  return Number(n || 0).toFixed(2);
+
+}
+
+
+function go(path){
+
+  location.href = path;
+
+}
+
+
+/* =========================================
+   INITIALIZE
+   ========================================= */
 
 async function init(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session?.user){go("signup.html");return}
-  currentUser=session.user;
-  const {data:user,error}=await sb.from("users").select("*").eq("id",currentUser.id).maybeSingle();
-  if(error) console.warn(error);
-  $("userLine").textContent=(user?.username||user?.full_name||currentUser.user_metadata?.full_name||currentUser.email||"Creator");
-  await Promise.all([loadEligibility(),loadMonetization(),loadPayout()]);
-}
-async function loadEligibility(){
-  const [{count:followers},{count:videos},{data:claims}]=await Promise.all([
-    sb.from("followers").select("*",{count:"exact",head:true}).eq("following_id",currentUser.id),
-    sb.from("videos").select("*",{count:"exact",head:true}).eq("user_id",currentUser.id).eq("status","published"),
-    sb.from("videos").select("id").eq("user_id",currentUser.id).or("copyright_status.eq.claimed,copyright_status.eq.flagged")
+
+  const {
+    data:{session}
+  } = await sb.auth.getSession();
+
+
+  if(!session?.user){
+
+    go("signup.html");
+
+    return;
+
+  }
+
+
+  currentUser = session.user;
+
+
+  const {
+    data:user,
+    error
+  } =
+    await sb
+      .from("users")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+
+  if(error){
+
+    console.warn(error);
+
+  }
+
+
+  $("userLine").textContent =
+    user?.username ||
+    user?.full_name ||
+    currentUser.user_metadata?.full_name ||
+    currentUser.email ||
+    "Creator";
+
+
+  await Promise.all([
+    loadEligibility(),
+    loadMonetization(),
+    loadPayout()
   ]);
-  const f=followers||0,v=videos||0,c=claims?.length||0;
-  $("followersStatus").textContent=f>=1000?"✓ 1,000+":`${f} / 1,000`; $("followersStatus").className="status "+(f>=1000?"ok":"bad");
-  $("videosStatus").textContent=v>=5?"✓ 5+ videos":`${v} / 5`; $("videosStatus").className="status "+(v>=5?"ok":"bad");
-  $("copyrightStatus").textContent=c===0?"✓ No active claims":`${c} claim(s)`; $("copyrightStatus").className="status "+(c===0?"ok":"bad");
-  const done=(f>=1000?1:0)+(v>=5?1:0)+(c===0?1:0); eligibility=done===3;
-  $("progress").style.width=(done/3*100)+"%"; $("progressText").textContent=`${done} of 3 requirements complete`;
+
 }
-async function loadMonetization(){
-  const {data}=await sb.from("creator_monetization").select("*").eq("user_id",currentUser.id).maybeSingle();
-  earnings=Number(data?.available_balance||0);
-  $("accountBadge").textContent=data?.status==="active"?"Monetized":(data?.status||"Not monetized");
-  if(data?.legal_name)$("legalName").value=data.legal_name;
-  if(data?.date_of_birth)$("dob").value=data.date_of_birth;
-  if(data?.country)$("country").value=data.country;
-  const unlocked=earnings>=10;
-  $("payoutLocked").classList.toggle("hidden",unlocked);
-  $("payoutForm").classList.toggle("hidden",!unlocked);
-  if(!unlocked) $("payoutLocked").textContent=`Current eligible balance: $${money(earnings)}. Reach $10 to unlock payout setup.`;
+
+
+/* =========================================
+   ELIGIBILITY
+   ========================================= */
+
+async function loadEligibility(){
+
+  const [
+    {count:followers},
+    {count:videos},
+    {data:claims}
+  ] =
+  await Promise.all([
+
+    sb
+      .from("followers")
+      .select("*",{count:"exact",head:true})
+      .eq("following_id",currentUser.id),
+
+
+    sb
+      .from("videos")
+      .select("*",{count:"exact",head:true})
+      .eq("user_id",currentUser.id)
+      .eq("status","published"),
+
+
+    sb
+      .from("videos")
+      .select("id")
+      .eq("user_id",currentUser.id)
+      .or(
+        "copyright_status.eq.claimed,copyright_status.eq.flagged"
+      )
+
+  ]);
+
+
+  const f = followers || 0;
+  const v = videos || 0;
+  const c = claims?.length || 0;
+
+
+  const followersComplete = f >= 1000;
+  const videosComplete = v >= 5;
+  const copyrightComplete = c === 0;
+
+
+  $("followersStatus").textContent =
+    followersComplete
+      ? "✓ 1,000+"
+      : `${f} / 1,000`;
+
+  $("followersStatus").className =
+    "status " +
+    (followersComplete ? "ok" : "bad");
+
+
+  $("videosStatus").textContent =
+    videosComplete
+      ? "✓ 5+ videos"
+      : `${v} / 5`;
+
+  $("videosStatus").className =
+    "status " +
+    (videosComplete ? "ok" : "bad");
+
+
+  $("copyrightStatus").textContent =
+    copyrightComplete
+      ? "✓ No active claims"
+      : `${c} claim(s)`;
+
+  $("copyrightStatus").className =
+    "status " +
+    (copyrightComplete ? "ok" : "bad");
+
+
+  const done =
+    (followersComplete ? 1 : 0) +
+    (videosComplete ? 1 : 0) +
+    (copyrightComplete ? 1 : 0);
+
+
+  eligibility = done === 3;
+
+
+  $("progress").style.width =
+    (done / 3 * 100) + "%";
+
+
+  $("progressText").textContent =
+    `${done} of 3 requirements complete`;
+
+
+  /*
+    BEFORE ELIGIBILITY:
+    Show Eligibility.
+    Lock Identity Verification.
+
+    AFTER ELIGIBILITY:
+    Hide Eligibility.
+    Unlock Identity Verification.
+  */
+
+  if(eligibility){
+
+    $("eligibilityCard")
+      .classList.add("hidden");
+
+
+    unlockVerification();
+
+  }else{
+
+    $("eligibilityCard")
+      .classList.remove("hidden");
+
+
+    lockVerification();
+
+  }
+
 }
-async function loadPayout(){
-  const {data}=await sb.from("payout_methods").select("method,account_name,account_reference,status").eq("user_id",currentUser.id).maybeSingle();
-  if(!data)return;
-  $("savedPayout").className="notice success";$("savedPayout").classList.remove("hidden");
-  $("savedPayout").textContent=`Saved: ${data.method.replaceAll("_"," ")} • ${data.account_name} • ${data.status}`;
-  $("paymentMethod").value=data.method;$("accountName").value=data.account_name;$("accountNumber").value=data.account_reference;
+
+
+/* =========================================
+   LOCK IDENTITY VERIFICATION
+   ========================================= */
+
+function lockVerification(){
+
+  const card =
+    $("verificationCard");
+
+
+  card.classList.add("locked");
+  card.classList.remove("active");
+
+
+  $("legalName").disabled = true;
+  $("dob").disabled = true;
+  $("country").disabled = true;
+  $("idFile").disabled = true;
+
+
+  $("verifyBtn").disabled = true;
+
+
+  $("verificationLockMessage").textContent =
+    "Complete all 3 monetization requirements before identity verification becomes available.";
+
 }
-$("verificationForm").addEventListener("submit",async e=>{
-  e.preventDefault(); $("verifyBtn").disabled=true;
-  try{
-    let path=null; const file=$("idFile").files[0];
-    if(file){
-      if(file.size>10*1024*1024)throw new Error("ID file must be 10 MB or smaller.");
-      const ext=(file.name.split(".").pop()||"bin").toLowerCase();
-      path=`${currentUser.id}/${crypto.randomUUID()}.${ext}`;
-      const {error}=await sb.storage.from("creator-verification").upload(path,file,{upsert:false});
-      if(error)throw error;
+
+
+/* =========================================
+   UNLOCK IDENTITY VERIFICATION
+   ========================================= */
+
+function unlockVerification(){
+
+  const card =
+    $("verificationCard");
+
+
+  card.classList.remove("locked");
+  card.classList.add("active");
+
+
+  $("legalName").disabled = false;
+  $("dob").disabled = false;
+  $("country").disabled = false;
+  $("idFile").disabled = false;
+
+
+  updateVerificationButton();
+
+}
+
+
+/* =========================================
+   VERIFY FORM BUTTON STATE
+   ========================================= */
+
+function updateVerificationButton(){
+
+  /*
+    Button requires:
+    1. Legal name
+    2. Date of birth
+    3. Country
+    4. Government ID
+    5. Eligibility
+  */
+
+  const name =
+    $("legalName").value.trim();
+
+  const dob =
+    $("dob").value.trim();
+
+  const country =
+    $("country").value.trim();
+
+  const file =
+    $("idFile").files[0];
+
+
+  const allFieldsComplete =
+    name.length > 0 &&
+    dob.length > 0 &&
+    country.length > 0 &&
+    !!file;
+
+
+  $("verifyBtn").disabled =
+    !eligibility ||
+    !allFieldsComplete;
+
+}
+
+
+/* Listen for every verification field */
+
+$("legalName").addEventListener(
+  "input",
+  updateVerificationButton
+);
+
+$("dob").addEventListener(
+  "change",
+  updateVerificationButton
+);
+
+$("country").addEventListener(
+  "change",
+  updateVerificationButton
+);
+
+$("idFile").addEventListener(
+  "change",
+  function(){
+
+    const file =
+      this.files[0];
+
+    if(file && file.size > 10 * 1024 * 1024){
+
+      msg(
+        "Government ID must be 10 MB or smaller.",
+        "error"
+      );
+
+      this.value = "";
+
     }
-    const payload={user_id:currentUser.id,legal_name:$("legalName").value.trim(),date_of_birth:$("dob").value,country:$("country").value,verification_status:"pending",id_document_path:path};
-    const {error}=await sb.from("creator_monetization").upsert(payload,{onConflict:"user_id"});
-    if(error)throw error;
-    $("accountBadge").textContent="Verification pending";msg("Verification submitted successfully. BIGULA will review your submission.","success");
-  }catch(err){console.error(err);msg(err.message||"Could not submit verification.","error")}
-  finally{$("verifyBtn").disabled=false}
-});
-$("payoutForm").addEventListener("submit",async e=>{
-  e.preventDefault();$("savePayoutBtn").disabled=true;
-  try{
-    if(!eligibility)throw new Error("Your monetization requirements are not complete yet.");
-    const payload={user_id:currentUser.id,method:$("paymentMethod").value,account_name:$("accountName").value.trim(),account_reference:$("accountNumber").value.trim(),status:"active"};
-    const {error}=await sb.from("payout_methods").upsert(payload,{onConflict:"user_id"});
-    if(error)throw error;
-    await sb.from("creator_monetization").upsert({user_id:currentUser.id,status:"active",payout_eligible:true},{onConflict:"user_id"});
-    msg("Payout method saved successfully.","success");await loadPayout();await loadMonetization();
-  }catch(err){console.error(err);msg(err.message||"Could not save payout method.","error")}
-  finally{$("savePayoutBtn").disabled=false}
-});
-$("backBtn").onclick=()=>go("account.html");$("earningsBtn").onclick=()=>go("creator-earnings.html");
+
+    updateVerificationButton();
+
+  }
+);
+
+
+/* =========================================
+   MONETIZATION
+   ========================================= */
+
+async function loadMonetization(){
+
+  const {data,error} =
+    await sb
+      .from("creator_monetization")
+      .select("*")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+
+  if(error){
+
+    console.warn(error);
+
+  }
+
+
+  earnings =
+    Number(data?.available_balance || 0);
+
+
+  $("accountBadge").textContent =
+    data?.status === "active"
+      ? "Monetized"
+      : (data?.status || "Not monetized");
+
+
+  if(data?.legal_name)
+    $("legalName").value =
+      data.legal_name;
+
+
+  if(data?.date_of_birth)
+    $("dob").value =
+      data.date_of_birth;
+
+
+  if(data?.country)
+    $("country").value =
+      data.country;
+
+
+  /*
+    Payout setup unlocks at $10.
+  */
+
+  const unlocked =
+    earnings >= 10;
+
+
+  $("payoutLocked")
+    .classList.toggle(
+      "hidden",
+      unlocked
+    );
+
+
+  $("payoutForm")
+    .classList.toggle(
+      "hidden",
+      !unlocked
+    );
+
+
+  if(!unlocked){
+
+    $("payoutLocked").textContent =
+      `Current eligible balance: $${money(earnings)}. Reach $10 to unlock payout setup.`;
+
+  }
+
+
+  /*
+    If verification is already pending,
+    update badge.
+  */
+
+  if(data?.verification_status === "pending"){
+
+    $("accountBadge").textContent =
+      "Verification pending";
+
+  }
+
+}
+
+
+/* =========================================
+   LOAD SAVED PAYOUT METHOD
+   ========================================= */
+
+async function loadPayout(){
+
+  const {data,error} =
+    await sb
+      .from("payout_methods")
+      .select(
+        "method,account_name,account_reference,status"
+      )
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+
+  if(error){
+
+    console.warn(error);
+
+  }
+
+
+  if(!data)
+    return;
+
+
+  $("savedPayout").className =
+    "notice success";
+
+  $("savedPayout")
+    .classList.remove("hidden");
+
+
+  $("savedPayout").textContent =
+    `Saved: ${data.method.replaceAll("_"," ")} • ${data.account_name} • ${data.status}`;
+
+
+  $("paymentMethod").value =
+    data.method;
+
+
+  $("accountName").value =
+    data.account_name;
+
+
+  $("accountNumber").value =
+    data.account_reference;
+
+}
+
+
+/* =========================================
+   SUBMIT IDENTITY VERIFICATION
+   ========================================= */
+
+$("verificationForm")
+  .addEventListener(
+    "submit",
+    async e => {
+
+      e.preventDefault();
+
+
+      /*
+        Extra security check.
+        The form cannot submit if eligibility
+        has somehow become false.
+      */
+
+      if(!eligibility){
+
+        msg(
+          "You must complete all monetization requirements first.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      const file =
+        $("idFile").files[0];
+
+
+      if(
+        !$("legalName").value.trim() ||
+        !$("dob").value ||
+        !$("country").value ||
+        !file
+      ){
+
+        msg(
+          "Complete all verification fields and select your Government ID.",
+          "error"
+        );
+
+        updateVerificationButton();
+
+        return;
+
+      }
+
+
+      if(file.size > 10 * 1024 * 1024){
+
+        msg(
+          "Government ID must be 10 MB or smaller.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      $("verifyBtn").disabled = true;
+
+
+      try{
+
+        let path = null;
+
+
+        const ext =
+          (
+            file.name
+              .split(".")
+              .pop() ||
+            "bin"
+          ).toLowerCase();
+
+
+        path =
+          `${currentUser.id}/${crypto.randomUUID()}.${ext}`;
+
+
+        const {
+          error:uploadError
+        } =
+          await sb
+            .storage
+            .from("creator-verification")
+            .upload(
+              path,
+              file,
+              {
+                upsert:false
+              }
+            );
+
+
+        if(uploadError)
+          throw uploadError;
+
+
+        const payload = {
+
+          user_id:
+            currentUser.id,
+
+          legal_name:
+            $("legalName")
+              .value
+              .trim(),
+
+          date_of_birth:
+            $("dob").value,
+
+          country:
+            $("country").value,
+
+          verification_status:
+            "pending",
+
+          id_document_path:
+            path
+
+        };
+
+
+        const {
+          error
+        } =
+          await sb
+            .from("creator_monetization")
+            .upsert(
+              payload,
+              {
+                onConflict:"user_id"
+              }
+            );
+
+
+        if(error)
+          throw error;
+
+
+        $("accountBadge").textContent =
+          "Verification pending";
+
+
+        msg(
+          "Verification submitted successfully. BIGULA will review your submission.",
+          "success"
+        );
+
+
+        /*
+          Prevent another submission while
+          this verification is pending.
+        */
+
+        $("verifyBtn").disabled = true;
+
+        $("legalName").disabled = true;
+        $("dob").disabled = true;
+        $("country").disabled = true;
+        $("idFile").disabled = true;
+
+
+      }catch(err){
+
+        console.error(err);
+
+
+        msg(
+          err.message ||
+          "Could not submit verification.",
+          "error"
+        );
+
+
+        updateVerificationButton();
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   SAVE PAYOUT METHOD
+   ========================================= */
+
+$("payoutForm")
+  .addEventListener(
+    "submit",
+    async e => {
+
+      e.preventDefault();
+
+
+      $("savePayoutBtn").disabled =
+        true;
+
+
+      try{
+
+        if(!eligibility){
+
+          throw new Error(
+            "Your monetization requirements are not complete yet."
+          );
+
+        }
+
+
+        if(earnings < 10){
+
+          throw new Error(
+            "Your balance must reach $10 before adding a payout method."
+          );
+
+        }
+
+
+        const payload = {
+
+          user_id:
+            currentUser.id,
+
+          method:
+            $("paymentMethod").value,
+
+          account_name:
+            $("accountName")
+              .value
+              .trim(),
+
+          account_reference:
+            $("accountNumber")
+              .value
+              .trim(),
+
+          status:
+            "active"
+
+        };
+
+
+        const {
+          error
+        } =
+          await sb
+            .from("payout_methods")
+            .upsert(
+              payload,
+              {
+                onConflict:"user_id"
+              }
+            );
+
+
+        if(error)
+          throw error;
+
+
+        await sb
+          .from("creator_monetization")
+          .upsert(
+            {
+              user_id:
+                currentUser.id,
+
+              status:
+                "active",
+
+              payout_eligible:
+                true
+
+            },
+            {
+              onConflict:"user_id"
+            }
+          );
+
+
+        msg(
+          "Payout method saved successfully.",
+          "success"
+        );
+
+
+        await loadPayout();
+        await loadMonetization();
+
+
+      }catch(err){
+
+        console.error(err);
+
+
+        msg(
+          err.message ||
+          "Could not save payout method.",
+          "error"
+        );
+
+
+      }finally{
+
+        $("savePayoutBtn").disabled =
+          false;
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   NAVIGATION
+   ========================================= */
+
+$("backBtn").onclick =
+  () => go("account.html");
+
+
+$("earningsBtn").onclick =
+  () => go("creator-earnings.html");
+
+
+/* =========================================
+   START
+   ========================================= */
+
 init();
+
 </script>
+
 </body>
 </html>
