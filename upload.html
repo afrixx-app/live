@@ -1,37 +1,29 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BIGULA — Create</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BIGULA – Upload</title>
 
 <style>
 *{
-  box-sizing:border-box;
   margin:0;
   padding:0;
-}
-
-:root{
-  --bg:#070707;
-  --card:#111;
-  --card2:#171717;
-  --line:#292929;
-  --text:#fff;
-  --muted:#999;
-  --accent:#ff0050;
-  --accent2:#ff2d75;
+  box-sizing:border-box;
 }
 
 body{
-  font-family:Inter,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  background:#000;
+  color:#fff;
   min-height:100vh;
+  overflow-x:hidden;
 }
 
-button,input,textarea,select{
+button,
+input,
+textarea,
+select{
   font:inherit;
 }
 
@@ -40,300 +32,175 @@ button{
   cursor:pointer;
 }
 
-button:disabled{
-  cursor:not-allowed;
+.app{
+  width:100%;
+  max-width:650px;
+  margin:auto;
+  min-height:100vh;
+  background:#080808;
 }
 
-.topbar{
-  height:64px;
+header{
+  height:60px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 22px;
-  border-bottom:1px solid #202020;
-  background:rgba(7,7,7,.96);
+  padding:0 16px;
+  border-bottom:1px solid #242424;
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:100;
+  background:#080808;
 }
 
 .logo{
-  font-size:22px;
+  font-size:24px;
   font-weight:900;
   letter-spacing:-1px;
 }
 
-.logo span{
-  color:var(--accent);
-}
-
 .back{
-  color:#aaa;
-  text-decoration:none;
-  font-size:14px;
+  background:#181818;
+  color:#fff;
+  padding:9px 14px;
+  border-radius:20px;
 }
 
-.page{
-  width:min(1050px,94%);
-  margin:28px auto 60px;
-}
-
-.header{
-  margin-bottom:26px;
-}
-
-.header h1{
-  font-size:32px;
-  font-weight:900;
-}
-
-.header p{
-  color:var(--muted);
-  margin-top:7px;
+main{
+  padding:18px;
+  padding-bottom:50px;
 }
 
 .steps{
   display:flex;
-  gap:8px;
-  margin-bottom:24px;
+  gap:7px;
+  margin-bottom:22px;
 }
 
 .step{
   flex:1;
-  height:6px;
+  height:5px;
+  background:#2a2a2a;
   border-radius:10px;
-  background:#292929;
 }
 
 .step.active{
-  background:var(--accent);
+  background:#fff;
 }
 
-.panel{
-  display:none;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:22px;
-}
-
-.panel.active{
-  display:block;
-}
-
-
-/* =========================
-   STEP 1
-========================= */
-
-.choose-panel{
-  max-width:760px;
-  margin:0 auto;
-}
-
-.choose-panel h2{
-  font-size:24px;
+h1{
+  font-size:25px;
   margin-bottom:8px;
 }
 
-.choose-subtitle{
-  color:#888;
+.subtitle{
+  color:#999;
   font-size:14px;
-  margin-bottom:28px;
+  line-height:1.5;
+  margin-bottom:25px;
 }
 
-.choice-list{
+.panel{
+  background:#111;
+  border:1px solid #252525;
+  border-radius:18px;
+  padding:18px;
+}
+
+.choice-grid{
   display:grid;
-  grid-template-columns:1fr;
   gap:13px;
 }
 
 .choice{
   width:100%;
-  min-height:76px;
-  padding:18px 20px;
-  border-radius:15px;
-  background:#1a1a1a;
+  min-height:75px;
+  border-radius:16px;
+  background:#191919;
   border:1px solid #303030;
   color:#fff;
-  font-weight:800;
-  font-size:16px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:15px;
+  padding:16px;
   text-align:left;
-  transition:.18s;
 }
 
 .choice:hover{
-  background:#202020;
-  border-color:#555;
-  transform:translateY(-1px);
+  background:#222;
 }
 
-.choice-left{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.choice-icon{
-  width:42px;
-  height:42px;
-  border-radius:11px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#252525;
-  font-size:20px;
-}
-
-.choice-arrow{
-  color:#777;
-  font-size:20px;
-}
-
-.choice.live{
-  opacity:.45;
+.choice.disabled{
+  opacity:.38;
   cursor:not-allowed;
 }
 
-.choice.live:hover{
-  background:#1a1a1a;
-  border-color:#303030;
-  transform:none;
+.choice-icon{
+  width:45px;
+  height:45px;
+  border-radius:13px;
+  background:#292929;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
 }
 
-.live-lock{
-  color:#777;
-  font-size:12px;
-  font-weight:700;
-  margin-left:auto;
-  margin-right:12px;
-}
-
-.selected-file-box{
-  display:none;
-  margin-top:22px;
-  padding:16px;
-  border-radius:14px;
-  background:#151515;
-  border:1px solid #292929;
-}
-
-.selected-file-box.show{
-  display:block;
-}
-
-.selected-file-name{
+.choice-title{
   font-weight:800;
-  font-size:14px;
-  word-break:break-word;
+  font-size:16px;
 }
 
-.selected-file-meta{
+.choice-description{
   color:#888;
   font-size:12px;
-  margin-top:6px;
+  margin-top:4px;
 }
 
-.recording-box{
-  display:none;
-  margin-top:22px;
-  padding:16px;
-  border-radius:14px;
-  background:#151515;
-  border:1px solid #292929;
-  text-align:center;
-}
-
-.recording-box.show{
-  display:block;
-}
-
-.recording-dot{
-  display:inline-block;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--accent);
-  margin-right:7px;
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-  0%,100%{opacity:1}
-  50%{opacity:.35}
-}
-
-.duration-box{
-  margin-top:18px;
-  color:#888;
-  font-size:13px;
-}
-
-.review-note{
-  margin-top:20px;
-  padding:14px;
+.file-status{
+  margin-top:15px;
+  padding:12px;
   border-radius:12px;
-  background:#191919;
-  border:1px solid #292929;
+  background:#171717;
   color:#aaa;
   font-size:13px;
-  line-height:1.5;
+  display:none;
 }
 
-.action-row{
+.file-status.show{
+  display:block;
+}
+
+.hidden{
+  display:none !important;
+}
+
+/* STEP 2 */
+
+.editor{
   display:flex;
-  gap:10px;
-  margin-top:20px;
+  flex-direction:column;
+  gap:18px;
 }
 
-.primary{
-  flex:1;
-  padding:14px;
-  border-radius:12px;
-  background:var(--accent);
-  color:#fff;
-  font-weight:900;
-}
-
-.secondary{
-  padding:14px 20px;
-  border-radius:12px;
-  background:#242424;
-  color:#fff;
-  font-weight:800;
-}
-
-.primary:disabled{
-  opacity:.45;
-}
-
-
-/* =========================
-   STEP 2
-========================= */
-
-.editor-preview{
+.preview-area{
   display:flex;
   justify-content:center;
-  margin-bottom:25px;
 }
 
-.small-phone{
+.preview-phone{
   width:260px;
-  max-width:70vw;
-  aspect-ratio:9/16;
+  height:462px;
   background:#000;
   border-radius:20px;
   overflow:hidden;
   position:relative;
-  border:1px solid #303030;
-  box-shadow:0 15px 50px rgba(0,0,0,.45);
+  border:1px solid #333;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);
 }
 
-.small-phone video{
+.preview-phone video{
   width:100%;
   height:100%;
   object-fit:cover;
@@ -341,552 +208,583 @@ button:disabled{
   background:#000;
 }
 
-.preview-overlay{
+.overlay-layer{
   position:absolute;
   inset:0;
   pointer-events:none;
+  overflow:hidden;
 }
 
-.preview-title{
+.text-overlay{
   position:absolute;
-  left:14px;
-  right:14px;
-  bottom:17px;
-  font-size:14px;
-  font-weight:800;
-  text-shadow:0 2px 8px #000;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  color:#fff;
+  font-weight:900;
+  font-size:30px;
+  text-align:center;
+  white-space:pre-wrap;
+  max-width:90%;
+  text-shadow:0 2px 7px #000;
+  padding:3px 7px;
 }
 
-.preview-controls{
-  position:absolute;
-  top:12px;
-  right:12px;
-  display:flex;
-  gap:7px;
-  pointer-events:auto;
-}
-
-.round{
-  width:34px;
-  height:34px;
-  border-radius:50%;
+.text-overlay.boxed{
   background:rgba(0,0,0,.65);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.2);
-  font-size:13px;
+  border-radius:8px;
+  text-shadow:none;
 }
 
-.media-tools{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px;
+.emoji-overlay{
+  position:absolute;
+  left:50%;
+  top:65%;
+  transform:translate(-50%,-50%);
+  font-size:65px;
+  line-height:1;
+  filter:none;
 }
 
-.tool-box{
-  background:#151515;
-  border:1px solid #292929;
+.editor-section{
+  background:#111;
+  border:1px solid #252525;
   border-radius:16px;
-  padding:17px;
+  padding:14px;
 }
 
-.tool-box h3{
-  font-size:15px;
-  margin-bottom:8px;
+.editor-section h3{
+  font-size:14px;
+  margin-bottom:11px;
 }
 
-.tool-box p{
-  color:#888;
-  font-size:12px;
-  margin-bottom:12px;
-}
-
-.filter-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
+.horizontal{
+  display:flex;
   gap:8px;
+  overflow-x:auto;
+  padding-bottom:4px;
 }
 
-.filter-btn{
-  min-height:62px;
+.horizontal::-webkit-scrollbar{
+  height:3px;
+}
+
+.tool{
+  flex:0 0 auto;
+  min-width:76px;
+  padding:9px 10px;
   border-radius:10px;
-  background:#222;
-  color:#fff;
+  background:#1c1c1c;
+  color:#ddd;
   border:1px solid #303030;
-  font-size:12px;
-  font-weight:700;
+  font-size:11px;
 }
 
-.filter-btn:hover,
-.effect-btn:hover{
-  background:#292929;
+.tool.active{
+  background:#fff;
+  color:#000;
 }
 
-.filter-btn.active{
-  border-color:var(--accent);
-  box-shadow:0 0 0 1px var(--accent);
-}
-
-.effect-grid{
+.control-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
 }
 
-.effect-btn{
-  padding:12px 5px;
-  border-radius:10px;
-  background:#222;
+.control{
+  background:#1b1b1b;
   color:#fff;
   border:1px solid #303030;
+  padding:10px 6px;
+  border-radius:10px;
   font-size:12px;
 }
 
-.effect-btn.active{
-  border-color:var(--accent);
-  box-shadow:0 0 0 1px var(--accent);
+.control.active{
+  background:#fff;
+  color:#000;
 }
-
-
-/* =========================
-   STEP 3
-========================= */
 
 .field{
-  margin-bottom:18px;
-}
-
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:800;
-  margin-bottom:7px;
-}
-
-input,
-textarea,
-select{
   width:100%;
-  border:1px solid #303030;
   background:#181818;
+  border:1px solid #303030;
+  border-radius:10px;
   color:#fff;
-  border-radius:12px;
-  padding:13px 14px;
+  padding:11px;
   outline:none;
 }
 
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:#666;
+.field:focus{
+  border-color:#777;
 }
 
-textarea{
-  min-height:130px;
+textarea.field{
   resize:vertical;
+  min-height:80px;
 }
 
-
-/* =========================
-   GLOBAL UPLOAD
-========================= */
-
-.global-upload{
-  display:none;
-  margin-bottom:20px;
-  padding:15px;
-  background:#141414;
-  border:1px solid #292929;
-  border-radius:14px;
-}
-
-.global-upload.show{
-  display:block;
-}
-
-.upload-head{
+.row{
   display:flex;
-  justify-content:space-between;
-  font-size:13px;
+  gap:8px;
+}
+
+.row>*{
+  flex:1;
+}
+
+.range-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.range-row input{
+  flex:1;
+}
+
+.range-value{
+  width:45px;
+  text-align:right;
+  color:#aaa;
+  font-size:12px;
+}
+
+label.small{
+  display:block;
+  color:#aaa;
+  font-size:11px;
+  margin:0 0 6px;
+}
+
+select.field{
+  appearance:auto;
+}
+
+.effect-status{
+  color:#999;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:9px;
+}
+
+.nav-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.primary,
+.secondary{
+  flex:1;
+  min-height:48px;
+  border-radius:13px;
   font-weight:800;
 }
 
-.upload-sub{
-  color:#888;
+.primary{
+  background:#fff;
+  color:#000;
+}
+
+.secondary{
+  background:#1c1c1c;
+  color:#fff;
+  border:1px solid #333;
+}
+
+/* STEP 3 */
+
+.form-group{
+  margin-bottom:17px;
+}
+
+.form-group label{
+  display:block;
+  color:#aaa;
   font-size:12px;
-  margin-top:5px;
+  margin-bottom:7px;
 }
 
-.progress{
-  width:100%;
+textarea.description{
+  min-height:120px;
+}
+
+.notice{
+  padding:13px;
+  background:#161616;
+  border-radius:12px;
+  color:#999;
+  font-size:12px;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+
+.upload-progress{
+  display:none;
+  margin-top:20px;
+  background:#151515;
+  border:1px solid #292929;
+  padding:14px;
+  border-radius:13px;
+}
+
+.upload-progress.show{
+  display:block;
+}
+
+.progress-track{
   height:7px;
-  background:#292929;
-  border-radius:8px;
+  background:#2a2a2a;
+  border-radius:20px;
   overflow:hidden;
-  margin-top:10px;
+  margin-top:9px;
 }
 
-.progress-fill{
-  width:0%;
+.progress-bar{
   height:100%;
-  background:var(--accent);
-  transition:width .2s;
+  width:0%;
+  background:#fff;
+  transition:width .15s linear;
+}
+
+.progress-text{
+  font-size:12px;
+  color:#aaa;
+  margin-top:7px;
 }
 
 .message{
-  min-height:20px;
-  margin-top:12px;
-  text-align:center;
+  margin-top:15px;
+  padding:12px;
+  border-radius:11px;
   font-size:13px;
-  color:#aaa;
+  display:none;
 }
 
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:800px){
-
-  .media-tools{
-    grid-template-columns:1fr;
-  }
-
-  .small-phone{
-    width:230px;
-  }
-
+.message.show{
+  display:block;
 }
 
-@media(max-width:500px){
+.message.error{
+  background:#2a1111;
+  color:#ff9d9d;
+}
 
-  .page{
-    width:96%;
-    margin-top:18px;
+.message.success{
+  background:#112a18;
+  color:#9dffb5;
+}
+
+.recording{
+  color:#ff7777 !important;
+}
+
+@media(max-width:420px){
+  main{
+    padding:14px;
   }
 
-  .panel{
-    padding:15px;
-    border-radius:15px;
+  .preview-phone{
+    width:240px;
+    height:426px;
   }
 
-  .header h1{
-    font-size:27px;
-  }
-
-  .choose-panel h2{
-    font-size:22px;
-  }
-
-  .filter-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .effect-grid{
+  .control-grid{
     grid-template-columns:repeat(2,1fr);
   }
-
-  .small-phone{
-    width:210px;
-  }
-
 }
 </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="logo">BIGULA<span>.</span></div>
-  <a class="back" href="home.html">Cancel</a>
+<div class="app">
+
+<header>
+  <button class="back" onclick="history.back()">← Back</button>
+  <div class="logo">BIGULA</div>
+  <div style="width:58px"></div>
 </header>
 
+<main>
 
-<main class="page">
+<div class="steps">
+  <div class="step active" id="stepBar1"></div>
+  <div class="step" id="stepBar2"></div>
+  <div class="step" id="stepBar3"></div>
+</div>
 
-  <div class="header">
-    <h1>Create a video</h1>
-    <p>Make it yours, then send it to BIGULA for review.</p>
-  </div>
+<!-- ================= STEP 1 ================= -->
 
+<section id="step1">
 
-  <div class="steps">
-    <div class="step active" id="stepIndicator1"></div>
-    <div class="step" id="stepIndicator2"></div>
-    <div class="step" id="stepIndicator3"></div>
-  </div>
+  <h1>Create your video</h1>
+  <p class="subtitle">
+    Choose how you want to create your BIGULA video.
+  </p>
 
+  <div class="panel">
 
-  <!-- GLOBAL UPLOAD STATUS -->
+    <div class="choice-grid">
 
-  <div class="global-upload" id="globalUpload">
-
-    <div class="upload-head">
-      <span id="globalTitle">BIGULA upload</span>
-      <span id="globalPercent">0%</span>
-    </div>
-
-    <div class="upload-sub" id="globalStatus">
-      Preparing...
-    </div>
-
-    <div class="progress">
-      <div
-        class="progress-fill"
-        id="globalFill">
-      </div>
-    </div>
-
-  </div>
-
-
-  <!-- =====================================================
-       STEP 1 — CHOOSE
-  ====================================================== -->
-
-  <section
-    class="panel active"
-    id="panel1">
-
-    <div class="choose-panel">
-
-      <h2>Choose how you want to create</h2>
-
-      <p class="choose-subtitle">
-        Select a video, record one with your camera,
-        or go live when you reach 100 followers.
-      </p>
-
-
-      <div class="choice-list">
-
-        <!-- CHOOSE VIDEO -->
-
-        <button
-          class="choice"
-          id="selectBtn">
-
-          <span class="choice-left">
-
-            <span class="choice-icon">
-              📁
-            </span>
-
-            <span>
-              Choose Video
-            </span>
-
-          </span>
-
-          <span class="choice-arrow">
-            ›
-          </span>
-
-        </button>
-
-
-        <!-- RECORD VIDEO -->
-
-        <button
-          class="choice"
-          id="cameraBtn">
-
-          <span class="choice-left">
-
-            <span class="choice-icon">
-              🎥
-            </span>
-
-            <span>
-              Record Video
-            </span>
-
-          </span>
-
-          <span class="choice-arrow">
-            ›
-          </span>
-
-        </button>
-
-
-        <!-- GO LIVE -->
-
-        <button
-          class="choice live"
-          id="liveBtn"
-          disabled>
-
-          <span class="choice-left">
-
-            <span class="choice-icon">
-              🔴
-            </span>
-
-            <span>
-              Go Live
-            </span>
-
-          </span>
-
-          <span class="live-lock">
-            100 followers required
-          </span>
-
-          <span class="choice-arrow">
-            🔒
-          </span>
-
-        </button>
-
-      </div>
-
-
-      <input
-        id="fileInput"
-        type="file"
-        accept="video/*"
-        hidden>
-
-
-      <!-- SELECTED FILE -->
-
-      <div
-        class="selected-file-box"
-        id="selectedFileBox">
-
-        <div
-          class="selected-file-name"
-          id="selectedFileName">
-          Video selected
-        </div>
-
-        <div
-          class="selected-file-meta"
-          id="selectedFileMeta">
-          Ready for editing
-        </div>
-
-      </div>
-
-
-      <!-- RECORDING STATUS -->
-
-      <div
-        class="recording-box"
-        id="recordingBox">
-
+      <button class="choice" id="chooseVideoBtn">
+        <div class="choice-icon">🎬</div>
         <div>
-          <span class="recording-dot"></span>
-          <strong id="recordingText">
-            Recording...
-          </strong>
+          <div class="choice-title">Choose Video</div>
+          <div class="choice-description">
+            Select a video from your device
+          </div>
         </div>
+      </button>
 
-        <div
-          style="color:#888;font-size:12px;margin-top:7px"
-          id="recordingTimer">
-          15 seconds maximum
+      <button class="choice" id="recordBtn">
+        <div class="choice-icon">📷</div>
+        <div>
+          <div class="choice-title">Record Video</div>
+          <div class="choice-description">
+            Record a new video with your camera
+          </div>
         </div>
+      </button>
 
-      </div>
-
-
-      <div class="duration-box">
-        <strong>Duration:</strong>
-        <span id="durationText">
-          No video selected
-        </span>
-      </div>
-
-
-      <div class="review-note">
-
-        Your video will first be uploaded privately.
-        BIGULA will then check it for copyright claims
-        and policy violations before you decide whether
-        to make it public.
-
-      </div>
-
-
-      <div class="action-row">
-
-        <button
-          class="primary"
-          id="next1"
-          disabled>
-
-          Continue
-
-        </button>
-
-      </div>
-
-
-      <div
-        class="message"
-        id="message1">
-      </div>
+      <button class="choice disabled" id="liveBtn">
+        <div class="choice-icon">🔴</div>
+        <div>
+          <div class="choice-title">Go Live</div>
+          <div class="choice-description" id="liveDescription">
+            Available after reaching 100 followers
+          </div>
+        </div>
+      </button>
 
     </div>
 
-  </section>
+    <input
+      type="file"
+      id="videoInput"
+      accept="video/*"
+      class="hidden"
+    >
+
+    <div class="file-status" id="fileStatus"></div>
+
+  </div>
+
+</section>
 
 
-  <!-- =====================================================
-       STEP 2 — EDIT
-  ====================================================== -->
+<!-- ================= STEP 2 ================= -->
 
-  <section
-    class="panel"
-    id="panel2">
+<section id="step2" class="hidden">
 
-    <h2 style="font-size:24px;margin-bottom:8px">
-      Make it yours
-    </h2>
+  <h1>Edit your video</h1>
+  <p class="subtitle">
+    Preview your video and add filters, effects, text, emojis, crop, speed and sound effects.
+  </p>
 
-    <p style="color:#888;font-size:13px;margin-bottom:22px">
-      Preview filters and effects before sending your video.
-    </p>
+  <div class="editor">
 
-
-    <!-- SMALL VIDEO PREVIEW -->
-
-    <div class="editor-preview">
-
-      <div class="small-phone">
+    <div class="preview-area">
+      <div class="preview-phone" id="previewPhone">
 
         <video
-          id="preview"
-          muted
+          id="previewVideo"
           playsinline
-          preload="metadata">
-        </video>
+          controls
+        ></video>
+
+        <div class="overlay-layer" id="overlayLayer">
+          <div class="text-overlay hidden" id="textOverlay"></div>
+          <div class="emoji-overlay hidden" id="emojiOverlay">😂</div>
+        </div>
+
+      </div>
+    </div>
 
 
-        <div class="preview-overlay">
+    <!-- FILTERS -->
 
-          <div
-            class="preview-controls">
+    <div class="editor-section">
 
-            <button
-              class="round"
-              id="playBtn">
-              ▶
-            </button>
+      <h3>Filters</h3>
 
-            <button
-              class="round"
-              id="muteBtn">
-              🔇
-            </button>
+      <div class="horizontal" id="filterList">
 
-          </div>
+        <button class="tool active" data-filter="none">Original</button>
+        <button class="tool" data-filter="cinematic">Cinematic</button>
+        <button class="tool" data-filter="vivid">Vivid</button>
+        <button class="tool" data-filter="warm">Warm</button>
+        <button class="tool" data-filter="cool">Cool</button>
+        <button class="tool" data-filter="film">Film</button>
+        <button class="tool" data-filter="retro">Retro</button>
+        <button class="tool" data-filter="dream">Dream</button>
+        <button class="tool" data-filter="noir">Noir</button>
+        <button class="tool" data-filter="faded">Faded</button>
+        <button class="tool" data-filter="moody">Moody</button>
+        <button class="tool" data-filter="sunset">Sunset</button>
+        <button class="tool" data-filter="bright">Bright</button>
+        <button class="tool" data-filter="portrait">Portrait</button>
+        <button class="tool" data-filter="soft">Soft</button>
+        <button class="tool" data-filter="contrast">High Contrast</button>
+        <button class="tool" data-filter="golden">Golden</button>
+        <button class="tool" data-filter="arctic">Arctic</button>
+        <button class="tool" data-filter="sepia">Sepia</button>
+        <button class="tool" data-filter="bw">B&W</button>
 
-          <div
-            class="preview-title"
-            id="previewTitle">
-          </div>
+      </div>
+
+    </div>
+
+
+    <!-- EFFECTS -->
+
+    <div class="editor-section">
+
+      <h3>Effects</h3>
+
+      <div class="horizontal" id="effectList">
+
+        <button class="tool active" data-effect="none">None</button>
+        <button class="tool" data-effect="glow">Glow</button>
+        <button class="tool" data-effect="vintage">Vintage</button>
+        <button class="tool" data-effect="dramatic">Dramatic</button>
+        <button class="tool" data-effect="pop">Pop</button>
+        <button class="tool" data-effect="blur">Blur</button>
+        <button class="tool" data-effect="sharpen">Sharpen</button>
+        <button class="tool" data-effect="vhs">VHS</button>
+        <button class="tool" data-effect="glitch">Glitch</button>
+        <button class="tool" data-effect="rgb">RGB Split</button>
+        <button class="tool" data-effect="pixel">Pixel</button>
+        <button class="tool" data-effect="shake">Shake</button>
+        <button class="tool" data-effect="flash">Flash</button>
+        <button class="tool" data-effect="mirror">Mirror</button>
+        <button class="tool" data-effect="negative">Negative</button>
+
+      </div>
+
+      <div class="effect-status" id="effectStatus">
+        Select an effect.
+      </div>
+
+    </div>
+
+
+    <!-- CROP -->
+
+    <div class="editor-section">
+
+      <h3>Crop</h3>
+
+      <div class="control-grid">
+
+        <button class="control active" data-crop="original">
+          Original
+        </button>
+
+        <button class="control" data-crop="9:16">
+          9:16
+        </button>
+
+        <button class="control" data-crop="1:1">
+          1:1
+        </button>
+
+        <button class="control" data-crop="4:5">
+          4:5
+        </button>
+
+        <button class="control" data-crop="16:9">
+          16:9
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- SPEED -->
+
+    <div class="editor-section">
+
+      <h3>Speed</h3>
+
+      <div class="control-grid">
+
+        <button class="control" data-speed="0.25">0.25×</button>
+        <button class="control" data-speed="0.5">0.5×</button>
+        <button class="control active" data-speed="1">1×</button>
+        <button class="control" data-speed="1.5">1.5×</button>
+        <button class="control" data-speed="2">2×</button>
+        <button class="control" data-speed="3">3×</button>
+
+      </div>
+
+    </div>
+
+
+    <!-- TEXT -->
+
+    <div class="editor-section">
+
+      <h3>Text</h3>
+
+      <div class="form-group">
+        <label>Text to place on video</label>
+        <textarea
+          class="field"
+          id="textInput"
+          placeholder="Write something..."
+        ></textarea>
+      </div>
+
+      <div class="row">
+
+        <div>
+          <label class="small">Text size</label>
+
+          <select class="field" id="textSize">
+            <option value="20">Small</option>
+            <option value="30" selected>Medium</option>
+            <option value="42">Large</option>
+            <option value="55">Extra Large</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="small">Text color</label>
+
+          <input
+            class="field"
+            type="color"
+            id="textColor"
+            value="#ffffff"
+            style="height:43px;padding:4px"
+          >
+        </div>
+
+      </div>
+
+      <div style="margin-top:10px">
+
+        <button
+          class="control"
+          id="textBackgroundBtn"
+        >
+          Add background
+        </button>
+
+      </div>
+
+      <div style="margin-top:10px">
+
+        <label class="small">Position</label>
+
+        <div class="control-grid">
+
+          <button class="control" data-textpos="top">Top</button>
+          <button class="control" data-textpos="center">Center</button>
+          <button class="control active" data-textpos="bottom">Bottom</button>
 
         </div>
 
@@ -895,196 +793,166 @@ textarea{
     </div>
 
 
-    <!-- FILTERS + EFFECTS -->
+    <!-- EMOJI -->
 
-    <div class="media-tools">
+    <div class="editor-section">
 
+      <h3>Emoji</h3>
 
-      <!-- FILTERS -->
+      <div class="horizontal" id="emojiList">
 
-      <div class="tool-box">
-
-        <h3>Filters</h3>
-
-        <p>
-          Choose a look for your video.
-        </p>
-
-
-        <div class="filter-grid">
-
-          <button
-            class="filter-btn active"
-            data-filter="none">
-            Original
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="cinematic">
-            Cinematic
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="vivid">
-            Vivid
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="warm">
-            Warm
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="cool">
-            Cool
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="film">
-            Film
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="retro">
-            Retro
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="dream">
-            Dream
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="noir">
-            Noir
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="faded">
-            Faded
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="moody">
-            Moody
-          </button>
-
-          <button
-            class="filter-btn"
-            data-filter="sunset">
-            Sunset
-          </button>
-
-        </div>
+        <button class="tool" data-emoji="😂">😂</button>
+        <button class="tool" data-emoji="🤣">🤣</button>
+        <button class="tool" data-emoji="😍">😍</button>
+        <button class="tool" data-emoji="❤️">❤️</button>
+        <button class="tool" data-emoji="🔥">🔥</button>
+        <button class="tool" data-emoji="👏">👏</button>
+        <button class="tool" data-emoji="😎">😎</button>
+        <button class="tool" data-emoji="😱">😱</button>
+        <button class="tool" data-emoji="😭">😭</button>
+        <button class="tool" data-emoji="💯">💯</button>
+        <button class="tool" data-emoji="🎉">🎉</button>
+        <button class="tool" data-emoji="👍">👍</button>
+        <button class="tool" data-emoji="👀">👀</button>
+        <button class="tool" data-emoji="💔">💔</button>
 
       </div>
 
+      <div style="margin-top:10px">
 
-      <!-- EFFECTS -->
+        <label class="small">Emoji size</label>
 
-      <div class="tool-box">
-
-        <h3>Effects</h3>
-
-        <p>
-          Add a visual touch to your preview.
-        </p>
-
-
-        <div class="effect-grid">
-
-          <button
-            class="effect-btn active"
-            data-effect="none">
-            None
-          </button>
-
-          <button
-            class="effect-btn"
-            data-effect="glow">
-            Soft Glow
-          </button>
-
-          <button
-            class="effect-btn"
-            data-effect="vintage">
-            Vintage
-          </button>
-
-          <button
-            class="effect-btn"
-            data-effect="dramatic">
-            Dramatic
-          </button>
-
-          <button
-            class="effect-btn"
-            data-effect="pop">
-            Pop
-          </button>
-
-          <button
-            class="effect-btn"
-            data-effect="fade">
-            Fade
-          </button>
-
-        </div>
+        <input
+          type="range"
+          id="emojiSize"
+          min="30"
+          max="130"
+          value="65"
+          style="width:100%"
+        >
 
       </div>
 
     </div>
 
 
-    <div class="action-row">
+    <!-- SOUND EFFECTS -->
+
+    <div class="editor-section">
+
+      <h3>Sound effects</h3>
+
+      <div class="horizontal">
+
+        <button class="tool" data-sfx="pop">Pop</button>
+        <button class="tool" data-sfx="beep">Beep</button>
+        <button class="tool" data-sfx="click">Click</button>
+        <button class="tool" data-sfx="whoosh">Whoosh</button>
+        <button class="tool" data-sfx="ding">Ding</button>
+        <button class="tool" data-sfx="laugh">Laugh</button>
+        <button class="tool" data-sfx="clear">Clear</button>
+
+      </div>
+
+      <div style="margin-top:14px">
+
+        <label class="small">
+          Sound effect position
+        </label>
+
+        <div class="range-row">
+
+          <input
+            type="range"
+            id="sfxPosition"
+            min="0"
+            max="100"
+            value="50"
+          >
+
+          <div class="range-value" id="sfxPositionValue">
+            50%
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="margin-top:12px">
+
+        <label class="small">
+          Sound effect volume
+        </label>
+
+        <div class="range-row">
+
+          <input
+            type="range"
+            id="sfxVolume"
+            min="0"
+            max="100"
+            value="70"
+          >
+
+          <div class="range-value" id="sfxVolumeValue">
+            70%
+          </div>
+
+        </div>
+
+      </div>
+
+      <div
+        id="sfxStatus"
+        class="effect-status"
+      >
+        No sound effect selected.
+      </div>
+
+    </div>
+
+
+    <div class="notice">
+      Your edits will be rendered into the video before upload.
+      Processing time depends on the length and resolution of the video.
+    </div>
+
+    <div class="nav-buttons">
 
       <button
         class="secondary"
-        id="back2">
+        id="backToStep1"
+      >
         Back
       </button>
 
       <button
         class="primary"
-        id="next2">
+        id="goStep3"
+      >
         Continue
       </button>
 
     </div>
 
+  </div>
 
-    <div
-      class="message"
-      id="message2">
-    </div>
-
-  </section>
+</section>
 
 
-  <!-- =====================================================
-       STEP 3 — DETAILS
-  ====================================================== -->
+<!-- ================= STEP 3 ================= -->
 
-  <section
-    class="panel"
-    id="panel3">
+<section id="step3" class="hidden">
 
-    <h2 style="font-size:24px;margin-bottom:22px">
-      Tell people about it
-    </h2>
+  <h1>Video details</h1>
 
+  <p class="subtitle">
+    Tell viewers what your video is about.
+  </p>
 
-    <div class="field">
+  <div class="panel">
+
+    <div class="form-group">
 
       <label for="title">
         Title
@@ -1092,52 +960,52 @@ textarea{
 
       <input
         id="title"
-        maxlength="150"
-        placeholder="Give your video a title">
+        class="field"
+        maxlength="120"
+        placeholder="Give your video a title"
+      >
 
     </div>
 
 
-    <div class="field">
+    <div class="form-group">
 
       <label for="category">
         Category
       </label>
 
-      <select id="category">
+      <select
+        id="category"
+        class="field"
+      >
 
         <option value="">
           Select category
         </option>
 
-        <option value="Entertainment">Entertainment</option>
-        <option value="Comedy">Comedy</option>
-        <option value="Music">Music</option>
-        <option value="Dance">Dance</option>
-        <option value="Sports">Sports</option>
-        <option value="Gaming">Gaming</option>
-        <option value="Education">Education</option>
-        <option value="Technology">Technology</option>
-        <option value="News">News</option>
-        <option value="Lifestyle">Lifestyle</option>
-        <option value="Travel">Travel</option>
-        <option value="Food">Food</option>
-        <option value="Fashion">Fashion</option>
-        <option value="Beauty">Beauty</option>
-        <option value="Health & Fitness">Health & Fitness</option>
-        <option value="Business">Business</option>
-        <option value="Art">Art</option>
-        <option value="Animals & Nature">Animals & Nature</option>
-        <option value="People & Blogs">People & Blogs</option>
-        <option value="Cars & Vehicles">Cars & Vehicles</option>
-        <option value="Other">Other</option>
+        <option>Entertainment</option>
+        <option>Comedy</option>
+        <option>Music</option>
+        <option>Sports</option>
+        <option>Gaming</option>
+        <option>Education</option>
+        <option>Technology</option>
+        <option>News</option>
+        <option>Fashion</option>
+        <option>Food</option>
+        <option>Travel</option>
+        <option>Nature</option>
+        <option>Animals</option>
+        <option>People</option>
+        <option>Lifestyle</option>
+        <option>Other</option>
 
       </select>
 
     </div>
 
 
-    <div class="field">
+    <div class="form-group">
 
       <label for="description">
         Description
@@ -1145,59 +1013,89 @@ textarea{
 
       <textarea
         id="description"
+        class="field description"
         maxlength="5000"
-        placeholder="Describe your video"></textarea>
+        placeholder="Tell viewers more about your video..."
+      ></textarea>
 
     </div>
 
 
-    <div class="review-note">
+    <div class="notice">
 
-      <strong>Before your video becomes public</strong><br>
+      <strong>BIGULA review</strong><br><br>
 
-      BIGULA will review the uploaded video for copyright
-      matches, including matching video segments, and policy
-      violations. Your video remains private while this review
-      is pending.
+      Your video will first be uploaded privately.
+      BIGULA can then perform copyright and content checks
+      before the video becomes publicly available.
 
     </div>
 
 
-    <div class="action-row">
+    <div class="upload-progress" id="uploadProgress">
 
-      <button
-        class="secondary"
-        id="back3">
-        Back
-      </button>
+      <div id="uploadProgressTitle">
+        Preparing upload...
+      </div>
 
-      <button
-        class="primary"
-        id="uploadBtn">
-        Upload for review
-      </button>
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          id="progressBar"
+        ></div>
+
+      </div>
+
+      <div
+        class="progress-text"
+        id="progressText"
+      >
+        0%
+      </div>
 
     </div>
 
 
     <div
       class="message"
-      id="message3">
+      id="message"
+    ></div>
+
+
+    <div class="nav-buttons">
+
+      <button
+        class="secondary"
+        id="backToStep2"
+      >
+        Back
+      </button>
+
+      <button
+        class="primary"
+        id="uploadBtn"
+      >
+        Upload Video
+      </button>
+
     </div>
 
-  </section>
+  </div>
+
+</section>
 
 </main>
+</div>
 
 
 <script type="module">
 
-import {
-  createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { createClient }
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 import * as tus
-  from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
+from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
 
 
 /* =========================================================
@@ -1210,92 +1108,85 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-
 const supabase =
   createClient(
     SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth:{
-        persistSession:true,
-        autoRefreshToken:true,
-        detectSessionInUrl:true,
-        flowType:"pkce"
-      }
-    }
+    SUPABASE_KEY
   );
 
 
 /* =========================================================
-   STATE
+   GLOBAL STATE
 ========================================================= */
 
-let currentUser = null;
 let selectedFile = null;
-let mediaStream = null;
-let mediaRecorder = null;
+let processedFile = null;
 
-let selectedFilter = "none";
-let selectedEffect = "none";
+let currentFilter = "none";
+let currentEffect = "none";
+let currentCrop = "original";
+let currentSpeed = 1;
+
+let textValue = "";
+let textColor = "#ffffff";
+let textSize = 30;
+let textPosition = "bottom";
+let textBackground = false;
+
+let emojiValue = "";
+let emojiSize = 65;
+
+let selectedSfx = null;
+let sfxPosition = 50;
+let sfxVolume = 70;
+
+let videoDuration = 0;
+
+let recording = false;
 
 
 /* =========================================================
    ELEMENTS
 ========================================================= */
 
-const panels = [
-  document.getElementById("panel1"),
-  document.getElementById("panel2"),
-  document.getElementById("panel3")
-];
+const step1 =
+  document.getElementById("step1");
 
-const indicators = [
-  document.getElementById("stepIndicator1"),
-  document.getElementById("stepIndicator2"),
-  document.getElementById("stepIndicator3")
-];
+const step2 =
+  document.getElementById("step2");
 
-const preview =
-  document.getElementById("preview");
+const step3 =
+  document.getElementById("step3");
 
-const durationText =
-  document.getElementById("durationText");
+const stepBar1 =
+  document.getElementById("stepBar1");
 
-const previewTitle =
-  document.getElementById("previewTitle");
+const stepBar2 =
+  document.getElementById("stepBar2");
 
-const globalUpload =
-  document.getElementById("globalUpload");
+const stepBar3 =
+  document.getElementById("stepBar3");
 
-const globalPercent =
-  document.getElementById("globalPercent");
+const videoInput =
+  document.getElementById("videoInput");
 
-const globalStatus =
-  document.getElementById("globalStatus");
+const fileStatus =
+  document.getElementById("fileStatus");
 
-const globalFill =
-  document.getElementById("globalFill");
+const previewVideo =
+  document.getElementById("previewVideo");
 
-const selectedFileBox =
-  document.getElementById("selectedFileBox");
+const previewPhone =
+  document.getElementById("previewPhone");
 
-const selectedFileName =
-  document.getElementById("selectedFileName");
+const overlayLayer =
+  document.getElementById("overlayLayer");
 
-const selectedFileMeta =
-  document.getElementById("selectedFileMeta");
+const textOverlay =
+  document.getElementById("textOverlay");
 
-const recordingBox =
-  document.getElementById("recordingBox");
-
-const recordingText =
-  document.getElementById("recordingText");
-
-const recordingTimer =
-  document.getElementById("recordingTimer");
-
-const next1 =
-  document.getElementById("next1");
+const emojiOverlay =
+  document.getElementById("emojiOverlay");
 
 
 /* =========================================================
@@ -1304,633 +1195,320 @@ const next1 =
 
 function showStep(number){
 
-  panels.forEach(
-    (panel,index)=>{
-      panel.classList.toggle(
-        "active",
-        index === number - 1
-      );
-    }
-  );
+  step1.classList.add("hidden");
+  step2.classList.add("hidden");
+  step3.classList.add("hidden");
 
+  stepBar1.classList.remove("active");
+  stepBar2.classList.remove("active");
+  stepBar3.classList.remove("active");
 
-  indicators.forEach(
-    (indicator,index)=>{
-      indicator.classList.toggle(
-        "active",
-        index <= number - 1
-      );
-    }
-  );
+  if(number === 1){
 
-
-  /*
-    Step 2 is the FIRST place where the video
-    preview is loaded.
-  */
-
-  if(number === 2){
-
-    loadEditorPreview();
+    step1.classList.remove("hidden");
+    stepBar1.classList.add("active");
 
   }
 
+  if(number === 2){
+
+    step2.classList.remove("hidden");
+
+    stepBar1.classList.add("active");
+    stepBar2.classList.add("active");
+
+  }
+
+  if(number === 3){
+
+    step3.classList.remove("hidden");
+
+    stepBar1.classList.add("active");
+    stepBar2.classList.add("active");
+    stepBar3.classList.add("active");
+
+  }
 
   window.scrollTo({
     top:0,
     behavior:"smooth"
   });
-
 }
 
 
 /* =========================================================
-   AUTH
+   FILE SELECTION
 ========================================================= */
 
-async function requireUser(){
+document
+.getElementById("chooseVideoBtn")
+.addEventListener("click", () => {
 
-  const {
-    data:{
-      session
-    },
-    error
-  } =
-    await supabase.auth.getSession();
+  videoInput.click();
 
+});
 
-  if(error){
 
-    console.error(
-      "Session error:",
-      error
-    );
-
-  }
-
-
-  if(session?.user){
-
-    currentUser =
-      session.user;
-
-    return currentUser;
-
-  }
-
-
-  const params =
-    new URLSearchParams(
-      location.search
-    );
-
-
-  const code =
-    params.get("code");
-
-
-  if(code){
-
-    const result =
-      await supabase.auth.exchangeCodeForSession(
-        code
-      );
-
-
-    if(
-      !result.error &&
-      result.data.session?.user
-    ){
-
-      currentUser =
-        result.data.session.user;
-
-
-      history.replaceState(
-        {},
-        document.title,
-        location.pathname
-      );
-
-
-      return currentUser;
-
-    }
-
-  }
-
-
-  location.replace(
-    "signup.html"
-  );
-
-
-  return null;
-
-}
-
-
-/* =========================================================
-   GO LIVE — 100 FOLLOWER CHECK
-========================================================= */
-
-async function checkLiveEligibility(){
-
-  const liveBtn =
-    document.getElementById("liveBtn");
-
-
-  if(!currentUser){
-
-    liveBtn.disabled = true;
-    liveBtn.classList.add("live");
-
-    return;
-
-  }
-
-
-  try{
-
-    /*
-      BIGULA follower relationship:
-      follower_id = the person following
-      following_id = the creator being followed
-
-      We count rows where the current user
-      is the account being followed.
-    */
-
-    const {
-      count,
-      error
-    } =
-      await supabase
-        .from("followers")
-        .select(
-          "*",
-          {
-            count:"exact",
-            head:true
-          }
-        )
-        .eq(
-          "following_id",
-          currentUser.id
-        );
-
-
-    if(error){
-
-      console.warn(
-        "Follower count unavailable:",
-        error
-      );
-
-      /*
-        Fail closed:
-        Go Live stays disabled if the count
-        cannot safely be verified.
-      */
-
-      liveBtn.disabled = true;
-      liveBtn.classList.add("live");
-
-      return;
-
-    }
-
-
-    const followers =
-      Number(count || 0);
-
-
-    if(followers >= 100){
-
-      liveBtn.disabled = false;
-      liveBtn.classList.remove("live");
-
-      liveBtn.querySelector(
-        ".live-lock"
-      ).textContent =
-        "Ready";
-
-      liveBtn.querySelector(
-        ".choice-arrow"
-      ).textContent =
-        "›";
-
-    }else{
-
-      liveBtn.disabled = true;
-      liveBtn.classList.add("live");
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "Live eligibility error:",
-      error
-    );
-
-    liveBtn.disabled = true;
-    liveBtn.classList.add("live");
-
-  }
-
-}
-
-
-/* =========================================================
-   SELECT VIDEO
-========================================================= */
-
-document.getElementById(
-  "selectBtn"
-).onclick = ()=>{
-
-  document.getElementById(
-    "fileInput"
-  ).click();
-
-};
-
-
-document.getElementById(
-  "fileInput"
-).onchange = event=>{
+videoInput.addEventListener("change", () => {
 
   const file =
-    event.target.files?.[0];
+    videoInput.files?.[0];
+
+  if(!file) return;
+
+  if(!file.type.startsWith("video/")){
+
+    showMessage(
+      "Please select a valid video file.",
+      true
+    );
+
+    return;
+  }
+
+  setSelectedVideo(file);
+
+});
 
 
-  if(!file)return;
+function setSelectedVideo(file){
 
+  selectedFile = file;
+  processedFile = file;
 
-  selectedFile =
-    file;
+  fileStatus.classList.add("show");
 
+  fileStatus.textContent =
+    "Selected: " +
+    file.name +
+    " • " +
+    formatBytes(file.size);
 
-  selectedFileBox.classList.add(
-    "show"
-  );
-
-
-  selectedFileName.textContent =
-    file.name;
-
-
-  selectedFileMeta.textContent =
-    formatFileSize(file.size);
-
-
-  next1.disabled =
-    false;
-
-
-  /*
-    IMPORTANT:
-    NO PREVIEW IS CREATED HERE.
-    Step 1 deliberately has no video preview.
-  */
-
-  durationText.textContent =
-    "Reading duration...";
-
-
-  const metadataVideo =
-    document.createElement("video");
-
-
-  metadataVideo.preload =
-    "metadata";
-
-
-  metadataVideo.onloadedmetadata =
-    ()=>{
-
-      const seconds =
-        Math.round(
-          metadataVideo.duration
-        );
-
-
-      durationText.textContent =
-        `${seconds} seconds`;
-
-
-      URL.revokeObjectURL(
-        metadataVideo.src
-      );
-
-    };
-
-
-  metadataVideo.onerror =
-    ()=>{
-
-      durationText.textContent =
-        "Duration unavailable";
-
-    };
-
-
-  metadataVideo.src =
+  const url =
     URL.createObjectURL(file);
 
-};
+  previewVideo.src = url;
 
+  previewVideo.load();
 
-/* =========================================================
-   FILE SIZE
-========================================================= */
-
-function formatFileSize(bytes){
-
-  if(!bytes)return "0 B";
-
-
-  const units =
-    ["B","KB","MB","GB"];
-
-
-  const index =
-    Math.floor(
-      Math.log(bytes) /
-      Math.log(1024)
-    );
-
-
-  const value =
-    bytes /
-    Math.pow(
-      1024,
-      index
-    );
-
-
-  return (
-    value.toFixed(
-      index === 0 ? 0 : 1
-    ) +
-    " " +
-    units[index]
-  );
+  showStep(2);
 
 }
 
 
 /* =========================================================
-   RECORD VIDEO
+   CAMERA
 ========================================================= */
 
-document.getElementById(
-  "cameraBtn"
-).onclick =
-async ()=>{
+document
+.getElementById("recordBtn")
+.addEventListener("click", startCameraRecording);
 
-  const message =
-    document.getElementById(
-      "message1"
+
+async function startCameraRecording(){
+
+  if(recording) return;
+
+  if(!window.isSecureContext){
+
+    showMessage(
+      "Camera access requires a secure HTTPS page. Open BIGULA through HTTPS instead of HTTP.",
+      true
     );
 
+    return;
+  }
+
+  if(!navigator.mediaDevices ||
+     !navigator.mediaDevices.getUserMedia){
+
+    showMessage(
+      "This browser or app does not provide camera access. Try Chrome/Safari or enable camera support in the BIGULA Android wrapper.",
+      true
+    );
+
+    return;
+  }
 
   try{
 
-    /*
-      The camera stream is NEVER displayed
-      in the page.
-
-      BIGULA simply records it.
-    */
-
-    mediaStream =
+    const stream =
       await navigator.mediaDevices.getUserMedia({
-        video:true,
+        video:{
+          facingMode:"user"
+        },
         audio:true
       });
 
-
     const mimeTypes = [
+
       "video/webm;codecs=vp9,opus",
       "video/webm;codecs=vp8,opus",
-      "video/webm"
-    ];
+      "video/webm",
+      "video/mp4"
 
+    ];
 
     let mimeType = "";
 
-
-    for(
-      const type of mimeTypes
-    ){
+    for(const type of mimeTypes){
 
       if(
-        MediaRecorder.isTypeSupported(
-          type
-        )
+        window.MediaRecorder &&
+        MediaRecorder.isTypeSupported &&
+        MediaRecorder.isTypeSupported(type)
       ){
 
-        mimeType =
-          type;
-
+        mimeType = type;
         break;
-
       }
 
     }
 
+    if(!window.MediaRecorder){
 
-    mediaRecorder =
-      new MediaRecorder(
-        mediaStream,
-        mimeType
-          ? {mimeType}
-          : undefined
+      stream.getTracks().forEach(
+        track => track.stop()
       );
 
+      showMessage(
+        "Video recording is not supported by this browser.",
+        true
+      );
+
+      return;
+    }
+
+    const recorder =
+      mimeType
+      ? new MediaRecorder(
+          stream,
+          {mimeType}
+        )
+      : new MediaRecorder(stream);
 
     const chunks = [];
 
+    recording = true;
 
-    mediaRecorder.ondataavailable =
-      event=>{
+    const recordButton =
+      document.getElementById("recordBtn");
 
-        if(event.data?.size){
+    recordButton.classList.add("recording");
 
-          chunks.push(
-            event.data
-          );
+    recordButton.querySelector(
+      ".choice-title"
+    ).textContent =
+      "Recording...";
 
+    recorder.ondataavailable =
+      event => {
+
+        if(event.data &&
+           event.data.size > 0){
+
+          chunks.push(event.data);
         }
 
       };
 
 
-    mediaRecorder.onstop =
-      ()=>{
-
-        selectedFile =
-          new Blob(
-            chunks,
-            {
-              type:
-                mediaRecorder.mimeType ||
-                "video/webm"
-            }
-          );
-
-
-        if(mediaStream){
-
-          mediaStream
-            .getTracks()
-            .forEach(
-              track =>
-                track.stop()
-            );
-
-        }
-
-
-        mediaStream =
-          null;
-
-
-        recordingBox.classList.remove(
-          "show"
-        );
-
-
-        selectedFileBox.classList.add(
-          "show"
-        );
-
-
-        selectedFileName.textContent =
-          "Recorded video";
-
-
-        selectedFileMeta.textContent =
-          formatFileSize(
-            selectedFile.size
-          );
-
-
-        durationText.textContent =
-          "15 seconds maximum";
-
-
-        next1.disabled =
-          false;
-
-
-        message.textContent =
-          "✓ Recording complete. Continue to edit your video.";
-
-      };
-
-
-    mediaRecorder.onerror =
-      event=>{
+    recorder.onerror =
+      event => {
 
         console.error(
           "Recorder error:",
-          event.error
+          event
         );
 
+        stopCameraStream(stream);
 
-        if(mediaStream){
+        recording = false;
 
-          mediaStream
-            .getTracks()
-            .forEach(
-              track =>
-                track.stop()
-            );
-
-        }
-
-
-        mediaStream =
-          null;
-
-
-        recordingBox.classList.remove(
-          "show"
+        recordButton.classList.remove(
+          "recording"
         );
 
-
-        message.textContent =
-          "Recording failed. Please try again.";
+        showMessage(
+          "The camera recorder encountered an error.",
+          true
+        );
 
       };
 
 
-    recordingBox.classList.add(
-      "show"
-    );
+    recorder.onstop = () => {
 
+      stopCameraStream(stream);
 
-    recordingText.textContent =
-      "Recording...";
+      recording = false;
 
-
-    recordingTimer.textContent =
-      "15 seconds maximum";
-
-
-    message.textContent =
-      "";
-
-
-    mediaRecorder.start();
-
-
-    let remaining = 15;
-
-
-    const countdown =
-      setInterval(
-        ()=>{
-
-          remaining--;
-
-
-          recordingTimer.textContent =
-            `${remaining} second${remaining === 1 ? "" : "s"} remaining`;
-
-
-          if(remaining <= 0){
-
-            clearInterval(
-              countdown
-            );
-
-          }
-
-        },
-        1000
+      recordButton.classList.remove(
+        "recording"
       );
 
+      recordButton.querySelector(
+        ".choice-title"
+      ).textContent =
+        "Record Video";
 
-    setTimeout(
-      ()=>{
+      if(!chunks.length){
 
-        if(
-          mediaRecorder &&
-          mediaRecorder.state ===
-          "recording"
-        ){
+        showMessage(
+          "No video was recorded.",
+          true
+        );
 
-          mediaRecorder.stop();
+        return;
+      }
 
-        }
+      const blob =
+        new Blob(
+          chunks,
+          {
+            type:
+              mimeType ||
+              "video/webm"
+          }
+        );
 
-      },
-      15000
-    );
+      const extension =
+        blob.type.includes("mp4")
+        ? "mp4"
+        : "webm";
+
+      const file =
+        new File(
+          [blob],
+          "BIGULA_recording." + extension,
+          {
+            type:blob.type
+          }
+        );
+
+      setSelectedVideo(file);
+
+    };
+
+
+    recorder.start(250);
+
+    /*
+      BIGULA recording currently records
+      up to 60 seconds.
+    */
+    setTimeout(() => {
+
+      if(
+        recording &&
+        recorder.state === "recording"
+      ){
+
+        recorder.stop();
+
+      }
+
+    },60000);
 
 
   }catch(error){
@@ -1940,1125 +1518,3192 @@ async ()=>{
       error
     );
 
+    recording = false;
 
-    if(mediaStream){
+    let message =
+      "Camera access was denied.";
 
-      mediaStream
-        .getTracks()
-        .forEach(
-          track =>
-            track.stop()
-        );
+    if(error.name === "NotAllowedError"){
+
+      message =
+        "Camera permission was denied. Allow Camera and Microphone permission for BIGULA in your browser or Android app settings, then try again.";
+
+    }else if(error.name === "NotFoundError"){
+
+      message =
+        "No camera was found on this device.";
+
+    }else if(error.name === "NotReadableError"){
+
+      message =
+        "The camera is already being used by another application.";
+
+    }else if(error.name === "SecurityError"){
+
+      message =
+        "The browser blocked camera access for security reasons. BIGULA must run through HTTPS.";
+
+    }else if(error.name === "AbortError"){
+
+      message =
+        "Camera access was interrupted. Please try again.";
 
     }
 
-
-    mediaStream =
-      null;
-
-
-    recordingBox.classList.remove(
-      "show"
+    showMessage(
+      message,
+      true
     );
-
-
-    message.textContent =
-      "Camera access was denied or unavailable.";
 
   }
 
-};
+}
+
+
+function stopCameraStream(stream){
+
+  stream
+  .getTracks()
+  .forEach(
+    track => track.stop()
+  );
+
+}
 
 
 /* =========================================================
-   STEP 2 PREVIEW
+   GO LIVE
 ========================================================= */
 
-function loadEditorPreview(){
+document
+.getElementById("liveBtn")
+.addEventListener("click", () => {
 
-  if(!selectedFile)return;
+  showMessage(
+    "Go Live is not available until the account reaches 100 followers.",
+    true
+  );
+
+});
 
 
-  const objectUrl =
-    URL.createObjectURL(
-      selectedFile
+async function checkFollowerCount(){
+
+  const liveBtn =
+    document.getElementById("liveBtn");
+
+  const description =
+    document.getElementById(
+      "liveDescription"
     );
 
+  try{
 
-  /*
-    Release previous object URL if one exists.
-  */
+    const {
+      data:{
+        session
+      }
+    } =
+      await supabase.auth.getSession();
 
-  if(preview.dataset.objectUrl){
+    if(!session){
 
-    try{
+      liveBtn.classList.add("disabled");
 
-      URL.revokeObjectURL(
-        preview.dataset.objectUrl
+      return;
+    }
+
+    const userId =
+      session.user.id;
+
+    const {
+      count,
+      error
+    } =
+      await supabase
+      .from("followers")
+      .select("*",{
+        count:"exact",
+        head:true
+      })
+      .eq(
+        "following_id",
+        userId
       );
 
-    }catch(e){}
+    if(error){
+
+      console.warn(
+        "Follower count error:",
+        error
+      );
+
+      liveBtn.classList.add("disabled");
+
+      return;
+    }
+
+    if((count || 0) >= 100){
+
+      liveBtn.classList.remove(
+        "disabled"
+      );
+
+      description.textContent =
+        "Start a live video";
+
+      liveBtn.onclick =
+        () => {
+
+          showMessage(
+            "Live streaming setup will be connected next.",
+            false
+          );
+
+        };
+
+    }
+
+  }catch(error){
+
+    console.warn(error);
 
   }
 
-
-  preview.dataset.objectUrl =
-    objectUrl;
-
-
-  preview.src =
-    objectUrl;
-
-
-  preview.load();
-
-
-  preview.onloadedmetadata =
-    ()=>{
-
-      /*
-        Small preview begins playing automatically
-        once Step 2 is reached.
-      */
-
-      preview.play().catch(
-        ()=>{}
-      );
-
-    };
-
-
-  preview.onended =
-    ()=>{
-
-      preview.currentTime = 0;
-
-      preview.play().catch(
-        ()=>{}
-      );
-
-    };
-
-
-  applyVisualStyle();
-
 }
+
+checkFollowerCount();
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+previewVideo.addEventListener(
+  "loadedmetadata",
+  () => {
+
+    videoDuration =
+      previewVideo.duration || 0;
+
+    document
+    .getElementById(
+      "sfxPosition"
+    )
+    .max =
+      100;
+
+  }
+);
 
 
 /* =========================================================
    FILTERS
 ========================================================= */
 
-const filterStyles = {
+const filterMap = {
 
   none:
     "none",
 
   cinematic:
-    "contrast(1.12) saturate(.88) brightness(.92)",
+    "contrast(1.15) saturate(.9) brightness(.9)",
 
   vivid:
-    "contrast(1.12) saturate(1.45)",
+    "saturate(1.65) contrast(1.12)",
 
   warm:
-    "sepia(.18) saturate(1.2) contrast(1.05)",
+    "sepia(.12) saturate(1.2) contrast(1.04)",
 
   cool:
-    "saturate(.9) hue-rotate(12deg) brightness(1.03)",
+    "saturate(.9) hue-rotate(18deg) brightness(1.02)",
 
   film:
-    "contrast(1.18) saturate(.82) sepia(.08)",
+    "contrast(1.1) saturate(.82) sepia(.08)",
 
   retro:
-    "sepia(.28) contrast(1.08) saturate(.85)",
+    "sepia(.3) saturate(1.25) contrast(1.05)",
 
   dream:
-    "brightness(1.08) contrast(.88) saturate(.95)",
+    "brightness(1.08) saturate(.8) blur(.25px)",
 
   noir:
-    "grayscale(1) contrast(1.35)",
+    "grayscale(1) contrast(1.45)",
 
   faded:
-    "contrast(.82) saturate(.72) brightness(1.06)",
+    "contrast(.82) saturate(.7) brightness(1.08)",
 
   moody:
-    "brightness(.82) contrast(1.2) saturate(.85)",
+    "brightness(.78) contrast(1.2) saturate(.85)",
 
   sunset:
-    "sepia(.18) saturate(1.5) hue-rotate(-8deg)"
+    "sepia(.18) saturate(1.45) hue-rotate(-8deg)",
+
+  bright:
+    "brightness(1.22) contrast(1.02)",
+
+  portrait:
+    "contrast(1.04) saturate(.92) brightness(1.05)",
+
+  soft:
+    "brightness(1.04) contrast(.9) saturate(.88) blur(.18px)",
+
+  contrast:
+    "contrast(1.5) saturate(1.1)",
+
+  golden:
+    "sepia(.22) saturate(1.35) brightness(1.04)",
+
+  arctic:
+    "saturate(.82) hue-rotate(25deg) brightness(1.08)",
+
+  sepia:
+    "sepia(1)",
+
+  bw:
+    "grayscale(1)"
 
 };
 
 
 document
-  .querySelectorAll(".filter-btn")
-  .forEach(button=>{
+.querySelectorAll(
+  "[data-filter]"
+)
+.forEach(button => {
 
-    button.onclick = ()=>{
+  button.addEventListener(
+    "click",
+    () => {
 
       document
-        .querySelectorAll(".filter-btn")
-        .forEach(
-          b =>
-            b.classList.remove(
-              "active"
-            )
-        );
-
-
-      button.classList.add(
-        "active"
+      .querySelectorAll(
+        "[data-filter]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
       );
 
+      button.classList.add("active");
 
-      selectedFilter =
+      currentFilter =
         button.dataset.filter;
 
+      applyPreview();
 
-      applyVisualStyle();
+    }
+  );
 
-    };
-
-  });
+});
 
 
 /* =========================================================
    EFFECTS
 ========================================================= */
 
-document
-  .querySelectorAll(".effect-btn")
-  .forEach(button=>{
+const effectMap = {
 
-    button.onclick = ()=>{
+  none:
+    "",
+
+  glow:
+    "brightness(1.08) saturate(1.12)",
+
+  vintage:
+    "sepia(.3) contrast(1.08) saturate(.82)",
+
+  dramatic:
+    "contrast(1.45) brightness(.88)",
+
+  pop:
+    "saturate(1.55) contrast(1.2)",
+
+  blur:
+    "blur(2px)",
+
+  sharpen:
+    "contrast(1.2) saturate(1.12)",
+
+  vhs:
+    "contrast(1.15) saturate(1.1) hue-rotate(-5deg)",
+
+  glitch:
+    "contrast(1.35) saturate(1.5)",
+
+  rgb:
+    "saturate(1.35)",
+
+  pixel:
+    "contrast(1.25) saturate(1.15)",
+
+  shake:
+    "",
+
+  flash:
+    "brightness(1.35)",
+
+  mirror:
+    "",
+
+  negative:
+    "invert(1)"
+
+};
+
+
+document
+.querySelectorAll(
+  "[data-effect]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
 
       document
-        .querySelectorAll(".effect-btn")
-        .forEach(
-          b =>
-            b.classList.remove(
-              "active"
-            )
-        );
-
-
-      button.classList.add(
-        "active"
+      .querySelectorAll(
+        "[data-effect]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
       );
 
+      button.classList.add("active");
 
-      selectedEffect =
+      currentEffect =
         button.dataset.effect;
 
+      applyPreview();
 
-      applyVisualStyle();
+      document
+      .getElementById(
+        "effectStatus"
+      )
+      .textContent =
+        "Effect: " +
+        button.textContent;
 
-    };
+    }
+  );
 
-  });
-
-
-/* =========================================================
-   COMBINED FILTER + EFFECT PREVIEW
-========================================================= */
-
-function applyVisualStyle(){
-
-  if(!preview)return;
+});
 
 
-  const baseFilter =
-    filterStyles[selectedFilter] ||
+function applyPreview(){
+
+  const filter =
+    filterMap[currentFilter] ||
     "none";
 
+  const effect =
+    effectMap[currentEffect] ||
+    "";
 
-  let effectFilter =
-    "none";
+  previewVideo.style.filter =
+    filter === "none"
+    ? effect
+    : filter + " " + effect;
 
+  if(currentEffect === "mirror"){
 
-  switch(selectedEffect){
-
-    case "vintage":
-
-      effectFilter =
-        "sepia(.3) contrast(1.1)";
-
-      break;
-
-
-    case "dramatic":
-
-      effectFilter =
-        "contrast(1.35) saturate(.9)";
-
-      break;
-
-
-    case "pop":
-
-      effectFilter =
-        "contrast(1.18) saturate(1.5)";
-
-      break;
-
-
-    case "fade":
-
-      effectFilter =
-        "brightness(1.08) contrast(.85)";
-
-      break;
-
-
-    default:
-
-      effectFilter =
-        "none";
-
-  }
-
-
-  if(
-    baseFilter === "none" &&
-    effectFilter === "none"
-  ){
-
-    preview.style.filter =
-      "none";
+    previewVideo.style.transform =
+      "scaleX(-1)";
 
   }else{
 
-    preview.style.filter =
-      `${baseFilter} ${effectFilter}`;
+    previewVideo.style.transform =
+      "none";
+
+  }
+
+  if(currentEffect === "shake"){
+
+    previewVideo.style.animation =
+      "bigulaShake .18s infinite";
+
+  }else{
+
+    previewVideo.style.animation =
+      "none";
+
+  }
+
+}
+
+
+/* =========================================================
+   DYNAMIC SHAKE ANIMATION
+========================================================= */
+
+const shakeStyle =
+document.createElement("style");
+
+shakeStyle.textContent = `
+@keyframes bigulaShake{
+  0%{transform:translate(0,0)}
+  25%{transform:translate(2px,-1px)}
+  50%{transform:translate(-2px,2px)}
+  75%{transform:translate(1px,1px)}
+  100%{transform:translate(0,0)}
+}
+`;
+
+document.head.appendChild(
+  shakeStyle
+);
+
+
+/* =========================================================
+   CROP
+========================================================= */
+
+document
+.querySelectorAll(
+  "[data-crop]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      document
+      .querySelectorAll(
+        "[data-crop]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      currentCrop =
+        button.dataset.crop;
+
+      applyCropPreview();
+
+    }
+  );
+
+});
+
+
+function applyCropPreview(){
+
+  previewPhone.style.aspectRatio =
+    "9 / 16";
+
+  if(currentCrop === "1:1"){
+
+    previewPhone.style.aspectRatio =
+      "1 / 1";
+
+  }
+
+  if(currentCrop === "4:5"){
+
+    previewPhone.style.aspectRatio =
+      "4 / 5";
+
+  }
+
+  if(currentCrop === "16:9"){
+
+    previewPhone.style.aspectRatio =
+      "16 / 9";
+
+  }
+
+  if(currentCrop === "9:16"){
+
+    previewPhone.style.aspectRatio =
+      "9 / 16";
+
+  }
+
+}
+
+
+/* =========================================================
+   SPEED
+========================================================= */
+
+document
+.querySelectorAll(
+  "[data-speed]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      document
+      .querySelectorAll(
+        "[data-speed]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      currentSpeed =
+        Number(
+          button.dataset.speed
+        );
+
+      previewVideo.playbackRate =
+        currentSpeed;
+
+    }
+  );
+
+});
+
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+document
+.getElementById("textInput")
+.addEventListener(
+  "input",
+  event => {
+
+    textValue =
+      event.target.value;
+
+    updateTextOverlay();
+
+  }
+);
+
+
+document
+.getElementById("textSize")
+.addEventListener(
+  "change",
+  event => {
+
+    textSize =
+      Number(event.target.value);
+
+    updateTextOverlay();
+
+  }
+);
+
+
+document
+.getElementById("textColor")
+.addEventListener(
+  "input",
+  event => {
+
+    textColor =
+      event.target.value;
+
+    updateTextOverlay();
+
+  }
+);
+
+
+document
+.getElementById(
+  "textBackgroundBtn"
+)
+.addEventListener(
+  "click",
+  event => {
+
+    textBackground =
+      !textBackground;
+
+    event.target.classList.toggle(
+      "active",
+      textBackground
+    );
+
+    updateTextOverlay();
+
+  }
+);
+
+
+document
+.querySelectorAll(
+  "[data-textpos]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      document
+      .querySelectorAll(
+        "[data-textpos]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      textPosition =
+        button.dataset.textpos;
+
+      updateTextOverlay();
+
+    }
+  );
+
+});
+
+
+function updateTextOverlay(){
+
+  if(!textValue.trim()){
+
+    textOverlay.classList.add(
+      "hidden"
+    );
+
+    return;
+  }
+
+  textOverlay.classList.remove(
+    "hidden"
+  );
+
+  textOverlay.textContent =
+    textValue;
+
+  textOverlay.style.color =
+    textColor;
+
+  textOverlay.style.fontSize =
+    textSize + "px";
+
+  textOverlay.classList.toggle(
+    "boxed",
+    textBackground
+  );
+
+  if(textPosition === "top"){
+
+    textOverlay.style.top =
+      "13%";
+
+  }else if(textPosition === "center"){
+
+    textOverlay.style.top =
+      "50%";
+
+  }else{
+
+    textOverlay.style.top =
+      "84%";
+
+  }
+
+}
+
+
+/* =========================================================
+   EMOJI
+========================================================= */
+
+document
+.querySelectorAll(
+  "[data-emoji]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      document
+      .querySelectorAll(
+        "[data-emoji]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      emojiValue =
+        button.dataset.emoji;
+
+      updateEmojiOverlay();
+
+    }
+  );
+
+});
+
+
+document
+.getElementById("emojiSize")
+.addEventListener(
+  "input",
+  event => {
+
+    emojiSize =
+      Number(event.target.value);
+
+    updateEmojiOverlay();
+
+  }
+);
+
+
+function updateEmojiOverlay(){
+
+  if(!emojiValue){
+
+    emojiOverlay.classList.add(
+      "hidden"
+    );
+
+    return;
+  }
+
+  emojiOverlay.classList.remove(
+    "hidden"
+  );
+
+  emojiOverlay.textContent =
+    emojiValue;
+
+  emojiOverlay.style.fontSize =
+    emojiSize + "px";
+
+}
+
+
+/* =========================================================
+   SOUND EFFECTS
+========================================================= */
+
+document
+.querySelectorAll(
+  "[data-sfx]"
+)
+.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      const name =
+        button.dataset.sfx;
+
+      if(name === "clear"){
+
+        selectedSfx = null;
+
+        document
+        .querySelectorAll(
+          "[data-sfx]"
+        )
+        .forEach(
+          b => b.classList.remove("active")
+        );
+
+        document
+        .getElementById(
+          "sfxStatus"
+        )
+        .textContent =
+          "No sound effect selected.";
+
+        return;
+      }
+
+      document
+      .querySelectorAll(
+        "[data-sfx]"
+      )
+      .forEach(
+        b => b.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      selectedSfx =
+        name;
+
+      updateSfxStatus();
+
+      previewSoundEffect();
+
+    }
+  );
+
+});
+
+
+document
+.getElementById("sfxPosition")
+.addEventListener(
+  "input",
+  event => {
+
+    sfxPosition =
+      Number(event.target.value);
+
+    document
+    .getElementById(
+      "sfxPositionValue"
+    )
+    .textContent =
+      sfxPosition + "%";
+
+    updateSfxStatus();
+
+  }
+);
+
+
+document
+.getElementById("sfxVolume")
+.addEventListener(
+  "input",
+  event => {
+
+    sfxVolume =
+      Number(event.target.value);
+
+    document
+    .getElementById(
+      "sfxVolumeValue"
+    )
+    .textContent =
+      sfxVolume + "%";
+
+  }
+);
+
+
+function updateSfxStatus(){
+
+  if(!selectedSfx){
+
+    document
+    .getElementById(
+      "sfxStatus"
+    )
+    .textContent =
+      "No sound effect selected.";
+
+    return;
+  }
+
+  const seconds =
+    videoDuration
+    ? (
+        videoDuration *
+        (sfxPosition / 100)
+      ).toFixed(1)
+    : "0";
+
+  document
+  .getElementById(
+    "sfxStatus"
+  )
+  .textContent =
+    selectedSfx +
+    " will play around " +
+    seconds +
+    " seconds into the video.";
+
+}
+
+
+/* =========================================================
+   SOUND EFFECT PREVIEW
+========================================================= */
+
+let audioContext = null;
+
+function previewSoundEffect(){
+
+  if(!selectedSfx) return;
+
+  try{
+
+    if(!audioContext){
+
+      audioContext =
+        new (
+          window.AudioContext ||
+          window.webkitAudioContext
+        )();
+
+    }
+
+    if(
+      audioContext.state ===
+      "suspended"
+    ){
+
+      audioContext.resume();
+
+    }
+
+    const now =
+      audioContext.currentTime;
+
+    const gain =
+      audioContext.createGain();
+
+    gain.gain.value =
+      sfxVolume / 100;
+
+    gain.connect(
+      audioContext.destination
+    );
+
+    if(selectedSfx === "pop"){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "sine";
+
+      osc.frequency.setValueAtTime(
+        180,
+        now
+      );
+
+      osc.frequency.exponentialRampToValueAtTime(
+        700,
+        now + .08
+      );
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .1);
+
+    }else if(
+      selectedSfx === "beep"
+    ){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "square";
+      osc.frequency.value = 700;
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .12);
+
+    }else if(
+      selectedSfx === "click"
+    ){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "square";
+      osc.frequency.value = 1100;
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .035);
+
+    }else if(
+      selectedSfx === "ding"
+    ){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "sine";
+      osc.frequency.value = 1000;
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .3);
+
+    }else if(
+      selectedSfx === "whoosh"
+    ){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "sawtooth";
+
+      osc.frequency.setValueAtTime(
+        150,
+        now
+      );
+
+      osc.frequency.exponentialRampToValueAtTime(
+        900,
+        now + .35
+      );
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .35);
+
+    }else if(
+      selectedSfx === "laugh"
+    ){
+
+      const osc =
+        audioContext.createOscillator();
+
+      osc.type = "triangle";
+
+      osc.frequency.setValueAtTime(
+        350,
+        now
+      );
+
+      osc.frequency.setValueAtTime(
+        550,
+        now + .12
+      );
+
+      osc.frequency.setValueAtTime(
+        300,
+        now + .24
+      );
+
+      osc.connect(gain);
+
+      osc.start(now);
+      osc.stop(now + .3);
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Sound preview failed:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   BACK / CONTINUE
+========================================================= */
+
+document
+.getElementById("backToStep1")
+.addEventListener(
+  "click",
+  () => showStep(1)
+);
+
+
+document
+.getElementById("goStep3")
+.addEventListener(
+  "click",
+  () => {
+
+    if(!selectedFile){
+
+      showMessage(
+        "Please choose or record a video first.",
+        true
+      );
+
+      return;
+    }
+
+    showStep(3);
+
+  }
+);
+
+
+document
+.getElementById("backToStep2")
+.addEventListener(
+  "click",
+  () => showStep(2)
+);
+
+
+/* =========================================================
+   VIDEO RENDERING
+========================================================= */
+
+/*
+  This renderer creates a new video from the selected
+  source using Canvas + MediaRecorder.
+
+  It applies:
+    - filter
+    - effect
+    - crop
+    - speed
+    - text
+    - emoji
+    - sound effect
+*/
+
+async function renderEditedVideo(){
+
+  if(!selectedFile){
+
+    throw new Error(
+      "No video selected."
+    );
+
+  }
+
+  /*
+    If the browser cannot render the file,
+    fall back to the original file rather than
+    destroying the upload flow.
+  */
+
+  const source =
+    document.createElement("video");
+
+  source.muted = false;
+  source.playsInline = true;
+  source.preload = "auto";
+
+  const sourceURL =
+    URL.createObjectURL(
+      selectedFile
+    );
+
+  source.src =
+    sourceURL;
+
+  await waitForVideoMetadata(source);
+
+  const duration =
+    source.duration;
+
+  if(!isFinite(duration) ||
+     duration <= 0){
+
+    URL.revokeObjectURL(
+      sourceURL
+    );
+
+    return selectedFile;
+  }
+
+  /*
+    Keep rendering resolution reasonable for
+    mobile devices.
+  */
+
+  let width =
+    source.videoWidth || 720;
+
+  let height =
+    source.videoHeight || 1280;
+
+  const maxDimension =
+    1280;
+
+  if(
+    Math.max(width,height) >
+    maxDimension
+  ){
+
+    const ratio =
+      maxDimension /
+      Math.max(width,height);
+
+    width =
+      Math.round(width * ratio);
+
+    height =
+      Math.round(height * ratio);
 
   }
 
 
   /*
-    Glow is implemented separately because it
-    is a visual shadow rather than a video filter.
+    Crop output dimensions.
   */
 
-  if(
-    selectedEffect === "glow"
-  ){
+  let outputWidth =
+    width;
 
-    preview.style.boxShadow =
-      "0 0 35px rgba(255,255,255,.35)";
+  let outputHeight =
+    height;
 
-  }else{
+  if(currentCrop === "9:16"){
 
-    preview.style.boxShadow =
-      "none";
-
-  }
-
-}
-
-
-/* =========================================================
-   PREVIEW CONTROLS
-========================================================= */
-
-document.getElementById(
-  "playBtn"
-).onclick = ()=>{
-
-  if(!preview.src)return;
-
-
-  if(preview.paused){
-
-    preview.play().catch(
-      ()=>{}
-    );
-
-
-    document.getElementById(
-      "playBtn"
-    ).textContent =
-      "❚❚";
-
-  }else{
-
-    preview.pause();
-
-
-    document.getElementById(
-      "playBtn"
-    ).textContent =
-      "▶";
-
-  }
-
-};
-
-
-preview.onplay =
-  ()=>{
-
-    document.getElementById(
-      "playBtn"
-    ).textContent =
-      "❚❚";
-
-  };
-
-
-preview.onpause =
-  ()=>{
-
-    document.getElementById(
-      "playBtn"
-    ).textContent =
-      "▶";
-
-  };
-
-
-document.getElementById(
-  "muteBtn"
-).onclick = ()=>{
-
-  preview.muted =
-    !preview.muted;
-
-
-  document.getElementById(
-    "muteBtn"
-  ).textContent =
-    preview.muted
-      ? "🔇"
-      : "🔊";
-
-};
-
-
-/* =========================================================
-   TITLE PREVIEW
-========================================================= */
-
-document.getElementById(
-  "title"
-).oninput = event=>{
-
-  previewTitle.textContent =
-    event.target.value.trim();
-
-};
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
-next1.onclick = ()=>{
-
-  if(!selectedFile){
-
-    document.getElementById(
-      "message1"
-    ).textContent =
-      "Choose or record a video first.";
-
-    return;
-
-  }
-
-
-  showStep(2);
-
-};
-
-
-document.getElementById(
-  "back2"
-).onclick = ()=>{
-
-  showStep(1);
-
-};
-
-
-document.getElementById(
-  "next2"
-).onclick = ()=>{
-
-  showStep(3);
-
-};
-
-
-document.getElementById(
-  "back3"
-).onclick = ()=>{
-
-  showStep(2);
-
-};
-
-
-/* =========================================================
-   GLOBAL UPLOAD STATE
-========================================================= */
-
-const UPLOAD_STATE_KEY =
-  "bigula_upload_state_v1";
-
-
-const uploadChannel =
-  "BroadcastChannel" in window
-    ? new BroadcastChannel(
-        "bigula_uploads"
-      )
-    : null;
-
-
-function publishUploadState(
-  state
-){
-
-  localStorage.setItem(
-    UPLOAD_STATE_KEY,
-    JSON.stringify(state)
-  );
-
-
-  if(uploadChannel){
-
-    uploadChannel.postMessage(
-      state
-    );
-
-  }
-
-
-  renderUploadState(
-    state
-  );
-
-}
-
-
-function renderUploadState(
-  state
-){
-
-  if(
-    !state ||
-    !state.active
-  ){
-
-    globalUpload.classList.remove(
-      "show"
-    );
-
-    return;
-
-  }
-
-
-  globalUpload.classList.add(
-    "show"
-  );
-
-
-  const percent =
-    Math.max(
-      0,
-      Math.min(
-        100,
-        Number(
-          state.percent || 0
-        )
-      )
-    );
-
-
-  globalPercent.textContent =
-    percent + "%";
-
-
-  globalStatus.textContent =
-    state.status ||
-    "Uploading...";
-
-
-  globalFill.style.width =
-    percent + "%";
-
-}
-
-
-if(uploadChannel){
-
-  uploadChannel.onmessage =
-    event=>{
-
-      renderUploadState(
-        event.data
+    outputHeight =
+      Math.round(
+        outputWidth * 16 / 9
       );
+
+    if(outputHeight > height){
+
+      outputHeight =
+        height;
+
+      outputWidth =
+        Math.round(
+          outputHeight * 9 / 16
+        );
+
+    }
+
+  }else if(
+    currentCrop === "1:1"
+  ){
+
+    const size =
+      Math.min(
+        width,
+        height
+      );
+
+    outputWidth = size;
+    outputHeight = size;
+
+  }else if(
+    currentCrop === "4:5"
+  ){
+
+    outputHeight =
+      Math.round(
+        outputWidth * 5 / 4
+      );
+
+    if(outputHeight > height){
+
+      outputHeight =
+        height;
+
+      outputWidth =
+        Math.round(
+          outputHeight * 4 / 5
+        );
+
+    }
+
+  }else if(
+    currentCrop === "16:9"
+  ){
+
+    outputHeight =
+      Math.round(
+        outputWidth * 9 / 16
+      );
+
+    if(outputHeight > height){
+
+      outputHeight =
+        height;
+
+      outputWidth =
+        Math.round(
+          outputHeight * 16 / 9
+        );
+
+    }
+
+  }
+
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width =
+    outputWidth;
+
+  canvas.height =
+    outputHeight;
+
+  const ctx =
+    canvas.getContext("2d",{
+      alpha:false
+    });
+
+
+  /*
+    Canvas video stream.
+  */
+
+  const canvasStream =
+    canvas.captureStream(30);
+
+
+  /*
+    Audio from the original video.
+  */
+
+  let audioContextRender = null;
+  let audioDestination = null;
+  let mediaSource = null;
+
+  try{
+
+    audioContextRender =
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+    mediaSource =
+      audioContextRender
+      .createMediaElementSource(
+        source
+      );
+
+    audioDestination =
+      audioContextRender
+      .createMediaStreamDestination();
+
+    mediaSource.connect(
+      audioDestination
+    );
+
+    /*
+      Keep local audio audible during rendering
+      only if the browser allows it.
+    */
+
+    mediaSource.connect(
+      audioContextRender.destination
+    );
+
+    audioDestination
+    .stream
+    .getAudioTracks()
+    .forEach(
+      track => canvasStream.addTrack(track)
+    );
+
+  }catch(error){
+
+    console.warn(
+      "Audio rendering unavailable:",
+      error
+    );
+
+  }
+
+
+  /*
+    Recorder MIME selection.
+  */
+
+  const renderMimeTypes = [
+
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm"
+
+  ];
+
+  let renderMime = "";
+
+  for(
+    const type of renderMimeTypes
+  ){
+
+    if(
+      MediaRecorder.isTypeSupported &&
+      MediaRecorder.isTypeSupported(type)
+    ){
+
+      renderMime = type;
+      break;
+
+    }
+
+  }
+
+  if(!renderMime){
+
+    cleanupRender();
+
+    return selectedFile;
+  }
+
+
+  const recorder =
+    new MediaRecorder(
+      canvasStream,
+      {
+        mimeType:renderMime,
+        videoBitsPerSecond:4000000
+      }
+    );
+
+  const chunks = [];
+
+  recorder.ondataavailable =
+    event => {
+
+      if(
+        event.data &&
+        event.data.size
+      ){
+
+        chunks.push(event.data);
+
+      }
 
     };
 
-}
+
+  const stopped =
+    new Promise(resolve => {
+
+      recorder.onstop =
+        resolve;
+
+    });
 
 
-window.addEventListener(
-  "storage",
-  event=>{
+  /*
+    Seek to beginning.
+  */
+
+  source.currentTime = 0;
+
+  await waitForEvent(
+    source,
+    "seeked"
+  );
+
+
+  recorder.start(250);
+
+  if(
+    audioContextRender &&
+    audioContextRender.state ===
+    "suspended"
+  ){
+
+    await audioContextRender.resume();
+
+  }
+
+
+  /*
+    Start playback at selected speed.
+  */
+
+  source.playbackRate =
+    currentSpeed;
+
+  await source.play();
+
+
+  /*
+    Draw video frames.
+  */
+
+  let lastTime =
+    -1;
+
+  let stoppedByEnd = false;
+
+  function drawFrame(){
+
+    if(source.ended){
+
+      if(!stoppedByEnd){
+
+        stoppedByEnd = true;
+
+        try{
+          recorder.stop();
+        }catch(e){}
+
+      }
+
+      return;
+
+    }
+
+    const time =
+      source.currentTime;
+
+    /*
+      Crop source rectangle.
+    */
+
+    const cropRect =
+      calculateCropRect(
+        source.videoWidth,
+        source.videoHeight,
+        currentCrop
+      );
+
+
+    /*
+      Combine filters.
+    */
+
+    ctx.save();
+
+    ctx.filter =
+      getCanvasFilter();
+
+    /*
+      Mirror effect.
+    */
 
     if(
-      event.key ===
-      UPLOAD_STATE_KEY
+      currentEffect === "mirror"
     ){
 
+      ctx.translate(
+        outputWidth,
+        0
+      );
+
+      ctx.scale(
+        -1,
+        1
+      );
+
+    }
+
+
+    ctx.drawImage(
+      source,
+      cropRect.x,
+      cropRect.y,
+      cropRect.width,
+      cropRect.height,
+      0,
+      0,
+      outputWidth,
+      outputHeight
+    );
+
+    ctx.restore();
+
+
+    /*
+      Extra visual effects.
+    */
+
+    drawCanvasEffect(
+      ctx,
+      outputWidth,
+      outputHeight,
+      time
+    );
+
+
+    /*
+      Text overlay.
+    */
+
+    drawCanvasText(
+      ctx,
+      outputWidth,
+      outputHeight
+    );
+
+
+    /*
+      Emoji overlay.
+    */
+
+    drawCanvasEmoji(
+      ctx,
+      outputWidth,
+      outputHeight
+    );
+
+
+    lastTime =
+      time;
+
+    requestAnimationFrame(
+      drawFrame
+    );
+
+  }
+
+
+  drawFrame();
+
+
+  /*
+    Add generated sound effect to the
+    rendered AudioContext timeline.
+  */
+
+  if(
+    selectedSfx &&
+    audioContextRender
+  ){
+
+    scheduleSoundEffect(
+      audioContextRender,
+      audioDestination,
+      duration *
+      (sfxPosition / 100),
+      sfxVolume / 100,
+      selectedSfx
+    );
+
+  }
+
+
+  /*
+    Show rendering progress.
+  */
+
+  const progress =
+    document.getElementById(
+      "uploadProgress"
+    );
+
+  const progressTitle =
+    document.getElementById(
+      "uploadProgressTitle"
+    );
+
+  const progressText =
+    document.getElementById(
+      "progressText"
+    );
+
+  const progressBar =
+    document.getElementById(
+      "progressBar"
+    );
+
+  progress.classList.add(
+    "show"
+  );
+
+  progressTitle.textContent =
+    "Preparing edited video...";
+
+  const progressTimer =
+    setInterval(() => {
+
+      if(duration > 0){
+
+        const pct =
+          Math.min(
+            99,
+            Math.round(
+              source.currentTime /
+              duration *
+              100
+            )
+          );
+
+        progressBar.style.width =
+          pct + "%";
+
+        progressText.textContent =
+          pct + "%";
+
+      }
+
+    },250);
+
+
+  await stopped;
+
+  clearInterval(
+    progressTimer
+  );
+
+
+  source.pause();
+
+  cleanupRender();
+
+
+  if(!chunks.length){
+
+    return selectedFile;
+
+  }
+
+
+  const outputBlob =
+    new Blob(
+      chunks,
+      {
+        type:renderMime
+      }
+    );
+
+
+  progressBar.style.width =
+    "100%";
+
+  progressText.textContent =
+    "100%";
+
+  progressTitle.textContent =
+    "Video editing complete";
+
+
+  return new File(
+    [outputBlob],
+    "BIGULA_edited.webm",
+    {
+      type:renderMime
+    }
+  );
+
+
+  function cleanupRender(){
+
+    try{
+
+      source.pause();
+
+    }catch(e){}
+
+    URL.revokeObjectURL(
+      sourceURL
+    );
+
+    if(audioContextRender){
+
       try{
-
-        renderUploadState(
-          JSON.parse(
-            event.newValue ||
-            "null"
-          )
-        );
-
+        audioContextRender.close();
       }catch(e){}
 
     }
 
   }
-);
+
+}
+
+
+/* =========================================================
+   CROP CALCULATION
+========================================================= */
+
+function calculateCropRect(
+  width,
+  height,
+  crop
+){
+
+  if(crop === "original"){
+
+    return {
+      x:0,
+      y:0,
+      width,
+      height
+    };
+
+  }
+
+  let targetRatio;
+
+  if(crop === "9:16"){
+
+    targetRatio =
+      9 / 16;
+
+  }else if(crop === "1:1"){
+
+    targetRatio = 1;
+
+  }else if(crop === "4:5"){
+
+    targetRatio =
+      4 / 5;
+
+  }else if(crop === "16:9"){
+
+    targetRatio =
+      16 / 9;
+
+  }else{
+
+    return {
+      x:0,
+      y:0,
+      width,
+      height
+    };
+
+  }
+
+  const sourceRatio =
+    width / height;
+
+  let cropWidth =
+    width;
+
+  let cropHeight =
+    height;
+
+  if(sourceRatio > targetRatio){
+
+    cropWidth =
+      Math.round(
+        height * targetRatio
+      );
+
+  }else{
+
+    cropHeight =
+      Math.round(
+        width / targetRatio
+      );
+
+  }
+
+  return {
+    x:Math.round(
+      (width - cropWidth) / 2
+    ),
+    y:Math.round(
+      (height - cropHeight) / 2
+    ),
+    width:cropWidth,
+    height:cropHeight
+  };
+
+}
+
+
+/* =========================================================
+   CANVAS FILTER
+========================================================= */
+
+function getCanvasFilter(){
+
+  const filters = {
+
+    none:"none",
+
+    cinematic:
+      "contrast(1.15) saturate(.9) brightness(.9)",
+
+    vivid:
+      "saturate(1.65) contrast(1.12)",
+
+    warm:
+      "sepia(.12) saturate(1.2) contrast(1.04)",
+
+    cool:
+      "saturate(.9) hue-rotate(18deg) brightness(1.02)",
+
+    film:
+      "contrast(1.1) saturate(.82) sepia(.08)",
+
+    retro:
+      "sepia(.3) saturate(1.25) contrast(1.05)",
+
+    dream:
+      "brightness(1.08) saturate(.8)",
+
+    noir:
+      "grayscale(1) contrast(1.45)",
+
+    faded:
+      "contrast(.82) saturate(.7) brightness(1.08)",
+
+    moody:
+      "brightness(.78) contrast(1.2) saturate(.85)",
+
+    sunset:
+      "sepia(.18) saturate(1.45)",
+
+    bright:
+      "brightness(1.22) contrast(1.02)",
+
+    portrait:
+      "contrast(1.04) saturate(.92) brightness(1.05)",
+
+    soft:
+      "brightness(1.04) contrast(.9) saturate(.88)",
+
+    contrast:
+      "contrast(1.5) saturate(1.1)",
+
+    golden:
+      "sepia(.22) saturate(1.35) brightness(1.04)",
+
+    arctic:
+      "saturate(.82) hue-rotate(25deg) brightness(1.08)",
+
+    sepia:
+      "sepia(1)",
+
+    bw:
+      "grayscale(1)"
+
+  };
+
+
+  let result =
+    filters[currentFilter] ||
+    "none";
+
+
+  const effects = {
+
+    none:"",
+
+    glow:
+      "brightness(1.08) saturate(1.12)",
+
+    vintage:
+      "sepia(.3) contrast(1.08) saturate(.82)",
+
+    dramatic:
+      "contrast(1.45) brightness(.88)",
+
+    pop:
+      "saturate(1.55) contrast(1.2)",
+
+    blur:
+      "blur(2px)",
+
+    sharpen:
+      "contrast(1.2) saturate(1.12)",
+
+    vhs:
+      "contrast(1.15) saturate(1.1)",
+
+    glitch:
+      "contrast(1.35) saturate(1.5)",
+
+    rgb:
+      "saturate(1.35)",
+
+    pixel:
+      "contrast(1.25) saturate(1.15)",
+
+    shake:"",
+    flash:"brightness(1.35)",
+    mirror:"",
+    negative:"invert(1)"
+
+  };
+
+
+  const effect =
+    effects[currentEffect] ||
+    "";
+
+  if(effect){
+
+    result =
+      result === "none"
+      ? effect
+      : result + " " + effect;
+
+  }
+
+  return result;
+
+}
+
+
+/* =========================================================
+   CANVAS EFFECTS
+========================================================= */
+
+function drawCanvasEffect(
+  ctx,
+  width,
+  height,
+  time
+){
+
+  if(currentEffect === "flash"){
+
+    ctx.fillStyle =
+      "rgba(255,255,255,.18)";
+
+    ctx.fillRect(
+      0,
+      0,
+      width,
+      height
+    );
+
+  }
+
+
+  if(currentEffect === "vhs"){
+
+    ctx.fillStyle =
+      "rgba(255,255,255,.04)";
+
+    for(
+      let y = 0;
+      y < height;
+      y += 5
+    ){
+
+      ctx.fillRect(
+        0,
+        y,
+        width,
+        1
+      );
+
+    }
+
+  }
+
+
+  if(currentEffect === "glitch"){
+
+    const lines = 7;
+
+    for(
+      let i=0;
+      i<lines;
+      i++
+    ){
+
+      const y =
+        Math.random() *
+        height;
+
+      const h =
+        1 +
+        Math.random() *
+        8;
+
+      ctx.fillStyle =
+        Math.random() > .5
+        ? "rgba(255,0,80,.18)"
+        : "rgba(0,220,255,.18)";
+
+      ctx.fillRect(
+        0,
+        y,
+        width,
+        h
+      );
+
+    }
+
+  }
+
+
+  if(currentEffect === "rgb"){
+
+    ctx.globalAlpha = .08;
+
+    ctx.globalCompositeOperation =
+      "screen";
+
+    ctx.fillStyle =
+      "#ff0000";
+
+    ctx.fillRect(
+      -3,
+      0,
+      width,
+      height
+    );
+
+    ctx.fillStyle =
+      "#00ffff";
+
+    ctx.fillRect(
+      3,
+      0,
+      width,
+      height
+    );
+
+    ctx.globalAlpha = 1;
+
+    ctx.globalCompositeOperation =
+      "source-over";
+
+  }
+
+
+  if(currentEffect === "pixel"){
+
+    ctx.globalAlpha = .12;
+
+    ctx.fillStyle =
+      "#ffffff";
+
+    const size = 5;
+
+    for(
+      let y=0;
+      y<height;
+      y+=size*3
+    ){
+
+      for(
+        let x=0;
+        x<width;
+        x+=size*3
+      ){
+
+        if(
+          Math.random() > .65
+        ){
+
+          ctx.fillRect(
+            x,
+            y,
+            size,
+            size
+          );
+
+        }
+
+      }
+
+    }
+
+    ctx.globalAlpha = 1;
+
+  }
+
+
+  if(currentEffect === "shake"){
+
+    /*
+      Small overlay movement.
+      Actual frame translation is intentionally
+      subtle so the video remains usable.
+    */
+
+    const offset =
+      Math.sin(time * 45) * 3;
+
+    ctx.save();
+
+    ctx.globalAlpha = .08;
+
+    ctx.fillStyle =
+      "#ffffff";
+
+    ctx.fillRect(
+      offset,
+      0,
+      width,
+      height
+    );
+
+    ctx.restore();
+
+  }
+
+}
+
+
+/* =========================================================
+   CANVAS TEXT
+========================================================= */
+
+function drawCanvasText(
+  ctx,
+  width,
+  height
+){
+
+  if(!textValue.trim())
+    return;
+
+  const fontSize =
+    Math.round(
+      textSize *
+      (width / 260)
+    );
+
+  ctx.save();
+
+  ctx.font =
+    "900 " +
+    fontSize +
+    "px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  const x =
+    width / 2;
+
+  let y;
+
+  if(textPosition === "top"){
+
+    y =
+      height * .13;
+
+  }else if(
+    textPosition === "center"
+  ){
+
+    y =
+      height * .5;
+
+  }else{
+
+    y =
+      height * .84;
+
+  }
+
+  const lines =
+    textValue.split("\n");
+
+  const lineHeight =
+    fontSize * 1.2;
+
+  const totalHeight =
+    lines.length *
+    lineHeight;
+
+
+  /*
+    Background.
+  */
+
+  if(textBackground){
+
+    let longest = 0;
+
+    for(const line of lines){
+
+      longest =
+        Math.max(
+          longest,
+          ctx.measureText(line).width
+        );
+
+    }
+
+    ctx.fillStyle =
+      "rgba(0,0,0,.65)";
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+      x - longest / 2 - 14,
+      y - totalHeight / 2 - 9,
+      longest + 28,
+      totalHeight + 18,
+      10
+    );
+
+    ctx.fill();
+
+  }
+
+
+  ctx.fillStyle =
+    textColor;
+
+  ctx.shadowColor =
+    "rgba(0,0,0,.9)";
+
+  ctx.shadowBlur =
+    7;
+
+  lines.forEach(
+    (line,index) => {
+
+      ctx.fillText(
+        line,
+        x,
+        y -
+        totalHeight / 2 +
+        lineHeight / 2 +
+        index *
+        lineHeight
+      );
+
+    }
+  );
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   CANVAS EMOJI
+========================================================= */
+
+function drawCanvasEmoji(
+  ctx,
+  width,
+  height
+){
+
+  if(!emojiValue)
+    return;
+
+  const size =
+    Math.round(
+      emojiSize *
+      (width / 260)
+    );
+
+  ctx.save();
+
+  ctx.font =
+    size + "px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.fillText(
+    emojiValue,
+    width / 2,
+    height * .68
+  );
+
+  ctx.restore();
+
+}
+
+
+/* =========================================================
+   GENERATED SOUND EFFECT
+========================================================= */
+
+function scheduleSoundEffect(
+  audioCtx,
+  destination,
+  offset,
+  volume,
+  type
+){
+
+  const start =
+    audioCtx.currentTime +
+    Math.max(
+      .05,
+      offset
+    );
+
+  const gain =
+    audioCtx.createGain();
+
+  gain.gain.value =
+    volume;
+
+  gain.connect(
+    destination
+  );
+
+
+  if(type === "pop"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "sine";
+
+    osc.frequency.setValueAtTime(
+      180,
+      start
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+      700,
+      start + .08
+    );
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .1);
+
+  }else if(type === "beep"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "square";
+
+    osc.frequency.value =
+      700;
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .12);
+
+  }else if(type === "click"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "square";
+
+    osc.frequency.value =
+      1100;
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .04);
+
+  }else if(type === "ding"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "sine";
+
+    osc.frequency.value =
+      1000;
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .3);
+
+  }else if(type === "whoosh"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "sawtooth";
+
+    osc.frequency.setValueAtTime(
+      120,
+      start
+    );
+
+    osc.frequency.exponentialRampToValueAtTime(
+      900,
+      start + .35
+    );
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .35);
+
+  }else if(type === "laugh"){
+
+    const osc =
+      audioCtx.createOscillator();
+
+    osc.type =
+      "triangle";
+
+    osc.frequency.setValueAtTime(
+      350,
+      start
+    );
+
+    osc.frequency.setValueAtTime(
+      550,
+      start + .12
+    );
+
+    osc.frequency.setValueAtTime(
+      300,
+      start + .24
+    );
+
+    osc.connect(gain);
+
+    osc.start(start);
+    osc.stop(start + .3);
+
+  }
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function waitForVideoMetadata(video){
+
+  return new Promise(
+    (resolve,reject) => {
+
+      if(video.readyState >= 1){
+
+        resolve();
+
+        return;
+      }
+
+      const loaded =
+        () => {
+
+          cleanup();
+          resolve();
+
+        };
+
+      const failed =
+        () => {
+
+          cleanup();
+          reject(
+            new Error(
+              "Unable to read video."
+            )
+          );
+
+        };
+
+      function cleanup(){
+
+        video.removeEventListener(
+          "loadedmetadata",
+          loaded
+        );
+
+        video.removeEventListener(
+          "error",
+          failed
+        );
+
+      }
+
+      video.addEventListener(
+        "loadedmetadata",
+        loaded
+      );
+
+      video.addEventListener(
+        "error",
+        failed
+      );
+
+    }
+  );
+
+}
+
+
+function waitForEvent(
+  element,
+  event
+){
+
+  return new Promise(
+    resolve => {
+
+      const handler =
+        () => {
+
+          element.removeEventListener(
+            event,
+            handler
+          );
+
+          resolve();
+
+        };
+
+      element.addEventListener(
+        event,
+        handler
+      );
+
+    }
+  );
+
+}
+
+
+function formatBytes(bytes){
+
+  if(!bytes)
+    return "0 B";
+
+  const units =
+    [
+      "B",
+      "KB",
+      "MB",
+      "GB"
+    ];
+
+  const index =
+    Math.floor(
+      Math.log(bytes) /
+      Math.log(1024)
+    );
+
+  return (
+    bytes /
+    Math.pow(1024,index)
+  ).toFixed(
+    index === 0 ? 0 : 1
+  ) +
+  " " +
+  units[index];
+
+}
+
+
+function showMessage(
+  text,
+  error = false
+){
+
+  const box =
+    document.getElementById(
+      "message"
+    );
+
+  box.textContent =
+    text;
+
+  box.className =
+    "message show " +
+    (
+      error
+      ? "error"
+      : "success"
+    );
+
+  setTimeout(
+    () => {
+      box.classList.remove(
+        "show"
+      );
+    },
+    7000
+  );
+
+}
 
 
 /* =========================================================
    UPLOAD
 ========================================================= */
 
-document.getElementById(
-  "uploadBtn"
-).onclick =
-async ()=>{
-
-  const button =
-    document.getElementById(
-      "uploadBtn"
-    );
+document
+.getElementById("uploadBtn")
+.addEventListener(
+  "click",
+  uploadVideo
+);
 
 
-  const message =
-    document.getElementById(
-      "message3"
-    );
+async function uploadVideo(){
+
+  const title =
+    document
+    .getElementById("title")
+    .value
+    .trim();
+
+  const category =
+    document
+    .getElementById("category")
+    .value
+    .trim();
+
+  const description =
+    document
+    .getElementById("description")
+    .value
+    .trim();
 
 
   if(!selectedFile){
 
-    message.textContent =
-      "Choose a video first.";
+    showMessage(
+      "Please select a video first.",
+      true
+    );
 
     return;
-
   }
 
 
-  const title =
-    document
-      .getElementById("title")
-      .value
-      .trim();
+  if(!title){
 
-
-  const category =
-    document
-      .getElementById("category")
-      .value;
-
-
-  const description =
-    document
-      .getElementById("description")
-      .value
-      .trim();
-
-
-  if(
-    !title ||
-    !category ||
-    !description
-  ){
-
-    message.textContent =
-      "Please complete the title, category and description.";
+    showMessage(
+      "Please enter a title.",
+      true
+    );
 
     return;
-
   }
 
 
-  if(!currentUser){
+  if(!category){
 
-    currentUser =
-      await requireUser();
-
-
-    if(!currentUser)return;
-
-  }
-
-
-  const {
-    data:{
-      session
-    },
-    error:
-      sessionError
-  } =
-    await supabase.auth.getSession();
-
-
-  if(
-    sessionError ||
-    !session?.access_token
-  ){
-
-    message.textContent =
-      "Your BIGULA session expired. Please sign in again.";
+    showMessage(
+      "Please select a category.",
+      true
+    );
 
     return;
-
   }
 
 
-  button.disabled =
-    true;
+  const uploadButton =
+    document.getElementById(
+      "uploadBtn"
+    );
 
+  uploadButton.disabled = true;
 
-  message.textContent =
-    "Preparing private upload...";
+  uploadButton.textContent =
+    "Preparing...";
 
 
   try{
 
-    const originalName =
-      selectedFile.name ||
-      "video.mp4";
+    /*
+      Render all selected edits into the
+      actual video before uploading.
+    */
+
+    processedFile =
+      await renderEditedVideo();
 
 
-    const safeName =
-      originalName.replace(
-        /[^a-zA-Z0-9._-]/g,
-        "_"
+    const {
+      data:{
+        session
+      }
+    } =
+      await supabase.auth.getSession();
+
+
+    if(!session){
+
+      throw new Error(
+        "Your BIGULA session has expired. Please sign in again."
+      );
+
+    }
+
+
+    const userId =
+      session.user.id;
+
+
+    /*
+      Upload status is kept locally so other
+      BIGULA pages can detect an active upload.
+    */
+
+    localStorage.setItem(
+      "bigula_upload_state",
+      JSON.stringify({
+        active:true,
+        progress:0,
+        startedAt:Date.now()
+      })
+    );
+
+
+    const fileExt =
+      getExtension(
+        processedFile.name,
+        processedFile.type
       );
 
 
     const filePath =
-      `${currentUser.id}/${crypto.randomUUID()}_${safeName}`;
-
-
-    const endpoint =
-      "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable";
-
-
-    publishUploadState({
-
-      active:true,
-
-      status:
-        "Uploading video...",
-
-      percent:0,
-
-      fileName:
-        originalName,
-
-      startedAt:
-        Date.now()
-
-    });
-
-
-    const upload =
-      new tus.Upload(
-        selectedFile,
-        {
-
-          endpoint,
-
-          retryDelays:[
-            0,
-            3000,
-            5000,
-            10000,
-            20000
-          ],
-
-          chunkSize:
-            6 * 1024 * 1024,
-
-          headers:{
-
-            authorization:
-              `Bearer ${session.access_token}`,
-
-            apikey:
-              SUPABASE_KEY,
-
-            "x-upsert":
-              "false"
-
-          },
-
-          uploadDataDuringCreation:
-            true,
-
-          removeFingerprintOnSuccess:
-            true,
-
-          metadata:{
-
-            bucketName:
-              "videos",
-
-            objectName:
-              filePath,
-
-            contentType:
-              selectedFile.type ||
-              "video/mp4",
-
-            cacheControl:
-              "3600"
-
-          },
-
-
-          onError(error){
-
-            console.error(
-              "TUS upload error:",
-              error
-            );
-
-
-            const text =
-              error?.message ||
-              "Network error";
-
-
-            message.textContent =
-              "Upload failed: " +
-              text;
-
-
-            publishUploadState({
-
-              active:false,
-
-              status:
-                "Upload failed",
-
-              percent:0,
-
-              error:text
-
-            });
-
-
-            button.disabled =
-              false;
-
-          },
-
-
-          onProgress(
-            bytesUploaded,
-            bytesTotal
-          ){
-
-            const percent =
-              bytesTotal
-                ? Math.round(
-                    (
-                      bytesUploaded /
-                      bytesTotal
-                    ) * 100
-                  )
-                : 0;
-
-
-            message.textContent =
-              `Uploading video... ${percent}%`;
-
-
-            publishUploadState({
-
-              active:true,
-
-              status:
-                "Uploading video...",
-
-              percent,
-
-              fileName:
-                originalName,
-
-              startedAt:
-                Date.now()
-
-            });
-
-          },
-
-
-          onSuccess:
-          async ()=>{
-
-            try{
-
-              message.textContent =
-                "Upload complete. Saving video...";
-
-
-              publishUploadState({
-
-                active:true,
-
-                status:
-                  "Saving video...",
-
-                percent:100,
-
-                fileName:
-                  originalName
-
-              });
-
-
-              const {
-                data:
-                  publicData
-              } =
-                supabase.storage
-                  .from("videos")
-                  .getPublicUrl(
-                    filePath
-                  );
-
-
-              const videoUrl =
-                publicData.publicUrl;
-
-
-              /*
-                The uploaded file remains private
-                from the BIGULA publication workflow.
-              */
-
-              const {
-                data:
-                  videoRow,
-                error:
-                  dbError
-              } =
-                await supabase
-                  .from("videos")
-                  .insert({
-
-                    user_id:
-                      currentUser.id,
-
-                    title,
-
-                    category,
-
-                    description,
-
-                    video_url:
-                      videoUrl
-
-                  })
-                  .select()
-                  .single();
-
-
-              if(dbError){
-
-                console.error(
-                  "Database save error:",
-                  dbError
-                );
-
-                throw dbError;
-
-              }
-
-
-              publishUploadState({
-
-                active:false,
-
-                status:
-                  "Upload complete",
-
-                percent:100,
-
-                fileName:
-                  originalName
-
-              });
-
-
-              message.textContent =
-                "✓ Uploaded privately. Opening review...";
-
-
-              setTimeout(
-                ()=>{
-
-                  location.href =
-                    "uploaded.html?id=" +
-                    encodeURIComponent(
-                      videoRow.id
-                    );
-
-                },
-                500
-              );
-
-
-            }catch(error){
-
-              console.error(
-                "Finalization error:",
-                error
-              );
-
-
-              message.textContent =
-                "The video uploaded, but saving its information failed: " +
-                (
-                  error?.message ||
-                  "Unknown error"
-                );
-
-
-              publishUploadState({
-
-                active:false,
-
-                status:
-                  "Upload finished; database save failed",
-
-                percent:100,
-
-                error:
-                  error?.message ||
-                  "Unknown error"
-
-              });
-
-
-              button.disabled =
-                false;
-
-            }
-
-          }
-
-        }
+      userId +
+      "/" +
+      Date.now() +
+      "_" +
+      randomString() +
+      "." +
+      fileExt;
+
+
+    const fileSize =
+      processedFile.size;
+
+
+    const uploadProgress =
+      document.getElementById(
+        "uploadProgress"
+      );
+
+    const progressBar =
+      document.getElementById(
+        "progressBar"
+      );
+
+    const progressText =
+      document.getElementById(
+        "progressText"
+      );
+
+    const progressTitle =
+      document.getElementById(
+        "uploadProgressTitle"
       );
 
 
-    message.textContent =
-      "Starting secure resumable upload...";
+    uploadProgress.classList.add(
+      "show"
+    );
+
+    progressTitle.textContent =
+      "Uploading video...";
 
 
-    upload.start();
+    uploadButton.textContent =
+      "Uploading...";
+
+
+    /*
+      Supabase TUS resumable upload.
+    */
+
+    await new Promise(
+      (resolve,reject) => {
+
+        const upload =
+          new tus.Upload(
+            processedFile,
+            {
+
+              endpoint:
+                SUPABASE_URL +
+                "/storage/v1/upload/resumable",
+
+              retryDelays:[
+                0,
+                1000,
+                3000,
+                5000
+              ],
+
+              headers:{
+                authorization:
+                  "Bearer " +
+                  SUPABASE_KEY,
+
+                apikey:
+                  SUPABASE_KEY
+              },
+
+              metadata:{
+
+                bucketName:
+                  "videos",
+
+                objectName:
+                  filePath,
+
+                contentType:
+                  processedFile.type ||
+                  "video/webm",
+
+                cacheControl:
+                  "3600"
+
+              },
+
+              uploadDataDuringCreation:true,
+
+              removeFingerprintOnSuccess:true,
+
+              chunkSize:
+                6 * 1024 * 1024,
+
+              onError(error){
+
+                console.error(
+                  "TUS upload error:",
+                  error
+                );
+
+                reject(error);
+
+              },
+
+              onProgress(
+                bytesUploaded,
+                bytesTotal
+              ){
+
+                const percent =
+                  Math.round(
+                    bytesUploaded /
+                    bytesTotal *
+                    100
+                  );
+
+                progressBar.style.width =
+                  percent + "%";
+
+                progressText.textContent =
+                  percent + "%";
+
+                localStorage.setItem(
+                  "bigula_upload_state",
+                  JSON.stringify({
+                    active:true,
+                    progress:percent,
+                    startedAt:Date.now()
+                  })
+                );
+
+              },
+
+              onSuccess(){
+
+                resolve();
+
+              }
+
+            }
+          );
+
+
+        upload.start();
+
+      }
+    );
+
+
+    /*
+      Public storage URL.
+      The database stores the video URL.
+    */
+
+    const {
+      data:{
+        publicUrl
+      }
+    } =
+      supabase.storage
+      .from("videos")
+      .getPublicUrl(
+        filePath
+      );
+
+
+    if(!publicUrl){
+
+      throw new Error(
+        "Could not create the video URL."
+      );
+
+    }
+
+
+    progressTitle.textContent =
+      "Saving video...";
+
+    progressBar.style.width =
+      "100%";
+
+    progressText.textContent =
+      "100%";
+
+
+    /*
+      Insert video as private/unpublished
+      first.
+
+      Your review/copyright system can later
+      change the publication state.
+    */
+
+    const {
+      data:videoRow,
+      error:videoError
+    } =
+      await supabase
+      .from("videos")
+      .insert({
+
+        user_id:userId,
+
+        title:title,
+
+        category:category,
+
+        description:description,
+
+        video_url:publicUrl
+
+      })
+      .select("id")
+      .single();
+
+
+    if(videoError){
+
+      console.error(
+        "Video database error:",
+        videoError
+      );
+
+      throw videoError;
+
+    }
+
+
+    /*
+      Upload complete.
+    */
+
+    localStorage.removeItem(
+      "bigula_upload_state"
+    );
+
+
+    /*
+      Redirect to uploaded page.
+    */
+
+    window.location.href =
+      "uploaded.html?id=" +
+      encodeURIComponent(
+        videoRow.id
+      );
 
 
   }catch(error){
 
     console.error(
-      "Upload setup error:",
+      "BIGULA upload failed:",
       error
     );
 
 
-    message.textContent =
-      "Upload failed: " +
-      (
-        error?.message ||
-        "Unknown error"
-      );
+    localStorage.removeItem(
+      "bigula_upload_state"
+    );
 
 
-    publishUploadState({
+    uploadButton.disabled = false;
 
-      active:false,
-
-      status:
-        "Upload failed",
-
-      percent:0,
-
-      error:
-        error?.message ||
-        "Unknown error"
-
-    });
+    uploadButton.textContent =
+      "Upload Video";
 
 
-    button.disabled =
-      false;
-
-  }
-
-};
+    let message =
+      error?.message ||
+      "Video upload failed.";
 
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
+    if(
+      message
+      .toLowerCase()
+      .includes("bucket")
+    ){
 
-renderUploadState(
-  (()=>{
-
-    try{
-
-      return JSON.parse(
-        localStorage.getItem(
-          UPLOAD_STATE_KEY
-        ) || "null"
-      );
-
-    }catch(e){
-
-      return null;
+      message =
+        "BIGULA could not access the video storage bucket. Check the Supabase Storage bucket configuration.";
 
     }
 
-  })()
-);
 
-
-(async()=>{
-
-  const user =
-    await requireUser();
-
-
-  if(user){
-
-    await checkLiveEligibility();
+    showMessage(
+      message,
+      true
+    );
 
   }
 
-})();
+}
+
+
+/* =========================================================
+   EXTENSION
+========================================================= */
+
+function getExtension(
+  filename,
+  mime
+){
+
+  const existing =
+    filename
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  if(
+    existing &&
+    existing !== filename.toLowerCase()
+  ){
+
+    return existing;
+  }
+
+  if(
+    mime &&
+    mime.includes("mp4")
+  ){
+
+    return "mp4";
+
+  }
+
+  return "webm";
+
+}
+
+
+function randomString(){
+
+  return Math.random()
+    .toString(36)
+    .substring(2,10);
+
+}
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+showStep(1);
 
 </script>
 
 </body>
 </html>
-```
-
-This version now matches the three-step design you described. One important point: **the Step 1 screen contains no `<video>` preview at all**; the preview element exists only in Step 2.
