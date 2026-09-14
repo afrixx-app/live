@@ -476,6 +476,580 @@ body{
     font-size:20px;
   }
 }
+  ```css
+/* =========================================================
+   BIGULA SERIOUS VIDEO EDITOR
+   ========================================================= */
+
+.editor-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.editor-header h1{
+  margin-bottom:6px;
+}
+
+.editor-badge{
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:1px;
+  border:1px solid #444;
+  border-radius:20px;
+  padding:7px 10px;
+  color:#aaa;
+  white-space:nowrap;
+}
+
+
+/* WORKSPACE */
+
+.editor-workspace{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+
+/* PREVIEW */
+
+.preview-area{
+  display:flex;
+  justify-content:center;
+  width:100%;
+}
+
+.preview-phone{
+  width:min(76vw,290px);
+  height:min(135vw,515px);
+  max-height:515px;
+  min-height:400px;
+
+  background:#000;
+
+  border-radius:22px;
+
+  overflow:hidden;
+
+  position:relative;
+
+  border:1px solid #333;
+
+  box-shadow:
+    0 15px 50px rgba(0,0,0,.55);
+}
+
+.preview-phone video{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  display:block;
+
+  background:#000;
+
+  transition:
+    filter .15s ease,
+    transform .15s ease;
+}
+
+
+/* OVERLAY LAYER */
+
+.overlay-layer{
+  position:absolute;
+  inset:0;
+
+  overflow:hidden;
+
+  pointer-events:none;
+}
+
+
+/*
+  Individual overlays are interactive.
+*/
+
+.text-overlay,
+.emoji-overlay{
+  pointer-events:auto;
+
+  user-select:none;
+  -webkit-user-select:none;
+
+  touch-action:none;
+
+  cursor:grab;
+
+  z-index:10;
+}
+
+.text-overlay:active,
+.emoji-overlay:active{
+  cursor:grabbing;
+}
+
+
+/* TEXT */
+
+.text-overlay{
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  color:#fff;
+
+  font-weight:900;
+
+  font-size:30px;
+
+  line-height:1.15;
+
+  text-align:center;
+
+  white-space:pre-wrap;
+
+  max-width:90%;
+
+  padding:4px 8px;
+
+  text-shadow:
+    0 2px 7px #000;
+
+  border:1px solid transparent;
+}
+
+.text-overlay.selected{
+  border-color:#fff;
+}
+
+
+/* TEXT BACKGROUND */
+
+.text-overlay.boxed{
+  background:rgba(0,0,0,.68);
+
+  border-radius:8px;
+
+  text-shadow:none;
+}
+
+
+/* EMOJI */
+
+.emoji-overlay{
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  font-size:65px;
+
+  line-height:1;
+
+  z-index:11;
+}
+
+.emoji-overlay.selected{
+  outline:1px dashed #fff;
+  outline-offset:5px;
+}
+
+
+/* MAIN TOOLBAR */
+
+.editor-toolbar{
+  display:grid;
+
+  grid-template-columns:
+    repeat(7,1fr);
+
+  gap:5px;
+
+  background:#111;
+
+  border:1px solid #292929;
+
+  border-radius:16px;
+
+  padding:7px;
+
+  position:sticky;
+
+  top:62px;
+
+  z-index:50;
+}
+
+
+.editor-tool{
+  min-width:0;
+
+  min-height:58px;
+
+  background:#191919;
+
+  color:#aaa;
+
+  border:1px solid transparent;
+
+  border-radius:11px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:4px;
+
+  font-size:10px;
+}
+
+.editor-tool span{
+  font-size:18px;
+
+  font-weight:900;
+}
+
+.editor-tool strong{
+  font-size:9px;
+}
+
+.editor-tool:hover{
+  background:#222;
+}
+
+.editor-tool.active{
+  background:#fff;
+  color:#000;
+}
+
+
+/* EDITOR PANEL */
+
+.editor-panel{
+  background:#111;
+
+  border:1px solid #292929;
+
+  border-radius:16px;
+
+  min-height:135px;
+
+  padding:15px;
+}
+
+
+/* EMPTY */
+
+.editor-empty{
+  min-height:105px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+
+  color:#777;
+
+  gap:6px;
+}
+
+.editor-empty-icon{
+  width:38px;
+  height:38px;
+
+  border-radius:50%;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:#1c1c1c;
+
+  color:#fff;
+
+  font-size:18px;
+
+  margin-bottom:3px;
+}
+
+.editor-empty strong{
+  color:#bbb;
+  font-size:13px;
+}
+
+.editor-empty span{
+  font-size:11px;
+}
+
+
+/* TAB PANELS */
+
+.editor-tab-panel{
+  display:none;
+}
+
+.editor-tab-panel.active{
+  display:block;
+}
+
+.panel-title{
+  font-size:16px;
+
+  font-weight:900;
+
+  margin-bottom:4px;
+}
+
+.panel-subtitle{
+  color:#777;
+
+  font-size:11px;
+
+  margin-bottom:14px;
+}
+
+
+/* OPTIONS */
+
+.editor-options{
+  display:flex;
+
+  gap:8px;
+
+  overflow-x:auto;
+
+  padding-bottom:3px;
+}
+
+.editor-options::-webkit-scrollbar{
+  height:3px;
+}
+
+.editor-options.grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  overflow:visible;
+}
+
+.editor-options .tool{
+  flex:0 0 auto;
+
+  min-width:78px;
+
+  min-height:40px;
+
+  padding:9px 11px;
+
+  border-radius:10px;
+
+  background:#1b1b1b;
+
+  color:#ccc;
+
+  border:1px solid #303030;
+
+  font-size:11px;
+}
+
+.editor-options .tool.active{
+  background:#fff;
+
+  color:#000;
+
+  border-color:#fff;
+}
+
+
+/* CONTROL BUTTONS */
+
+.editor-options .control{
+  min-height:44px;
+
+  border-radius:10px;
+
+  background:#1b1b1b;
+
+  color:#ccc;
+
+  border:1px solid #303030;
+
+  font-size:12px;
+
+  font-weight:700;
+}
+
+.editor-options .control.active{
+  background:#fff;
+
+  color:#000;
+}
+
+
+/* TEXT CONTROLS */
+
+.editor-control-row{
+  display:grid;
+
+  grid-template-columns:
+    1fr 90px;
+
+  gap:10px;
+
+  margin-top:12px;
+
+  margin-bottom:10px;
+}
+
+.color-field{
+  height:43px;
+
+  padding:4px !important;
+}
+
+
+/* DRAG HINT */
+
+.drag-hint{
+  margin-top:12px;
+
+  padding:10px 12px;
+
+  background:#181818;
+
+  border:1px solid #292929;
+
+  border-radius:10px;
+
+  color:#888;
+
+  font-size:11px;
+}
+
+
+/* SOUND */
+
+.sound-control{
+  margin-top:15px;
+
+  display:grid;
+
+  grid-template-columns:
+    1fr 45px;
+
+  gap:8px;
+}
+
+.sound-control .small{
+  grid-column:
+    1 / -1;
+}
+
+.sound-control input{
+  width:100%;
+}
+
+.range-value{
+  text-align:right;
+
+  color:#aaa;
+
+  font-size:11px;
+
+  align-self:center;
+}
+
+
+/* STATUS */
+
+.editor-status-bar{
+  min-height:40px;
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:10px;
+
+  color:#777;
+
+  font-size:11px;
+}
+
+#resetEditor{
+  background:transparent;
+
+  border:0;
+
+  color:#aaa;
+
+  font-size:11px;
+
+  cursor:pointer;
+}
+
+#resetEditor:hover{
+  color:#fff;
+}
+
+
+/* MOBILE */
+
+@media(max-width:520px){
+
+  .editor-toolbar{
+    grid-template-columns:
+      repeat(4,1fr);
+
+    top:58px;
+  }
+
+  .editor-tool{
+    min-height:52px;
+  }
+
+  .preview-phone{
+    width:250px;
+    height:444px;
+    min-height:444px;
+  }
+
+}
+
+@media(max-width:360px){
+
+  .editor-toolbar{
+    grid-template-columns:
+      repeat(3,1fr);
+  }
+
+}
 </style>
 </head>
 
