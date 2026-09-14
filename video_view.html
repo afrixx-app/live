@@ -1,251 +1,1123 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover">
+
 <title>BIGULA • Video</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#07080b;--panel:#11131a;--panel2:#171a23;--text:#f7f7fa;--muted:#9ca3af;--line:#242833;--accent:#ff2d55;--green:#23d18b}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}body{min-height:100vh}
-button,input,textarea{font:inherit}button{cursor:pointer}
-.top{position:fixed;top:0;left:0;right:0;height:58px;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(#050609e8,transparent);pointer-events:none}.top>*{pointer-events:auto}
-.logo{font-weight:900;letter-spacing:.7px;font-size:20px}.topbtn{width:40px;height:40px;border:0;border-radius:50%;background:#ffffff12;color:#fff;font-size:20px}
-.wrap{max-width:900px;margin:auto;padding-bottom:90px}.playerShell{position:relative;background:#000;width:100%;height:min(76vh,760px);min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-video{width:100%;height:100%;object-fit:contain;background:#000}
-.centerPlay{position:absolute;width:74px;height:74px;border:0;border-radius:50%;background:#0009;color:#fff;font-size:30px;display:grid;place-items:center;backdrop-filter:blur(8px);opacity:0;transition:.2s}.playerShell.paused .centerPlay{opacity:1}
-.controls{position:absolute;left:0;right:0;bottom:0;padding:10px 12px 12px;background:linear-gradient(transparent,#000d);transition:.2s}.controls.hidden{opacity:0;pointer-events:none}
-.progress{width:100%;accent-color:var(--accent);height:4px}.ctrlrow{display:flex;align-items:center;gap:7px;margin-top:7px}.ctrl{border:0;background:#ffffff14;color:#fff;border-radius:9px;height:36px;min-width:36px;padding:0 9px}.time{font-size:12px;color:#ddd;margin-right:auto}.speed{font-size:12px}
-.info{padding:16px 16px 8px}.creatorRow{display:flex;align-items:center;gap:11px}.avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#252936;border:1px solid #303440}.creatorMeta{min-width:0;flex:1}.creatorName{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.handle{color:var(--muted);font-size:13px;margin-top:2px}.follow{border:0;background:#fff;color:#08090c;font-weight:800;border-radius:9px;padding:9px 14px}.follow.following{background:#292d38;color:#fff}
-.title{font-size:20px;font-weight:850;margin:14px 0 6px;line-height:1.2}.desc{color:#d2d5dc;line-height:1.45;font-size:14px;white-space:pre-wrap}.date{color:var(--muted);font-size:12px;margin-top:8px}
-.actions{display:flex;gap:8px;overflow:auto;padding:12px 16px 5px}.action{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:12px;min-width:72px;padding:9px 10px;text-align:center}.action .ico{font-size:19px;display:block}.action small{color:var(--muted);font-size:11px}.action.active{border-color:#ff2d5555;background:#ff2d5514}.action.reuse{border-color:#23d18b44}.action:disabled{opacity:.42;cursor:not-allowed}
-.sound{margin:9px 16px 12px;background:linear-gradient(120deg,#151923,#101217);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;align-items:center;gap:12px}.disc{width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,#ddd 0 8%,#333 9% 20%,#111 21% 55%,#555 56% 60%,#111 61%);animation:spin 3s linear infinite}.disc.stop{animation-play-state:paused}.soundText{flex:1;min-width:0}.soundTitle{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.soundSub{font-size:12px;color:var(--muted);margin-top:3px}.comments{border-top:1px solid var(--line);margin-top:8px;padding:14px 16px}.sectionHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sectionHead b{font-size:16px}.commentForm{display:flex;gap:8px}.commentForm input{flex:1;min-width:0;background:#151820;border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:#fff;outline:none}.send{border:0;background:var(--accent);color:#fff;font-weight:800;border-radius:11px;padding:0 15px}.comment{display:flex;gap:9px;padding:10px 0;border-bottom:1px solid #1c1f27}.comment .avatar{width:34px;height:34px}.commentBody{flex:1}.commentTop{display:flex;gap:8px;align-items:center}.commentTop b{font-size:13px}.commentTop span{font-size:11px;color:var(--muted)}.commentText{font-size:13px;color:#e2e4e9;margin-top:4px;line-height:1.4}.empty{color:var(--muted);font-size:13px;padding:12px 0}
-.more{display:flex;flex-wrap:wrap;gap:8px;padding:5px 16px 15px}.more button{border:1px solid var(--line);background:var(--panel);color:#ddd;border-radius:10px;padding:9px 12px}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:68px;background:#090a0eeF;border-top:1px solid var(--line);display:flex;justify-content:center;gap:8px;z-index:40;backdrop-filter:blur(16px)}.nav{flex:1;max-width:180px;border:0;background:none;color:#aaa}.nav span{display:block;font-size:20px}.nav b{font-size:10px}.nav.active{color:#fff}
-.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(15px);background:#222630;color:#fff;border:1px solid #343947;border-radius:12px;padding:11px 14px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.loading{padding:100px 20px;text-align:center;color:var(--muted)}
-@keyframes spin{to{transform:rotate(360deg)}}@media(min-width:760px){.playerShell{border-radius:0 0 16px 16px;margin-top:8px}.info,.actions,.sound,.comments,.more{padding-left:0;padding-right:0}.bottom{display:none}}
+:root{
+ --bg:#07080b;
+ --panel:#11131a;
+ --text:#f7f7fa;
+ --muted:#9ca3af;
+ --line:#242833;
+ --accent:#ff2d55;
+}
+*{box-sizing:border-box}
+html,body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Inter,Arial,sans-serif
+}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:900px;margin:auto;padding-bottom:80px}
+.top{
+ position:fixed;top:0;left:0;right:0;height:58px;
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 14px;z-index:30;
+ background:linear-gradient(#050609ee,transparent)
+}
+.logo{font-weight:900;font-size:20px}
+.topbtn{
+ width:40px;height:40px;border:0;border-radius:50%;
+ background:#ffffff12;color:#fff;font-size:20px
+}
+.player{
+ width:100%;height:min(78vh,760px);min-height:420px;
+ background:#000;position:relative;
+ display:flex;align-items:center;justify-content:center;
+ overflow:hidden
+}
+.player video{
+ width:100%;height:100%;object-fit:contain;
+ background:#000
+}
+.center{
+ position:absolute;left:50%;top:50%;
+ transform:translate(-50%,-50%);
+ width:70px;height:70px;border:0;border-radius:50%;
+ background:#0009;color:#fff;font-size:28px;
+ opacity:0;transition:.2s
+}
+.player.paused .center{opacity:1}
+.controls{
+ position:absolute;bottom:0;left:0;right:0;
+ padding:10px 12px 13px;
+ background:linear-gradient(transparent,#000e)
+}
+.progress{width:100%;accent-color:var(--accent)}
+.ctrlrow{display:flex;align-items:center;gap:7px;margin-top:7px}
+.ctrl{
+ border:0;background:#ffffff14;color:#fff;
+ border-radius:9px;min-width:37px;height:36px;padding:0 9px
+}
+.time{font-size:12px;color:#ddd;margin-right:auto}
+.info{padding:16px}
+.creator{
+ display:flex;align-items:center;gap:11px
+}
+.avatar{
+ width:46px;height:46px;border-radius:50%;
+ object-fit:cover;background:#252936
+}
+.meta{flex:1;min-width:0}
+.creatorName{font-weight:850}
+.handle{font-size:12px;color:var(--muted);margin-top:3px}
+.follow{
+ border:0;background:#fff;color:#000;
+ border-radius:10px;padding:9px 13px;font-weight:850
+}
+.following{background:#292d38;color:#fff}
+.title{font-size:20px;font-weight:850;margin-top:14px}
+.desc{font-size:14px;color:#d3d5da;line-height:1.5;margin-top:7px;white-space:pre-wrap}
+.date{font-size:12px;color:var(--muted);margin-top:8px}
+.actions{
+ display:flex;gap:8px;overflow:auto;padding:7px 16px 12px
+}
+.action{
+ min-width:76px;background:var(--panel);
+ color:#fff;border:1px solid var(--line);
+ border-radius:12px;padding:9px;text-align:center
+}
+.action .ico{display:block;font-size:19px}
+.action small{font-size:11px;color:var(--muted)}
+.action.active{background:#ff2d5515;border-color:#ff2d5555}
+.sound{
+ margin:7px 16px 12px;padding:12px;
+ background:#151923;border:1px solid var(--line);
+ border-radius:14px;display:flex;gap:12px;align-items:center
+}
+.disc{
+ width:42px;height:42px;border-radius:50%;
+ background:radial-gradient(circle,#ddd 0 8%,#333 9% 20%,#111 21% 55%,#555 56% 60%,#111 61%);
+ animation:spin 3s linear infinite
+}
+.disc.stop{animation-play-state:paused}
+.soundText{flex:1;min-width:0}
+.soundTitle{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.soundSub{font-size:12px;color:var(--muted);margin-top:3px}
+.comments{padding:14px 16px;border-top:1px solid var(--line)}
+.commentForm{display:flex;gap:8px}
+.commentForm input{
+ flex:1;min-width:0;background:#151820;
+ border:1px solid var(--line);border-radius:12px;
+ padding:11px;color:#fff
+}
+.send{
+ background:var(--accent);color:#fff;
+ border:0;border-radius:11px;padding:0 15px
+}
+.comment{
+ display:flex;gap:9px;padding:10px 0;
+ border-bottom:1px solid #1c1f27
+}
+.comment .avatar{width:34px;height:34px}
+.commentBody{flex:1}
+.commentTop{font-size:13px}
+.commentTop span{font-size:11px;color:var(--muted);margin-left:7px}
+.commentText{font-size:13px;color:#ddd;margin-top:4px}
+.more{
+ display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px
+}
+.more button{
+ background:var(--panel);color:#ddd;
+ border:1px solid var(--line);
+ border-radius:10px;padding:9px 12px
+}
+.loading{text-align:center;padding:120px 20px;color:var(--muted)}
+.toast{
+ position:fixed;left:50%;bottom:80px;
+ transform:translateX(-50%);
+ background:#222630;color:#fff;
+ border:1px solid #343947;border-radius:12px;
+ padding:11px 14px;opacity:0;pointer-events:none;
+ transition:.25s;z-index:80
+}
+.toast.show{opacity:1}
+.bottom{
+ position:fixed;bottom:0;left:0;right:0;height:67px;
+ background:#090a0eef;border-top:1px solid var(--line);
+ display:flex;z-index:40
+}
+.nav{
+ flex:1;border:0;background:none;color:#aaa
+}
+.nav span{display:block;font-size:20px}
+.nav b{font-size:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(min-width:760px){
+ .player{border-radius:0 0 16px 16px;margin-top:8px}
+ .bottom{display:none}
+ .info,.actions,.sound,.comments,.more{padding-left:0;padding-right:0}
+}
 </style>
 </head>
+
 <body>
-<div class="top"><div class="logo">BIGULA</div><button class="topbtn" id="moreTop">⋯</button></div>
-<main class="wrap" id="app"><div class="loading">Loading video…</div></main>
-<div class="toast" id="toast"></div>
+
+<div class="top">
+  <div class="logo">BIGULA</div>
+  <button id="moreTop" class="topbtn">⋯</button>
+</div>
+
+<main id="app" class="wrap">
+  <div class="loading">Loading video…</div>
+</main>
+
+<div id="toast" class="toast"></div>
+
 <nav class="bottom">
-<button class="nav active" onclick="location.href='home.html'"><span>⌂</span><b>Home</b></button>
-<button class="nav" onclick="location.href='explore.html'"><span>⌕</span><b>Explore</b></button>
-<button class="nav" onclick="location.href='upload.html'"><span>＋</span><b>Upload</b></button>
-<button class="nav" onclick="location.href='account.html'"><span>◎</span><b>Profile</b></button>
+<button class="nav" onclick="location.href='home.html'">
+<span>⌂</span><b>Home</b>
+</button>
+
+<button class="nav" onclick="location.href='explore.html'">
+<span>⌕</span><b>Explore</b>
+</button>
+
+<button class="nav" onclick="location.href='upload.html'">
+<span>＋</span><b>Upload</b>
+</button>
+
+<button class="nav" onclick="location.href='account.html'">
+<span>◎</span><b>Profile</b>
+</button>
 </nav>
 
 <script>
-const SUPABASE_URL='https://vfteiggdhthvrrlndtbs.supabase.co';
-const SUPABASE_KEY='sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe';
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}});
+
+const SUPABASE_URL=
+"https://vfteiggdhthvrrlndtbs.supabase.co";
+
+const SUPABASE_KEY=
+"sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+const supabase=
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
+      flowType:"pkce"
+    }
+  }
+);
+
 const params=new URLSearchParams(location.search);
-const shortCode=params.get('v') || params.get('short_code');
-const legacyId=params.get('id');
-let video=null, me=null, owner=null, liked=false, following=false, playing=false, commentsOpen=true;
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const toast=m=>{const x=document.getElementById('toast');x.textContent=m;x.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove('show'),2200)};
-const fmt=n=>n==null?'0':Intl.NumberFormat(undefined,{notation:'compact',maximumFractionDigits:1}).format(n);
-const dateFmt=d=>d?new Intl.DateTimeFormat(undefined,{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(d)):'—';
-const avatar=u=>u?.avatar_url||u?.photo_url||u?.profile_photo||u?.avatar||'';
-function profileUrl(){return owner?.id?`creator_profile.html?id=${encodeURIComponent(owner.id)}`:'#'}
-function ownerId(v){return v?.user_id||v?.creator_id||v?.owner_id}
-async function getMe(){const {data}=await supabase.auth.getUser();me=data?.user||null}
-async function first(table, selects, filters){
-  let q=supabase.from(table).select(selects);
-  for(const [k,v] of filters) q=q.eq(k,v);
-  const {data,error}=await q.limit(1); if(error) return null; return data?.[0]||null;
+const shortCode=
+  params.get("v")||
+  params.get("short_code");
+
+const legacyId=
+  params.get("id")||
+  params.get("video_id");
+
+let video=null;
+let me=null;
+let owner=null;
+let liked=false;
+let following=false;
+
+const esc=s=>
+ String(s??"").replace(
+  /[&<>"']/g,
+  m=>({
+   "&":"&amp;",
+   "<":"&lt;",
+   ">":"&gt;",
+   '"':"&quot;",
+   "'":"&#39;"
+  }[m])
+ );
+
+function toast(text){
+ const x=document.getElementById("toast");
+ x.textContent=text;
+ x.classList.add("show");
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(
+  ()=>x.classList.remove("show"),2300
+ );
 }
-async function count(table, field, value){const {count}=await supabase.from(table).select('*',{count:'exact',head:true}).eq(field,value);return count||0}
+
+function fmt(n){
+ return Intl.NumberFormat(
+  undefined,
+  {notation:"compact",maximumFractionDigits:1}
+ ).format(Number(n)||0);
+}
+
+function dateFmt(d){
+ if(!d)return"—";
+ return new Intl.DateTimeFormat(
+  undefined,
+  {
+   year:"numeric",
+   month:"short",
+   day:"numeric",
+   hour:"numeric",
+   minute:"2-digit"
+  }
+ ).format(new Date(d));
+}
+
+function ownerId(row){
+ return row?.user_id||
+        row?.creator_id||
+        row?.owner_id||
+        null;
+}
+
+function avatar(u){
+ return u?.avatar_url||
+        u?.photo_url||
+        u?.profile_photo||
+        u?.avatar||
+        "";
+}
+
+async function count(table,field,value){
+ const {count}=await supabase
+  .from(table)
+  .select("*",{count:"exact",head:true})
+  .eq(field,value);
+
+ return count||0;
+}
+
+async function first(table,selects,filters){
+
+ let q=supabase.from(table).select(selects);
+
+ for(const [k,v] of filters)
+  q=q.eq(k,v);
+
+ const {data}=await q.limit(1);
+
+ return data?.[0]||null;
+}
+
+async function loadMe(){
+ const {data:{user}}=
+  await supabase.auth.getUser();
+
+ me=user||null;
+}
+
 async function load(){
- if(!shortCode && !legacyId){
-   document.getElementById('app').innerHTML='<div class="loading">No video selected.</div>';
-   return;
+
+ if(!shortCode&&!legacyId){
+  document.getElementById("app").innerHTML=
+   `<div class="loading">No video selected.</div>`;
+  return;
  }
 
- await getMe();
+ await loadMe();
 
- // Primary lookup: the public short URL code.
- // Legacy ?id=UUID is supported only as a fallback.
- let r;
+ let result;
+
+ /*
+   Short BIGULA URL first.
+ */
  if(shortCode){
-   r=await supabase.from('videos').select('*').eq('short_code',shortCode).maybeSingle();
+  result=await supabase
+   .from("videos")
+   .select("*")
+   .eq("short_code",shortCode)
+   .maybeSingle();
+
+  /*
+    If short_code is not available, allow the UUID
+    fallback when supplied.
+  */
+  if((result.error||!result.data)&&legacyId){
+   result=await supabase
+    .from("videos")
+    .select("*")
+    .eq("id",legacyId)
+    .maybeSingle();
+  }
+
  }else{
-   r=await supabase.from('videos').select('*').eq('id',legacyId).maybeSingle();
+
+  result=await supabase
+   .from("videos")
+   .select("*")
+   .eq("id",legacyId)
+   .maybeSingle();
  }
 
- if(r.error||!r.data){
-   document.getElementById('app').innerHTML='<div class="loading">Video not found or unavailable.</div>';
-   return;
+ if(result.error){
+  console.error(result.error);
+
+  document.getElementById("app").innerHTML=
+   `<div class="loading">Could not load this video.</div>`;
+
+  return;
  }
 
- video=r.data;
+ if(!result.data){
 
- if(video.publication_status &&
-    !['approved','published','public'].includes(String(video.publication_status).toLowerCase()) &&
-    ownerId(video)!==me?.id){
-   document.getElementById('app').innerHTML='<div class="loading">This video is not available.</div>';
-   return;
+  document.getElementById("app").innerHTML=
+   `<div class="loading">Video not found or unavailable.</div>`;
+
+  return;
+ }
+
+ video=result.data;
+
+ const status=String(
+  video.publication_status||
+  ""
+ ).toLowerCase();
+
+ /*
+   Private videos are visible only to their owner.
+ */
+ if(
+  status &&
+  !["published","public","approved"].includes(status) &&
+  ownerId(video)!==me?.id
+ ){
+  document.getElementById("app").innerHTML=
+   `<div class="loading">This video is not publicly available.</div>`;
+  return;
  }
 
  const oid=ownerId(video);
- owner=oid ? await first('users','*',[['id',oid]]) : null;
 
- const videoId=video.id;
-
- if(me){
-   liked=!!await first('likes','id',[['video_id',videoId],['user_id',me.id]]);
-   following=!!(oid && await first('followers','id',[['follower_id',me.id],['following_id',oid]]));
+ if(oid){
+  owner=await first(
+   "users",
+   "*",
+   [["id",oid]]
+  );
  }
 
- // Record the view first, then fetch the live totals so the displayed
- // count reflects the database as closely as possible.
+ if(me&&oid){
+  liked=!!await first(
+   "likes",
+   "id",
+   [["video_id",video.id],["user_id",me.id]]
+  );
+
+  following=!!await first(
+   "followers",
+   "id",
+   [["follower_id",me.id],["following_id",oid]]
+  );
+ }
+
+ /*
+   Record one view for this page visit.
+ */
  await recordView();
 
- const [likes,comments,views,followers]=await Promise.all([
-   count('likes','video_id',videoId),
-   count('comments','video_id',videoId),
-   count('views','video_id',videoId),
-   oid ? count('followers','following_id',oid) : Promise.resolve(0)
+ const [
+  likes,
+  comments,
+  views,
+  followers
+ ]=await Promise.all([
+  count("likes","video_id",video.id),
+  count("comments","video_id",video.id),
+  count("views","video_id",video.id),
+  oid?
+   count("followers","following_id",oid):
+   Promise.resolve(0)
  ]);
 
- render({likes,comments,views,followers});
+ render({
+  likes,
+  comments,
+  views,
+  followers
+ });
+
  loadComments();
 }
+
 function render(c){
- const videoId=video.id;
- const url=video.video_url||video.url||video.file_url;
- const canReuse=video.allow_sound_reuse===true||video.sound_reuse_allowed===true||video.reuse_allowed===true;
- const uname=owner?.username||owner?.user_name||owner?.name||'BIGULA creator';
- const display=owner?.display_name||owner?.full_name||owner?.name||uname;
- document.getElementById('app').innerHTML=`
- <section class="playerShell paused" id="shell">
-   <video id="vid" playsinline preload="metadata" src="${esc(url)}"></video>
-   <button class="centerPlay" id="centerPlay">▶</button>
-   <div class="controls" id="controls">
-    <input class="progress" id="progress" type="range" min="0" max="1000" value="0">
-    <div class="ctrlrow">
-      <button class="ctrl" id="play">▶</button><button class="ctrl" id="mute">🔊</button>
-      <span class="time" id="time">0:00 / 0:00</span>
-      <button class="ctrl speed" id="speed">1×</button><button class="ctrl" id="pip">▣</button><button class="ctrl" id="full">⛶</button>
-    </div>
-   </div>
- </section>
- <section class="info">
-   <div class="creatorRow">
-    <img class="avatar" src="${esc(avatar(owner))}" onerror="this.style.display='none'">
-    <div class="creatorMeta"><div class="creatorName">${esc(display)}</div><div class="handle">@${esc(uname)} · ${fmt(c.followers)} followers</div></div>
-    ${me?.id!==ownerId(video)?`<button class="follow ${following?'following':''}" id="follow">${following?'Following':'Follow'}</button>`:''}
-   </div>
-   <div class="title">${esc(video.title||'Untitled video')}</div>
-   ${video.description?`<div class="desc">${esc(video.description)}</div>`:''}
-   <div class="date">Published ${dateFmt(video.published_at||video.created_at||video.updated_at)} · ${fmt(c.views)} views</div>
- </section>
- <div class="actions">
-  <button class="action ${liked?'active':''}" id="like"><span class="ico">♥</span><small id="likeTxt">${liked?'Liked':'Like'} · ${fmt(c.likes)}</small></button>
-  <button class="action" id="commentBtn"><span class="ico">💬</span><small>${fmt(c.comments)} comments</small></button>
-  <button class="action reuse" id="reuse" ${canReuse?'':'disabled'}><span class="ico">🎵</span><small>${canReuse?'Reuse sound':'Sound reuse off'}</small></button>
-  <button class="action" id="share"><span class="ico">↗</span><small>Share</small></button>
-  <button class="action" id="save"><span class="ico">🔖</span><small>Save</small></button>
- </div>
- <div class="sound"><div class="disc ${playing?'':'stop'}" id="disc"></div><div class="soundText"><div class="soundTitle">${esc(video.sound_title||video.sound_name||'Original sound')}</div><div class="soundSub">${canReuse?'Sound can be reused on BIGULA':'Creator has disabled sound reuse'}</div></div><button class="ctrl" id="soundInfo">ⓘ</button></div>
- <section class="comments" id="commentsSection"><div class="sectionHead"><b>Comments</b><button class="ctrl" id="closeComments">⌃</button></div>
-  <form class="commentForm" id="commentForm"><input id="commentInput" maxlength="500" placeholder="${me?'Add a comment…':'Sign in to comment'}" ${me?'':'disabled'}><button class="send" ${me?'':'disabled'}>Post</button></form>
-  <div id="commentList"></div>
- </section>
- <div class="more"><button id="notInterested">Not interested</button><button id="report">Report</button><button id="copyLink">Copy link</button></div>`;
- setupPlayer(); bindActions(canReuse); recordView();
+
+ const url=
+  video.video_url||
+  video.url||
+  video.file_url||
+  video.public_url||
+  "";
+
+ if(!url){
+  document.getElementById("app").innerHTML=
+   `<div class="loading">
+      This video does not have a playable video URL.
+    </div>`;
+  return;
+ }
+
+ const oid=ownerId(video);
+
+ const username=
+  owner?.username||
+  owner?.user_name||
+  owner?.name||
+  "BIGULA creator";
+
+ const display=
+  owner?.display_name||
+  owner?.full_name||
+  owner?.name||
+  username;
+
+ const canReuse=
+  video.allow_sound_reuse===true||
+  video.sound_reuse_allowed===true||
+  video.reuse_allowed===true;
+
+ document.getElementById("app").innerHTML=`
+
+<section class="player paused" id="player">
+
+<video
+ id="vid"
+ playsinline
+ preload="metadata"
+ src="${esc(url)}">
+</video>
+
+<button class="center" id="center">▶</button>
+
+<div class="controls">
+
+<input
+ id="progress"
+ class="progress"
+ type="range"
+ min="0"
+ max="1000"
+ value="0">
+
+<div class="ctrlrow">
+
+<button class="ctrl" id="play">▶</button>
+
+<button class="ctrl" id="mute">🔊</button>
+
+<span class="time" id="time">
+0:00 / 0:00
+</span>
+
+<button class="ctrl" id="speed">1×</button>
+
+<button class="ctrl" id="pip">▣</button>
+
+<button class="ctrl" id="full">⛶</button>
+
+</div>
+</div>
+</section>
+
+<section class="info">
+
+<div class="creator">
+
+<img
+ class="avatar"
+ src="${esc(avatar(owner))}"
+ onerror="this.style.display='none'">
+
+<div class="meta">
+
+<div class="creatorName">
+${esc(display)}
+</div>
+
+<div class="handle">
+@${esc(username)} · ${fmt(c.followers)} followers
+</div>
+
+</div>
+
+${
+ me?.id!==oid
+ ?
+ `<button id="follow"
+ class="follow ${following?"following":""}">
+ ${following?"Following":"Follow"}
+ </button>`
+ :""
 }
+
+</div>
+
+<div class="title">
+${esc(video.title||"Untitled video")}
+</div>
+
+${
+ video.description
+ ?
+ `<div class="desc">${esc(video.description)}</div>`
+ :""
+}
+
+<div class="date">
+Published ${dateFmt(
+ video.published_at||
+ video.created_at||
+ video.updated_at
+ )} · ${fmt(c.views)} views
+</div>
+
+</section>
+
+<div class="actions">
+
+<button id="like"
+ class="action ${liked?"active":""}">
+<span class="ico">♥</span>
+<small id="likeTxt">
+${liked?"Liked":"Like"} · ${fmt(c.likes)}
+</small>
+</button>
+
+<button id="commentBtn" class="action">
+<span class="ico">💬</span>
+<small>${fmt(c.comments)} comments</small>
+</button>
+
+<button
+ id="reuse"
+ class="action"
+ ${canReuse?"":"disabled"}>
+<span class="ico">🎵</span>
+<small>
+${canReuse?"Reuse sound":"Sound reuse off"}
+</small>
+</button>
+
+<button id="share" class="action">
+<span class="ico">↗</span>
+<small>Share</small>
+</button>
+
+<button id="copyLink" class="action">
+<span class="ico">🔗</span>
+<small>Copy link</small>
+</button>
+
+</div>
+
+<div class="sound">
+
+<div class="disc stop" id="disc"></div>
+
+<div class="soundText">
+
+<div class="soundTitle">
+${esc(video.sound_title||video.sound_name||"Original sound")}
+</div>
+
+<div class="soundSub">
+${canReuse?
+ "Sound can be reused on BIGULA":
+ "Creator has disabled sound reuse"}
+</div>
+
+</div>
+
+<button class="ctrl" id="soundInfo">ⓘ</button>
+
+</div>
+
+<section class="comments">
+
+<div style="font-weight:800;margin-bottom:10px">
+Comments
+</div>
+
+<form id="commentForm" class="commentForm">
+
+<input
+ id="commentInput"
+ maxlength="500"
+ placeholder="${me?"Add a comment…":"Sign in to comment"}"
+ ${me?"":"disabled"}>
+
+<button
+ class="send"
+ ${me?"":"disabled"}>
+Post
+</button>
+
+</form>
+
+<div id="commentList"></div>
+
+</section>
+
+<div class="more">
+
+<button id="notInterested">
+Not interested
+</button>
+
+<button id="report">
+Report
+</button>
+
+</div>
+`;
+
+ setupPlayer();
+ bindActions(canReuse);
+}
+
 function setupPlayer(){
- const v=document.getElementById('vid'),shell=document.getElementById('shell'),play=document.getElementById('play');
- const progress=document.getElementById('progress'),time=document.getElementById('time'),mute=document.getElementById('mute');
- const fmtT=s=>{s=Math.max(0,Math.floor(s||0));return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`};
- const toggle=async()=>{if(v.paused) await v.play();else v.pause()};
- document.getElementById('centerPlay').onclick=toggle; play.onclick=toggle;
- v.addEventListener('play',()=>{playing=true;shell.classList.remove('paused');play.textContent='Ⅱ';document.getElementById('disc').classList.remove('stop')});
- v.addEventListener('pause',()=>{playing=false;shell.classList.add('paused');play.textContent='▶';document.getElementById('disc').classList.add('stop')});
- v.addEventListener('loadedmetadata',()=>time.textContent=`0:00 / ${fmtT(v.duration)}`);
- v.addEventListener('timeupdate',()=>{progress.value=v.duration?(v.currentTime/v.duration)*1000:0;time.textContent=`${fmtT(v.currentTime)} / ${fmtT(v.duration)}`});
- progress.oninput=()=>{if(v.duration)v.currentTime=(progress.value/1000)*v.duration};
- mute.onclick=()=>{v.muted=!v.muted;mute.textContent=v.muted?'🔇':'🔊'};
- document.getElementById('speed').onclick=()=>{const rates=[1,1.25,1.5,2,.75];let i=rates.indexOf(v.playbackRate);v.playbackRate=rates[(i+1)%rates.length];document.getElementById('speed').textContent=v.playbackRate+'×'};
- document.getElementById('full').onclick=()=>shell.requestFullscreen?.();
- document.getElementById('pip').onclick=()=>v.requestPictureInPicture?.().catch(()=>{});
- shell.onclick=e=>{if(e.target===v)toggle()};
- let hide; const reveal=()=>{document.getElementById('controls').classList.remove('hidden');clearTimeout(hide);hide=setTimeout(()=>{if(!v.paused)document.getElementById('controls').classList.add('hidden')},3000)};shell.addEventListener('mousemove',reveal);shell.addEventListener('touchstart',reveal,{passive:true});
-}
-async function bindActions(canReuse){
- document.getElementById('follow')?.addEventListener('click',async()=>{
-  if(!me)return toast('Sign in to follow creators');
-  const oid=ownerId(video);
-  if(following){const {error}=await supabase.from('followers').delete().eq('follower_id',me.id).eq('following_id',oid);if(!error){following=false;}}
-  else{const {error}=await supabase.from('followers').insert({follower_id:me.id,following_id:oid});if(!error){following=true;}}
-  const b=document.getElementById('follow');b.textContent=following?'Following':'Follow';b.classList.toggle('following',following);
- });
- document.getElementById('like').onclick=async()=>{
-  if(!me)return toast('Sign in to like this video');
-  if(liked){const {error}=await supabase.from('likes').delete().eq('video_id',video.id).eq('user_id',me.id);if(!error)liked=false}
-  else{const {error}=await supabase.from('likes').insert({video_id:video.id,user_id:me.id});if(!error)liked=true}
-  const n=await count('likes','video_id',id);document.getElementById('like').classList.toggle('active',liked);document.getElementById('likeTxt').textContent=`${liked?'Liked':'Like'} · ${fmt(n)}`;
+
+ const v=document.getElementById("vid");
+ const shell=document.getElementById("player");
+ const play=document.getElementById("play");
+ const center=document.getElementById("center");
+ const progress=document.getElementById("progress");
+ const time=document.getElementById("time");
+ const mute=document.getElementById("mute");
+
+ const fmtTime=s=>{
+  s=Math.max(0,Math.floor(s||0));
+  return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
  };
- document.getElementById('reuse').onclick=()=>{if(!canReuse)return;location.href=`upload.html?sound_video=${encodeURIComponent(video.id)}`};
- document.getElementById('share').onclick=async()=>{const link=`${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
-if(navigator.share){
-  try{await navigator.share({title:video.title||'BIGULA video',url:link})}catch(e){}
-}else{
-  await navigator.clipboard?.writeText(link);
-  toast('Video link copied');
-}};
- document.getElementById('save').onclick=()=>toast(me?'Saved to your BIGULA collection':'Sign in to save videos');
- document.getElementById('soundInfo').onclick=()=>toast(canReuse?'Other creators can use this sound.':'The creator has disabled sound reuse.');
- document.getElementById('commentBtn').onclick=()=>document.getElementById('commentInput')?.focus();
- document.getElementById('closeComments').onclick=()=>{commentsOpen=!commentsOpen;document.getElementById('commentList').style.display=commentsOpen?'block':'none'};
- document.getElementById('commentForm').onsubmit=postComment;
- document.getElementById('notInterested').onclick=()=>toast('We’ll show you fewer videos like this');
- document.getElementById('report').onclick=()=>reportVideo();
- document.getElementById('copyLink').onclick=async()=>{
-  const link=`${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
-  await navigator.clipboard?.writeText(link);
-  toast('Link copied');
-};
- document.getElementById('moreTop').onclick=()=>toast('More video options are below');
+
+ const toggle=async()=>{
+  if(v.paused){
+   try{await v.play()}
+   catch(e){toast("Tap play to start the video")}
+  }else{
+   v.pause();
+  }
+ };
+
+ play.onclick=toggle;
+ center.onclick=toggle;
+
+ v.addEventListener("play",()=>{
+  shell.classList.remove("paused");
+  play.textContent="Ⅱ";
+  document.getElementById("disc")?.classList.remove("stop");
+ });
+
+ v.addEventListener("pause",()=>{
+  shell.classList.add("paused");
+  play.textContent="▶";
+  document.getElementById("disc")?.classList.add("stop");
+ });
+
+ v.addEventListener("loadedmetadata",()=>{
+  time.textContent=
+   `0:00 / ${fmtTime(v.duration)}`;
+ });
+
+ v.addEventListener("timeupdate",()=>{
+  progress.value=
+   v.duration?
+   (v.currentTime/v.duration)*1000:
+   0;
+
+  time.textContent=
+   `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
+ });
+
+ progress.oninput=()=>{
+  if(v.duration)
+   v.currentTime=
+    Number(progress.value)/1000*v.duration;
+ };
+
+ mute.onclick=()=>{
+  v.muted=!v.muted;
+  mute.textContent=v.muted?"🔇":"🔊";
+ };
+
+ document.getElementById("speed").onclick=()=>{
+  const rates=[1,.75,1.25,1.5,2];
+  const i=rates.indexOf(v.playbackRate);
+  v.playbackRate=rates[(i+1)%rates.length];
+  document.getElementById("speed").textContent=
+   v.playbackRate+"×";
+ };
+
+ document.getElementById("full").onclick=
+  ()=>shell.requestFullscreen?.();
+
+ document.getElementById("pip").onclick=
+  ()=>v.requestPictureInPicture?.().catch(()=>{});
+
+ shell.onclick=e=>{
+  if(e.target===v)toggle();
+ };
 }
-async function postComment(e){
- e.preventDefault(); if(!me)return toast('Sign in to comment');
- const input=document.getElementById('commentInput'),text=input.value.trim();if(!text)return;
- const payload={video_id:video.id,user_id:me.id,comment:text,content:text,text};
- let {error}=await supabase.from('comments').insert(payload);
- if(error){const fallback={video_id:video.id,user_id:me.id,content:text};({error}=await supabase.from('comments').insert(fallback))}
- if(error)return toast('Could not post comment');
- input.value='';toast('Comment posted');loadComments();
+
+async function bindActions(canReuse){
+
+ document.getElementById("follow")?.addEventListener(
+  "click",
+  async()=>{
+   if(!me){
+    toast("Sign in to follow creators");
+    return;
+   }
+
+   const oid=ownerId(video);
+
+   if(following){
+
+    const {error}=await supabase
+     .from("followers")
+     .delete()
+     .eq("follower_id",me.id)
+     .eq("following_id",oid);
+
+    if(!error)following=false;
+
+   }else{
+
+    const {error}=await supabase
+     .from("followers")
+     .insert({
+      follower_id:me.id,
+      following_id:oid
+     });
+
+    if(!error)following=true;
+   }
+
+   const b=document.getElementById("follow");
+
+   if(b){
+    b.textContent=following?"Following":"Follow";
+    b.classList.toggle("following",following);
+   }
+  }
+ );
+
+ document.getElementById("like").onclick=
+ async()=>{
+  if(!me){
+   toast("Sign in to like this video");
+   return;
+  }
+
+  if(liked){
+
+   const {error}=await supabase
+    .from("likes")
+    .delete()
+    .eq("video_id",video.id)
+    .eq("user_id",me.id);
+
+   if(!error)liked=false;
+
+  }else{
+
+   const {error}=await supabase
+    .from("likes")
+    .insert({
+     video_id:video.id,
+     user_id:me.id
+    });
+
+   if(!error)liked=true;
+  }
+
+  /*
+    FIXED: use video.id, not undefined "id".
+  */
+  const n=await count(
+   "likes",
+   "video_id",
+   video.id
+  );
+
+  const b=document.getElementById("like");
+
+  b.classList.toggle("active",liked);
+
+  document.getElementById("likeTxt").textContent=
+   `${liked?"Liked":"Like"} · ${fmt(n)}`;
+ };
+
+ document.getElementById("reuse").onclick=()=>{
+  if(canReuse)
+   location.href=
+    "upload.html?sound_video="+
+    encodeURIComponent(video.id);
+ };
+
+ document.getElementById("share").onclick=async()=>{
+  const link=shareLink();
+
+  if(navigator.share){
+   try{
+    await navigator.share({
+     title:video.title||"BIGULA video",
+     url:link
+    });
+   }catch(e){}
+  }else{
+   await copy(link);
+   toast("BIGULA video link copied");
+  }
+ };
+
+ document.getElementById("copyLink").onclick=
+ async()=>{
+  await copy(shareLink());
+  toast("BIGULA video link copied");
+ };
+
+ document.getElementById("commentBtn").onclick=
+  ()=>document.getElementById("commentInput")?.focus();
+
+ document.getElementById("commentForm").onsubmit=
+  postComment;
+
+ document.getElementById("soundInfo").onclick=
+  ()=>toast(
+   canReuse?
+   "Other creators can reuse this sound.":
+   "The creator has disabled sound reuse."
+  );
+
+ document.getElementById("notInterested").onclick=
+  ()=>toast("We'll show you fewer videos like this");
+
+ document.getElementById("report").onclick=
+  reportVideo;
+
+ document.getElementById("moreTop").onclick=
+  ()=>toast("More options are available below");
 }
-async function loadComments(){
- const box=document.getElementById('commentList');if(!box)return;
- let {data,error}=await supabase.from('comments').select('*').eq('video_id',video.id).order('created_at',{ascending:false}).limit(50);
- if(error||!data?.length){box.innerHTML='<div class="empty">No comments yet. Be the first to comment.</div>';return}
- const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];let users=[];
- if(ids.length){const r=await supabase.from('users').select('*').in('id',ids);users=r.data||[]}
- box.innerHTML=data.map(c=>{const u=users.find(x=>x.id===c.user_id)||{};return `<div class="comment"><img class="avatar" src="${esc(avatar(u))}" onerror="this.style.display='none'"><div class="commentBody"><div class="commentTop"><b>${esc(u.display_name||u.username||u.name||'BIGULA user')}</b><span>${dateFmt(c.created_at)}</span></div><div class="commentText">${esc(c.comment||c.content||c.text||'')}</div></div></div>`}).join('');
+
+function shareLink(){
+
+ if(video.short_code){
+  return `${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
+ }
+
+ return `${location.origin}${location.pathname}?id=${encodeURIComponent(video.id)}`;
 }
-async function recordView(){
+
+async function copy(text){
  try{
-  if(!me){await supabase.from('views').insert({video_id:video.id});return}
-  await supabase.from('views').insert({video_id:video.id,user_id:me.id});
- }catch(e){}
+  await navigator.clipboard.writeText(text);
+ }catch(e){
+  const input=document.createElement("input");
+  input.value=text;
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand("copy");
+  input.remove();
+ }
 }
+
+async function postComment(e){
+
+ e.preventDefault();
+
+ if(!me){
+  toast("Sign in to comment");
+  return;
+ }
+
+ const input=document.getElementById("commentInput");
+ const text=input.value.trim();
+
+ if(!text)return;
+
+ let result=await supabase
+  .from("comments")
+  .insert({
+   video_id:video.id,
+   user_id:me.id,
+   comment:text,
+   content:text,
+   text
+  });
+
+ if(result.error){
+
+  result=await supabase
+   .from("comments")
+   .insert({
+    video_id:video.id,
+    user_id:me.id,
+    content:text
+   });
+ }
+
+ if(result.error){
+  toast("Could not post comment");
+  return;
+ }
+
+ input.value="";
+ toast("Comment posted");
+ loadComments();
+}
+
+async function loadComments(){
+
+ const box=document.getElementById("commentList");
+
+ if(!box)return;
+
+ const {data,error}=await supabase
+  .from("comments")
+  .select("*")
+  .eq("video_id",video.id)
+  .order("created_at",{ascending:false})
+  .limit(50);
+
+ if(error||!data?.length){
+  box.innerHTML=
+   `<div style="color:#888;padding:12px 0">
+      No comments yet. Be the first to comment.
+    </div>`;
+  return;
+ }
+
+ const ids=[
+  ...new Set(
+   data.map(x=>x.user_id).filter(Boolean)
+  )
+ ];
+
+ let users=[];
+
+ if(ids.length){
+  const r=await supabase
+   .from("users")
+   .select("*")
+   .in("id",ids);
+
+  users=r.data||[];
+ }
+
+ box.innerHTML=data.map(c=>{
+
+  const u=
+   users.find(x=>x.id===c.user_id)||{};
+
+  return `
+  <div class="comment">
+
+  <img
+   class="avatar"
+   src="${esc(avatar(u))}"
+   onerror="this.style.display='none'">
+
+  <div class="commentBody">
+
+  <div class="commentTop">
+   <b>${esc(
+    u.display_name||
+    u.username||
+    u.name||
+    "BIGULA user"
+   )}</b>
+
+   <span>
+   ${dateFmt(c.created_at)}
+   </span>
+  </div>
+
+  <div class="commentText">
+  ${esc(c.comment||c.content||c.text||"")}
+  </div>
+
+  </div>
+  </div>`;
+ }).join("");
+}
+
+async function recordView(){
+
+ try{
+
+  if(!me){
+
+   await supabase
+    .from("views")
+    .insert({
+     video_id:video.id
+    });
+
+  }else{
+
+   await supabase
+    .from("views")
+    .insert({
+     video_id:video.id,
+     user_id:me.id
+    });
+  }
+
+ }catch(e){
+  console.warn("View:",e);
+ }
+}
+
 async function reportVideo(){
- const reason=prompt('Why are you reporting this video?\\n\\nExamples: harmful content, copyright, spam, harassment, other');
+
+ const reason=prompt(
+  "Why are you reporting this video?\n\n"+
+  "Examples: harmful content, copyright, spam, harassment, other"
+ );
+
  if(!reason)return;
- if(!me)return toast('Sign in to report a video');
- const payload={video_id:video.id,user_id:me.id,reason:reason.trim(),status:'open'};
- let {error}=await supabase.from('reports').insert(payload);
- if(error)toast('Report could not be submitted');else toast('Report submitted. Thank you.');
+
+ if(!me){
+  toast("Sign in to report a video");
+  return;
+ }
+
+ const {error}=await supabase
+  .from("reports")
+  .insert({
+   video_id:video.id,
+   user_id:me.id,
+   reason:reason.trim(),
+   status:"open"
+  });
+
+ toast(
+  error?
+  "Report could not be submitted":
+  "Report submitted. Thank you."
+ );
 }
+
 load();
+
 </script>
 </body>
 </html>
+```
