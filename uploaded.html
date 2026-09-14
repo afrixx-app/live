@@ -1,415 +1,589 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BIGULA – Upload Review</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI,Arial,sans-serif}
-body{background:#050505;color:#fff;min-height:100vh;padding-bottom:40px}
-.header{position:sticky;top:0;z-index:20;background:rgba(5,5,5,.94);backdrop-filter:blur(12px);border-bottom:1px solid #222;padding:18px 16px}
-.logo{font-size:28px;font-weight:900;letter-spacing:4px;color:#f00}
-.container{width:min(680px,94%);margin:30px auto}
-.card{background:#111;border:1px solid #252525;border-radius:22px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.35)}
-.status-icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;font-size:34px;background:#222}
-h1{text-align:center;font-size:25px;margin-bottom:8px}
-.subtitle{text-align:center;color:#999;line-height:1.5;margin-bottom:24px}
-.progress{height:9px;background:#242424;border-radius:20px;overflow:hidden;margin:18px 0}
-.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#f00,#ff8a00);transition:width .5s}
-.check{display:flex;align-items:flex-start;gap:14px;padding:15px 0;border-bottom:1px solid #222}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#050505;color:#fff;
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh;padding-bottom:40px
+}
+.header{
+  height:62px;display:flex;align-items:center;
+  padding:0 17px;border-bottom:1px solid #222;
+  position:sticky;top:0;z-index:20;
+  background:#080808ee;backdrop-filter:blur(14px)
+}
+.logo{font-size:23px;font-weight:900;letter-spacing:-.8px}
+.container{width:min(680px,94%);margin:25px auto}
+.card{
+  background:#111;border:1px solid #292929;
+  border-radius:22px;padding:20px;
+  box-shadow:0 18px 60px #0008
+}
+.video{
+  width:100%;max-height:480px;background:#000;
+  border-radius:15px;margin-bottom:20px;display:block
+}
+.status{
+  width:66px;height:66px;border-radius:50%;
+  display:grid;place-items:center;
+  margin:0 auto 14px;background:#222;font-size:30px
+}
+h1{text-align:center;font-size:24px;margin-bottom:7px}
+.subtitle{text-align:center;color:#999;line-height:1.5;margin-bottom:20px}
+.progress{height:8px;background:#272727;border-radius:20px;overflow:hidden;margin:18px 0}
+.progress-fill{height:100%;width:0;background:#fff;transition:.3s}
+.check{
+  display:flex;gap:13px;padding:15px 0;
+  border-bottom:1px solid #252525
+}
 .check:last-child{border-bottom:0}
-.check-icon{width:34px;height:34px;min-width:34px;border-radius:50%;display:grid;place-items:center;background:#242424}
+.icon{
+  width:34px;height:34px;min-width:34px;
+  border-radius:50%;display:grid;place-items:center;
+  background:#252525;font-weight:900
+}
 .check h3{font-size:15px;margin-bottom:4px}
-.check p{font-size:13px;color:#888;line-height:1.45}
-.ok{color:#31e981}.bad{color:#ff4d4d}.warn{color:#ffc14d}.muted{color:#777}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
-button,.link-btn{border:0;border-radius:14px;padding:13px 15px;font-weight:900;cursor:pointer;text-align:center;text-decoration:none;font-size:14px}
+.check p{font-size:13px;color:#8f8f8f;line-height:1.45}
+.ok{color:#35e987}.bad{color:#ff5959}.warn{color:#ffc24d}
+.details{
+  background:#161616;border:1px solid #292929;
+  padding:14px;border-radius:13px;
+  margin-top:17px;font-size:12px;color:#aaa;
+  line-height:1.5
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+button,a{
+  border:0;border-radius:13px;padding:13px 15px;
+  font-weight:850;text-align:center;text-decoration:none;
+  font-size:14px;cursor:pointer
+}
 .primary{background:#fff;color:#000}
 .secondary{background:#222;color:#fff;border:1px solid #333}
-button:disabled,.disabled{opacity:.35!important;cursor:not-allowed!important;filter:grayscale(1)}
-.policy{margin-top:18px;background:rgba(255,50,50,.08);border:1px solid rgba(255,70,70,.25);border-radius:15px;padding:15px;display:none}
-.policy h3{color:#ff5b5b;margin-bottom:7px}
-.policy p{color:#ccc;font-size:14px;line-height:1.5}
-.video-preview{width:100%;max-height:420px;background:#000;border-radius:16px;margin-bottom:22px;display:none}
-.details{margin-top:20px;color:#777;font-size:12px;line-height:1.6;text-align:center}
-.share-box{margin-top:20px;padding:16px;border-radius:15px;background:#0d0d0d;border:1px solid #242424}
-.share-box h3{font-size:15px;margin-bottom:12px}
-.share-row{display:flex;gap:8px;flex-wrap:wrap}
-.share-row button{background:#222;color:#fff;padding:10px 13px}
-.monetize{margin-top:20px;padding:18px;border-radius:16px;background:linear-gradient(135deg,rgba(255,215,0,.09),rgba(255,140,0,.04));border:1px solid rgba(255,215,0,.22)}
-.monetize h3{color:#ffd54a;margin-bottom:6px}
+.danger{background:#351313;color:#ffaaaa;border:1px solid #572020}
 .hidden{display:none!important}
-.violation-actions{margin-top:9px}
-.view-details{background:#1b1b1b;color:#fff;border:1px solid #333;padding:8px 11px;border-radius:10px;font-size:12px}
-.bottom-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px;padding-top:20px;border-top:1px solid #252525}
-.review-modal{position:fixed;inset:0;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
-.review-modal.show{display:flex}
-.review-panel{width:min(560px,100%);max-height:85vh;overflow:auto;background:#111;border:1px solid #333;border-radius:20px;padding:22px;box-shadow:0 20px 80px rgba(0,0,0,.6)}
-.review-panel h2{margin-bottom:8px}
-.review-panel .review-status{font-size:12px;font-weight:800;text-transform:uppercase;margin-bottom:15px}
-.review-panel p{color:#ccc;line-height:1.6;font-size:14px;white-space:pre-wrap}
-.close-review{margin-top:18px;width:100%;background:#fff;color:#000}
-@media(max-width:520px){.bottom-actions{grid-template-columns:1fr}.review-panel{padding:18px}}
-@media(max-width:520px){.actions{grid-template-columns:1fr}.container{margin-top:18px}.card{padding:19px}}
+.issue{
+  display:none;background:#351313;
+  border:1px solid #632323;
+  padding:15px;border-radius:14px;margin-top:17px
+}
+.issue h3{color:#ff6969;margin-bottom:7px}
+.issue p{color:#ddd;font-size:13px;line-height:1.5}
+.review{
+  margin-top:18px;padding:14px;
+  border-radius:13px;background:#161616;
+  border:1px solid #292929;color:#aaa;
+  font-size:12px;line-height:1.5
+}
+.modal{
+  position:fixed;inset:0;background:#000c;
+  display:none;align-items:center;justify-content:center;
+  padding:18px;z-index:100
+}
+.modal.show{display:flex}
+.modal-box{
+  width:min(500px,100%);
+  background:#111;border:1px solid #333;
+  border-radius:18px;padding:20px
+}
+.modal-box h2{margin-bottom:9px}
+.modal-box p{color:#bbb;line-height:1.5;font-size:14px}
+@media(max-width:520px){
+  .actions{grid-template-columns:1fr}
+  .card{padding:16px}
+}
 </style>
 </head>
+
 <body>
-<header class="header"><div class="logo">BIGULA</div></header>
+
+<header class="header">
+  <div class="logo">BIGULA</div>
+</header>
 
 <main class="container">
+
 <section class="card">
-  <video id="videoPreview" class="video-preview" controls playsinline></video>
-  <div id="statusIcon" class="status-icon">⏳</div>
-  <h1 id="headline">Checking your video</h1>
-  <p id="subtitle" class="subtitle">BIGULA is reviewing the upload before it can be published.</p>
 
-  <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+<video id="videoPreview" class="video" controls playsinline preload="metadata"></video>
 
-  <div id="checks">
-    <div class="check">
-      <div id="policyIcon" class="check-icon">⏳</div>
-      <div><h3>Safety & policy</h3><p id="policyText">Checking for nudity, sexual content, graphic blood/gore and other prohibited content.</p><div class="violation-actions"><button class="view-details" data-review="policy">View details</button></div></div>
-    </div>
-    <div class="check">
-      <div id="copyrightIcon" class="check-icon">⏳</div>
-      <div><h3>Copyright</h3><p id="copyrightText">Checking whether the video has a copyright restriction.</p><div class="violation-actions"><button class="view-details" data-review="copyright">View details</button></div></div>
-    </div>
-    <div class="check">
-      <div id="publishIcon" class="check-icon">⏳</div>
-      <div><h3>Publication status</h3><p id="publishText">Waiting for the moderation result.</p><div class="violation-actions"><button class="view-details" data-review="publication">View details</button></div></div>
-    </div>
+<div id="statusIcon" class="status">⏳</div>
+
+<h1 id="headline">Loading upload…</h1>
+
+<p id="subtitle" class="subtitle">
+  BIGULA is loading the upload information.
+</p>
+
+<div class="progress">
+  <div id="progressFill" class="progress-fill"></div>
+</div>
+
+<div class="check">
+  <div id="policyIcon" class="icon">?</div>
+  <div>
+    <h3>Safety & policy</h3>
+    <p id="policyText">Reading available review information…</p>
   </div>
+</div>
 
-  <div id="policyBox" class="policy">
-    <h3>Publication blocked</h3>
-    <p id="policyReason"></p>
+<div class="check">
+  <div id="copyrightIcon" class="icon">?</div>
+  <div>
+    <h3>Copyright</h3>
+    <p id="copyrightText">Reading available copyright information…</p>
   </div>
+</div>
 
-  <div id="shareBox" class="share-box hidden">
-    <h3>Share your video</h3>
-    <div class="share-row">
-      <button id="nativeShare">Share</button>
-      <button id="whatsapp">WhatsApp</button>
-      <button id="copyLink">Copy link</button>
-    </div>
+<div class="check">
+  <div id="publicationIcon" class="icon">?</div>
+  <div>
+    <h3>Publication</h3>
+    <p id="publicationText">Checking publication status…</p>
   </div>
+</div>
 
-  <div id="monetizeBox" class="monetize hidden">
-    <h3>💰 Monetization available</h3>
-    <p id="monetizeText">Your account currently meets BIGULA's monetization requirements.</p>
-    <div class="actions">
-      <button id="monetizeBtn" class="primary">Monetize video</button>
-      <button id="analyticsBtn" class="secondary">View analytics</button>
-    </div>
-  </div>
+<div id="issueBox" class="issue">
+  <h3>Issue detected</h3>
+  <p id="issueText"></p>
+</div>
 
-  <div id="blockedActions" class="actions hidden">
-    <button id="blockedShare" class="secondary disabled" disabled>Share disabled</button>
-    <button id="blockedMonetize" class="secondary disabled" disabled>Monetization disabled</button>
-  </div>
+<div id="reviewNote" class="review">
+  BIGULA displays the review information actually stored for this upload.
+  If no moderation result has been recorded, this page will not invent one.
+</div>
 
-  <div id="successActions" class="actions hidden">
-    <a id="homeBtn" class="link-btn primary" href="home.html">Go to BIGULA</a>
-    <a id="accountBtn" class="link-btn secondary" href="account.html">My account</a>
-  </div>
+<div class="actions">
+  <button id="publishBtn" class="primary hidden">Publish Video</button>
+  <a id="viewBtn" class="primary hidden">View Video</a>
+</div>
 
-  <div class="bottom-actions">
-    <a class="link-btn primary" href="home.html">Back Home</a>
-    <a class="link-btn secondary" href="delete_video.html">Delete This Video</a>
-    <a class="link-btn secondary" href="upload.html">Upload Again</a>
-  </div>
+<div class="actions">
+  <a href="home.html" class="secondary">Back Home</a>
+  <a href="upload.html" class="secondary">Upload Another</a>
+</div>
 
-  <div class="details" id="details">Upload ID: —</div>
+<div class="actions">
+  <a id="deleteBtn" href="delete_video.html" class="danger">
+    Delete This Video
+  </a>
+</div>
+
+<div id="details" style="text-align:center;color:#666;font-size:11px;margin-top:17px">
+  Upload ID: —
+</div>
+
 </section>
 </main>
 
-<div id="reviewModal" class="review-modal" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
-  <div class="review-panel">
-    <h2 id="reviewTitle">Violation review</h2>
-    <div id="reviewStatus" class="review-status muted">Review</div>
-    <p id="reviewContent">No review information is available.</p>
-    <button id="closeReview" class="close-review">Close</button>
+<div id="confirmModal" class="modal">
+  <div class="modal-box">
+    <h2>Publish this video?</h2>
+    <p>
+      Your video will become publicly available on BIGULA.
+      Make sure you have the rights to the content before publishing.
+    </p>
+
+    <div class="actions">
+      <button id="cancelPublish" class="secondary">Cancel</button>
+      <button id="confirmPublish" class="primary">Publish</button>
+    </div>
   </div>
 </div>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co"
-const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
+import {createClient}
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const supabase = createClient(SUPABASE_URL,SUPABASE_KEY,{
-  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'}
-})
+const SUPABASE_URL=
+"https://vfteiggdhthvrrlndtbs.supabase.co";
 
-const params = new URLSearchParams(location.search)
-let videoId = params.get("id") || params.get("video_id")
-let currentUser = null
-let videoRow = null
-let pollTimer = null
+const SUPABASE_KEY=
+"sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-const $ = id => document.getElementById(id)
+const supabase=createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
+      flowType:"pkce"
+    }
+  }
+);
 
-function setCheck(icon,text,state){
-  $(icon).textContent = state==="ok" ? "✓" : state==="bad" ? "!" : "⏳"
-  $(icon).className = "check-icon " + (state||"")
-  $(text).className = state || ""
+const $=id=>document.getElementById(id);
+
+const params=new URLSearchParams(location.search);
+const videoId=params.get("id")||params.get("video_id");
+
+let currentUser=null;
+let video=null;
+
+function value(v){
+  return String(v??"").trim().toLowerCase();
 }
 
-function statusValue(v){
-  return String(v ?? "").trim().toLowerCase()
+function badPolicy(row){
+  const s=value(
+    row.moderation_status||
+    row.policy_status||
+    row.content_status
+  );
+
+  return [
+    "blocked","rejected","violation",
+    "violated","failed"
+  ].includes(s) ||
+  !!row.policy_violation ||
+  !!row.policy_found;
 }
 
-function isBlocked(row){
-  const moderation = statusValue(row.moderation_status || row.policy_status || row.content_status)
-  const copyright = statusValue(row.copyright_status)
-  return ["blocked","rejected","violation","violated","failed"].includes(moderation) ||
-         ["blocked","rejected","violation","violated","failed","detected"].includes(copyright) ||
-         !!row.policy_violation || !!row.copyright_found
-}
+function badCopyright(row){
+  const s=value(row.copyright_status);
 
-function isPending(row){
-  const moderation = statusValue(row.moderation_status || row.policy_status || row.content_status)
-  const copyright = statusValue(row.copyright_status)
-  return !moderation || ["pending","processing","reviewing","queued","scanning","uploading"].includes(moderation) ||
-         !copyright || ["pending","processing","reviewing","queued","scanning"].includes(copyright)
+  return [
+    "blocked","rejected","violation",
+    "violated","failed","detected"
+  ].includes(s) ||
+  !!row.copyright_found ||
+  !!row.copyright_violation;
 }
 
 function policyReason(row){
-  return row.policy_violation || row.policy_reason ||
-         row.moderation_reason || row.violation_reason ||
-         "BIGULA's safety checks found content that cannot be published."
+  return row.policy_violation||
+         row.policy_reason||
+         row.policy_message||
+         row.moderation_reason||
+         "A BIGULA policy issue was reported for this upload.";
 }
 
 function copyrightReason(row){
-  return row.copyright_reason || row.copyright_match ||
-         "A copyright restriction was detected for this video."
+  return row.copyright_reason||
+         row.copyright_match||
+         row.copyright_message||
+         "A copyright issue was reported for this upload.";
 }
 
-function getVideoUrl(row){
-  return row.video_url || row.url || row.public_url || ""
+function setCheck(icon,text,state,msg){
+  $(icon).textContent=
+    state==="ok"?"✓":
+    state==="bad"?"!":
+    state==="warn"?"!":"?";
+
+  $(icon).className="icon "+state;
+  $(text).className=state;
+  $(text).textContent=msg;
 }
 
-function getShareUrl(row){
-  return getVideoUrl(row) || `${location.origin}/live/home.html?video=${encodeURIComponent(row.id)}`
+function videoUrl(row){
+  return row.video_url||
+         row.url||
+         row.file_url||
+         row.public_url||
+         "";
 }
 
 async function getSession(){
-  const {data:{session}} = await supabase.auth.getSession()
-  currentUser = session?.user || null
-  return session
+  const {data:{session}}=
+    await supabase.auth.getSession();
+
+  currentUser=session?.user||null;
 }
 
-async function loadVideo(){
-  if(!videoId) throw new Error("No upload ID was supplied.")
+async function load(){
 
-  const {data,error} = await supabase.from("videos").select("*").eq("id",videoId).maybeSingle()
-  if(error) throw error
-  if(!data) throw new Error("The uploaded video could not be found.")
-  videoRow=data
-
-  if(currentUser && data.user_id && data.user_id !== currentUser.id){
-    throw new Error("You are not allowed to view this upload review.")
+  if(!videoId){
+    throw new Error("No upload ID was supplied.");
   }
 
-  $("details").textContent = `Upload ID: ${data.id}`
-  const url=getVideoUrl(data)
+  await getSession();
+
+  if(!currentUser){
+    throw new Error("Please sign in again.");
+  }
+
+  const {data,error}=
+    await supabase
+      .from("videos")
+      .select("*")
+      .eq("id",videoId)
+      .maybeSingle();
+
+  if(error)throw error;
+  if(!data)throw new Error("Video upload was not found.");
+
+  video=data;
+
+  if(data.user_id&&data.user_id!==currentUser.id){
+    throw new Error("You cannot review another user's upload.");
+  }
+
+  $("details").textContent=
+    "Upload ID: "+data.id;
+
+  const url=videoUrl(data);
+
   if(url){
-    $("videoPreview").src=url
-    $("videoPreview").style.display="block"
+    $("videoPreview").src=url;
+    $("videoPreview").load();
   }
+
+  render(data);
 }
 
-function renderPending(row){
-  $("statusIcon").textContent="⏳"
-  $("headline").textContent="Checking your video"
-  $("subtitle").textContent="Your video has uploaded. BIGULA is checking it before publication."
-  $("progressFill").style.width="55%"
+function render(row){
 
-  setCheck("policyIcon","policyText","pending")
-  setCheck("copyrightIcon","copyrightText","pending")
-  setCheck("publishIcon","publishText","pending")
-  $("publishText").textContent="Publication will happen only after all checks pass."
-}
+  const policyIssue=badPolicy(row);
+  const copyrightIssue=badCopyright(row);
 
-function renderClean(row){
-  $("statusIcon").textContent="✓"
-  $("headline").textContent="Upload successful"
-  $("subtitle").textContent="Your video passed the available BIGULA checks and is ready to be published."
-  $("progressFill").style.width="100%"
-
-  setCheck("policyIcon","policyText","ok")
-  $("policyText").textContent="No detected nudity, sexual content, graphic blood/gore or listed policy violation."
-  setCheck("copyrightIcon","copyrightText","ok")
-  $("copyrightText").textContent="No copyright restriction was reported by the moderation system."
-  setCheck("publishIcon","publishText","ok")
-  $("publishText").textContent="Video approved for publication."
-
-  $("shareBox").classList.remove("hidden")
-  $("successActions").classList.remove("hidden")
-
-  const url=getShareUrl(row)
-  $("nativeShare").onclick=async()=>{
-    if(navigator.share){
-      try{await navigator.share({title:row.title||"BIGULA video",url})}catch(e){}
-    }else{
-      await navigator.clipboard?.writeText(url)
-      alert("Video link copied.")
-    }
-  }
-  $("whatsapp").onclick=()=>window.open("https://wa.me/?text="+encodeURIComponent("Watch my BIGULA video: "+url),"_blank")
-  $("copyLink").onclick=async()=>{
-    try{await navigator.clipboard.writeText(url);alert("Video link copied.")}catch(e){alert(url)}
-  }
-
-  const monetizable = row.is_monetizable === true || row.monetization_eligible === true ||
-                      row.can_monetize === true || statusValue(row.monetization_status)==="eligible"
-
-  if(monetizable){
-    $("monetizeBox").classList.remove("hidden")
-    $("monetizeBtn").onclick=async()=>{
-      const {error}=await supabase.from("videos").update({
-        monetization_enabled:true
-      }).eq("id",row.id)
-      if(error) alert("Could not enable monetization: "+error.message)
-      else{
-        $("monetizeText").textContent="Monetization has been enabled for this video."
-        $("monetizeBtn").disabled=true
-        $("monetizeBtn").textContent="Monetized ✓"
-      }
-    }
-  }else{
-    $("monetizeBox").classList.add("hidden")
-  }
-}
-
-function renderBlocked(row){
-  const policy=statusValue(row.moderation_status || row.policy_status || row.content_status)
-  const copyright=statusValue(row.copyright_status)
-  const policyBad=["blocked","rejected","violation","violated","failed"].includes(policy) || !!row.policy_violation
-  const copyrightBad=["blocked","rejected","violation","violated","failed","detected"].includes(copyright) || !!row.copyright_found
-
-  $("statusIcon").textContent="!"
-  $("headline").textContent="Video cannot be published"
-  $("subtitle").textContent="Sharing and monetization are disabled until the problem is resolved."
-  $("progressFill").style.width="100%"
-
-  setCheck("policyIcon","policyText",policyBad?"bad":"ok")
-  $("policyText").textContent=policyBad ? policyReason(row) : "No policy violation reported."
-  setCheck("copyrightIcon","copyrightText",copyrightBad?"bad":"ok")
-  $("copyrightText").textContent=copyrightBad ? copyrightReason(row) : "No copyright restriction reported."
-  setCheck("publishIcon","publishText","bad")
-  $("publishText").textContent="Publication blocked."
-
-  $("policyBox").style.display="block"
-  $("policyReason").textContent=(policyBad?policyReason(row):"")+(policyBad&&copyrightBad?" ":"")+(copyrightBad?copyrightReason(row):"")
-  $("blockedActions").classList.remove("hidden")
-  $("successActions").classList.remove("hidden")
-  $("shareBox").classList.add("hidden")
-  $("monetizeBox").classList.add("hidden")
-}
-
-async function checkStatus(){
-  const {data,error}=await supabase.from("videos").select("*").eq("id",videoId).maybeSingle()
-  if(error) throw error
-  if(!data) throw new Error("Video record not found.")
-  videoRow=data
-
-  if(isPending(data)){
-    renderPending(data)
-    return false
-  }
-  if(isBlocked(data)){
-    renderBlocked(data)
-    return true
-  }
-  renderClean(data)
-  return true
-}
-
-function getReview(type,row){
-  if(type==="policy"){
-    const bad=statusValue(row.moderation_status || row.policy_status || row.content_status);
-    return {
-      title:"Safety & policy review",
-      status:(bad==="blocked"||bad==="rejected"||bad==="violation"||bad==="violated"||bad==="failed"||row.policy_violation)?"Violation found":"No violation reported",
-      text:(bad==="blocked"||bad==="rejected"||bad==="violation"||bad==="violated"||bad==="failed"||row.policy_violation)
-        ? "BIGULA found a safety or policy issue in this upload.\n\nFinding: "+policyReason(row)+"\n\nPublication may remain blocked until the issue is resolved."
-        : "BIGULA's available moderation result reports no safety or policy violation for this video."
-    };
-  }
-  if(type==="copyright"){
-    const bad=["blocked","rejected","violation","violated","failed","detected"].includes(statusValue(row.copyright_status)) || !!row.copyright_found;
-    return {
-      title:"Copyright review",
-      status:bad?"Copyright restriction found":"No restriction reported",
-      text:bad
-        ? "BIGULA detected a possible copyright restriction.\n\nFinding: "+copyrightReason(row)+"\n\nReview the rights to the material before attempting publication again."
-        : "BIGULA's available moderation result reports no copyright restriction for this video."
-    };
-  }
-  const pub=statusValue(row.moderation_status || row.policy_status || row.content_status);
-  const blocked=isBlocked(row);
-  return {
-    title:"Publication status review",
-    status:blocked?"Publication blocked":isPending(row)?"Review in progress":"Approved",
-    text:blocked
-      ? "This video cannot currently be published because one or more checks reported a problem. Review the Safety & policy and Copyright sections for the findings."
-      : isPending(row)
-        ? "BIGULA is still reviewing this upload. Publication will happen only after the required checks are complete."
-        : "The available checks have passed and this video is ready for publication."
-  };
-}
-
-function openReview(type){
-  if(!videoRow) return;
-  const review=getReview(type,videoRow);
-  $("reviewTitle").textContent=review.title;
-  $("reviewStatus").textContent=review.status;
-  $("reviewStatus").className="review-status "+(
-    review.status.toLowerCase().includes("violation") ||
-    review.status.toLowerCase().includes("blocked") ||
-    review.status.toLowerCase().includes("restriction") ? "bad" :
-    review.status.toLowerCase().includes("approved") || review.status.toLowerCase().includes("no ") ? "ok" : "warn"
+  const publication=value(
+    row.publication_status||
+    row.status
   );
-  $("reviewContent").textContent=review.text;
-  $("reviewModal").classList.add("show");
-}
-document.querySelectorAll(".view-details").forEach(btn=>{
-  btn.addEventListener("click",()=>openReview(btn.dataset.review));
-});
-$("closeReview").onclick=()=>$("reviewModal").classList.remove("show");
-$("reviewModal").addEventListener("click",e=>{
-  if(e.target===$("reviewModal")) $("reviewModal").classList.remove("show");
-});
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape") $("reviewModal").classList.remove("show");
-});
 
-async function start(){
-  try{
-    await getSession()
-    if(!currentUser) throw new Error("Please sign in again.")
-    await loadVideo()
-    renderPending(videoRow)
+  const blocked=
+    policyIssue||
+    copyrightIssue||
+    ["blocked","rejected"].includes(publication);
 
-    const done=await checkStatus()
-    if(!done){
-      pollTimer=setInterval(async()=>{
-        try{
-          const finished=await checkStatus()
-          if(finished){clearInterval(pollTimer);pollTimer=null}
-        }catch(e){console.error(e)}
-      },5000)
-    }
-  }catch(e){
-    $("statusIcon").textContent="!"
-    $("headline").textContent="Upload review unavailable"
-    $("subtitle").textContent=e?.message || "Could not load the upload."
-    $("progressFill").style.width="0%"
+  /*
+    A missing moderation field does NOT mean
+    "pending forever". It means no result was
+    recorded. We show that honestly.
+  */
+
+  if(policyIssue){
+    setCheck(
+      "policyIcon",
+      "policyText",
+      "bad",
+      policyReason(row)
+    );
+  }else if(row.moderation_status||
+           row.policy_status||
+           row.content_status){
+    setCheck(
+      "policyIcon",
+      "policyText",
+      "ok",
+      "No policy violation was reported."
+    );
+  }else{
+    setCheck(
+      "policyIcon",
+      "policyText",
+      "warn",
+      "No policy review result has been recorded."
+    );
+  }
+
+  if(copyrightIssue){
+    setCheck(
+      "copyrightIcon",
+      "copyrightText",
+      "bad",
+      copyrightReason(row)
+    );
+  }else if(row.copyright_status||
+           row.copyright_found!==undefined){
+    setCheck(
+      "copyrightIcon",
+      "copyrightText",
+      "ok",
+      "No copyright restriction was reported."
+    );
+  }else{
+    setCheck(
+      "copyrightIcon",
+      "copyrightText",
+      "warn",
+      "No copyright review result has been recorded."
+    );
+  }
+
+  if(blocked){
+
+    $("statusIcon").textContent="!";
+    $("headline").textContent="Video cannot be published";
+    $("subtitle").textContent=
+      "BIGULA found an issue that currently prevents publication.";
+
+    $("progressFill").style.width="100%";
+
+    setCheck(
+      "publicationIcon",
+      "publicationText",
+      "bad",
+      "Publication is blocked."
+    );
+
+    $("issueBox").style.display="block";
+
+    const reasons=[];
+
+    if(policyIssue)
+      reasons.push("Safety & policy: "+policyReason(row));
+
+    if(copyrightIssue)
+      reasons.push("Copyright: "+copyrightReason(row));
+
+    $("issueText").textContent=reasons.join("\n\n");
+
+    $("publishBtn").classList.add("hidden");
+
+    $("reviewNote").textContent=
+      "The video remains private because a recorded issue prevents publication.";
+
+    return;
+  }
+
+  /*
+    If there are no recorded issues, show the user that
+    there are no issues reported — without pretending
+    an external AI scan occurred.
+  */
+
+  $("statusIcon").textContent="✓";
+  $("headline").textContent="No issues reported";
+  $("subtitle").textContent=
+    "BIGULA found no recorded policy or copyright issue for this upload.";
+
+  $("progressFill").style.width="100%";
+
+  if(publication==="published"||
+     publication==="public"||
+     publication==="approved"){
+
+    setCheck(
+      "publicationIcon",
+      "publicationText",
+      "ok",
+      "This video is already published."
+    );
+
+    $("publishBtn").classList.add("hidden");
+
+    $("viewBtn").classList.remove("hidden");
+    $("viewBtn").href=
+      buildVideoLink(row);
+
+    $("reviewNote").textContent=
+      "Your video is publicly available on BIGULA.";
+
+  }else{
+
+    setCheck(
+      "publicationIcon",
+      "publicationText",
+      "ok",
+      "Video is ready to be published."
+    );
+
+    $("publishBtn").classList.remove("hidden");
+
+    $("viewBtn").classList.add("hidden");
+
+    $("reviewNote").textContent=
+      "No issue is currently recorded. You can publish this video when you are ready.";
   }
 }
-start()
+
+function buildVideoLink(row){
+
+  if(row.short_code){
+    return "video_view.html?v="+
+      encodeURIComponent(row.short_code);
+  }
+
+  return "video_view.html?id="+
+    encodeURIComponent(row.id);
+}
+
+$("publishBtn").onclick=()=>{
+  $("confirmModal").classList.add("show");
+};
+
+$("cancelPublish").onclick=()=>{
+  $("confirmModal").classList.remove("show");
+};
+
+$("confirmPublish").onclick=publish;
+
+async function publish(){
+
+  const btn=$("confirmPublish");
+
+  btn.disabled=true;
+  btn.textContent="Publishing…";
+
+  try{
+
+    /*
+      publication_status is the field used by the
+      BIGULA video-view system.
+    */
+
+    const {data,error}=
+      await supabase
+        .from("videos")
+        .update({
+          publication_status:"published"
+        })
+        .eq("id",video.id)
+        .eq("user_id",currentUser.id)
+        .select("*")
+        .single();
+
+    if(error)throw error;
+
+    video=data;
+
+    $("confirmModal").classList.remove("show");
+
+    render(video);
+
+    $("viewBtn").classList.remove("hidden");
+    $("viewBtn").href=buildVideoLink(video);
+
+  }catch(e){
+
+    console.error("Publish:",e);
+
+    alert(
+      "BIGULA could not publish this video.\n\n"+
+      (e?.message||"Unknown error")
+    );
+
+  }finally{
+
+    btn.disabled=false;
+    btn.textContent="Publish";
+  }
+}
+
+load().catch(e=>{
+
+  console.error(e);
+
+  $("statusIcon").textContent="!";
+  $("headline").textContent="Upload review unavailable";
+  $("subtitle").textContent=
+    e?.message||"Could not load the upload.";
+
+  $("progressFill").style.width="0%";
+});
+
 </script>
 </body>
 </html>
+```
