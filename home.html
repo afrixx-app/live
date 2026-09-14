@@ -646,137 +646,98 @@ function getCreatorNameFromCard(card){
 }
 
 function setupVideo(card){
-  const video = card.querySelector("video")
-  let lastTap = 0
-
-  // One tap/click in the middle toggles pause/play.
-  video.addEventListener("click", async e=>{
-    if(e.target !== video) return
-    const now = Date.now()
-    if(now - lastTap < 350){
-      e.preventDefault()
-      if(await requireSignIn()) await toggleLike(card.dataset.id, card.querySelector(".stat-btn"))
-      lastTap = 0
-      return
+  const video=card.querySelector("video");
+  let lastTap=0, viewRecorded=false, maxWatched=0;
+  video.addEventListener("play",()=>{
+    document.querySelectorAll("#feed video").forEach(other=>{
+      if(other!==video) other.pause();
+    });
+  });
+  video.addEventListener("click",async e=>{
+    if(e.target!==video)return;
+    const now=Date.now();
+    if(now-lastTap<350){
+      e.preventDefault();
+      if(await requireSignIn()) await toggleLike(card.dataset.id,card.querySelector(".stat-btn"));
+      lastTap=0; return;
     }
-    lastTap = now
-    setTimeout(()=>{
-      if(lastTap === now){
-        if(video.paused) video.play().catch(()=>{})
-        else video.pause()
-      }
-    },350)
-  })
-
-  // A view is added only after the video has actually been watched to the end.
-  // Replaying the complete video is allowed to create another view.
-  video.addEventListener("ended", async ()=>{
-    const recorded = await registerCompletedView(card.dataset.id)
-    if(recorded){
-      const viewsBtn = card.querySelector(".views-btn")
-      const current = parseInt((viewsBtn.textContent.match(/\d+/)||["0"])[0],10)
-      viewsBtn.textContent = `Views ${current + 1}`
+    lastTap=now;
+    setTimeout(()=>{if(lastTap===now){if(video.paused)video.play().catch(()=>{});else video.pause()}},350);
+  });
+  video.addEventListener("timeupdate",async()=>{
+    if(viewRecorded||!isFinite(video.duration)||video.duration<=0)return;
+    maxWatched=Math.max(maxWatched,video.currentTime);
+    if(maxWatched>=video.duration*.5){
+      viewRecorded=true;
+      const ok=await registerCompletedView(card.dataset.id);
+      if(ok){
+        const b=card.querySelector(".views-btn"), m=b?.textContent.match(/\d+/);
+        if(b)b.textContent=`▶ ${(m?parseInt(m[0],10):0)+1}`;
+      }else viewRecorded=false;
     }
-
-    // Keep the feed moving forever. When the current card is the last one,
-    // duplicate the loaded video set before the user reaches the bottom.
-    const next = card.nextElementSibling
-    if(next){
-      next.scrollIntoView({behavior:"smooth",block:"start"})
-    } else {
-      const cards=[...document.querySelectorAll(".video-card")]
-      cards.slice(0, Math.min(cards.length, 8)).forEach(original=>{
-        const clone=original.cloneNode(true)
-        clone.dataset.id=original.dataset.id
-        clone.dataset.creatorId=original.dataset.creatorId
-        clone.dataset.shortCode=original.dataset.shortCode
-        feed.appendChild(clone)
-        bindCardActions(clone)
-        setupVideo(clone)
-      })
-      const newNext=card.nextElementSibling
-      if(newNext) newNext.scrollIntoView({behavior:"auto",block:"start"})
+  });
+  video.addEventListener("ended",async()=>{
+    if(!viewRecorded){
+      viewRecorded=true;
+      const ok=await registerCompletedView(card.dataset.id);
+      if(ok){
+        const b=card.querySelector(".views-btn"), m=b?.textContent.match(/\d+/);
+        if(b)b.textContent=`▶ ${(m?parseInt(m[0],10):0)+1}`;
+      }else viewRecorded=false;
     }
-  })
-
-  // Swipe the video/player LEFT to open its video_view page using the real short code.
-  let swipeStartX = null
-  let swipeStartY = null
-  video.addEventListener("touchstart", e=>{
-    if(e.touches.length !== 1) return
-    swipeStartX = e.touches[0].clientX
-    swipeStartY = e.touches[0].clientY
-  },{passive:true})
-
-  video.addEventListener("touchend", e=>{
-    if(swipeStartX === null) return
-    const dx = e.changedTouches[0].clientX - swipeStartX
-    const dy = e.changedTouches[0].clientY - swipeStartY
-    swipeStartX = null
-    swipeStartY = null
-
-    // Only treat a clearly horizontal left swipe as navigation.
-    if(dx < -70 && Math.abs(dx) > Math.abs(dy) * 1.25){
-      const shortCode = card.dataset.shortCode
-      if(shortCode){
-        location.href = `video_view.html?v=${encodeURIComponent(shortCode)}`
-      }
+    const next=card.nextElementSibling;
+    if(next) next.scrollIntoView({behavior:"smooth",block:"start"});
+    else{
+      const cards=[...document.querySelectorAll(".video-card")];
+      cards.slice(0,Math.min(cards.length,8)).forEach(original=>{
+        const clone=original.cloneNode(true);
+        clone.dataset.id=original.dataset.id; clone.dataset.creatorId=original.dataset.creatorId; clone.dataset.shortCode=original.dataset.shortCode;
+        feed.appendChild(clone); bindCardActions(clone); setupVideo(clone);
+      });
+      const newNext=card.nextElementSibling;
+      if(newNext)newNext.scrollIntoView({behavior:"auto",block:"start"});
     }
-  },{passive:true})
+  });
+  let sx=null,sy=null;
+  video.addEventListener("touchstart",e=>{if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
+  video.addEventListener("touchend",e=>{
+    if(sx===null)return;
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;sx=null;sy=null;
+    if(dx<-70&&Math.abs(dx)>Math.abs(dy)*1.25){
+      const sc=card.dataset.shortCode;if(sc)location.href=`video_view.html?v=${encodeURIComponent(sc)}`;
+    }
+  },{passive:true});
 }
 
 async function registerCompletedView(videoId){
-  if(!currentUser) return false
-
-  // Every genuinely completed playback counts. Scrolling halfway never reaches
-  // this handler, and replaying the whole video can create another view.
-  const {error} = await supabase.from("views").insert({
-    video_id: videoId,
-    user_id: currentUser.id
-  })
-
-  if(error){
-    console.warn("View could not be recorded:",error.message)
-    return false
-  }
-
-  return true
+  if(!currentUser||!navigator.onLine)return false;
+  const {error}=await supabase.from("views").insert({video_id:videoId,user_id:currentUser.id});
+  if(error){console.warn("View could not be recorded:",error.message);return false;}
+  return true;
 }
 
 // --- Autoplay ---
 function setupAutoplay(){
-  const vids = document.querySelectorAll("#feed video")
-  const observer = new IntersectionObserver(entries=>{
+  const vids=document.querySelectorAll("#feed video");
+  const observer=new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
-      const video = entry.target
-      if(entry.isIntersecting && entry.intersectionRatio >= 0.7){
-        // BIGULA should play with sound. Browser autoplay policies may block
-        // unmuted autoplay until the user interacts; when allowed, keep audio on.
-        video.muted = false
-        video.volume = 1
-        video.play().catch(()=>{
-          // If the browser blocks unmuted autoplay, do not permanently mute it.
-          video.muted = false
-        })
-      } else if(!entry.isIntersecting){
-        video.pause()
-      }
-    })
-  }, { threshold:[0.7] })
-  vids.forEach(v=>observer.observe(v))
-
-  // First user interaction unlocks audio for the active feed video.
-  const unlockAudio = ()=>{
-    const active = [...document.querySelectorAll("#feed video")]
-      .find(v=>v.getBoundingClientRect().top < innerHeight*0.65 &&
-             v.getBoundingClientRect().bottom > innerHeight*0.35)
+      const v=entry.target;
+      if(entry.isIntersecting&&entry.intersectionRatio>=.7){
+        vids.forEach(o=>{if(o!==v)o.pause()});
+        v.muted=false;v.volume=1;
+        v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})});
+      }else v.pause();
+    });
+  },{threshold:[0,.7]});
+  vids.forEach(v=>observer.observe(v));
+  const unlock=()=>{
+    const active=[...document.querySelectorAll("#feed video")].find(v=>v.getBoundingClientRect().top<innerHeight*.65&&v.getBoundingClientRect().bottom>innerHeight*.35);
     if(active){
-      active.muted = false
-      active.volume = 1
-      active.play().catch(()=>{})
+      document.querySelectorAll("#feed video").forEach(v=>{if(v!==active)v.pause()});
+      active.muted=false;active.volume=1;active.play().catch(()=>{});
     }
-  }
-  document.addEventListener("pointerdown", unlockAudio, {once:true, passive:true})
+  };
+  document.addEventListener("pointerdown",unlock,{once:true,passive:true});
 }
 
 // --- Swipe right through tabs ---
@@ -846,16 +807,22 @@ function shareStatus(videoId, username){
 // --- Actions ---
 function openProfile(uid){ if(!uid) return; location.href=`creator_profile.html?uid=${encodeURIComponent(uid)}` }
 
-async function toggleLike(videoId, btn){
-    const likeEl = document.getElementById(`like-${videoId}`)
-  const { data: exists } = await supabase.from('likes').select("*").eq('video_id', videoId).eq('user_id', currentUser.id)
-  if(exists && exists.length){
-    await supabase.from('likes').delete().eq('video_id', videoId).eq('user_id', currentUser.id)
-    likeEl.innerText = parseInt(likeEl.innerText)-1
-  } else {
-    await supabase.from('likes').insert({ video_id: videoId, user_id: currentUser.id })
-    likeEl.innerText = parseInt(likeEl.innerText)+1
+async function toggleLike(videoId,btn){
+  if(!currentUser)return false;
+  if(!navigator.onLine){alert("Turn on data or connect to your Wi-Fi to like this video.");return false;}
+  const el=document.getElementById(`like-${videoId}`);if(!el)return false;
+  const {data:exists,error:checkError}=await supabase.from("likes").select("id").eq("video_id",videoId).eq("user_id",currentUser.id).limit(1);
+  if(checkError){console.warn("Like check failed:",checkError.message);return false;}
+  if(exists?.length){
+    const {error}=await supabase.from("likes").delete().eq("video_id",videoId).eq("user_id",currentUser.id);
+    if(error){console.warn("Unlike failed:",error.message);return false;}
+    el.textContent=Math.max(0,parseInt(el.textContent||"0",10)-1);
+  }else{
+    const {error}=await supabase.from("likes").insert({video_id:videoId,user_id:currentUser.id});
+    if(error){console.warn("Like could not be recorded:",error.message);return false;}
+    el.textContent=parseInt(el.textContent||"0",10)+1;
   }
+  return true;
 }
 
 async function openComments(videoId){
@@ -921,6 +888,8 @@ document.getElementById("searchInput").addEventListener("input",e=>{
   })
 })
 
+window.addEventListener("offline",()=>{const f=document.getElementById("feed");if(f)f.innerHTML="<p style='color:#aaa;text-align:center;margin-top:30px;padding:20px;'>Turn on data or connect to your Wi-Fi to load videos.</p>"});
+window.addEventListener("online",()=>{const t=document.querySelector(".tab.active")?.dataset.feed||"foryou";if(t==="status")fetchStatuses();else if(t==="live")fetchLive();else fetchVideos(t)});
 initUser().then(()=>{
   // Home is public: always load the For You feed.
   fetchVideos("foryou")
