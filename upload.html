@@ -599,96 +599,274 @@ body{
   </section>
 
 
-  <!-- =========================================================
-       STEP 2
-       ========================================================= -->
-  <section id="step2" class="section">
+  ```html
+<!-- ================= STEP 2 ================= -->
+<section id="step2" class="hidden">
 
-    <div class="card">
+  <div class="editor-header">
 
-      <div class="step-heading">Edit your video</div>
+    <div>
+      <h1>Edit your video</h1>
+      <p class="subtitle">
+        Create your BIGULA video exactly the way you want it.
+      </p>
+    </div>
 
-      <div class="step-subtitle">
-        Preview your video and add filters, effects, text, emojis,
-        crop and speed changes.
-      </div>
+    <div class="editor-badge">
+      EDITOR
+    </div>
+
+  </div>
 
 
-      <div class="preview-wrap">
+  <div class="editor-workspace">
 
-        <div class="preview-frame">
+    <!-- =====================================================
+         VIDEO PREVIEW
+         ===================================================== -->
 
-          <video
-            id="editPreview"
-            playsinline
-            controls
-          ></video>
+    <div class="preview-area">
+
+      <div
+        class="preview-phone"
+        id="previewPhone"
+      >
+
+        <video
+          id="previewVideo"
+          playsinline
+          controls
+        ></video>
+
+        <!-- Drag layer -->
+        <div
+          class="overlay-layer"
+          id="overlayLayer"
+        >
 
           <div
-            id="overlayText"
-            class="overlay-text"
+            class="text-overlay hidden"
+            id="textOverlay"
           ></div>
 
           <div
-            id="overlayEmoji"
-            class="overlay-emoji"
+            class="emoji-overlay hidden"
+            id="emojiOverlay"
           ></div>
 
         </div>
 
       </div>
 
+    </div>
 
-      <!-- FILTERS -->
-      <div class="control-section">
 
-        <div class="control-title">
+    <!-- =====================================================
+         MAIN EDITOR TOOLBAR
+         ===================================================== -->
+
+    <div class="editor-toolbar">
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="filters"
+      >
+        <span>◐</span>
+        <strong>Filters</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="effects"
+      >
+        <span>✦</span>
+        <strong>Effects</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="crop"
+      >
+        <span>⌗</span>
+        <strong>Crop</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="speed"
+      >
+        <span>1×</span>
+        <strong>Speed</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="text"
+      >
+        <span>T</span>
+        <strong>Text</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="emoji"
+      >
+        <span>☺</span>
+        <strong>Emoji</strong>
+      </button>
+
+
+      <button
+        type="button"
+        class="editor-tool"
+        data-editor-tab="sound"
+      >
+        <span>♫</span>
+        <strong>Sound</strong>
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         EDITOR PANEL
+         ===================================================== -->
+
+    <div
+      class="editor-panel"
+      id="editorPanel"
+    >
+
+      <div
+        class="editor-empty"
+        id="editorEmpty"
+      >
+
+        <div class="editor-empty-icon">
+          ✦
+        </div>
+
+        <strong>Choose an editing tool</strong>
+
+        <span>
+          Select Filters, Effects, Text, Emoji,
+          Crop, Speed or Sound.
+        </span>
+
+      </div>
+
+
+      <!-- ===================================================
+           FILTERS PANEL
+           =================================================== -->
+
+      <div
+        class="editor-tab-panel"
+        data-panel="filters"
+      >
+
+        <div class="panel-title">
           Filters
         </div>
 
-        <div class="horizontal">
+        <div class="panel-subtitle">
+          Choose a look for your video.
+        </div>
 
-          <button class="tool-btn active" data-filter="none">
+
+        <div
+          class="editor-options"
+          id="filterList"
+        >
+
+          <button class="tool active" data-filter="none">
             Original
           </button>
 
-          <button class="tool-btn" data-filter="cinematic">
+          <button class="tool" data-filter="cinematic">
             Cinematic
           </button>
 
-          <button class="tool-btn" data-filter="vivid">
+          <button class="tool" data-filter="vivid">
             Vivid
           </button>
 
-          <button class="tool-btn" data-filter="warm">
+          <button class="tool" data-filter="warm">
             Warm
           </button>
 
-          <button class="tool-btn" data-filter="cool">
+          <button class="tool" data-filter="cool">
             Cool
           </button>
 
-          <button class="tool-btn" data-filter="film">
+          <button class="tool" data-filter="film">
             Film
           </button>
 
-          <button class="tool-btn" data-filter="retro">
+          <button class="tool" data-filter="retro">
             Retro
           </button>
 
-          <button class="tool-btn" data-filter="dream">
+          <button class="tool" data-filter="dream">
             Dream
           </button>
 
-          <button class="tool-btn" data-filter="noir">
+          <button class="tool" data-filter="noir">
             Noir
           </button>
 
-          <button class="tool-btn" data-filter="sepia">
+          <button class="tool" data-filter="faded">
+            Faded
+          </button>
+
+          <button class="tool" data-filter="moody">
+            Moody
+          </button>
+
+          <button class="tool" data-filter="sunset">
+            Sunset
+          </button>
+
+          <button class="tool" data-filter="bright">
+            Bright
+          </button>
+
+          <button class="tool" data-filter="portrait">
+            Portrait
+          </button>
+
+          <button class="tool" data-filter="soft">
+            Soft
+          </button>
+
+          <button class="tool" data-filter="contrast">
+            High Contrast
+          </button>
+
+          <button class="tool" data-filter="golden">
+            Golden
+          </button>
+
+          <button class="tool" data-filter="arctic">
+            Arctic
+          </button>
+
+          <button class="tool" data-filter="sepia">
             Sepia
           </button>
 
-          <button class="tool-btn" data-filter="bw">
+          <button class="tool" data-filter="bw">
             B&W
           </button>
 
@@ -697,124 +875,202 @@ body{
       </div>
 
 
-      <!-- EFFECTS -->
-      <div class="control-section">
+      <!-- ===================================================
+           EFFECTS PANEL
+           =================================================== -->
 
-        <div class="control-title">
+      <div
+        class="editor-tab-panel"
+        data-panel="effects"
+      >
+
+        <div class="panel-title">
           Effects
         </div>
 
-        <div class="horizontal">
+        <div class="panel-subtitle">
+          Add a visual effect to your video.
+        </div>
 
-          <button class="tool-btn" data-effect="none">
+
+        <div
+          class="editor-options"
+          id="effectList"
+        >
+
+          <button class="tool active" data-effect="none">
             None
           </button>
 
-          <button class="tool-btn" data-effect="glow">
+          <button class="tool" data-effect="glow">
             Glow
           </button>
 
-          <button class="tool-btn" data-effect="dramatic">
+          <button class="tool" data-effect="vintage">
+            Vintage
+          </button>
+
+          <button class="tool" data-effect="dramatic">
             Dramatic
           </button>
 
-          <button class="tool-btn" data-effect="vhs">
+          <button class="tool" data-effect="pop">
+            Pop
+          </button>
+
+          <button class="tool" data-effect="blur">
+            Blur
+          </button>
+
+          <button class="tool" data-effect="sharpen">
+            Sharpen
+          </button>
+
+          <button class="tool" data-effect="vhs">
             VHS
           </button>
 
-          <button class="tool-btn" data-effect="glitch">
+          <button class="tool" data-effect="glitch">
             Glitch
           </button>
 
-          <button class="tool-btn" data-effect="pixel">
+          <button class="tool" data-effect="rgb">
+            RGB Split
+          </button>
+
+          <button class="tool" data-effect="pixel">
             Pixel
           </button>
 
-          <button class="tool-btn" data-effect="shake">
+          <button class="tool" data-effect="shake">
             Shake
           </button>
 
-          <button class="tool-btn" data-effect="flash">
+          <button class="tool" data-effect="flash">
             Flash
           </button>
 
-          <button class="tool-btn" data-effect="mirror">
+          <button class="tool" data-effect="mirror">
             Mirror
           </button>
 
-          <button class="tool-btn" data-effect="negative">
+          <button class="tool" data-effect="negative">
             Negative
           </button>
 
         </div>
 
-      </div>
-
-
-      <!-- CROP -->
-      <div class="control-section">
-
-        <div class="control-title">
-          Crop / Position
+        <div
+          class="effect-status"
+          id="effectStatus"
+        >
+          No effect selected.
         </div>
-
-        <select id="cropSelect" class="tool-select">
-
-          <option value="fill">
-            Fill 9:16
-          </option>
-
-          <option value="fit">
-            Fit
-          </option>
-
-          <option value="center">
-            Center
-          </option>
-
-          <option value="top">
-            Top
-          </option>
-
-          <option value="bottom">
-            Bottom
-          </option>
-
-        </select>
 
       </div>
 
 
-      <!-- SPEED -->
-      <div class="control-section">
+      <!-- ===================================================
+           CROP PANEL
+           =================================================== -->
 
-        <div class="control-title">
-          Speed
+      <div
+        class="editor-tab-panel"
+        data-panel="crop"
+      >
+
+        <div class="panel-title">
+          Crop & Frame
         </div>
 
-        <div class="horizontal">
+        <div class="panel-subtitle">
+          Choose how your video fills the BIGULA player.
+        </div>
 
-          <button class="tool-btn" data-speed="0.25">
+
+        <div class="editor-options grid">
+
+          <button
+            class="control active"
+            data-crop="original"
+          >
+            Original
+          </button>
+
+          <button
+            class="control"
+            data-crop="9:16"
+          >
+            9:16
+          </button>
+
+          <button
+            class="control"
+            data-crop="1:1"
+          >
+            1:1
+          </button>
+
+          <button
+            class="control"
+            data-crop="4:5"
+          >
+            4:5
+          </button>
+
+          <button
+            class="control"
+            data-crop="16:9"
+          >
+            16:9
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================
+           SPEED PANEL
+           =================================================== -->
+
+      <div
+        class="editor-tab-panel"
+        data-panel="speed"
+      >
+
+        <div class="panel-title">
+          Playback Speed
+        </div>
+
+        <div class="panel-subtitle">
+          Make your video slower or faster.
+        </div>
+
+
+        <div class="editor-options grid">
+
+          <button class="control" data-speed="0.25">
             0.25×
           </button>
 
-          <button class="tool-btn" data-speed="0.5">
+          <button class="control" data-speed="0.5">
             0.5×
           </button>
 
-          <button class="tool-btn active" data-speed="1">
+          <button class="control active" data-speed="1">
             1×
           </button>
 
-          <button class="tool-btn" data-speed="1.5">
+          <button class="control" data-speed="1.5">
             1.5×
           </button>
 
-          <button class="tool-btn" data-speed="2">
+          <button class="control" data-speed="2">
             2×
           </button>
 
-          <button class="tool-btn" data-speed="3">
+          <button class="control" data-speed="3">
             3×
           </button>
 
@@ -823,105 +1079,325 @@ body{
       </div>
 
 
-      <!-- TEXT -->
-      <div class="control-section">
+      <!-- ===================================================
+           TEXT PANEL
+           =================================================== -->
 
-        <div class="control-title">
-          Add Text
+      <div
+        class="editor-tab-panel"
+        data-panel="text"
+      >
+
+        <div class="panel-title">
+          Text
         </div>
 
-        <input
+        <div class="panel-subtitle">
+          Add text, then drag it anywhere on your video.
+        </div>
+
+
+        <textarea
+          class="field"
           id="textInput"
-          class="tool-input"
-          type="text"
-          maxlength="80"
-          placeholder="Write text on your video"
+          maxlength="200"
+          placeholder="Write something..."
+        ></textarea>
+
+
+        <div class="editor-control-row">
+
+          <div>
+
+            <label class="small">
+              Size
+            </label>
+
+            <select
+              class="field"
+              id="textSize"
+            >
+
+              <option value="20">
+                Small
+              </option>
+
+              <option
+                value="30"
+                selected
+              >
+                Medium
+              </option>
+
+              <option value="42">
+                Large
+              </option>
+
+              <option value="55">
+                Extra Large
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div>
+
+            <label class="small">
+              Color
+            </label>
+
+            <input
+              class="field color-field"
+              type="color"
+              id="textColor"
+              value="#ffffff"
+            >
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="control"
+          id="textBackgroundBtn"
+        >
+          Add background
+        </button>
+
+
+        <div class="drag-hint">
+          ✋ Drag the text directly on the video preview.
+        </div>
+
+      </div>
+
+
+      <!-- ===================================================
+           EMOJI PANEL
+           =================================================== -->
+
+      <div
+        class="editor-tab-panel"
+        data-panel="emoji"
+      >
+
+        <div class="panel-title">
+          Emoji
+        </div>
+
+        <div class="panel-subtitle">
+          Choose an emoji and drag it anywhere.
+        </div>
+
+
+        <div
+          class="editor-options emoji-options"
+          id="emojiList"
         >
 
+          <button class="tool" data-emoji="😂">😂</button>
+          <button class="tool" data-emoji="🤣">🤣</button>
+          <button class="tool" data-emoji="😍">😍</button>
+          <button class="tool" data-emoji="❤️">❤️</button>
+          <button class="tool" data-emoji="🔥">🔥</button>
+          <button class="tool" data-emoji="👏">👏</button>
+          <button class="tool" data-emoji="😎">😎</button>
+          <button class="tool" data-emoji="😱">😱</button>
+          <button class="tool" data-emoji="😭">😭</button>
+          <button class="tool" data-emoji="💯">💯</button>
+          <button class="tool" data-emoji="🎉">🎉</button>
+          <button class="tool" data-emoji="👍">👍</button>
+          <button class="tool" data-emoji="👀">👀</button>
+          <button class="tool" data-emoji="💔">💔</button>
+          <button class="tool" data-emoji="🥳">🥳</button>
+          <button class="tool" data-emoji="😈">😈</button>
+          <button class="tool" data-emoji="🤯">🤯</button>
+          <button class="tool" data-emoji="🙏">🙏</button>
+
+        </div>
+
+
+        <label class="small">
+          Emoji size
+        </label>
+
+        <input
+          type="range"
+          id="emojiSize"
+          min="30"
+          max="140"
+          value="65"
+          style="width:100%"
+        >
+
+
+        <div class="drag-hint">
+          ✋ Drag the emoji directly on the video preview.
+        </div>
+
       </div>
 
 
-      <!-- EMOJI -->
-      <div class="control-section">
+      <!-- ===================================================
+           SOUND PANEL
+           =================================================== -->
 
-        <div class="control-title">
-          Add Emoji
+      <div
+        class="editor-tab-panel"
+        data-panel="sound"
+      >
+
+        <div class="panel-title">
+          Sound Effects
         </div>
 
-        <div class="horizontal">
-
-          <button class="tool-btn emoji-btn">😂</button>
-          <button class="tool-btn emoji-btn">🤣</button>
-          <button class="tool-btn emoji-btn">😍</button>
-          <button class="tool-btn emoji-btn">🔥</button>
-          <button class="tool-btn emoji-btn">❤️</button>
-          <button class="tool-btn emoji-btn">👍</button>
-          <button class="tool-btn emoji-btn">😎</button>
-          <button class="tool-btn emoji-btn">😭</button>
-          <button class="tool-btn emoji-btn">😱</button>
-          <button class="tool-btn emoji-btn">👏</button>
-
+        <div class="panel-subtitle">
+          Add a sound effect at any point in the video.
         </div>
 
-      </div>
 
+        <div class="editor-options">
 
-      <!-- SOUND EFFECT -->
-      <div class="control-section">
-
-        <div class="control-title">
-          Sound Effect
-        </div>
-
-        <select id="soundEffect" class="tool-select">
-
-          <option value="none">
-            None
-          </option>
-
-          <option value="pop">
+          <button class="tool" data-sfx="pop">
             Pop
-          </option>
+          </button>
 
-          <option value="click">
+          <button class="tool" data-sfx="beep">
+            Beep
+          </button>
+
+          <button class="tool" data-sfx="click">
             Click
-          </option>
+          </button>
 
-          <option value="whoosh">
+          <button class="tool" data-sfx="whoosh">
             Whoosh
-          </option>
+          </button>
 
-          <option value="bell">
-            Bell
-          </option>
+          <button class="tool" data-sfx="ding">
+            Ding
+          </button>
 
-        </select>
+          <button class="tool" data-sfx="laugh">
+            Laugh
+          </button>
+
+          <button class="tool" data-sfx="clear">
+            Clear
+          </button>
+
+        </div>
+
+
+        <div class="sound-control">
+
+          <label class="small">
+            Position
+          </label>
+
+          <input
+            type="range"
+            id="sfxPosition"
+            min="0"
+            max="100"
+            value="50"
+          >
+
+          <div
+            class="range-value"
+            id="sfxPositionValue"
+          >
+            50%
+          </div>
+
+        </div>
+
+
+        <div class="sound-control">
+
+          <label class="small">
+            Volume
+          </label>
+
+          <input
+            type="range"
+            id="sfxVolume"
+            min="0"
+            max="100"
+            value="70"
+          >
+
+          <div
+            class="range-value"
+            id="sfxVolumeValue"
+          >
+            70%
+          </div>
+
+        </div>
+
+
+        <div
+          id="sfxStatus"
+          class="effect-status"
+        >
+          No sound effect selected.
+        </div>
 
       </div>
 
+    </div>
 
-      <div class="message" id="step2Message"></div>
 
+    <!-- =====================================================
+         EDITOR STATUS
+         ===================================================== -->
+
+    <div class="editor-status-bar">
+
+      <span id="editorStatus">
+        No edits selected
+      </span>
 
       <button
         type="button"
-        class="primary-btn"
-        id="nextToDetailsBtn"
+        id="resetEditor"
       >
-        Continue
-      </button>
-
-      <button
-        type="button"
-        class="back-btn"
-        id="backToStep1Btn"
-      >
-        ← Back
+        Reset edits
       </button>
 
     </div>
 
-  </section>
+
+    <!-- =====================================================
+         NAVIGATION
+         ===================================================== -->
+
+    <div class="nav-buttons">
+
+      <button
+        class="secondary"
+        id="backToStep1"
+      >
+        ← Back
+      </button>
+
+      <button
+        class="primary"
+        id="goStep3"
+      >
+        Continue →
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
 
 
   <!-- =========================================================
