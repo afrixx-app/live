@@ -1,465 +1,1624 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upload - BIGULA</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>BIGULA – Upload</title>
+
 <style>
-body { margin:0; padding:0; font-family:'Segoe UI',sans-serif; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; background:#000; color:#fff; }
-.container { width:400px; margin-top:50px; background:#111; padding:20px; border-radius:12px; }
-h1 { text-align:center; color:#ff0000; margin-bottom:20px; }
-button { padding:12px; margin-top:10px; border:none; border-radius:8px; font-weight:bold; background:#ff0000; color:#fff; cursor:pointer; width:100%; }
-button.disabled { opacity:.4; cursor:not-allowed; }
-input, select, textarea { width:100%; padding:10px; margin-top:10px; border-radius:8px; border:none; background:#222; color:#fff; }
-video { width:100%; border-radius:12px; margin-top:10px; }
-#trimBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
-#trimProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
-#filterBar { width:100%; height:10px; background:#222; border-radius:5px; margin-top:10px; position:relative; cursor:pointer; }
-#filterProgress { height:100%; width:0%; background:#ff0050; border-radius:5px; }
-.progress-bar { width:100%; height:8px; background:#222; border-radius:5px; margin-top:10px; overflow:hidden; } .progress-fill { width:0%; height:100%; background:#ff0050; transition:width .2s; } .message { margin-top:8px; font-size:14px; color:#ff9999; text-align:center; display:none; }
-#globalUploadStatus { display:none; margin-top:14px; padding:12px; border-radius:10px; background:#181818; border:1px solid #333; }
-#globalUploadStatus .upload-title { font-weight:700; font-size:13px; }
-#globalUploadStatus .upload-percent { font-size:12px; color:#aaa; margin-top:5px; }
-#globalUploadStatus .global-progress { height:6px; background:#333; border-radius:4px; overflow:hidden; margin-top:8px; }
-#globalUploadStatus .global-progress-fill { height:100%; width:0%; background:#ff0050; transition:width .2s; }
-section { display:none; flex-direction:column; }
-section.active { display:flex; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#050505;color:#fff;
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:680px;margin:auto;min-height:100vh;background:#080808}
+header{
+  height:62px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;
+  border-bottom:1px solid #242424;
+  position:sticky;top:0;z-index:50;
+  background:rgba(8,8,8,.96);backdrop-filter:blur(14px)
+}
+.logo{font-size:23px;font-weight:900;letter-spacing:-.8px}
+.back{background:#191919;color:#fff;border:1px solid #303030;padding:9px 14px;border-radius:20px}
+main{padding:18px 16px 55px}
+.steps{display:flex;gap:7px;margin-bottom:24px}
+.step{height:5px;flex:1;background:#292929;border-radius:10px}
+.step.active{background:#fff}
+h1{font-size:26px;margin-bottom:7px}
+.subtitle{color:#929292;font-size:14px;line-height:1.5;margin-bottom:22px}
+
+.panel,.editor-section{
+  background:#111;border:1px solid #272727;border-radius:18px;padding:16px
+}
+.choice-grid{display:grid;gap:11px}
+.choice{
+  width:100%;display:flex;align-items:center;gap:14px;
+  text-align:left;color:#fff;background:#191919;
+  border:1px solid #303030;border-radius:15px;padding:15px
+}
+.choice:hover{background:#222}
+.choice.disabled{opacity:.35;cursor:not-allowed}
+.choice-icon{
+  width:46px;height:46px;display:grid;place-items:center;
+  border-radius:13px;background:#292929;font-size:22px;flex:none
+}
+.choice-title{font-weight:850;font-size:16px}
+.choice-description{font-size:12px;color:#888;margin-top:4px}
+.file-status{
+  margin-top:13px;padding:12px;border-radius:11px;
+  background:#181818;color:#bbb;font-size:13px
+}
+.hidden{display:none!important}
+
+.editor{display:grid;gap:15px}
+.preview-area{display:flex;justify-content:center}
+.preview-phone{
+  width:min(270px,82vw);
+  aspect-ratio:9/16;
+  background:#000;border:1px solid #343434;
+  border-radius:22px;overflow:hidden;position:relative;
+  box-shadow:0 15px 45px #000
+}
+.preview-phone video{
+  width:100%;height:100%;object-fit:cover;
+  background:#000;display:block
+}
+.overlay-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.text-overlay{
+  position:absolute;left:50%;transform:translateX(-50%);
+  max-width:90%;text-align:center;white-space:pre-wrap;
+  color:#fff;font-weight:900;text-shadow:0 2px 8px #000;
+  padding:4px 8px
+}
+.text-overlay.boxed{background:#000a;border-radius:8px;text-shadow:none}
+.emoji-overlay{
+  position:absolute;left:50%;top:67%;
+  transform:translate(-50%,-50%);
+  line-height:1
+}
+.preview-label{
+  position:absolute;top:9px;left:10px;
+  padding:5px 8px;border-radius:8px;
+  background:#0009;font-size:10px;color:#ddd
+}
+
+.editor-section h3{font-size:14px;margin-bottom:11px}
+.horizontal{
+  display:flex;gap:7px;overflow-x:auto;padding-bottom:3px
+}
+.horizontal::-webkit-scrollbar{height:3px}
+.tool,.control{
+  flex:none;background:#1b1b1b;color:#ddd;
+  border:1px solid #303030;border-radius:10px;
+  padding:9px 11px;font-size:11px
+}
+.tool.active,.control.active{background:#fff;color:#000}
+.control-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.field{
+  width:100%;background:#181818;color:#fff;
+  border:1px solid #303030;border-radius:10px;
+  padding:11px;outline:none
+}
+.field:focus{border-color:#777}
+textarea.field{min-height:90px;resize:vertical}
+.row{display:flex;gap:9px}
+.row>*{flex:1}
+.small-label{
+  display:block;color:#999;font-size:11px;margin-bottom:6px
+}
+.range-row{display:flex;align-items:center;gap:10px}
+.range-row input{flex:1}
+.range-value{width:50px;text-align:right;color:#aaa;font-size:12px}
+.status-note{font-size:12px;color:#929292;line-height:1.5;margin-top:9px}
+
+.nav-buttons{display:flex;gap:9px;margin-top:4px}
+.primary,.secondary{
+  flex:1;min-height:48px;border-radius:13px;font-weight:850
+}
+.primary{background:#fff;color:#000}
+.secondary{background:#1b1b1b;color:#fff;border:1px solid #333}
+button:disabled{opacity:.35;cursor:not-allowed}
+
+.form-group{margin-bottom:17px}
+.form-group label{display:block;color:#aaa;font-size:12px;margin-bottom:7px}
+.notice{
+  background:#161616;border:1px solid #292929;
+  border-radius:12px;padding:13px;color:#999;
+  font-size:12px;line-height:1.5;margin-bottom:16px
+}
+.upload-progress{
+  display:none;background:#151515;border:1px solid #292929;
+  padding:14px;border-radius:13px;margin-top:16px
+}
+.upload-progress.show{display:block}
+.progress-track{height:7px;background:#292929;border-radius:20px;overflow:hidden;margin-top:9px}
+.progress-bar{height:100%;width:0;background:#fff;transition:width .15s}
+.progress-text{color:#aaa;font-size:12px;margin-top:7px}
+.message{display:none;padding:12px;border-radius:11px;margin-top:14px;font-size:13px;line-height:1.45}
+.message.show{display:block}
+.message.error{background:#321313;color:#ffaaaa}
+.message.success{background:#102b19;color:#a8ffbd}
+.recording .choice-icon{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(.9);opacity:.55}}
+
+@media(max-width:420px){
+  main{padding:15px 12px 45px}
+  .control-grid{grid-template-columns:repeat(2,1fr)}
+}
 </style>
 </head>
+
 <body>
+<div class="app">
 
-<div class="container">
-<h1>Upload Video</h1>
-<div id="globalUploadStatus"><div class="upload-title">BIGULA upload</div><div class="upload-percent" id="globalUploadPercent">0%</div><div class="global-progress"><div class="global-progress-fill" id="globalUploadFill"></div></div></div>
+<header>
+  <button class="back" onclick="history.back()">← Back</button>
+  <div class="logo">BIGULA</div>
+  <div style="width:55px"></div>
+</header>
 
-<!-- Step 1: Choose Video -->
-<section id="step1" class="active">
-  <button id="fileBtn">📁 Select Video from Storage</button>
-  <button id="cameraBtn">🎥 Record Video with Camera</button>
-  <button id="goLiveBtn" class="disabled" disabled>🔴 Go Live</button>
-  <video id="preview" muted playsinline preload="metadata"></video>
-  <div id="msgStep1" class="message"></div>
-  <button id="toStep2" class="disabled" disabled>Next: Edit Video</button>
-</section>
+<main>
 
-<!-- Step 2: Trim & Filter -->
-<section id="step2">
-  <video id="editPreview" muted playsinline preload="metadata"></video>
-  <div id="trimBar"><div id="trimProgress"></div></div>
-  <div id="filterBar"><div id="filterProgress"></div></div>
-  <div style="display:flex; gap:5px; margin-top:10px;">
-    <button data-filter="">Normal</button>
-    <button data-filter="grayscale(50%)">B&W</button>
-    <button data-filter="sepia(60%)">Sepia</button>
-    <button data-filter="brightness(1.3)">Bright</button>
-    <button data-filter="contrast(1.3)">Contrast</button>
+<div class="steps">
+  <div class="step active" id="stepBar1"></div>
+  <div class="step" id="stepBar2"></div>
+  <div class="step" id="stepBar3"></div>
+</div>
+
+<!-- STEP 1 -->
+<section id="step1">
+  <h1>Create your video</h1>
+  <p class="subtitle">Choose how you want to create your BIGULA video.</p>
+
+  <div class="panel">
+    <div class="choice-grid">
+
+      <button class="choice" id="chooseVideoBtn">
+        <div class="choice-icon">🎬</div>
+        <div>
+          <div class="choice-title">Choose Video</div>
+          <div class="choice-description">Select a video from your device</div>
+        </div>
+      </button>
+
+      <button class="choice" id="recordBtn">
+        <div class="choice-icon">📷</div>
+        <div>
+          <div class="choice-title">Record Video</div>
+          <div class="choice-description">Record a new video with your camera</div>
+        </div>
+      </button>
+
+      <button class="choice disabled" id="liveBtn">
+        <div class="choice-icon">🔴</div>
+        <div>
+          <div class="choice-title">Go Live</div>
+          <div class="choice-description" id="liveDescription">
+            Available after reaching 100 followers
+          </div>
+        </div>
+      </button>
+
+    </div>
+
+    <input id="videoInput" type="file" accept="video/*" hidden>
+    <div id="fileStatus" class="file-status hidden"></div>
   </div>
-  <div id="msgStep2" class="message"></div>
-  <button id="toStep3">Next: Add Details</button>
 </section>
 
-<!-- Step 3: Metadata & Upload -->
-<section id="step3">
-  <input type="text" id="title" placeholder="Title" required>
-  <select id="category" required>
-    <option value="">Select Category</option>
-    <option value="music">Music</option>
-    <option value="dance">Dance</option>
-    <option value="animals">Animals</option>
-    <option value="film and animation">Film & Animation</option>
-    <option value="people and blogs">People & Blogs</option>
-    <option value="autos and vehicles">Autos & Vehicles</option>
-    <option value="sports">Sports</option>
-    <option value="comedy">Comedy</option>
-    <option value="entertainment">Entertainment</option>
-    <option value="news and politics">News & Politics</option>
-    <option value="fashion and style">Fashion & Style</option>
-    <option value="education">Education</option>
-    <option value="science and technology">Science & Technology</option>
-  </select>
-  <textarea id="description" placeholder="Description" required></textarea>
-  <button id="uploadBtn">Upload Video</button>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <div id="msgStep3" class="message"></div>
+<!-- STEP 2 -->
+<section id="step2" class="hidden">
+
+<h1>Edit your video</h1>
+<p class="subtitle">
+  Make your video yours. Changes shown here are rendered into the uploaded video.
+</p>
+
+<div class="editor">
+
+<div class="preview-area">
+  <div class="preview-phone" id="previewPhone">
+    <video id="previewVideo" playsinline controls></video>
+    <div class="preview-label">BIGULA preview</div>
+    <div class="overlay-layer">
+      <div id="textOverlay" class="text-overlay hidden"></div>
+      <div id="emojiOverlay" class="emoji-overlay hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="editor-section">
+<h3>Filters</h3>
+<div class="horizontal" id="filterList">
+<button class="tool active" data-filter="none">Original</button>
+<button class="tool" data-filter="cinematic">Cinematic</button>
+<button class="tool" data-filter="vivid">Vivid</button>
+<button class="tool" data-filter="warm">Warm</button>
+<button class="tool" data-filter="cool">Cool</button>
+<button class="tool" data-filter="film">Film</button>
+<button class="tool" data-filter="retro">Retro</button>
+<button class="tool" data-filter="dream">Dream</button>
+<button class="tool" data-filter="noir">Noir</button>
+<button class="tool" data-filter="faded">Faded</button>
+<button class="tool" data-filter="moody">Moody</button>
+<button class="tool" data-filter="sunset">Sunset</button>
+<button class="tool" data-filter="bright">Bright</button>
+<button class="tool" data-filter="portrait">Portrait</button>
+<button class="tool" data-filter="soft">Soft</button>
+<button class="tool" data-filter="golden">Golden</button>
+<button class="tool" data-filter="arctic">Arctic</button>
+<button class="tool" data-filter="sepia">Sepia</button>
+<button class="tool" data-filter="bw">B&W</button>
+</div>
+</div>
+
+<!-- EFFECTS -->
+<div class="editor-section">
+<h3>Effects</h3>
+<div class="horizontal" id="effectList">
+<button class="tool active" data-effect="none">None</button>
+<button class="tool" data-effect="glow">Glow</button>
+<button class="tool" data-effect="dramatic">Dramatic</button>
+<button class="tool" data-effect="pop">Pop</button>
+<button class="tool" data-effect="blur">Blur</button>
+<button class="tool" data-effect="sharpen">Sharpen</button>
+<button class="tool" data-effect="vhs">VHS</button>
+<button class="tool" data-effect="glitch">Glitch</button>
+<button class="tool" data-effect="rgb">RGB</button>
+<button class="tool" data-effect="pixel">Pixel</button>
+<button class="tool" data-effect="shake">Shake</button>
+<button class="tool" data-effect="flash">Flash</button>
+<button class="tool" data-effect="mirror">Mirror</button>
+<button class="tool" data-effect="negative">Negative</button>
+</div>
+<div id="effectStatus" class="status-note">No effect selected.</div>
+</div>
+
+<!-- CROP -->
+<div class="editor-section">
+<h3>Crop</h3>
+<div class="control-grid">
+<button class="control active" data-crop="original">Original</button>
+<button class="control" data-crop="9:16">9:16</button>
+<button class="control" data-crop="1:1">1:1</button>
+<button class="control" data-crop="4:5">4:5</button>
+<button class="control" data-crop="16:9">16:9</button>
+</div>
+<div class="status-note">Crop is centered automatically.</div>
+</div>
+
+<!-- SPEED -->
+<div class="editor-section">
+<h3>Speed</h3>
+<div class="control-grid">
+<button class="control" data-speed=".25">0.25×</button>
+<button class="control active" data-speed=".5">0.5×</button>
+<button class="control active" data-speed="1">1×</button>
+<button class="control" data-speed="1.5">1.5×</button>
+<button class="control" data-speed="2">2×</button>
+<button class="control" data-speed="3">3×</button>
+</div>
+</div>
+
+<!-- TEXT -->
+<div class="editor-section">
+<h3>Text</h3>
+
+<label class="small-label">Text</label>
+<textarea id="textInput" class="field" maxlength="500"
+placeholder="Write something on your video..."></textarea>
+
+<div class="row" style="margin-top:10px">
+<div>
+<label class="small-label">Size</label>
+<select id="textSize" class="field">
+<option value="20">Small</option>
+<option value="30" selected>Medium</option>
+<option value="42">Large</option>
+<option value="55">Extra large</option>
+</select>
+</div>
+<div>
+<label class="small-label">Color</label>
+<input id="textColor" type="color" value="#ffffff"
+class="field" style="height:43px;padding:4px">
+</div>
+</div>
+
+<div class="control-grid" style="margin-top:10px">
+<button class="control" data-textpos="top">Top</button>
+<button class="control" data-textpos="center">Center</button>
+<button class="control active" data-textpos="bottom">Bottom</button>
+</div>
+
+<button id="textBackgroundBtn" class="control" style="margin-top:9px">
+Add background
+</button>
+</div>
+
+<!-- EMOJI -->
+<div class="editor-section">
+<h3>Emoji</h3>
+<div class="horizontal">
+<button class="tool" data-emoji="😂">😂</button>
+<button class="tool" data-emoji="🤣">🤣</button>
+<button class="tool" data-emoji="😍">😍</button>
+<button class="tool" data-emoji="❤️">❤️</button>
+<button class="tool" data-emoji="🔥">🔥</button>
+<button class="tool" data-emoji="👏">👏</button>
+<button class="tool" data-emoji="😎">😎</button>
+<button class="tool" data-emoji="😱">😱</button>
+<button class="tool" data-emoji="😭">😭</button>
+<button class="tool" data-emoji="💯">💯</button>
+<button class="tool" data-emoji="🎉">🎉</button>
+<button class="tool" data-emoji="👍">👍</button>
+<button class="tool" data-emoji="👀">👀</button>
+<button class="tool" data-emoji="💔">💔</button>
+</div>
+
+<label class="small-label" style="margin-top:12px">Emoji size</label>
+<div class="range-row">
+<input id="emojiSize" type="range" min="30" max="130" value="65">
+<span id="emojiSizeValue" class="range-value">65</span>
+</div>
+</div>
+
+<!-- SOUND -->
+<div class="editor-section">
+<h3>Sound effects</h3>
+<div class="horizontal">
+<button class="tool" data-sfx="pop">Pop</button>
+<button class="tool" data-sfx="beep">Beep</button>
+<button class="tool" data-sfx="click">Click</button>
+<button class="tool" data-sfx="whoosh">Whoosh</button>
+<button class="tool" data-sfx="ding">Ding</button>
+<button class="tool" data-sfx="laugh">Laugh</button>
+<button class="tool" data-sfx="clear">Clear</button>
+</div>
+
+<label class="small-label" style="margin-top:13px">
+Position in actual video
+</label>
+<div class="range-row">
+<input id="sfxPosition" type="range" min="0" max="100" value="50">
+<span id="sfxPositionValue" class="range-value">50%</span>
+</div>
+
+<label class="small-label" style="margin-top:12px">Volume</label>
+<div class="range-row">
+<input id="sfxVolume" type="range" min="0" max="100" value="70">
+<span id="sfxVolumeValue" class="range-value">70%</span>
+</div>
+
+<div id="sfxStatus" class="status-note">
+No sound effect selected.
+</div>
+</div>
+
+<div class="notice">
+<strong>BIGULA editing</strong><br><br>
+Your selected edits are rendered into a new video before it is uploaded.
+Long or high-resolution videos may take longer to process on a phone.
+</div>
+
+<div class="nav-buttons">
+<button class="secondary" id="backToStep1">Back</button>
+<button class="primary" id="goStep3">Continue</button>
+</div>
+
+</div>
 </section>
+
+<!-- STEP 3 -->
+<section id="step3" class="hidden">
+
+<h1>Video details</h1>
+<p class="subtitle">Tell viewers what your video is about.</p>
+
+<div class="panel">
+
+<div class="form-group">
+<label for="title">Title</label>
+<input id="title" class="field" maxlength="120"
+placeholder="Give your video a title">
+</div>
+
+<div class="form-group">
+<label for="category">Category</label>
+<select id="category" class="field">
+<option value="">Select category</option>
+<option>Entertainment</option>
+<option>Comedy</option>
+<option>Music</option>
+<option>Sports</option>
+<option>Gaming</option>
+<option>Education</option>
+<option>Technology</option>
+<option>News</option>
+<option>Fashion</option>
+<option>Food</option>
+<option>Travel</option>
+<option>Nature</option>
+<option>Animals</option>
+<option>People</option>
+<option>Lifestyle</option>
+<option>Other</option>
+</select>
+</div>
+
+<div class="form-group">
+<label for="description">Description</label>
+<textarea id="description" class="field"
+maxlength="5000"
+placeholder="Tell viewers more about your video..."></textarea>
+</div>
+
+<div class="notice">
+Your video is uploaded privately first. Publication happens only after the
+BIGULA review status allows it.
+</div>
+
+<div id="uploadProgress" class="upload-progress">
+<div id="uploadProgressTitle">Preparing upload...</div>
+<div class="progress-track">
+<div id="progressBar" class="progress-bar"></div>
+</div>
+<div id="progressText" class="progress-text">0%</div>
+</div>
+
+<div id="message" class="message"></div>
+
+<div class="nav-buttons">
+<button class="secondary" id="backToStep2">Back</button>
+<button class="primary" id="uploadBtn">Upload Video</button>
+</div>
+
+</div>
+</section>
+
+</main>
+</div>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-import * as tus from 'https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm'
+import {createClient}
+from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const SUPABASE_URL = 'https://vfteiggdhthvrrlndtbs.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe'
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: "pkce"
+import * as tus
+from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
+
+const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const BUCKET="videos";
+
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:true,
+    flowType:"pkce"
   }
-})
+});
 
-let selectedFile = null
-let currentUser = null
-let currentProfile = null
+let selectedFile=null;
+let processedFile=null;
+let objectUrl=null;
 
-async function requireUser(){
-  const { data:{session}, error } = await supabase.auth.getSession()
-  if(error) console.error("Auth session error:", error)
+let currentFilter="none";
+let currentEffect="none";
+let currentCrop="original";
+let currentSpeed=1;
 
-  if(session?.user){
-    currentUser = session.user
-  }else{
-    const params = new URLSearchParams(location.search)
-    const code = params.get("code")
+let textValue="";
+let textColor="#ffffff";
+let textSize=30;
+let textPosition="bottom";
+let textBackground=false;
 
-    if(code){
-      const result = await supabase.auth.exchangeCodeForSession(code)
-      if(!result.error && result.data.session?.user){
-        currentUser = result.data.session.user
-        history.replaceState({}, document.title, location.pathname)
-      }else{
-        console.error("Google OAuth exchange failed:", result.error)
-      }
-    }
-  }
+let emojiValue="";
+let emojiSize=65;
 
-  if(!currentUser){
-    location.replace("signup.html")
-    return null
-  }
+let selectedSfx=null;
+let sfxPosition=50;
+let sfxVolume=70;
+let videoDuration=0;
+let recording=false;
 
-  const { data:profile, error:profileError } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", currentUser.id)
-    .maybeSingle()
+const $=id=>document.getElementById(id);
 
-  if(profileError) console.warn("Profile refresh failed:", profileError.message)
+function showStep(n){
+  ["step1","step2","step3"].forEach(x=>$(x).classList.add("hidden"));
+  ["stepBar1","stepBar2","stepBar3"].forEach(x=>$(x).classList.remove("active"));
 
-  if(profile){
-    currentProfile = profile
-    localStorage.setItem("bigula_profile", JSON.stringify(profile))
-  }
+  $(`step${n}`).classList.remove("hidden");
+  for(let i=1;i<=n;i++)$(`stepBar${i}`).classList.add("active");
 
-  return currentUser
+  scrollTo({top:0,behavior:"smooth"});
 }
 
-function followerCount(){
-  return Number(currentProfile?.followers ?? currentProfile?.followers_count ?? 0)
+function message(text,error=false){
+  const box=$("message");
+  box.textContent=text;
+  box.className="message show "+(error?"error":"success");
 }
 
-// Elements
-const step1 = document.getElementById("step1")
-const step2 = document.getElementById("step2")
-const step3 = document.getElementById("step3")
-const preview = document.getElementById("preview")
-const editPreview = document.getElementById("editPreview")
-const toStep2 = document.getElementById("toStep2")
-const goLiveBtn = document.getElementById("goLiveBtn")
-const trimBar = document.getElementById("trimBar")
-const trimProgress = document.getElementById("trimProgress")
-const filterBar = document.getElementById("filterBar")
-const filterProgress = document.getElementById("filterProgress")
-const msgStep1 = document.getElementById("msgStep1")
-const msgStep2 = document.getElementById("msgStep2")
-
-// Go Live requires the real follower count.
-function updateGoLiveAccess(){
-  if(followerCount() >= 500){
-    goLiveBtn.disabled = false
-    goLiveBtn.classList.remove("disabled")
-  }else{
-    goLiveBtn.disabled = true
-    goLiveBtn.classList.add("disabled")
-  }
+function bytes(n){
+  if(!n)return"0 B";
+  const u=["B","KB","MB","GB"];
+  const i=Math.min(3,Math.floor(Math.log(n)/Math.log(1024)));
+  return (n/Math.pow(1024,i)).toFixed(i?1:0)+" "+u[i];
 }
 
-// Step 1: File selection
-document.getElementById("fileBtn").onclick = ()=>{
-  const input = document.createElement("input")
-  input.type = "file"
-  input.accept = "video/*"
-  input.onchange = ()=>{
-    selectedFile = input.files[0]
-    preview.src = URL.createObjectURL(selectedFile)
-    toStep2.disabled = false
-    toStep2.classList.remove("disabled")
-  }
-  input.click()
+function secondsText(n){
+  n=Math.max(0,Math.floor(n||0));
+  return `${Math.floor(n/60)}:${String(n%60).padStart(2,"0")}`;
 }
 
-// Record video
-document.getElementById("cameraBtn").onclick = async ()=>{
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true })
-    preview.srcObject = stream
-    const recorder = new MediaRecorder(stream)
-    let chunks = []
-    recorder.ondataavailable = e=>chunks.push(e.data)
-    recorder.onstop = ()=>{
-      selectedFile = new Blob(chunks,{type:'video/mp4'})
-      preview.src = URL.createObjectURL(selectedFile)
-      preview.srcObject = null
-      try { stream.getTracks().forEach(track => track.stop()) } catch(e) {}
-        toStep2.disabled = false
-      toStep2.classList.remove("disabled")
-    }
-    recorder.start()
-    setTimeout(()=>recorder.stop(),15000) // demo 15s
-  }catch(e){ msgStep1.textContent="Camera access denied"; msgStep1.style.display="block" }
-}
+/* FILE */
 
-// Go Live
-goLiveBtn.onclick = ()=>{ if(followerCount() >= 500) location.href='live.html' }
+$("chooseVideoBtn").onclick=()=>$("videoInput").click();
 
-// Step 2: Edit
-toStep2.onclick = ()=>{
-  if(!selectedFile) return
-  step1.classList.remove("active")
-  step2.classList.add("active")
-  editPreview.src = preview.src
-  editPreview.onloadedmetadata = ()=>{ trimProgress.style.width = '0%'; filterProgress.style.width='0%' }
-}
+$("videoInput").onchange=()=>{
+  const f=$("videoInput").files?.[0];
+  if(f)setSelectedVideo(f);
+};
 
-// Trim click-drag
-let trimming=false
-trimBar.addEventListener("mousedown", e=>{ trimming=true; updateTrim(e) })
-window.addEventListener("mouseup", ()=>trimming=false)
-trimBar.addEventListener("mousemove", e=>{ if(trimming) updateTrim(e) })
-function updateTrim(e){
-  const rect=trimBar.getBoundingClientRect()
-  let percent = Math.min(Math.max(0,(e.clientX-rect.left)/rect.width),1)
-  trimProgress.style.width = percent*100 + "%"
-  if(editPreview.duration) editPreview.currentTime = percent * editPreview.duration
-}
-
-// Filter click-drag (for demo, we just apply linear intensity)
-let filtering=false
-filterBar.addEventListener("mousedown", e=>{ filtering=true; updateFilter(e) })
-window.addEventListener("mouseup", ()=>filtering=false)
-filterBar.addEventListener("mousemove", e=>{ if(filtering) updateFilter(e) })
-function updateFilter(e){
-  const rect=filterBar.getBoundingClientRect()
-  let percent = Math.min(Math.max(0,(e.clientX-rect.left)/rect.width),1)
-  filterProgress.style.width = percent*100 + "%"
-  editPreview.style.filter = `brightness(${1 + percent*0.5})` // example dynamic filter
-}
-
-// Filter buttons
-document.querySelectorAll("#step2 button[data-filter]").forEach(btn=>{
-  btn.onclick = ()=>{ editPreview.style.filter = btn.dataset.filter; filterProgress.style.width='100%' }
-})
-
-// Step 3
-document.getElementById("toStep3").onclick = ()=>{
-  step2.classList.remove("active")
-  step3.classList.add("active")
-}
-
-// Shared upload state. Every BIGULA page can read this state from localStorage
-// and receive live updates through BroadcastChannel while this page is alive.
-const UPLOAD_STATE_KEY = "bigula_upload_state_v1";
-const uploadChannel = "BroadcastChannel" in window ? new BroadcastChannel("bigula_uploads") : null;
-const globalUploadStatus = document.getElementById("globalUploadStatus");
-const globalUploadPercent = document.getElementById("globalUploadPercent");
-const globalUploadFill = document.getElementById("globalUploadFill");
-
-function publishUploadState(state){
-  localStorage.setItem(UPLOAD_STATE_KEY, JSON.stringify(state));
-  if(uploadChannel) uploadChannel.postMessage(state);
-  renderUploadState(state);
-}
-
-function renderUploadState(state){
-  if(!state || !state.active){
-    globalUploadStatus.style.display = "none";
+function setSelectedVideo(file){
+  if(!file.type.startsWith("video/")){
+    message("Please select a valid video file.",true);
     return;
   }
-  globalUploadStatus.style.display = "block";
-  const percent = Math.max(0, Math.min(100, Number(state.percent || 0)));
-  globalUploadPercent.textContent = `${state.status || "Uploading"} ${percent}%`;
-  globalUploadFill.style.width = percent + "%";
+
+  selectedFile=file;
+  processedFile=file;
+
+  $("fileStatus").classList.remove("hidden");
+  $("fileStatus").textContent=
+    `${file.name} • ${bytes(file.size)}`;
+
+  if(objectUrl)URL.revokeObjectURL(objectUrl);
+  objectUrl=URL.createObjectURL(file);
+
+  $("previewVideo").src=objectUrl;
+  $("previewVideo").load();
+
+  showStep(2);
 }
 
-function readUploadState(){
-  try { return JSON.parse(localStorage.getItem(UPLOAD_STATE_KEY) || "null"); }
-  catch(e){ return null; }
-}
+/* CAMERA */
 
-if(uploadChannel) uploadChannel.onmessage = event => renderUploadState(event.data);
-window.addEventListener("storage", event => {
-  if(event.key === UPLOAD_STATE_KEY) renderUploadState(readUploadState());
-});
-renderUploadState(readUploadState());
+$("recordBtn").onclick=startRecording;
 
-// Upload to Supabase Storage with TUS resumable uploads.
-document.getElementById("uploadBtn").onclick = async ()=>{
-  const msg = document.getElementById("msgStep3")
-  const uploadBtn = document.getElementById("uploadBtn")
-  const progressFill = document.getElementById("progressFill")
+async function startRecording(){
+  if(recording)return;
 
-  if(!selectedFile){
-    msg.textContent = "Select a video first"
-    msg.style.display = "block"
-    return
+  if(!window.isSecureContext){
+    message(
+      "Camera access requires HTTPS. The new BIGULA build must be opened through your HTTPS GitHub Pages address.",
+      true
+    );
+    return;
   }
 
-  const title = document.getElementById("title").value.trim()
-  const category = document.getElementById("category").value
-  const description = document.getElementById("description").value.trim()
-
-  if(!title || !category || !description){
-    msg.textContent = "Fill all fields"
-    msg.style.display = "block"
-    return
+  if(!navigator.mediaDevices?.getUserMedia){
+    message(
+      "Camera access is unavailable in this app/browser. Try Chrome on HTTPS. If you are testing an Android wrapper, the wrapper must grant Camera and Microphone permissions.",
+      true
+    );
+    return;
   }
 
-  if(!currentUser){
-    currentUser = await requireUser()
-    if(!currentUser) return
+  if(!window.MediaRecorder){
+    message("This browser does not support video recording.",true);
+    return;
   }
 
-  // Never allow the selected video to keep playing during upload.
-  [preview, editPreview].forEach(video=>{
-    try { video.pause(); } catch(e) {}
-    video.removeAttribute("autoplay");
-  })
-
-  uploadBtn.disabled = true
-  uploadBtn.classList.add("disabled")
-  msg.style.display = "block"
-  msg.textContent = "Preparing upload..."
-  progressFill.style.width = "0%"
+  let stream=null;
 
   try{
-    const { data:{session}, error:sessionError } = await supabase.auth.getSession()
-    if(sessionError || !session?.access_token){
-      throw new Error("Your BIGULA login session is not available. Please sign in again.")
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:{ideal:"user"},
+        width:{ideal:1280},
+        height:{ideal:720}
+      },
+      audio:true
+    });
+
+    const types=[
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm"
+    ];
+
+    let mime="";
+    for(const t of types){
+      if(MediaRecorder.isTypeSupported?.(t)){
+        mime=t;break;
+      }
     }
 
-    const originalName = selectedFile.name || "video.mp4"
-    const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_")
-    const filePath = `${currentUser.id}/${crypto.randomUUID()}_${safeName}`
+    const recorder=new MediaRecorder(
+      stream,
+      mime?{mimeType:mime}:undefined
+    );
 
-    // IMPORTANT: the Supabase Storage bucket must exist with the exact id/name "videos".
-    // A 404 "Bucket not found" is a bucket configuration problem, not a TUS progress problem.
-    const endpoint = "https://vfteiggdhthvrrlndtbs.storage.supabase.co/storage/v1/upload/resumable"
+    const chunks=[];
+    recording=true;
 
-    publishUploadState({
-      active:true,
-      status:"Uploading video...",
-      percent:0,
-      fileName:originalName,
-      startedAt:Date.now()
-    })
+    $("recordBtn").classList.add("recording");
+    $("recordBtn").querySelector(".choice-title").textContent="Recording…";
 
-    const upload = new tus.Upload(selectedFile, {
-      endpoint,
-      retryDelays: [0, 3000, 5000, 10000, 20000],
-      chunkSize: 6 * 1024 * 1024,
-      headers: {
-        authorization: `Bearer ${session.access_token}`,
-        apikey: SUPABASE_KEY,
-        "x-upsert": "false"
-      },
-      uploadDataDuringCreation: true,
-      removeFingerprintOnSuccess: true,
-      metadata: {
-        bucketName: "videos",
-        objectName: filePath,
-        contentType: selectedFile.type || "video/mp4",
-        cacheControl: "3600"
-      },
+    recorder.ondataavailable=e=>{
+      if(e.data?.size)chunks.push(e.data);
+    };
 
-      onError(error){
-        console.error("TUS upload error:", error)
-        const message = error?.message || "Network error"
-        const bucketMissing = /Bucket not found|NoSuchBucket/i.test(message)
-        msg.textContent = bucketMissing
-          ? 'Upload failed: Supabase Storage bucket "videos" does not exist. Create the bucket first.'
-          : "Upload failed: " + message
-        progressFill.style.width = "0%"
-        publishUploadState({active:false, status:"Upload failed", percent:0, error:message})
-        uploadBtn.disabled = false
-        uploadBtn.classList.remove("disabled")
-      },
+    recorder.onerror=e=>{
+      console.error(e);
+      finish();
+      message("The camera recorder encountered an error.",true);
+    };
 
-      onProgress(bytesUploaded, bytesTotal){
-        const percent = bytesTotal ? Math.round((bytesUploaded / bytesTotal) * 100) : 0
-        progressFill.style.width = percent + "%"
-        msg.textContent = `Uploading video... ${percent}%`
-        publishUploadState({
-          active:true,
-          status:"Uploading video...",
-          percent,
-          fileName:originalName,
-          startedAt:Date.now()
-        })
-      },
+    recorder.onstop=()=>{
+      finish();
 
-      onSuccess: async function(){
-        try{
-          progressFill.style.width = "100%"
-          msg.textContent = "Upload complete. Saving video information..."
-          publishUploadState({active:true, status:"Saving video...", percent:100, fileName:originalName})
-
-          const { data:publicData } = supabase.storage.from("videos").getPublicUrl(filePath)
-          const videoUrl = publicData.publicUrl
-
-          const { data:videoRow, error:dbError } = await supabase
-            .from("videos")
-            .insert({
-              user_id: currentUser.id,
-              title,
-              category,
-              description,
-              video_url: videoUrl
-            })
-            .select()
-            .single()
-
-          if(dbError){
-            console.error("videos table error:", dbError)
-            msg.textContent = "Video uploaded, but saving it to the videos table failed: " + dbError.message
-            publishUploadState({active:false, status:"Uploaded; database save failed", percent:100, error:dbError.message})
-          }else{
-            msg.textContent = "✅ Video uploaded and published successfully!"
-            console.log("BIGULA video:", videoRow)
-            publishUploadState({active:false, status:"Upload complete", percent:100, fileName:originalName})
-          }
-
-          uploadBtn.disabled = false
-          uploadBtn.classList.remove("disabled")
-        }catch(error){
-          console.error("Post-upload error:", error)
-          msg.textContent = "Upload finished, but finalizing the video failed."
-          publishUploadState({active:false, status:"Upload finished; finalizing failed", percent:100, error:error?.message || "Unknown error"})
-          uploadBtn.disabled = false
-          uploadBtn.classList.remove("disabled")
-        }
+      if(!chunks.length){
+        message("No video was recorded.",true);
+        return;
       }
-    })
 
-    msg.textContent = "Starting resumable upload..."
-    upload.start()
+      const blob=new Blob(chunks,{
+        type:mime||"video/webm"
+      });
 
-  }catch(error){
-    console.error("Upload setup error:", error)
-    msg.textContent = "Upload failed: " + (error?.message || "Unknown error")
-    progressFill.style.width = "0%"
-    publishUploadState({active:false, status:"Upload failed", percent:0, error:error?.message || "Unknown error"})
-    uploadBtn.disabled = false
-    uploadBtn.classList.remove("disabled")
+      const ext=blob.type.includes("mp4")?"mp4":"webm";
+
+      setSelectedVideo(
+        new File(
+          [blob],
+          `BIGULA_recording.${ext}`,
+          {type:blob.type}
+        )
+      );
+    };
+
+    function finish(){
+      recording=false;
+      stream?.getTracks().forEach(t=>t.stop());
+      $("recordBtn").classList.remove("recording");
+      $("recordBtn").querySelector(".choice-title").textContent="Record Video";
+    }
+
+    recorder.start(250);
+
+    setTimeout(()=>{
+      if(recording&&recorder.state==="recording")recorder.stop();
+    },60000);
+
+  }catch(e){
+    stream?.getTracks().forEach(t=>t.stop());
+    recording=false;
+
+    let text="Camera access could not be started.";
+
+    if(e.name==="NotAllowedError"){
+      text="Camera or microphone permission was denied. Allow both permissions for BIGULA and try again.";
+    }else if(e.name==="NotFoundError"){
+      text="No camera was found on this device.";
+    }else if(e.name==="NotReadableError"){
+      text="The camera is being used by another application.";
+    }else if(e.name==="SecurityError"){
+      text="The browser blocked camera access. BIGULA camera recording requires HTTPS.";
+    }else if(e.name==="AbortError"){
+      text="Camera access was interrupted. Please try again.";
+    }
+
+    message(text,true);
   }
 }
 
-requireUser().then(user=>{
-  if(user) updateGoLiveAccess()
-})
+/* LIVE */
 
-supabase.auth.onAuthStateChange((event, session)=>{
-  if(session?.user) currentUser = session.user
-})
+async function checkLive(){
+  try{
+    const {data:{session}}=await supabase.auth.getSession();
+    if(!session)return;
+
+    const {count,error}=await supabase
+      .from("followers")
+      .select("*",{count:"exact",head:true})
+      .eq("following_id",session.user.id);
+
+    if(!error&&Number(count||0)>=100){
+      $("liveBtn").classList.remove("disabled");
+      $("liveDescription").textContent="Start a live video";
+      $("liveBtn").onclick=()=>{
+        message("Live streaming will be connected to BIGULA next.");
+      };
+    }
+  }catch(e){
+    console.warn("Live check:",e);
+  }
+}
+checkLive();
+
+/* PREVIEW */
+
+$("previewVideo").onloadedmetadata=()=>{
+  videoDuration=$("previewVideo").duration||0;
+  updateSfx();
+};
+
+function previewStyle(){
+  const filters={
+    none:"",
+    cinematic:"contrast(1.15) saturate(.9) brightness(.9)",
+    vivid:"saturate(1.65) contrast(1.12)",
+    warm:"sepia(.12) saturate(1.2) contrast(1.04)",
+    cool:"saturate(.9) hue-rotate(18deg) brightness(1.02)",
+    film:"contrast(1.1) saturate(.82) sepia(.08)",
+    retro:"sepia(.3) saturate(1.25) contrast(1.05)",
+    dream:"brightness(1.08) saturate(.8)",
+    noir:"grayscale(1) contrast(1.45)",
+    faded:"contrast(.82) saturate(.7) brightness(1.08)",
+    moody:"brightness(.78) contrast(1.2) saturate(.85)",
+    sunset:"sepia(.18) saturate(1.45)",
+    bright:"brightness(1.22) contrast(1.02)",
+    portrait:"contrast(1.04) saturate(.92) brightness(1.05)",
+    soft:"brightness(1.04) contrast(.9) saturate(.88)",
+    golden:"sepia(.22) saturate(1.35) brightness(1.04)",
+    arctic:"saturate(.82) hue-rotate(25deg) brightness(1.08)",
+    sepia:"sepia(1)",
+    bw:"grayscale(1)"
+  };
+
+  const effects={
+    none:"",
+    glow:"brightness(1.08) saturate(1.12)",
+    dramatic:"contrast(1.45) brightness(.88)",
+    pop:"saturate(1.55) contrast(1.2)",
+    blur:"blur(2px)",
+    sharpen:"contrast(1.2) saturate(1.12)",
+    vhs:"contrast(1.15) saturate(1.1)",
+    glitch:"contrast(1.35) saturate(1.5)",
+    rgb:"saturate(1.35)",
+    pixel:"contrast(1.25) saturate(1.15)",
+    shake:"",
+    flash:"brightness(1.35)",
+    mirror:"",
+    negative:"invert(1)"
+  };
+
+  $("previewVideo").style.filter=
+    [filters[currentFilter],effects[currentEffect]]
+      .filter(Boolean).join(" ")||"none";
+
+  $("previewVideo").style.transform=
+    currentEffect==="mirror"?"scaleX(-1)":"none";
+
+  $("previewVideo").style.animation=
+    currentEffect==="shake"?"bigulaShake .18s infinite":"none";
+}
+
+const dynamicStyle=document.createElement("style");
+dynamicStyle.textContent=`
+@keyframes bigulaShake{
+0%{transform:translate(0,0)}
+25%{transform:translate(2px,-1px)}
+50%{transform:translate(-2px,2px)}
+75%{transform:translate(1px,1px)}
+100%{transform:translate(0,0)}
+}`;
+document.head.appendChild(dynamicStyle);
+
+document.querySelectorAll("[data-filter]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    currentFilter=b.dataset.filter;
+    previewStyle();
+  };
+});
+
+document.querySelectorAll("[data-effect]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-effect]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    currentEffect=b.dataset.effect;
+    $("effectStatus").textContent="Effect: "+b.textContent;
+    previewStyle();
+  };
+});
+
+/* CROP */
+
+document.querySelectorAll("[data-crop]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-crop]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    currentCrop=b.dataset.crop;
+
+    const ratios={
+      original:"9/16",
+      "9:16":"9/16",
+      "1:1":"1/1",
+      "4:5":"4/5",
+      "16:9":"16/9"
+    };
+
+    $("previewPhone").style.aspectRatio=ratios[currentCrop];
+  };
+});
+
+/* SPEED */
+
+document.querySelectorAll("[data-speed]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-speed]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    currentSpeed=Number(b.dataset.speed);
+    $("previewVideo").playbackRate=currentSpeed;
+  };
+});
+
+/* TEXT */
+
+$("textInput").oninput=e=>{
+  textValue=e.target.value;
+  updateText();
+};
+
+$("textSize").onchange=e=>{
+  textSize=Number(e.target.value);
+  updateText();
+};
+
+$("textColor").oninput=e=>{
+  textColor=e.target.value;
+  updateText();
+};
+
+$("textBackgroundBtn").onclick=()=>{
+  textBackground=!textBackground;
+  $("textBackgroundBtn").classList.toggle("active",textBackground);
+  updateText();
+};
+
+document.querySelectorAll("[data-textpos]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-textpos]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    textPosition=b.dataset.textpos;
+    updateText();
+  };
+});
+
+function updateText(){
+  const el=$("textOverlay");
+
+  if(!textValue.trim()){
+    el.classList.add("hidden");
+    return;
+  }
+
+  el.classList.remove("hidden");
+  el.textContent=textValue;
+  el.style.color=textColor;
+  el.style.fontSize=textSize+"px";
+  el.classList.toggle("boxed",textBackground);
+
+  el.style.top=
+    textPosition==="top"?"13%":
+    textPosition==="center"?"50%":"84%";
+}
+
+/* EMOJI */
+
+document.querySelectorAll("[data-emoji]").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    emojiValue=b.dataset.emoji;
+    updateEmoji();
+  };
+});
+
+$("emojiSize").oninput=e=>{
+  emojiSize=Number(e.target.value);
+  $("emojiSizeValue").textContent=emojiSize;
+  updateEmoji();
+};
+
+function updateEmoji(){
+  const el=$("emojiOverlay");
+
+  if(!emojiValue){
+    el.classList.add("hidden");
+    return;
+  }
+
+  el.classList.remove("hidden");
+  el.textContent=emojiValue;
+  el.style.fontSize=emojiSize+"px";
+}
+
+/* SOUND */
+
+document.querySelectorAll("[data-sfx]").forEach(b=>{
+  b.onclick=()=>{
+    if(b.dataset.sfx==="clear"){
+      selectedSfx=null;
+      document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));
+      updateSfx();
+      return;
+    }
+
+    document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedSfx=b.dataset.sfx;
+    updateSfx();
+    playSfx(selectedSfx);
+  };
+});
+
+$("sfxPosition").oninput=e=>{
+  sfxPosition=Number(e.target.value);
+  updateSfx();
+};
+
+$("sfxVolume").oninput=e=>{
+  sfxVolume=Number(e.target.value);
+  $("sfxVolumeValue").textContent=sfxVolume+"%";
+};
+
+function updateSfx(){
+  $("sfxPositionValue").textContent=sfxPosition+"%";
+
+  if(!selectedSfx){
+    $("sfxStatus").textContent="No sound effect selected.";
+    return;
+  }
+
+  const at=videoDuration*(sfxPosition/100);
+
+  $("sfxStatus").textContent=
+    `${selectedSfx} will play at approximately ${secondsText(at)} of the ${secondsText(videoDuration)} video.`;
+}
+
+let audioContext;
+
+function playSfx(type){
+  try{
+    audioContext ||= new(window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==="suspended")audioContext.resume();
+
+    const now=audioContext.currentTime;
+    const gain=audioContext.createGain();
+    gain.gain.value=sfxVolume/100;
+    gain.connect(audioContext.destination);
+
+    const osc=audioContext.createOscillator();
+
+    if(type==="pop"){
+      osc.type="sine";
+      osc.frequency.setValueAtTime(180,now);
+      osc.frequency.exponentialRampToValueAtTime(700,now+.08);
+      osc.start(now);osc.stop(now+.1);
+    }else if(type==="beep"){
+      osc.type="square";osc.frequency.value=700;
+      osc.start(now);osc.stop(now+.12);
+    }else if(type==="click"){
+      osc.type="square";osc.frequency.value=1100;
+      osc.start(now);osc.stop(now+.04);
+    }else if(type==="ding"){
+      osc.type="sine";osc.frequency.value=1000;
+      osc.start(now);osc.stop(now+.3);
+    }else if(type==="whoosh"){
+      osc.type="sawtooth";
+      osc.frequency.setValueAtTime(120,now);
+      osc.frequency.exponentialRampToValueAtTime(900,now+.35);
+      osc.start(now);osc.stop(now+.35);
+    }else{
+      osc.type="triangle";
+      osc.frequency.setValueAtTime(350,now);
+      osc.frequency.setValueAtTime(550,now+.12);
+      osc.frequency.setValueAtTime(300,now+.24);
+      osc.start(now);osc.stop(now+.3);
+    }
+
+    osc.connect(gain);
+  }catch(e){
+    console.warn("SFX preview:",e);
+  }
+}
+
+/* NAVIGATION */
+
+$("backToStep1").onclick=()=>showStep(1);
+
+$("goStep3").onclick=()=>{
+  if(!selectedFile){
+    message("Please choose or record a video first.",true);
+    return;
+  }
+  showStep(3);
+};
+
+$("backToStep2").onclick=()=>showStep(2);
+
+/* VIDEO RENDER */
+
+function cropRect(w,h,crop){
+  if(crop==="original")return{x:0,y:0,width:w,height:h};
+
+  const ratios={
+    "9:16":9/16,
+    "1:1":1,
+    "4:5":4/5,
+    "16:9":16/9
+  };
+
+  const target=ratios[crop]||w/h;
+  let cw=w,ch=h;
+
+  if(w/h>target)cw=Math.round(h*target);
+  else ch=Math.round(w/target);
+
+  return{
+    x:Math.round((w-cw)/2),
+    y:Math.round((h-ch)/2),
+    width:cw,
+    height:ch
+  };
+}
+
+function canvasFilter(){
+  const filters={
+    none:"none",
+    cinematic:"contrast(1.15) saturate(.9) brightness(.9)",
+    vivid:"saturate(1.65) contrast(1.12)",
+    warm:"sepia(.12) saturate(1.2) contrast(1.04)",
+    cool:"saturate(.9) hue-rotate(18deg) brightness(1.02)",
+    film:"contrast(1.1) saturate(.82) sepia(.08)",
+    retro:"sepia(.3) saturate(1.25) contrast(1.05)",
+    dream:"brightness(1.08) saturate(.8)",
+    noir:"grayscale(1) contrast(1.45)",
+    faded:"contrast(.82) saturate(.7) brightness(1.08)",
+    moody:"brightness(.78) contrast(1.2) saturate(.85)",
+    sunset:"sepia(.18) saturate(1.45)",
+    bright:"brightness(1.22) contrast(1.02)",
+    portrait:"contrast(1.04) saturate(.92) brightness(1.05)",
+    soft:"brightness(1.04) contrast(.9) saturate(.88)",
+    golden:"sepia(.22) saturate(1.35) brightness(1.04)",
+    arctic:"saturate(.82) hue-rotate(25deg) brightness(1.08)",
+    sepia:"sepia(1)",
+    bw:"grayscale(1)"
+  };
+
+  const effects={
+    none:"",
+    glow:"brightness(1.08) saturate(1.12)",
+    dramatic:"contrast(1.45) brightness(.88)",
+    pop:"saturate(1.55) contrast(1.2)",
+    blur:"blur(2px)",
+    sharpen:"contrast(1.2) saturate(1.12)",
+    vhs:"contrast(1.15) saturate(1.1)",
+    glitch:"contrast(1.35) saturate(1.5)",
+    rgb:"saturate(1.35)",
+    pixel:"contrast(1.25) saturate(1.15)",
+    shake:"",
+    flash:"brightness(1.35)",
+    mirror:"",
+    negative:"invert(1)"
+  };
+
+  return [filters[currentFilter],effects[currentEffect]]
+    .filter(Boolean).join(" ")||"none";
+}
+
+function drawEffect(ctx,w,h,time){
+  if(currentEffect==="flash"){
+    ctx.fillStyle="rgba(255,255,255,.18)";
+    ctx.fillRect(0,0,w,h);
+  }
+
+  if(currentEffect==="vhs"){
+    ctx.fillStyle="rgba(255,255,255,.05)";
+    for(let y=0;y<h;y+=5)ctx.fillRect(0,y,w,1);
+  }
+
+  if(currentEffect==="glitch"){
+    for(let i=0;i<7;i++){
+      const y=Math.random()*h;
+      ctx.fillStyle=Math.random()>.5?
+        "rgba(255,0,80,.18)":"rgba(0,220,255,.18)";
+      ctx.fillRect(0,y,w,2+Math.random()*7);
+    }
+  }
+
+  if(currentEffect==="rgb"){
+    ctx.globalAlpha=.08;
+    ctx.fillStyle="#ff0000";
+    ctx.fillRect(-3,0,w,h);
+    ctx.fillStyle="#00ffff";
+    ctx.fillRect(3,0,w,h);
+    ctx.globalAlpha=1;
+  }
+
+  if(currentEffect==="pixel"){
+    ctx.globalAlpha=.12;
+    ctx.fillStyle="#fff";
+    for(let y=0;y<h;y+=15){
+      for(let x=0;x<w;x+=15){
+        if(Math.random()>.65)ctx.fillRect(x,y,5,5);
+      }
+    }
+    ctx.globalAlpha=1;
+  }
+
+  if(currentEffect==="shake"){
+    ctx.globalAlpha=.08;
+    ctx.fillStyle="#fff";
+    ctx.fillRect(Math.sin(time*45)*3,0,w,h);
+    ctx.globalAlpha=1;
+  }
+}
+
+function drawText(ctx,w,h){
+  if(!textValue.trim())return;
+
+  const size=Math.round(textSize*(w/270));
+  ctx.save();
+  ctx.font=`900 ${size}px Arial`;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+
+  const x=w/2;
+  const y=textPosition==="top"?h*.13:
+          textPosition==="center"?h*.5:h*.84;
+
+  const lines=textValue.split("\n");
+  const lineH=size*1.2;
+  const total=lines.length*lineH;
+
+  if(textBackground){
+    let longest=0;
+    lines.forEach(l=>longest=Math.max(longest,ctx.measureText(l).width));
+    ctx.fillStyle="rgba(0,0,0,.65)";
+    ctx.beginPath();
+    if(ctx.roundRect){
+      ctx.roundRect(
+        x-longest/2-14,
+        y-total/2-9,
+        longest+28,
+        total+18,
+        10
+      );
+    }else{
+      ctx.rect(x-longest/2-14,y-total/2-9,longest+28,total+18);
+    }
+    ctx.fill();
+  }
+
+  ctx.fillStyle=textColor;
+  ctx.shadowColor="rgba(0,0,0,.9)";
+  ctx.shadowBlur=7;
+
+  lines.forEach((line,i)=>{
+    ctx.fillText(
+      line,x,
+      y-total/2+lineH/2+i*lineH
+    );
+  });
+
+  ctx.restore();
+}
+
+function drawEmoji(ctx,w,h){
+  if(!emojiValue)return;
+
+  ctx.save();
+  ctx.font=`${Math.round(emojiSize*(w/270))}px Arial`;
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText(emojiValue,w/2,h*.68);
+  ctx.restore();
+}
+
+function createSfxNode(ctx,destination,when,type,volume){
+  const gain=ctx.createGain();
+  gain.gain.value=volume;
+  gain.connect(destination);
+
+  const osc=ctx.createOscillator();
+
+  if(type==="pop"){
+    osc.type="sine";
+    osc.frequency.setValueAtTime(180,when);
+    osc.frequency.exponentialRampToValueAtTime(700,when+.08);
+    osc.start(when);osc.stop(when+.1);
+  }else if(type==="beep"){
+    osc.type="square";osc.frequency.value=700;
+    osc.start(when);osc.stop(when+.12);
+  }else if(type==="click"){
+    osc.type="square";osc.frequency.value=1100;
+    osc.start(when);osc.stop(when+.04);
+  }else if(type==="ding"){
+    osc.type="sine";osc.frequency.value=1000;
+    osc.start(when);osc.stop(when+.3);
+  }else if(type==="whoosh"){
+    osc.type="sawtooth";
+    osc.frequency.setValueAtTime(120,when);
+    osc.frequency.exponentialRampToValueAtTime(900,when+.35);
+    osc.start(when);osc.stop(when+.35);
+  }else{
+    osc.type="triangle";
+    osc.frequency.setValueAtTime(350,when);
+    osc.frequency.setValueAtTime(550,when+.12);
+    osc.frequency.setValueAtTime(300,when+.24);
+    osc.start(when);osc.stop(when+.3);
+  }
+
+  osc.connect(gain);
+}
+
+async function renderEditedVideo(){
+
+  if(!selectedFile)return selectedFile;
+
+  const source=document.createElement("video");
+  source.src=URL.createObjectURL(selectedFile);
+  source.preload="auto";
+  source.playsInline=true;
+
+  await new Promise((resolve,reject)=>{
+    source.onloadedmetadata=resolve;
+    source.onerror=()=>reject(new Error("Unable to read the video."));
+  });
+
+  const duration=source.duration;
+
+  let w=source.videoWidth||720;
+  let h=source.videoHeight||1280;
+
+  const max=1280;
+  if(Math.max(w,h)>max){
+    const r=max/Math.max(w,h);
+    w=Math.round(w*r);
+    h=Math.round(h*r);
+  }
+
+  const crop=cropRect(w,h,currentCrop);
+
+  const canvas=document.createElement("canvas");
+  canvas.width=crop.width;
+  canvas.height=crop.height;
+
+  const ctx=canvas.getContext("2d",{alpha:false});
+  const stream=canvas.captureStream(30);
+
+  let audioCtx=null;
+  let audioDest=null;
+  let mediaSource=null;
+
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+
+    mediaSource=audioCtx.createMediaElementSource(source);
+    audioDest=audioCtx.createMediaStreamDestination();
+
+    mediaSource.connect(audioDest);
+    mediaSource.connect(audioCtx.destination);
+
+    audioDest.stream.getAudioTracks()
+      .forEach(t=>stream.addTrack(t));
+
+  }catch(e){
+    console.warn("Original audio could not be rendered:",e);
+  }
+
+  if(!window.MediaRecorder){
+    return selectedFile;
+  }
+
+  const mimeTypes=[
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm"
+  ];
+
+  let mime="";
+  for(const m of mimeTypes){
+    if(MediaRecorder.isTypeSupported?.(m)){
+      mime=m;break;
+    }
+  }
+
+  if(!mime)return selectedFile;
+
+  const recorder=new MediaRecorder(stream,{
+    mimeType:mime,
+    videoBitsPerSecond:4000000
+  });
+
+  const chunks=[];
+  recorder.ondataavailable=e=>{
+    if(e.data?.size)chunks.push(e.data);
+  };
+
+  const stopped=new Promise(resolve=>{
+    recorder.onstop=resolve;
+  });
+
+  const progress=$("uploadProgress");
+  const bar=$("progressBar");
+  const text=$("progressText");
+  const title=$("uploadProgressTitle");
+
+  progress.classList.add("show");
+  title.textContent="Rendering edited video…";
+
+  if(audioCtx?.state==="suspended")await audioCtx.resume();
+
+  source.currentTime=0;
+
+  await new Promise(resolve=>{
+    source.onseeked=resolve;
+  });
+
+  source.playbackRate=currentSpeed;
+
+  recorder.start(250);
+
+  if(selectedSfx&&audioCtx&&audioDest){
+    /*
+      The SFX position is calculated from the original video's
+      actual duration, then converted to the render timeline.
+    */
+    const originalPosition=duration*(sfxPosition/100);
+    const renderPosition=originalPosition/currentSpeed;
+
+    createSfxNode(
+      audioCtx,
+      audioDest,
+      audioCtx.currentTime+Math.max(.05,renderPosition),
+      selectedSfx,
+      sfxVolume/100
+    );
+  }
+
+  await source.play();
+
+  let stopped=false;
+
+  const draw=()=>{
+    if(source.ended){
+      if(!stopped){
+        stopped=true;
+        try{recorder.stop()}catch(e){}
+      }
+      return;
+    }
+
+    ctx.save();
+
+    ctx.filter=canvasFilter();
+
+    if(currentEffect==="mirror"){
+      ctx.translate(crop.width,0);
+      ctx.scale(-1,1);
+    }
+
+    ctx.drawImage(
+      source,
+      crop.x,crop.y,crop.width,crop.height,
+      0,0,crop.width,crop.height
+    );
+
+    ctx.restore();
+
+    drawEffect(ctx,crop.width,crop.height,source.currentTime);
+    drawText(ctx,crop.width,crop.height);
+    drawEmoji(ctx,crop.width,crop.height);
+
+    const pct=Math.min(
+      99,
+      Math.round(source.currentTime/duration*100)
+    );
+
+    bar.style.width=pct+"%";
+    text.textContent=pct+"%";
+
+    requestAnimationFrame(draw);
+  };
+
+  draw();
+
+  await stopped;
+
+  source.pause();
+
+  try{audioCtx?.close()}catch(e){}
+
+  const blob=new Blob(chunks,{type:mime});
+
+  bar.style.width="100%";
+  text.textContent="100%";
+  title.textContent="Video editing complete";
+
+  return new File(
+    [blob],
+    "BIGULA_edited.webm",
+    {type:mime}
+  );
+}
+
+/* UPLOAD */
+
+$("uploadBtn").onclick=uploadVideo;
+
+async function uploadVideo(){
+
+  const title=$("title").value.trim();
+  const category=$("category").value.trim();
+  const description=$("description").value.trim();
+
+  if(!selectedFile){
+    message("Please select or record a video first.",true);
+    return;
+  }
+
+  if(!title){
+    message("Please enter a title.",true);
+    return;
+  }
+
+  if(!category){
+    message("Please select a category.",true);
+    return;
+  }
+
+  const button=$("uploadBtn");
+  button.disabled=true;
+  button.textContent="Preparing…";
+
+  try{
+
+    const {data:{session}}=await supabase.auth.getSession();
+
+    if(!session){
+      throw new Error("Your BIGULA session has expired. Please sign in again.");
+    }
+
+    processedFile=await renderEditedVideo();
+
+    const userId=session.user.id;
+
+    const state={
+      active:true,
+      progress:0,
+      startedAt:Date.now()
+    };
+
+    localStorage.setItem("bigula_upload_state",JSON.stringify(state));
+
+    const ext=processedFile.type.includes("mp4")?"mp4":"webm";
+
+    const path=
+      `${userId}/${Date.now()}_${Math.random().toString(36).slice(2,10)}.${ext}`;
+
+    $("uploadProgress").classList.add("show");
+    $("uploadProgressTitle").textContent="Uploading video…";
+    button.textContent="Uploading…";
+
+    await new Promise((resolve,reject)=>{
+
+      const upload=new tus.Upload(
+        processedFile,
+        {
+          endpoint:SUPABASE_URL+"/storage/v1/upload/resumable",
+
+          retryDelays:[0,1000,3000,5000],
+
+          headers:{
+            authorization:"Bearer "+SUPABASE_KEY,
+            apikey:SUPABASE_KEY
+          },
+
+          metadata:{
+            bucketName:BUCKET,
+            objectName:path,
+            contentType:processedFile.type||"video/webm",
+            cacheControl:"3600"
+          },
+
+          uploadDataDuringCreation:true,
+          removeFingerprintOnSuccess:true,
+          chunkSize:6*1024*1024,
+
+          onError:error=>{
+            console.error("TUS:",error);
+            reject(error);
+          },
+
+          onProgress:(uploaded,total)=>{
+            const pct=Math.round(uploaded/total*100);
+
+            $("progressBar").style.width=pct+"%";
+            $("progressText").textContent=pct+"%";
+
+            localStorage.setItem(
+              "bigula_upload_state",
+              JSON.stringify({
+                active:true,
+                progress:pct,
+                startedAt:state.startedAt
+              })
+            );
+          },
+
+          onSuccess:resolve
+        }
+      );
+
+      upload.start();
+    });
+
+    $("uploadProgressTitle").textContent="Saving video…";
+    $("progressBar").style.width="100%";
+    $("progressText").textContent="100%";
+
+    const {data:{publicUrl}}=
+      supabase.storage.from(BUCKET).getPublicUrl(path);
+
+    if(!publicUrl)throw new Error("Could not create the video URL.");
+
+    /*
+      Keep the initial database record private/unpublished.
+      The review page controls publication afterwards.
+    */
+    const {data:video,error}=await supabase
+      .from("videos")
+      .insert({
+        user_id:userId,
+        title,
+        category,
+        description,
+        video_url:publicUrl
+      })
+      .select("id")
+      .single();
+
+    if(error)throw error;
+
+    localStorage.removeItem("bigula_upload_state");
+
+    location.href=
+      "uploaded.html?id="+encodeURIComponent(video.id);
+
+  }catch(e){
+
+    console.error("BIGULA upload:",e);
+
+    localStorage.removeItem("bigula_upload_state");
+
+    button.disabled=false;
+    button.textContent="Upload Video";
+
+    message(
+      e?.message||"Video upload failed.",
+      true
+    );
+  }
+}
+
+showStep(1);
 </script>
 </body>
 </html>
+```
