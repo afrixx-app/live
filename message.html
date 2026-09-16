@@ -1,25 +1,19 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BIGULA Messages</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
 *{
   box-sizing:border-box;
 }
 
-html,
-body{
+html,body{
   margin:0;
   padding:0;
+  width:100%;
   height:100%;
   font-family:Arial,sans-serif;
   background:#fff;
@@ -29,66 +23,62 @@ body{
 body{
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
+
 
 /* =========================================================
    HEADER
 ========================================================= */
 
 header{
-  flex:0 0 auto;
-
-  position:sticky;
-  top:0;
-
+  flex-shrink:0;
   background:#fff;
-
   border-bottom:1px solid #ddd;
-
-  padding:
-    calc(10px + env(safe-area-inset-top))
-    16px
-    12px;
-
-  z-index:10;
+  padding:12px 15px;
+  z-index:5;
 }
 
-.headerRow{
+.header-row{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
 }
 
-.backBtn{
-  width:38px;
-  height:38px;
-
+.back{
   border:0;
-  border-radius:50%;
-
-  background:#f1f1f1;
-
+  background:none;
   color:#111;
-
+  padding:4px;
+  margin:0;
+  width:auto;
   font-size:25px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
+  line-height:1;
   cursor:pointer;
 }
 
+.header-info{
+  min-width:0;
+}
+
 header strong{
-  font-size:20px;
+  display:block;
+  font-size:19px;
+}
+
+#recipientName{
+  display:block;
+  margin-top:3px;
+  color:#777;
+  font-size:12px;
 }
 
 #status{
-  font-size:13px;
-  color:#666;
-  margin-top:4px;
-  margin-left:48px;
+  margin-top:3px;
+  font-size:12px;
+  color:#777;
 }
+
 
 /* =========================================================
    MESSAGES AREA
@@ -96,247 +86,181 @@ header strong{
 
 #messages{
   flex:1;
-
-  overflow-y:auto;
-
-  padding:
-    16px
-    12px
-    100px;
-
   min-height:0;
-
+  overflow-y:auto;
+  padding:15px 12px 90px;
+  background:#fff;
   scroll-behavior:smooth;
+}
+
+.msg-row{
+  width:100%;
+  display:flex;
+  margin:7px 0;
+}
+
+.msg-row.mine{
+  justify-content:flex-end;
+}
+
+.msg-row.theirs{
+  justify-content:flex-start;
 }
 
 .msg{
   max-width:78%;
-
   padding:10px 13px;
-
-  margin:8px 0;
-
-  border-radius:16px;
-
+  border-radius:17px;
   word-break:break-word;
-
-  line-height:1.4;
-
-  position:relative;
+  overflow-wrap:anywhere;
+  line-height:1.35;
+  font-size:15px;
 }
 
-.mine{
-  margin-left:auto;
-
+.mine .msg{
   background:#111;
-
   color:#fff;
-
   border-bottom-right-radius:5px;
 }
 
-.theirs{
-  margin-right:auto;
-
+.theirs .msg{
   background:#eee;
-
   color:#111;
-
   border-bottom-left-radius:5px;
 }
 
 .time{
   display:block;
-
   font-size:10px;
-
-  opacity:.65;
-
+  opacity:.62;
   margin-top:4px;
-
-  text-align:right;
 }
 
 .empty{
   text-align:center;
-
   color:#777;
-
-  padding:50px 15px;
+  padding:55px 15px;
+  font-size:14px;
 }
 
+.error{
+  margin:20px auto;
+  max-width:600px;
+  padding:14px;
+  border-radius:10px;
+  background:#ffe9e9;
+  color:#a00000;
+  font-size:14px;
+  line-height:1.45;
+  word-break:break-word;
+}
+
+
 /* =========================================================
-   MESSAGE FORM
+   COMPOSER
 ========================================================= */
 
 form{
-  flex:0 0 auto;
-
-  position:fixed;
-
-  bottom:0;
-  left:0;
-  right:0;
-
-  background:#fff;
-
-  border-top:1px solid #ddd;
-
-  padding:
-    10px
-    10px
-    calc(10px + env(safe-area-inset-bottom));
-
+  flex-shrink:0;
   display:flex;
-
   gap:8px;
-
-  z-index:20;
+  padding:10px;
+  background:#fff;
+  border-top:1px solid #ddd;
 }
 
 #messageInput{
   flex:1;
-
   min-width:0;
-
   border:1px solid #ccc;
-
   border-radius:22px;
-
   padding:11px 14px;
-
   font-size:15px;
-
   outline:none;
 }
 
 #messageInput:focus{
-  border-color:#888;
-}
-
-button{
-  border:0;
-
-  border-radius:22px;
-
-  padding:0 18px;
-
-  background:#111;
-
-  color:#fff;
-
-  font-weight:700;
+  border-color:#111;
 }
 
 #sendBtn{
-  min-width:72px;
+  flex-shrink:0;
+  border:0;
+  border-radius:22px;
+  padding:0 18px;
+  min-width:70px;
+  background:#111;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 #sendBtn:disabled{
   opacity:.45;
+  cursor:not-allowed;
 }
+
 
 /* =========================================================
-   DELIVERY STATE
+   SMALL SCREENS
 ========================================================= */
 
-.sending{
-  opacity:.65;
+@media(max-width:420px){
+
+  .msg{
+    max-width:84%;
+  }
+
+  #sendBtn{
+    padding:0 15px;
+  }
+
 }
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-#toast{
-  position:fixed;
-
-  left:50%;
-  bottom:85px;
-
-  transform:
-    translate(-50%,10px);
-
-  background:#222;
-
-  color:#fff;
-
-  padding:10px 14px;
-
-  border-radius:10px;
-
-  font-size:13px;
-
-  opacity:0;
-
-  pointer-events:none;
-
-  transition:.2s;
-
-  z-index:50;
-
-  max-width:90%;
-
-  text-align:center;
-}
-
-#toast.show{
-  opacity:1;
-
-  transform:
-    translate(-50%,0);
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- =======================================================
-     HEADER
-======================================================= -->
 
 <header>
 
-  <div class="headerRow">
+  <div class="header-row">
 
     <button
       id="backBtn"
-      class="backBtn"
+      class="back"
       type="button"
       aria-label="Back">
       ‹
     </button>
 
-    <strong>
-      Messages
-    </strong>
+    <div class="header-info">
 
-  </div>
+      <strong>Messages</strong>
 
-  <div id="status">
-    Checking your BIGULA session…
+      <span id="recipientName">
+        Loading…
+      </span>
+
+      <div id="status">
+        Checking your BIGULA session…
+      </div>
+
+    </div>
+
   </div>
 
 </header>
 
 
-<!-- =======================================================
-     MESSAGES
-======================================================= -->
-
 <div id="messages">
 
   <div class="empty">
-    Loading…
+    Loading messages…
   </div>
 
 </div>
 
-
-<!-- =======================================================
-     SEND FORM
-======================================================= -->
 
 <form id="sendForm">
 
@@ -351,36 +275,31 @@ button{
     id="sendBtn"
     type="submit"
     disabled>
-
     Send
-
   </button>
 
 </form>
 
 
-<!-- =======================================================
-     TOAST
-======================================================= -->
+<script type="module">
 
-<div id="toast"></div>
+import {
+  createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-
-<script>
 
 /* =========================================================
-   SUPABASE
+   BIGULA SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
-"https://vfteiggdhthvrrlndtbs.supabase.co";
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
 
-const supabase =
-window.supabase.createClient(
+const supabase = createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
@@ -395,74 +314,59 @@ window.supabase.createClient(
 
 
 /* =========================================================
-   ELEMENTS
+   URL
 ========================================================= */
 
 const params =
-new URLSearchParams(
-  location.search
-);
-
+  new URLSearchParams(location.search);
 
 const recipientId =
-params.get("uid") ||
-params.get("user_id") ||
-params.get("to");
+  params.get("uid") ||
+  params.get("user_id") ||
+  params.get("to");
 
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
 const messagesEl =
-document.getElementById(
-  "messages"
-);
-
+  document.getElementById("messages");
 
 const statusEl =
-document.getElementById(
-  "status"
-);
+  document.getElementById("status");
 
+const recipientNameEl =
+  document.getElementById("recipientName");
 
 const input =
-document.getElementById(
-  "messageInput"
-);
-
+  document.getElementById("messageInput");
 
 const sendBtn =
-document.getElementById(
-  "sendBtn"
-);
-
+  document.getElementById("sendBtn");
 
 const form =
-document.getElementById(
-  "sendForm"
-);
-
+  document.getElementById("sendForm");
 
 const backBtn =
-document.getElementById(
-  "backBtn"
-);
-
-
-const toastEl =
-document.getElementById(
-  "toast"
-);
+  document.getElementById("backBtn");
 
 
 /* =========================================================
    STATE
 ========================================================= */
 
-let currentUser = null;
+let currentUser =
+  null;
 
-let pollTimer = null;
+let recipient =
+  null;
 
-let sending = false;
+let pollTimer =
+  null;
 
-let authSubscription = null;
+let loadingMessages =
+  false;
 
 
 /* =========================================================
@@ -471,276 +375,169 @@ let authSubscription = null;
 
 function esc(value){
 
-  return String(
-    value ?? ""
-  ).replace(
-    /[&<>"']/g,
-    c => ({
+  return String(value ?? "")
+    .replace(/[&<>"']/g,c => ({
       "&":"&amp;",
       "<":"&lt;",
       ">":"&gt;",
       '"':"&quot;",
       "'":"&#039;"
-    }[c])
-  );
+    }[c]));
+
 }
 
 
 /* =========================================================
-   TOAST
-========================================================= */
-
-function toast(text){
-
-  toastEl.textContent =
-    text;
-
-  toastEl.classList.add(
-    "show"
-  );
-
-  clearTimeout(
-    window.toastTimer
-  );
-
-  window.toastTimer =
-    setTimeout(
-      ()=>{
-        toastEl.classList.remove(
-          "show"
-        );
-      },
-      2500
-    );
-}
-
-
-/* =========================================================
-   FORMAT DATE
-========================================================= */
-
-function formatDate(value){
-
-  if(!value)
-    return "";
-
-  const d =
-    new Date(value);
-
-  if(
-    Number.isNaN(
-      d.getTime()
-    )
-  ){
-    return "";
-  }
-
-  return d.toLocaleString(
-    undefined,
-    {
-      month:"short",
-      day:"numeric",
-      hour:"numeric",
-      minute:"2-digit"
-    }
-  );
-}
-
-
-/* =========================================================
-   PKCE SESSION
-========================================================= */
-
-async function finishPKCE(){
-
-  const code =
-    params.get("code");
-
-  if(!code)
-    return;
-
-
-  try{
-
-    const {
-      error
-    } =
-    await supabase.auth
-      .exchangeCodeForSession(
-        code
-      );
-
-
-    if(error){
-
-      console.error(
-        "PKCE exchange error:",
-        error
-      );
-
-      return;
-    }
-
-
-    /*
-      Remove ?code= from
-      the visible URL.
-    */
-
-    const cleanParams =
-      new URLSearchParams();
-
-
-    if(recipientId){
-
-      cleanParams.set(
-        "uid",
-        recipientId
-      );
-    }
-
-
-    const cleanUrl =
-      location.pathname +
-      (
-        cleanParams.toString()
-        ?
-        "?" +
-        cleanParams.toString()
-        :
-        ""
-      );
-
-
-    history.replaceState(
-      {},
-      document.title,
-      cleanUrl
-    );
-
-  }catch(error){
-
-    console.error(
-      "PKCE exception:",
-      error
-    );
-  }
-}
-
-
-/* =========================================================
-   GET CURRENT SESSION
+   GET AUTHENTICATED USER
 ========================================================= */
 
 async function getCurrentUser(){
 
-  try{
+  /*
+    First use the existing persisted session.
+  */
 
-    const {
-      data,
-      error
-    } =
-    await supabase.auth
-      .getSession();
-
-
-    if(error){
-
-      console.warn(
-        "getSession:",
-        error
-      );
-    }
+  const {
+    data,
+    error
+  } =
+    await supabase.auth.getSession();
 
 
-    if(
-      data?.session?.user
-    ){
-
-      return data.session.user;
-    }
-
-
-    /*
-      Try refreshing an existing
-      refreshable session.
-    */
-
-    const refreshed =
-      await supabase.auth
-        .refreshSession();
-
-
-    if(
-      !refreshed.error &&
-      refreshed.data?.session?.user
-    ){
-
-      return refreshed
-        .data
-        .session
-        .user;
-    }
-
-
-    return null;
-
-  }catch(error){
+  if(error){
 
     console.error(
-      "Session error:",
+      "getSession error:",
       error
     );
 
-    return null;
   }
+
+
+  if(data?.session?.user){
+
+    return data.session.user;
+
+  }
+
+
+  /*
+    Try refresh if session wasn't immediately available.
+  */
+
+  const refreshed =
+    await supabase.auth.refreshSession();
+
+
+  if(
+    !refreshed.error &&
+    refreshed.data?.session?.user
+  ){
+
+    return refreshed.data.session.user;
+
+  }
+
+
+  return null;
+
 }
 
 
 /* =========================================================
-   CHECK RECIPIENT
+   SHOW ERROR
 ========================================================= */
 
-function validateRecipient(){
+function showError(message){
+
+  messagesEl.innerHTML =
+    `<div class="error">${esc(message)}</div>`;
+
+}
+
+
+/* =========================================================
+   LOAD RECIPIENT PROFILE
+========================================================= */
+
+async function loadRecipient(){
 
   if(!recipientId){
 
-    statusEl.textContent =
-      "No recipient selected.";
-
-    messagesEl.innerHTML = `
-      <div class="empty">
-        Open a user profile and choose Message.
-      </div>
-    `;
+    recipientNameEl.textContent =
+      "No recipient selected";
 
     return false;
+
   }
 
 
-  if(
-    currentUser &&
-    recipientId === currentUser.id
-  ){
+  /*
+    Fetch the recipient from users.
+    Select * prevents this page from breaking if
+    your users table has different optional profile
+    column names.
+  */
 
-    statusEl.textContent =
-      "You cannot message yourself.";
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from("users")
+      .select("*")
+      .eq("id",recipientId)
+      .maybeSingle();
 
-    messagesEl.innerHTML = `
-      <div class="empty">
-        Select another BIGULA user.
-      </div>
-    `;
 
-    input.disabled = true;
+  if(error){
 
-    sendBtn.disabled = true;
+    console.error(
+      "Recipient error:",
+      error
+    );
 
-    return false;
+    /*
+      Messaging can still work even if profile
+      information cannot be loaded.
+    */
+
+    recipientNameEl.textContent =
+      "User";
+
+    return true;
+
+  }
+
+
+  if(data){
+
+    recipient =
+      data;
+
+
+    const name =
+      data.name ||
+      data.full_name ||
+      data.username ||
+      data.display_name ||
+      data.email ||
+      "User";
+
+
+    recipientNameEl.textContent =
+      name;
+
+  }else{
+
+    recipientNameEl.textContent =
+      "User";
+
   }
 
 
   return true;
+
 }
 
 
@@ -748,230 +545,213 @@ function validateRecipient(){
    RENDER MESSAGES
 ========================================================= */
 
-function renderMessages(
-  rows
-){
+function renderMessages(rows){
 
-  if(!rows?.length){
+  if(!rows || !rows.length){
 
-    messagesEl.innerHTML = `
-      <div class="empty">
+    messagesEl.innerHTML =
+      `<div class="empty">
         No messages yet.<br>
         Start the conversation.
-      </div>
-    `;
+      </div>`;
 
     return;
+
   }
 
 
   messagesEl.innerHTML =
-    rows.map(
-      message => {
+    rows.map(message => {
 
-        const mine =
-          message.sender_id ===
-          currentUser.id;
-
-
-        const body =
-          message.message ??
-          "";
+      const mine =
+        String(message.sender_id) ===
+        String(currentUser.id);
 
 
-        return `
+      const text =
+        message.message ?? "";
 
-          <div
-            class="msg ${
-              mine
-              ? "mine"
-              : "theirs"
-            }">
 
-            ${esc(body)}
+      const date =
+        message.created_at
+          ? new Date(
+              message.created_at
+            ).toLocaleString()
+          : "";
+
+
+      return `
+        <div class="msg-row ${mine ? "mine" : "theirs"}">
+
+          <div class="msg">
+
+            ${esc(text)}
 
             <span class="time">
-
-              ${esc(
-                formatDate(
-                  message.created_at
-                )
-              )}
-
-              ${
-                mine
-                ?
-                (
-                  message.is_read
-                  ? " · Read"
-                  : " · Sent"
-                )
-                :
-                ""
-              }
-
+              ${esc(date)}
+              ${mine && message.is_read ? " · Read" : ""}
             </span>
 
           </div>
 
-        `;
-      }
-    ).join("");
+        </div>
+      `;
+
+    }).join("");
 
 
   /*
-    Always show the newest
-    message.
+    Always show the newest messages.
   */
 
-  requestAnimationFrame(
-    ()=>{
-      messagesEl.scrollTop =
-        messagesEl.scrollHeight;
-    }
-  );
+  requestAnimationFrame(() => {
+
+    messagesEl.scrollTop =
+      messagesEl.scrollHeight;
+
+  });
+
 }
 
 
 /* =========================================================
-   LOAD MESSAGES
+   LOAD CONVERSATION
 ========================================================= */
 
 async function loadMessages(){
 
   if(
+    loadingMessages ||
     !currentUser ||
     !recipientId
   ){
 
     return;
+
   }
 
 
-  const uid =
-    currentUser.id;
+  loadingMessages =
+    true;
 
 
-  /*
-    Explicit OR expression.
+  try{
 
-    Conversation consists of:
+    /*
+      Get both directions of this conversation.
 
-    current user -> recipient
+      sender = me + recipient
+      OR
+      sender = recipient + me
+    */
 
-    OR
-
-    recipient -> current user
-  */
-
-  const conversation =
-    `and(sender_id.eq.${uid},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${uid})`;
-
-
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("messages")
-    .select(
-      "id,sender_id,recipient_id,message,created_at,is_read"
-    )
-    .or(conversation)
-    .order(
-      "created_at",
-      {
-        ascending:true
-      }
-    );
-
-
-  if(error){
-
-    console.error(
-      "Message load error:",
+    const {
+      data,
       error
+    } =
+      await supabase
+        .from("messages")
+        .select(
+          "id,sender_id,recipient_id,message,created_at,is_read"
+        )
+        .or(
+          `and(sender_id.eq.${currentUser.id},recipient_id.eq.${recipientId}),and(sender_id.eq.${recipientId},recipient_id.eq.${currentUser.id})`
+        )
+        .order(
+          "created_at",
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error){
+
+      console.error(
+        "Message load error:",
+        error
+      );
+
+      statusEl.textContent =
+        "Message database error.";
+
+      showError(
+        "Could not load messages: " +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    renderMessages(
+      data || []
     );
-
-
-    statusEl.textContent =
-      "Could not load messages.";
 
 
     /*
-      This often means RLS
-      is blocking SELECT.
+      Mark messages received from this person
+      as read.
     */
-
-    messagesEl.innerHTML = `
-      <div class="empty">
-
-        Could not load this conversation.
-
-        <br><br>
-
-        <small>
-          ${esc(error.message)}
-        </small>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  statusEl.textContent =
-    "Conversation";
-
-
-  renderMessages(
-    data || []
-  );
-
-
-  /*
-    Mark incoming messages
-    as read.
-  */
-
-  const unreadIds =
-    (data || [])
-      .filter(
-        message =>
-          message.sender_id === recipientId &&
-          message.recipient_id === currentUser.id &&
-          message.is_read === false
-      )
-      .map(
-        message => message.id
-      );
-
-
-  if(unreadIds.length){
 
     const {
       error:readError
     } =
-    await supabase
-      .from("messages")
-      .update({
-        is_read:true
-      })
-      .in(
-        "id",
-        unreadIds
-      );
+      await supabase
+        .from("messages")
+        .update({
+          is_read:true
+        })
+        .eq(
+          "sender_id",
+          recipientId
+        )
+        .eq(
+          "recipient_id",
+          currentUser.id
+        )
+        .eq(
+          "is_read",
+          false
+        );
 
 
     if(readError){
 
+      /*
+        Don't destroy the conversation if only
+        the read receipt policy is missing.
+      */
+
       console.warn(
-        "Read receipt error:",
+        "Read receipt update failed:",
         readError
       );
+
     }
+
+
+    statusEl.textContent =
+      "Connected";
+
+  }catch(error){
+
+    console.error(
+      "Conversation error:",
+      error
+    );
+
+    statusEl.textContent =
+      "Connection error.";
+
+  }finally{
+
+    loadingMessages =
+      false;
+
   }
+
 }
 
 
@@ -981,263 +761,128 @@ async function loadMessages(){
 
 async function sendMessage(){
 
-  if(sending)
-    return;
-
-
-  if(!currentUser){
-
-    toast(
-      "Please sign in first."
-    );
-
-    return;
-  }
-
-
-  if(!recipientId){
-
-    toast(
-      "No recipient selected."
-    );
-
-    return;
-  }
-
-
-  if(
-    recipientId ===
-    currentUser.id
-  ){
-
-    toast(
-      "You cannot message yourself."
-    );
-
-    return;
-  }
-
-
   const body =
     input.value.trim();
 
 
-  if(!body)
+  if(
+    !body ||
+    !currentUser ||
+    !recipientId
+  ){
+
     return;
 
+  }
 
-  sending = true;
+
+  if(
+    String(currentUser.id) ===
+    String(recipientId)
+  ){
+
+    alert(
+      "You cannot send a message to yourself."
+    );
+
+    return;
+
+  }
 
 
   sendBtn.disabled =
     true;
 
-  input.classList.add(
-    "sending"
-  );
+  input.disabled =
+    true;
+
+  statusEl.textContent =
+    "Sending…";
 
 
-  /*
-    IMPORTANT:
+  try{
 
-    The insert uses exactly
-    the columns in your
-    public.messages table.
-  */
+    /*
+      IMPORTANT:
+      Supabase automatically sends the real logged-in
+      user's JWT here.
 
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("messages")
-    .insert({
-      sender_id:
-        currentUser.id,
+      We do NOT manually put the publishable key
+      into Authorization.
+    */
 
-      recipient_id:
-        recipientId,
-
-      message:
-        body,
-
-      is_read:
-        false
-    })
-    .select()
-    .single();
-
-
-  if(error){
-
-    console.error(
-      "MESSAGE INSERT ERROR:",
+    const {
+      data,
       error
-    );
+    } =
+      await supabase
+        .from("messages")
+        .insert({
+          sender_id:currentUser.id,
+          recipient_id:recipientId,
+          message:body,
+          is_read:false
+        })
+        .select(
+          "id,sender_id,recipient_id,message,created_at,is_read"
+        )
+        .single();
+
+
+    if(error){
+
+      console.error(
+        "Message send error:",
+        error
+      );
+
+      throw error;
+
+    }
 
 
     /*
-      Give the actual database
-      error to the user.
+      Put the sent message immediately on screen.
+      No waiting for polling.
     */
 
-    toast(
-      "Message failed: " +
-      error.message
-    );
+    input.value =
+      "";
+
+
+    await loadMessages();
 
 
     statusEl.textContent =
-      "Message could not be delivered.";
+      "Delivered";
 
+  }catch(error){
 
-    sending = false;
+    console.error(
+      "BIGULA send message error:",
+      error
+    );
+
+    alert(
+      "Message could not be delivered:\n\n" +
+      (error.message || error)
+    );
+
+    statusEl.textContent =
+      "Message not sent.";
+
+  }finally{
+
+    input.disabled =
+      false;
 
     sendBtn.disabled =
       false;
 
-    input.classList.remove(
-      "sending"
-    );
+    input.focus();
 
-    return;
   }
 
-
-  /*
-    Only clear the input after
-    Supabase confirms the insert.
-  */
-
-  input.value =
-    "";
-
-
-  toast(
-    "Message sent"
-  );
-
-
-  /*
-    Immediately reload the
-    conversation so the sender
-    sees the new message.
-  */
-
-  await loadMessages();
-
-
-  sending = false;
-
-  sendBtn.disabled =
-    false;
-
-  input.classList.remove(
-    "sending"
-  );
-
-
-  input.focus();
-}
-
-
-/* =========================================================
-   AUTH CHANGE
-========================================================= */
-
-function setupAuthListener(){
-
-  const {
-    data
-  } =
-  supabase.auth.onAuthStateChange(
-    async(
-      event,
-      session
-    )=>{
-
-      /*
-        Ignore token refresh events
-        that still have the same user.
-      */
-
-      if(
-        session?.user
-      ){
-
-        const changed =
-          !currentUser ||
-          currentUser.id !==
-          session.user.id;
-
-
-        currentUser =
-          session.user;
-
-
-        if(changed){
-
-          if(validateRecipient()){
-
-            statusEl.textContent =
-              "Signed in";
-
-            input.disabled =
-              false;
-
-            sendBtn.disabled =
-              false;
-
-            await loadMessages();
-          }
-
-        }
-
-        return;
-      }
-
-
-      /*
-        User actually became
-        signed out.
-      */
-
-      if(
-        event ===
-        "SIGNED_OUT"
-      ){
-
-        currentUser =
-          null;
-
-
-        clearInterval(
-          pollTimer
-        );
-
-
-        input.disabled =
-          true;
-
-        sendBtn.disabled =
-          true;
-
-
-        statusEl.textContent =
-          "Please sign in to use messages.";
-
-
-        location.replace(
-          "signup.html"
-        );
-      }
-
-    }
-  );
-
-
-  authSubscription =
-    data.subscription;
 }
 
 
@@ -1245,8 +890,9 @@ function setupAuthListener(){
    BACK BUTTON
 ========================================================= */
 
-backBtn.onclick =
-  ()=>{
+backBtn.addEventListener(
+  "click",
+  () => {
 
     if(
       history.length > 1
@@ -1257,9 +903,12 @@ backBtn.onclick =
     }else{
 
       location.href =
-        "home.html";
+        "account.html";
+
     }
-  };
+
+  }
+);
 
 
 /* =========================================================
@@ -1273,27 +922,37 @@ form.addEventListener(
     event.preventDefault();
 
     sendMessage();
+
   }
 );
 
 
 /* =========================================================
-   ENTER TO SEND
+   AUTH CHANGES
 ========================================================= */
 
-input.addEventListener(
-  "keydown",
-  event => {
+supabase.auth.onAuthStateChange(
+  (event,session) => {
 
     if(
-      event.key === "Enter" &&
-      !event.shiftKey
+      event === "SIGNED_OUT" ||
+      !session?.user
     ){
 
-      event.preventDefault();
+      if(pollTimer){
 
-      sendMessage();
+        clearInterval(
+          pollTimer
+        );
+
+      }
+
+      location.replace(
+        "signup.html"
+      );
+
     }
+
   }
 );
 
@@ -1304,135 +963,110 @@ input.addEventListener(
 
 async function init(){
 
-  /*
-    Validate URL first.
-  */
+  try{
 
-  if(!recipientId){
+    if(!recipientId){
 
-    validateRecipient();
+      statusEl.textContent =
+        "No recipient selected.";
 
-    return;
-  }
+      recipientNameEl.textContent =
+        "Messages";
 
+      showError(
+        "No recipient ID was supplied. Open Messages from a user's profile."
+      );
 
-  /*
-    Finish Google/Supabase
-    PKCE exchange first.
-  */
+      return;
 
-  await finishPKCE();
-
-
-  /*
-    Now retrieve the actual
-    authenticated user.
-  */
-
-  currentUser =
-    await getCurrentUser();
+    }
 
 
-  if(!currentUser){
-
-    statusEl.textContent =
-      "Please sign in to use messages.";
+    currentUser =
+      await getCurrentUser();
 
 
-    messagesEl.innerHTML = `
-      <div class="empty">
-        Please sign in to use BIGULA Messages.
-      </div>
-    `;
+    if(!currentUser){
+
+      location.replace(
+        "signup.html?next=" +
+        encodeURIComponent(
+          "messages.html?uid=" +
+          recipientId
+        )
+      );
+
+      return;
+
+    }
+
+
+    /*
+      Don't allow self-conversation.
+    */
+
+    if(
+      String(currentUser.id) ===
+      String(recipientId)
+    ){
+
+      statusEl.textContent =
+        "Invalid recipient.";
+
+      showError(
+        "You cannot open a conversation with yourself."
+      );
+
+      return;
+
+    }
+
+
+    await loadRecipient();
+
+    await loadMessages();
 
 
     input.disabled =
-      true;
+      false;
 
     sendBtn.disabled =
-      true;
+      false;
+
+    input.focus();
 
 
-    setTimeout(
-      ()=>{
-        location.replace(
-          "signup.html"
-        );
-      },
-      700
+    /*
+      Poll every 3 seconds so the recipient sees
+      new messages without refreshing.
+    */
+
+    pollTimer =
+      setInterval(
+        loadMessages,
+        3000
+      );
+
+
+  }catch(error){
+
+    console.error(
+      "BIGULA Messages initialization error:",
+      error
     );
 
+    statusEl.textContent =
+      "Messages failed to start.";
 
-    return;
-  }
-
-
-  /*
-    Don't allow self-messaging.
-  */
-
-  if(
-    !validateRecipient()
-  ){
-
-    return;
-  }
-
-
-  statusEl.textContent =
-    "Signed in";
-
-
-  input.disabled =
-    false;
-
-  sendBtn.disabled =
-    false;
-
-
-  /*
-    Initial conversation load.
-  */
-
-  await loadMessages();
-
-
-  /*
-    Keep messages current.
-  */
-
-  clearInterval(
-    pollTimer
-  );
-
-
-  pollTimer =
-    setInterval(
-      ()=>{
-        loadMessages();
-      },
-      3000
+    showError(
+      "Messages could not start: " +
+      (error.message || error)
     );
 
+  }
 
-  /*
-    Watch authentication.
-  */
-
-  setupAuthListener();
-
-
-  /*
-    Focus message box.
-  */
-
-  input.focus();
 }
 
-
-/* =========================================================
-   START
-========================================================= */
 
 init();
 
