@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>BIGULA – Home</title>
 
 <style>
@@ -14,33 +13,30 @@
   font-family:'Segoe UI',sans-serif;
 }
 
-html,body{
+html,
+body{
   background:#000;
   color:#fff;
   width:100%;
-  min-height:100%;
-  overflow-x:hidden;
+  height:100%;
+  overflow:hidden;
 }
 
 body{
-  overflow-y:auto;
   touch-action:pan-y;
-  scroll-snap-type:y mandatory;
-  scroll-padding-top:112px;
-  scroll-padding-bottom:72px;
 }
 
-/* =========================
+/* =========================================================
    TOP BAR
-========================= */
+========================================================= */
 
 .topbar{
   position:fixed;
   top:0;
   left:0;
   width:100%;
-  min-height:112px;
-  background:linear-gradient(to bottom,#000 88%,rgba(0,0,0,.88));
+  height:112px;
+  background:linear-gradient(to bottom,#000 88%,rgba(0,0,0,.92));
   z-index:100;
   padding:10px 14px 8px;
   display:flex;
@@ -48,6 +44,13 @@ body{
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   box-shadow:0 3px 18px rgba(0,0,0,.45);
+}
+
+.top-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
 }
 
 .logo{
@@ -60,25 +63,9 @@ body{
   line-height:1;
 }
 
-.top-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-}
-
-.actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  margin-left:auto;
-  flex:0 0 auto;
-}
-
 .top-search{
   flex:1;
   min-width:0;
-  max-width:none;
 }
 
 .top-search input{
@@ -98,9 +85,9 @@ body{
   box-shadow:0 0 0 2px rgba(255,0,0,.12);
 }
 
-/* =========================
+/* =========================================================
    TABS
-========================= */
+========================================================= */
 
 .tabs{
   display:flex;
@@ -119,7 +106,7 @@ body{
   cursor:pointer;
   font-weight:700;
   opacity:.6;
-  transition:.3s;
+  transition:.2s;
   font-size:16px;
   flex:1 1 0;
   text-align:center;
@@ -134,255 +121,386 @@ body{
   border-bottom:2px solid #ff0000;
 }
 
-/* =========================
+/* =========================================================
    FEED
-========================= */
+========================================================= */
+
+/*
+   The usable screen is:
+
+   topbar
+      +
+   video card
+      +
+   footer
+
+   Every video card is exactly the available viewport.
+*/
 
 .feed{
-  margin-top:112px;
-  margin-bottom:72px;
+  position:fixed;
+  top:112px;
+  left:0;
+  right:0;
+  bottom:72px;
+
   width:100%;
-  min-height:calc(100vh - 184px);
+  height:calc(100dvh - 184px);
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
   display:flex;
   flex-direction:column;
   align-items:stretch;
-  overflow:visible;
+
   scroll-snap-type:y mandatory;
-  gap:0;
+  scroll-behavior:smooth;
+
+  overscroll-behavior-y:contain;
+
+  scrollbar-width:none;
 }
 
-/*
-  The card is now explicitly sized to the space
-  between the fixed top bar and bottom footer.
-*/
+.feed::-webkit-scrollbar{
+  display:none;
+}
+
+/* =========================================================
+   VIDEO CARD
+========================================================= */
+
 .video-card{
+  position:relative;
+
+  flex:0 0 100%;
   width:100%;
-  height:calc(100vh - 184px);
-  min-height:0;
-  max-height:calc(100vh - 184px);
+
+  height:100%;
+  min-height:100%;
+
   background:#000;
-  border-radius:0;
+
   overflow:hidden;
+
   display:flex;
   flex-direction:column;
+
   scroll-snap-align:start;
   scroll-snap-stop:always;
-  position:relative;
-  box-shadow:none;
+
   margin:0;
+  padding:0;
 }
 
 /*
-  Video receives all remaining vertical space
-  after the metadata/buttons section.
+   Video takes all available space except metadata.
 */
+
 .video-stage{
   position:relative;
+
   width:100%;
   flex:1 1 auto;
+
   min-height:0;
+
   background:#000;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   overflow:hidden;
 }
 
-video{
+.video-stage video{
   width:100%;
   height:100%;
+
   object-fit:cover;
+
   display:block;
+
+  background:#000;
+
   cursor:pointer;
   user-select:none;
   -webkit-user-select:none;
-  background:#000;
 }
 
-/* =========================
-   VIDEO META
-========================= */
+/* =========================================================
+   VIDEO TITLE
+========================================================= */
+
+.title-overlay{
+  position:absolute;
+
+  left:14px;
+  right:14px;
+  bottom:12px;
+
+  max-width:calc(100% - 28px);
+
+  font-size:15px;
+  font-weight:800;
+
+  color:#fff;
+
+  text-shadow:
+    0 2px 12px #000,
+    0 0 3px #000;
+
+  z-index:3;
+
+  pointer-events:none;
+
+  padding:30px 0 4px;
+}
+
+/* =========================================================
+   METADATA AREA
+========================================================= */
 
 .meta-overlay{
   position:relative;
+
   flex:0 0 128px;
+
+  height:128px;
   min-height:128px;
-  padding:10px 13px 10px;
+
+  padding:9px 13px 9px;
+
   display:flex;
   flex-direction:column;
-  gap:7px;
+
+  gap:6px;
+
   background:#090909;
+
   border-top:1px solid #242424;
+
+  overflow:hidden;
 }
+
+/* =========================================================
+   CREATOR ROW
+========================================================= */
 
 .user-row{
   display:flex;
   align-items:center;
+
   gap:9px;
-  justify-content:flex-start;
-  flex-wrap:nowrap;
+
   width:100%;
   min-width:0;
+
+  flex:0 0 auto;
 }
 
 .username{
   font-weight:900;
   font-size:18px;
+
   cursor:pointer;
+
   color:#00e5ff;
+
   line-height:1.2;
+
   white-space:nowrap;
+
   overflow:hidden;
   text-overflow:ellipsis;
+
   text-shadow:0 0 10px rgba(0,229,255,.18);
+
+  min-width:0;
 }
 
-.user-row .follow-btn{
+.follow-btn{
   flex:0 0 auto;
-  padding:7px 12px;
+
+  padding:7px 13px;
+
   font-size:13px;
+
+  background:linear-gradient(180deg,#1e1e1e,#111);
+
+  color:#fff;
+
+  border-radius:999px;
+
+  border:1px solid #333;
+
+  cursor:pointer;
+
+  font-weight:800;
+
+  white-space:nowrap;
 }
+
+.live-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+
+  color:#ff3040;
+
+  font-size:11px;
+  font-weight:900;
+
+  flex:0 0 auto;
+}
+
+.live-dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#ff3040;
+
+  display:inline-block;
+
+  box-shadow:0 0 8px rgba(255,48,64,.8);
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
 
 .video-actions{
   display:flex;
+
   align-items:center;
-  justify-content:flex-start;
-  gap:9px;
-  flex-wrap:nowrap;
-  margin:0;
+
+  gap:8px;
+
   width:100%;
+
   overflow-x:auto;
+
   scrollbar-width:none;
-  padding-bottom:1px;
+
+  padding:1px 0 1px;
+
+  flex:0 0 auto;
 }
 
 .video-actions::-webkit-scrollbar{
   display:none;
 }
 
-/* Slightly larger action buttons */
-.follow-btn,
-.share-btn,
-.views-btn{
-  background:linear-gradient(180deg,#1e1e1e,#111);
-  color:#fff;
-  padding:10px 14px;
-  border-radius:999px;
-  border:1px solid #333;
-  font-size:13px;
-  cursor:pointer;
-  font-weight:800;
-  margin:0;
-  white-space:nowrap;
-  box-shadow:0 3px 10px rgba(0,0,0,.25);
-}
+/*
+   Slightly larger than the old buttons.
+*/
 
-/* Larger LIKE / COMMENT buttons */
-.stat-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  background:linear-gradient(180deg,#202020,#111);
-  padding:10px 14px;
-  border-radius:999px;
-  cursor:pointer;
-  font-weight:800;
-  font-size:13px;
-  color:#fff;
-  border:1px solid #353535;
-  text-shadow:0 1px 3px #000;
-  white-space:nowrap;
-  min-width:88px;
-  min-height:40px;
-  box-shadow:0 3px 10px rgba(0,0,0,.25);
-}
-
-.stat-btn span{
-  color:#fff;
-  font-weight:900;
-  text-shadow:0 1px 4px #000;
-}
-
+.stat-btn,
 .views-btn,
 .share-btn{
-  min-height:40px;
-}
+  height:40px;
 
-.title-overlay{
-  position:absolute;
-  left:14px;
-  right:14px;
-  bottom:14px;
-  max-width:calc(100% - 28px);
-  font-size:15px;
-  font-weight:800;
-  color:#fff;
-  text-shadow:0 2px 12px #000,0 0 3px #000;
-  z-index:3;
-  pointer-events:none;
-  background:none;
-  padding:28px 0 4px;
-}
-
-.stats{
   display:flex;
+
   align-items:center;
-  gap:7px;
-  margin-top:0;
-  width:100%;
-  overflow-x:auto;
-  scrollbar-width:none;
+  justify-content:center;
+
+  gap:6px;
+
+  background:linear-gradient(180deg,#242424,#111);
+
+  color:#fff;
+
+  padding:8px 13px;
+
+  border-radius:999px;
+
+  border:1px solid #383838;
+
+  cursor:pointer;
+
+  font-weight:800;
+
+  font-size:13px;
+
+  white-space:nowrap;
+
+  min-width:82px;
+
+  box-shadow:
+    0 3px 10px rgba(0,0,0,.3);
+
+  flex:0 0 auto;
 }
 
-.stats::-webkit-scrollbar{
-  display:none;
+.stat-btn span:first-child{
+  font-size:19px;
+  line-height:1;
 }
 
-/* =========================
-   LIVE / STATUS
-========================= */
-
-.live-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  color:#ff3040;
-  font-size:11px;
+.stat-btn span:last-child{
+  font-size:13px;
   font-weight:900;
 }
 
-.live-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#ff3040;
-  display:inline-block;
-  box-shadow:0 0 8px rgba(255,48,64,.8);
+.views-btn{
+  min-width:88px;
 }
+
+.share-btn{
+  min-width:90px;
+}
+
+.stat-btn:active,
+.views-btn:active,
+.share-btn:active{
+  transform:scale(.97);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
 
 .status-card{
   min-height:90px;
+
   padding:14px;
+
   border-bottom:1px solid #222;
+
   display:flex;
   align-items:center;
+
   gap:12px;
+
   background:#090909;
+
+  cursor:pointer;
 }
 
 .status-avatar{
   width:52px;
   height:52px;
+
   border-radius:50%;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   background:#222;
+
   color:#00e5ff;
+
   font-weight:900;
+
   font-size:18px;
+
   flex:0 0 52px;
+
   overflow:hidden;
 }
 
@@ -411,6 +529,7 @@ video{
 .status-text{
   font-size:14px;
   color:#ddd;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -421,91 +540,176 @@ video{
   overflow-y:auto;
 }
 
-/* =========================
+/* =========================================================
+   SHARE MENU
+========================================================= */
+
+.share-options{
+  display:none;
+
+  position:absolute;
+
+  right:10px;
+  bottom:49px;
+
+  background:#000;
+
+  padding:10px;
+
+  border-radius:10px;
+
+  flex-direction:column;
+
+  gap:5px;
+
+  z-index:20;
+
+  border:1px solid #333;
+}
+
+.share-options button{
+  background:#333;
+  color:#fff;
+
+  padding:7px 12px;
+
+  border:0;
+  border-radius:10px;
+
+  cursor:pointer;
+
+  white-space:nowrap;
+}
+
+/* =========================================================
    COMMENTS
-========================= */
+========================================================= */
 
 .comment-modal{
   position:fixed;
+
+  left:0;
   bottom:0;
+
   width:100%;
   height:60%;
+
   background:#111;
+
   display:none;
+
   flex-direction:column;
+
   border-top:3px solid #ff0000;
-  z-index:150;
+
+  z-index:200;
 }
 
 .comment-list{
   flex:1;
+
   overflow-y:auto;
+
   padding:15px;
 }
 
 .comment-input{
   display:flex;
+
   border-top:1px solid #333;
 }
 
 .comment-input input{
   flex:1;
+
   padding:12px;
+
   background:#000;
+
   border:none;
+
   color:#fff;
+
   font-size:16px;
 }
 
 .comment-input button{
   background:#ff0000;
+
   border:none;
+
   padding:12px 20px;
+
   color:#fff;
+
   font-weight:bold;
+
   cursor:pointer;
+
   font-size:16px;
 }
 
-/* =========================
+/* =========================================================
    FOOTER
-========================= */
+========================================================= */
 
 .footer{
   position:fixed;
+
   bottom:0;
   left:0;
+
   width:100%;
+
   height:72px;
-  background:rgba(0,0,0,.96);
+
+  background:rgba(0,0,0,.97);
+
   border-top:1px solid #292929;
+
   display:flex;
+
   justify-content:space-around;
   align-items:center;
-  font-size:22px;
-  z-index:200;
+
+  z-index:100;
+
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
+
+  padding-bottom:env(safe-area-inset-bottom);
 }
 
 .footer div{
   cursor:pointer;
-  transition:.3s;
+
+  transition:.2s;
+
   display:flex;
+
   flex-direction:column;
+
   align-items:center;
   justify-content:center;
+
   gap:3px;
+
   min-width:72px;
+
   height:58px;
+
   color:#ddd;
+
   font-size:20px;
 }
 
 .footer div::after{
   font-size:10px;
+
   font-weight:800;
+
   color:#aaa;
+
   letter-spacing:.2px;
 }
 
@@ -515,69 +719,121 @@ video{
 
 #notificationBadge{
   position:absolute;
+
   top:3px;
   right:12px;
+
   min-width:18px;
   height:18px;
+
   padding:0 5px;
+
   border-radius:999px;
+
   background:#ff1744;
+
   color:#fff;
+
   font-size:10px;
+
   font-weight:900;
+
   display:none;
+
   align-items:center;
   justify-content:center;
+
   border:2px solid #000;
+
   box-shadow:0 2px 8px rgba(255,23,68,.45);
 }
 
-/* =========================
-   ACCOUNT FOOTER
-========================= */
+#notifBtn::after{
+  content:'Notifications';
+}
+
+#footerUpload{
+  position:relative;
+  min-width:82px;
+}
+
+#footerUpload::after{
+  content:'Create';
+}
+
+#footerUpload.signed-out::after{
+  content:'Upload';
+}
+
+/* =========================================================
+   ACCOUNT BUTTON
+========================================================= */
 
 #accountBtn{
   position:relative;
+
   min-width:92px;
+
   color:#fff;
+
   font-size:14px;
+
   font-weight:900;
+
   letter-spacing:.2px;
+
   border-radius:16px;
+
   padding:5px 9px;
 }
 
 #accountBtn .account-icon{
   width:34px;
   height:34px;
+
   border-radius:50%;
+
   display:flex;
+
   align-items:center;
   justify-content:center;
+
   background:linear-gradient(145deg,#202020,#080808);
+
   border:1px solid #444;
+
   box-shadow:
     0 0 0 1px rgba(255,255,255,.04),
     0 4px 14px rgba(0,0,0,.45);
+
   font-size:16px;
+
   overflow:hidden;
 }
 
 #accountBtn .account-icon img{
   width:100%;
   height:100%;
+
   object-fit:cover;
+
   display:block;
 }
 
 #accountBtn .account-label{
   max-width:82px;
+
   overflow:hidden;
   text-overflow:ellipsis;
+
   white-space:nowrap;
+
   font-size:10px;
+
   line-height:1.1;
+
   font-weight:900;
+
   color:#aaa;
 }
 
@@ -587,13 +843,17 @@ video{
     rgba(255,0,0,.10),
     rgba(0,0,0,.05)
   );
+
   border:1px solid rgba(255,0,0,.35);
+
   box-shadow:0 0 16px rgba(255,0,0,.08);
 }
 
 #accountBtn.signed-in .account-icon{
   border-color:#ff3030;
-  background:#111;
+
+  background:linear-gradient(145deg,#ff3030,#700000);
+
   box-shadow:0 0 12px rgba(255,0,0,.35);
 }
 
@@ -610,106 +870,66 @@ video{
   color:#ff3030;
 }
 
-/* =========================
-   CREATE BUTTON
-========================= */
-
-#footerUpload{
-  position:relative;
-  min-width:82px;
-}
+/* =========================================================
+   UPLOAD BUTTON
+========================================================= */
 
 #footerUpload .upload-icon{
-  width:40px;
-  height:40px;
+  width:38px;
+  height:38px;
+
   border-radius:13px;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   font-size:25px;
   font-weight:900;
+
   line-height:1;
+
   color:#fff;
+
   background:linear-gradient(
     145deg,
     #ff3030,
     #a00000 58%,
     #520000
   );
+
   border:1px solid #ff5555;
+
   box-shadow:
     0 5px 18px rgba(255,0,0,.30),
     inset 0 1px 0 rgba(255,255,255,.22);
-  transform:translateY(-1px);
-}
-
-#footerUpload:hover .upload-icon{
-  transform:translateY(-2px) scale(1.04);
-  box-shadow:
-    0 7px 22px rgba(255,0,0,.42),
-    inset 0 1px 0 rgba(255,255,255,.25);
 }
 
 #footerUpload.signed-out .upload-icon{
   background:linear-gradient(145deg,#242424,#0b0b0b);
+
   border-color:#555;
+
   box-shadow:0 4px 13px rgba(0,0,0,.5);
-}
-
-#footerUpload::after{
-  content:'Create';
-}
-
-#footerUpload.signed-out::after{
-  content:'Upload';
 }
 
 #accountBtn::after{
   content:none;
 }
 
-.footer div:hover:not(.disabled){
-  color:#ff0000;
-}
-
-.footer div:hover:not(.disabled)::after{
-  color:#ff0000;
-}
-
-/* =========================
-   SHARE
-========================= */
-
-.share-options{
-  display:none;
-  position:absolute;
-  bottom:50px;
-  right:10px;
-  background:#000;
-  padding:10px;
-  border-radius:10px;
-  flex-direction:column;
-  gap:5px;
-  z-index:20;
-}
-
-.share-options button{
-  background:#333;
-  color:#fff;
-  padding:7px 12px;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-/* =========================
+/* =========================================================
    MOBILE
-========================= */
+========================================================= */
 
 @media(max-width:620px){
 
   .topbar{
-    min-height:104px;
-    padding:9px 10px 7px;
+    height:104px;
+
+    padding:
+      9px
+      10px
+      7px;
   }
 
   .top-row{
@@ -723,76 +943,79 @@ video{
 
   .top-search input{
     height:38px;
+
     font-size:13px;
+
     padding:8px 12px;
   }
 
-  .actions{
-    display:none;
-  }
-
   .tabs{
-    gap:0;
     margin-top:9px;
   }
 
+  .tab{
+    font-size:14px;
+    padding:7px 4px 8px;
+  }
+
+  /*
+     Mobile viewport.
+
+     104px top bar
+     70px footer
+     = actual card area
+  */
+
   .feed{
-    margin-top:104px;
-    margin-bottom:70px;
-    min-height:calc(100vh - 174px);
+    top:104px;
+    bottom:70px;
+
+    height:calc(100dvh - 174px);
   }
 
-  /*
-    Mobile card fills exactly the usable area.
-  */
   .video-card{
-    width:100%;
-    height:calc(100vh - 174px);
-    max-height:calc(100vh - 174px);
-    min-height:0;
-  }
-
-  /*
-    Slightly smaller metadata on phones so the
-    video remains large while buttons stay visible.
-  */
-  .meta-overlay{
-    flex:0 0 124px;
-    min-height:124px;
-    padding:9px 10px 8px;
-    gap:6px;
+    flex-basis:100%;
+    height:100%;
+    min-height:100%;
   }
 
   .video-stage{
     flex:1 1 auto;
-    min-height:0;
+  }
+
+  .meta-overlay{
+    flex-basis:126px;
+    height:126px;
+    min-height:126px;
+
+    padding:8px 10px 8px;
+
+    gap:6px;
   }
 
   .username{
     font-size:16px;
   }
 
-  .user-row .follow-btn{
-    padding:7px 11px;
+  .follow-btn{
+    padding:6px 11px;
     font-size:12px;
   }
 
-  .video-actions{
-    gap:7px;
-  }
-
-  .stat-btn{
-    padding:9px 12px;
-    min-width:82px;
-    min-height:39px;
-    font-size:12px;
-  }
-
+  .stat-btn,
   .views-btn,
   .share-btn{
-    padding:9px 12px;
-    min-height:39px;
+    height:39px;
+
+    padding:7px 11px;
+
     font-size:12px;
+
+    min-width:80px;
+  }
+
+  .stat-btn span:first-child{
+    font-size:18px;
   }
 
   .footer{
@@ -801,22 +1024,12 @@ video{
 
   .footer div{
     min-width:64px;
-    font-size:19px;
-  }
-
-  #notificationBadge{
-    right:7px;
-    top:2px;
+    height:58px;
   }
 
   #accountBtn{
     min-width:72px;
     padding:4px 5px;
-  }
-
-  #accountBtn .account-icon{
-    width:32px;
-    height:32px;
   }
 
   #accountBtn .account-label{
@@ -827,19 +1040,86 @@ video{
     min-width:64px;
   }
 
-  #footerUpload .upload-icon{
-    width:38px;
-    height:38px;
+  #notificationBadge{
+    right:7px;
+    top:2px;
   }
+
+  .title-overlay{
+    left:10px;
+    right:10px;
+    max-width:calc(100% - 20px);
+    font-size:13px;
+  }
+}
+
+/* Very short screens */
+
+@media(max-height:650px){
+
+  .meta-overlay{
+    flex-basis:112px;
+    height:112px;
+    min-height:112px;
+
+    padding-top:6px;
+    padding-bottom:6px;
+
+    gap:4px;
+  }
+
+  .stat-btn,
+  .views-btn,
+  .share-btn{
+    height:36px;
+    padding:6px 10px;
+  }
+
+  .username{
+    font-size:15px;
+  }
+
+  .follow-btn{
+    padding:5px 10px;
+  }
+}
+
+/* =========================================================
+   EMPTY / SEARCH
+========================================================= */
+
+.empty-message{
+  width:100%;
+
+  text-align:center;
+
+  color:#aaa;
+
+  padding:30px 20px;
+
+  font-size:14px;
+}
+
+/* =========================================================
+   HIDDEN SEARCH RESULTS
+========================================================= */
+
+.search-active .video-card{
+  scroll-snap-align:start;
 }
 </style>
 </head>
 
 <body>
 
+<!-- =======================================================
+     TOP BAR
+======================================================== -->
+
 <div class="topbar" id="topbar">
 
   <div class="top-row">
+
     <div class="logo">BIGULA</div>
 
     <div class="top-search">
@@ -850,34 +1130,74 @@ video{
         autocomplete="off"
       >
     </div>
+
   </div>
 
   <div class="tabs">
-    <div class="tab active" data-feed="foryou">For You</div>
-    <div class="tab" data-feed="latest">Latest</div>
-    <div class="tab" data-feed="viral">Viral</div>
-    <div class="tab" data-feed="live">Live</div>
-    <div class="tab" data-feed="status">Status</div>
+
+    <div class="tab active" data-feed="foryou">
+      For You
+    </div>
+
+    <div class="tab" data-feed="latest">
+      Latest
+    </div>
+
+    <div class="tab" data-feed="viral">
+      Viral
+    </div>
+
+    <div class="tab" data-feed="live">
+      Live
+    </div>
+
+    <div class="tab" data-feed="status">
+      Status
+    </div>
+
   </div>
 
 </div>
 
+
+<!-- =======================================================
+     FEED
+======================================================== -->
+
 <div class="feed" id="feed"></div>
+
+
+<!-- =======================================================
+     COMMENTS
+======================================================== -->
 
 <div class="comment-modal" id="commentModal">
 
-  <div class="comment-list" id="commentList"></div>
+  <div
+    class="comment-list"
+    id="commentList"
+  ></div>
 
   <div class="comment-input">
+
     <input
       type="text"
       id="commentText"
       placeholder="Write a comment..."
     >
-    <button id="postCommentBtn">Post</button>
+
+    <button id="postCommentBtn">
+      Post
+    </button>
+
   </div>
 
 </div>
+
+
+<!-- =======================================================
+     FOOTER
+======================================================== -->
 
 <div class="footer">
 
@@ -892,27 +1212,43 @@ video{
     >↑</span>
   </div>
 
+
   <div id="notifBtn">
+
     🔔
-    <span id="notificationBadge">0</span>
+
+    <span id="notificationBadge">
+      0
+    </span>
+
   </div>
+
 
   <div
     id="accountBtn"
     class="signed-out"
     title="Signup"
   >
-    <span class="account-icon" aria-hidden="true">👤</span>
-    <span class="account-label">Signup</span>
+
+    <span
+      class="account-icon"
+      aria-hidden="true"
+    >👤</span>
+
+    <span class="account-label">
+      Signup
+    </span>
+
   </div>
 
 </div>
+
 
 <script type="module">
 
 import {
   createClient
-} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
 /* =========================================================
@@ -920,244 +1256,54 @@ import {
 ========================================================= */
 
 const SUPABASE_URL =
-  "https://vfteiggdhthvrrlndtbs.supabase.co"
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe"
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
 const supabase =
-  createClient(SUPABASE_URL, SUPABASE_KEY)
-
-
-let currentUser = null
-let currentVideoId = null
-
-const creatorProfiles = new Map()
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
 /* =========================================================
-   SIGN-IN
+   GLOBAL STATE
 ========================================================= */
 
-async function requireSignIn(){
+let currentUser = null;
 
-  try{
+let currentVideoId = null;
 
-    const params =
-      new URLSearchParams(window.location.search)
+const creatorProfiles = new Map();
 
-    const code =
-      params.get("code")
+let allLoadedVideos = [];
 
-    if(code){
+let allLoadedCreators = [];
 
-      const {
-        data,
-        error
-      } =
-        await supabase.auth.exchangeCodeForSession(code)
+let activeFeedType = "foryou";
 
-      if(error) throw error
-
-      currentUser =
-        data?.session?.user || null
-
-      history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-      )
-    }
-
-    if(!currentUser){
-
-      const {
-        data,
-        error
-      } =
-        await supabase.auth.getSession()
-
-      if(!error){
-        currentUser =
-          data?.session?.user || null
-      }
-    }
-
-    if(currentUser) return true
-
-  }catch(error){
-
-    console.warn(
-      "Sign-in/session check failed:",
-      error
-    )
-  }
-
-  alert("Please sign in first.")
-
-  window.location.href =
-    "signup.html"
-
-  return false
-}
+let searchTimer = null;
 
 
 /* =========================================================
-   FOOTER USER STATE + AVATAR
-========================================================= */
-
-function updateFooterUserState(){
-
-  const upload =
-    document.getElementById("footerUpload")
-
-  const account =
-    document.getElementById("accountBtn")
-
-  if(!upload || !account) return
-
-
-  const icon =
-    account.querySelector(".account-icon")
-
-  const label =
-    account.querySelector(".account-label")
-
-
-  if(currentUser){
-
-    const cached =
-      localStorage.getItem("bigula_user")
-
-    let profile = {}
-
-    try{
-      profile =
-        cached ? JSON.parse(cached) : {}
-    }catch(_){
-      profile = {}
-    }
-
-
-    const username =
-      String(
-        profile?.username ||
-        profile?.name ||
-        profile?.full_name ||
-        profile?.display_name ||
-        currentUser.user_metadata?.user_name ||
-        currentUser.user_metadata?.preferred_username ||
-        currentUser.user_metadata?.name ||
-        "Account"
-      ).trim()
-
-
-    /*
-      Look for avatar in the users table/cache.
-      Support several common column names.
-    */
-    const avatarUrl =
-      String(
-        profile?.avatar_url ||
-        profile?.avatar ||
-        profile?.profile_image ||
-        profile?.profile_image_url ||
-        profile?.photo_url ||
-        profile?.image_url ||
-        currentUser.user_metadata?.avatar_url ||
-        currentUser.user_metadata?.picture ||
-        ""
-      ).trim()
-
-
-    account.classList.remove("signed-out")
-    account.classList.add("signed-in")
-
-    account.title = username
-
-
-    if(label){
-      label.textContent = username
-    }
-
-
-    /*
-      Display actual profile image when available.
-      Otherwise show the normal user icon.
-    */
-    if(icon){
-
-      if(avatarUrl){
-
-        icon.innerHTML = ""
-
-        const img =
-          document.createElement("img")
-
-        img.src = avatarUrl
-        img.alt = ""
-
-        img.onerror = () => {
-          icon.innerHTML = "👤"
-        }
-
-        icon.appendChild(img)
-
-      }else{
-
-        icon.innerHTML = "👤"
-      }
-    }
-
-
-    upload.classList.remove("signed-out")
-    upload.classList.add("signed-in")
-
-    upload.title =
-      "Create / Upload"
-
-  }else{
-
-    account.classList.remove("signed-in")
-    account.classList.add("signed-out")
-
-    account.title =
-      "Signup"
-
-    if(label){
-      label.textContent = "Signup"
-    }
-
-    if(icon){
-      icon.innerHTML = "👤"
-    }
-
-
-    upload.classList.remove("signed-in")
-    upload.classList.add("signed-out")
-
-    upload.title =
-      "Sign up to upload"
-  }
-}
-
-
-/* =========================================================
-   USER INITIALIZATION
+   SESSION
 ========================================================= */
 
 async function initUser(){
 
-  currentUser = null
+  currentUser = null;
 
   try{
 
     const params =
-      new URLSearchParams(window.location.search)
+      new URLSearchParams(
+        window.location.search
+      );
 
     const code =
-      params.get("code")
-
+      params.get("code");
 
     if(code){
 
@@ -1165,153 +1311,466 @@ async function initUser(){
         data,
         error
       } =
-        await supabase.auth.exchangeCodeForSession(code)
+        await supabase.auth
+          .exchangeCodeForSession(code);
 
-      if(error) throw error
+      if(error) throw error;
 
       currentUser =
-        data?.session?.user || null
+        data?.session?.user || null;
 
       history.replaceState(
         {},
         document.title,
         window.location.pathname
-      )
+      );
 
     }else{
+
+      /*
+         getSession is used to restore the
+         persisted browser session.
+      */
 
       const {
         data,
         error
       } =
-        await supabase.auth.getSession()
+        await supabase.auth.getSession();
 
       if(error){
 
         console.warn(
           "Session check failed:",
           error
-        )
+        );
 
       }else{
 
         currentUser =
-          data?.session?.user || null
+          data?.session?.user || null;
+
       }
+
     }
 
-  }catch(e){
+  }catch(error){
 
     console.warn(
       "Could not establish Supabase session:",
-      e
-    )
+      error
+    );
 
-    currentUser = null
+    currentUser = null;
+
   }
 
 
-  const uploadBtn =
-    document.querySelector(".upload-btn")
-
-  const footerUpload =
-    document.getElementById("footerUpload")
-
-  const accountBtn =
-    document.getElementById("accountBtn")
-
-  const notifBtn =
-    document.getElementById("notifBtn")
-
-
-  ;[
-    uploadBtn,
-    footerUpload,
-    accountBtn,
-    notifBtn
-  ].forEach(btn => {
-
-    if(btn){
-
-      btn.classList.remove("disabled")
-
-      btn.style.pointerEvents =
-        "auto"
-
-      btn.style.cursor =
-        "pointer"
-    }
-
-  })
-
-
-  document
-    .querySelector(".login-btn")
-    ?.remove()
-
-
-  /*
-    First update immediately using cached
-    Google/Supabase information.
-  */
-  updateFooterUserState()
+  updateFooterUserState();
 
 
   if(currentUser){
 
-    loadNotificationBadge()
+    await loadCurrentUserProfile();
+
+    loadNotificationBadge();
+
+  }
+
+  return true;
+}
+
+
+/* =========================================================
+   LOAD LOGGED-IN USER PROFILE
+========================================================= */
+
+async function loadCurrentUserProfile(){
+
+  if(!currentUser) return null;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await supabase
+        .from("users")
+        .select("*")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+    if(error){
+
+      console.warn(
+        "Could not load current user profile:",
+        error.message
+      );
+
+      return null;
+    }
+
+    if(data){
+
+      localStorage.setItem(
+        "bigula_user",
+        JSON.stringify(data)
+      );
+
+      updateFooterUserState(data);
+
+      return data;
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Profile loading failed:",
+      error
+    );
+
+  }
+
+  return null;
+}
+
+
+/* =========================================================
+   GET AVATAR URL
+========================================================= */
+
+function getAvatarUrl(profile){
+
+  if(!profile) return "";
+
+  /*
+     Support several likely avatar column names.
+
+     The actual users table can therefore use:
+       avatar_url
+       avatar
+       profile_image
+       profile_image_url
+       image_url
+       photo_url
+       photo
+       picture
+       image
+  */
+
+  const candidates = [
+
+    profile.avatar_url,
+
+    profile.avatar,
+
+    profile.profile_image,
+
+    profile.profile_image_url,
+
+    profile.image_url,
+
+    profile.photo_url,
+
+    profile.photo,
+
+    profile.picture,
+
+    profile.image
+
+  ];
+
+  for(const value of candidates){
+
+    const url =
+      String(value || "").trim();
+
+    if(url) return url;
+
+  }
+
+  /*
+     If no avatar is stored in users,
+     try Google's profile picture from
+     Supabase user metadata.
+  */
+
+  const metadata =
+    currentUser?.user_metadata || {};
+
+  const googleAvatar =
+    String(
+      metadata.avatar_url ||
+      metadata.picture ||
+      metadata.photo_url ||
+      ""
+    ).trim();
+
+  return googleAvatar;
+
+}
+
+
+/* =========================================================
+   UPDATE FOOTER USER STATE
+========================================================= */
+
+function updateFooterUserState(profile = null){
+
+  const upload =
+    document.getElementById(
+      "footerUpload"
+    );
+
+  const account =
+    document.getElementById(
+      "accountBtn"
+    );
+
+  if(!upload || !account) return;
+
+
+  if(currentUser){
+
+    /*
+       Use supplied profile first.
+       If not supplied, use cached profile.
+    */
+
+    let cached = {};
+
+    try{
+
+      const stored =
+        localStorage.getItem(
+          "bigula_user"
+        );
+
+      cached =
+        stored
+          ? JSON.parse(stored)
+          : {};
+
+    }catch(_){
+
+      cached = {};
+
+    }
+
+
+    const userProfile =
+      profile || cached || {};
+
+
+    const username =
+      String(
+
+        userProfile?.username ||
+
+        userProfile?.name ||
+
+        userProfile?.full_name ||
+
+        userProfile?.display_name ||
+
+        currentUser.user_metadata?.user_name ||
+
+        currentUser.user_metadata?.preferred_username ||
+
+        currentUser.user_metadata?.name ||
+
+        "Account"
+
+      ).trim();
+
+
+    const avatarUrl =
+      getAvatarUrl(userProfile);
+
+
+    account.classList.remove(
+      "signed-out"
+    );
+
+    account.classList.add(
+      "signed-in"
+    );
+
+    account.title =
+      username;
+
+
+    const label =
+      account.querySelector(
+        ".account-label"
+      );
+
+    if(label){
+
+      label.textContent =
+        username;
+
+    }
 
 
     /*
-      IMPORTANT:
-      Fetch the real users row so the
-      footer gets the current avatar.
+       Replace the 👤 icon with
+       the real avatar from users.
     */
-    try{
 
-      const {
-        data: profile,
-        error
-      } =
-        await supabase
-          .from("users")
-          .select("*")
-          .eq("id", currentUser.id)
-          .maybeSingle()
+    const icon =
+      account.querySelector(
+        ".account-icon"
+      );
 
+    if(icon){
 
-      if(error){
+      if(avatarUrl){
 
-        console.warn(
-          "Could not refresh local profile:",
-          error
-        )
+        icon.innerHTML = "";
 
-      }else if(profile){
+        const img =
+          document.createElement(
+            "img"
+          );
 
-        localStorage.setItem(
-          "bigula_user",
-          JSON.stringify(profile)
-        )
+        img.src = avatarUrl;
 
-        /*
-          Re-render footer after the
-          database profile is available.
-        */
-        updateFooterUserState()
+        img.alt = username;
+
+        img.loading = "eager";
+
+        img.referrerPolicy =
+          "no-referrer";
+
+        img.onerror = () => {
+
+          icon.innerHTML = "👤";
+
+        };
+
+        icon.appendChild(img);
+
+      }else{
+
+        icon.innerHTML = "👤";
+
       }
 
-    }catch(e){
-
-      console.warn(
-        "Could not refresh local profile:",
-        e
-      )
     }
+
+
+    upload.classList.remove(
+      "signed-out"
+    );
+
+    upload.classList.add(
+      "signed-in"
+    );
+
+    upload.title =
+      "Create / Upload";
+
+
+  }else{
+
+    account.classList.remove(
+      "signed-in"
+    );
+
+    account.classList.add(
+      "signed-out"
+    );
+
+    account.title =
+      "Signup";
+
+
+    const label =
+      account.querySelector(
+        ".account-label"
+      );
+
+    if(label){
+
+      label.textContent =
+        "Signup";
+
+    }
+
+
+    const icon =
+      account.querySelector(
+        ".account-icon"
+      );
+
+    if(icon){
+
+      icon.innerHTML = "👤";
+
+    }
+
+
+    upload.classList.remove(
+      "signed-in"
+    );
+
+    upload.classList.add(
+      "signed-out"
+    );
+
+    upload.title =
+      "Sign up to upload";
+
+  }
+
+}
+
+
+/* =========================================================
+   REQUIRE SIGN IN
+========================================================= */
+
+async function requireSignIn(){
+
+  if(currentUser) return true;
+
+  try{
+
+    const {
+      data
+    } =
+      await supabase.auth.getSession();
+
+    currentUser =
+      data?.session?.user || null;
+
+  }catch(_){
+
+    currentUser = null;
+
   }
 
 
-  return true
+  if(currentUser){
+
+    updateFooterUserState();
+
+    return true;
+
+  }
+
+
+  alert(
+    "Please sign in first."
+  );
+
+  window.location.href =
+    "signup.html";
+
+  return false;
 }
 
 
@@ -1324,12 +1783,13 @@ async function loadNotificationBadge(){
   const badge =
     document.getElementById(
       "notificationBadge"
-    )
+    );
 
-  if(!badge || !currentUser) return
+  if(!badge || !currentUser)
+    return;
 
 
-  let count = null
+  let count = null;
 
 
   try{
@@ -1337,41 +1797,48 @@ async function loadNotificationBadge(){
     const first =
       await supabase
         .from("notifications")
-        .select("id",{
-          count:"exact",
-          head:true
-        })
+        .select(
+          "id",
+          {
+            count:"exact",
+            head:true
+          }
+        )
         .eq(
           "user_id",
           currentUser.id
-        )
+        );
 
 
     if(!first.error){
 
       count =
-        first.count || 0
+        first.count || 0;
 
     }else{
 
       const second =
         await supabase
           .from("notifications")
-          .select("id",{
-            count:"exact",
-            head:true
-          })
+          .select(
+            "id",
+            {
+              count:"exact",
+              head:true
+            }
+          )
           .eq(
             "recipient_id",
             currentUser.id
-          )
-
+          );
 
       if(!second.error){
 
         count =
-          second.count || 0
+          second.count || 0;
+
       }
+
     }
 
   }catch(e){
@@ -1379,18 +1846,25 @@ async function loadNotificationBadge(){
     console.warn(
       "Could not load notification count:",
       e
-    )
+    );
+
   }
 
 
-  if(count === null) return
+  if(count === null)
+    return;
 
 
   badge.textContent =
-    count > 99 ? "99+" : String(count)
+    count > 99
+      ? "99+"
+      : String(count);
 
   badge.style.display =
-    count > 0 ? "flex" : "none"
+    count > 0
+      ? "flex"
+      : "none";
+
 }
 
 
@@ -1408,452 +1882,113 @@ function isPublicVideo(video){
       video.content_status ??
       ""
     )
-    .toLowerCase()
-    .trim()
+      .toLowerCase()
+      .trim();
 
 
   if(
     video.is_public === true ||
     video.public === true ||
     video.published === true
-  ) return true
+  )
+    return true;
 
 
   if(
     video.is_public === false ||
     video.public === false ||
     video.published === false
-  ) return false
-
-
-  if([
-    "public",
-    "published",
-    "live",
-    "active"
-  ].includes(status)) return true
-
-
-  if([
-    "private",
-    "draft",
-    "unlisted",
-    "blocked",
-    "rejected",
-    "pending",
-    "processing",
-    "deleted"
-  ].includes(status)) return false
-
-
-  return true
-}
-
-
-/* =========================================================
-   FETCH VIDEOS
-========================================================= */
-
-async function fetchVideos(
-  type="foryou"
-){
-
-  let query =
-    supabase
-      .from("videos")
-      .select("*")
-
-
-  if(type === "latest"){
-
-    query =
-      query.order(
-        "created_at",
-        {ascending:false}
-      )
-
-  }else if(type === "viral"){
-
-    query =
-      query.order(
-        "views",
-        {ascending:false}
-      )
-
-  }else{
-
-    query =
-      query.order(
-        "created_at",
-        {ascending:false}
-      )
-  }
-
-
-  const {
-    data,
-    error
-  } = await query
-
-
-  if(error){
-
-    console.error(error)
-
-    document.getElementById(
-      "feed"
-    ).innerHTML =
-      "<p style='color:#ff5555;text-align:center;margin-top:20px;'>Failed to load videos.</p>"
-
-    return
-  }
-
-
-  const publicVideos =
-    (data || []).filter(
-      isPublicVideo
-    )
-
-
-  renderVideos(publicVideos)
-}
-
-
-/* =========================================================
-   LIVE
-========================================================= */
-
-async function fetchLive(){
-
-  const feed =
-    document.getElementById("feed")
-
-  feed.classList.remove(
-    "status-feed"
   )
-
-  feed.innerHTML =
-    "<p style='color:#aaa;text-align:center;margin-top:30px;'>Loading live videos...</p>"
+    return false;
 
 
-  let query =
-    supabase
-      .from("videos")
-      .select("*")
+  if(
+    [
+      "public",
+      "published",
+      "live",
+      "active"
+    ].includes(status)
+  )
+    return true;
 
 
-  query =
-    query.or(
-      "is_live.eq.true,live.eq.true,status.eq.live"
-    )
+  if(
+    [
+      "private",
+      "draft",
+      "unlisted",
+      "blocked",
+      "rejected",
+      "pending",
+      "processing",
+      "deleted"
+    ].includes(status)
+  )
+    return false;
 
 
-  const {
-    data,
-    error
-  } =
-    await query.order(
-      "created_at",
-      {ascending:false}
-    )
+  return true;
 
-
-  if(error){
-
-    console.warn(
-      "Live query failed:",
-      error.message
-    )
-
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>No users are live right now.</p>"
-
-    return
-  }
-
-
-  const live =
-    (data || []).filter(v =>
-      v.is_live === true ||
-      v.live === true ||
-      String(v.status || "")
-        .toLowerCase() === "live"
-    )
-
-
-  if(!live.length){
-
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>No users are live right now.</p>"
-
-    return
-  }
-
-
-  await renderVideos(live)
 }
 
 
 /* =========================================================
-   STATUS
+   CREATOR PROFILE
 ========================================================= */
 
-async function fetchStatuses(){
+function getCreatorNameFromProfile(profile){
 
-  const feed =
-    document.getElementById("feed")
+  return String(
 
-  feed.classList.add(
-    "status-feed"
-  )
+    profile?.name ||
 
-  feed.innerHTML =
-    "<p style='color:#aaa;text-align:center;margin-top:30px;'>Loading statuses...</p>"
+    profile?.full_name ||
 
+    profile?.display_name ||
 
-  if(!currentUser){
+    profile?.username ||
 
-    location.replace(
-      "signup.html"
-    )
+    "BIGULA Creator"
 
-    return
-  }
+  ).trim();
+
+}
 
 
-  const {
-    data:follows,
-    error:followError
-  } =
-    await supabase
-      .from("followers")
-      .select("following_id")
-      .eq(
-        "follower_id",
-        currentUser.id
-      )
+function getCreatorName(video){
+
+  const uid =
+    video.creator_id ||
+    video.user_id;
+
+  const profile =
+    uid
+      ? creatorProfiles.get(uid)
+      : null;
 
 
-  if(followError){
+  return String(
 
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>Could not load followed users' statuses.</p>"
+    profile?.name ||
 
-    return
-  }
+    profile?.full_name ||
 
+    profile?.display_name ||
 
-  const ids =
-    (follows || [])
-      .map(x => x.following_id)
-      .filter(Boolean)
+    profile?.username ||
 
+    video.username ||
 
-  if(!ids.length){
+    "BIGULA Creator"
 
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>Follow creators to see their statuses here.</p>"
+  ).trim();
 
-    return
-  }
-
-
-  const result =
-    await supabase
-      .from("statuses")
-      .select("*")
-      .in("user_id",ids)
-      .order(
-        "created_at",
-        {ascending:false}
-      )
-
-
-  if(result.error){
-
-    console.warn(
-      "statuses table unavailable:",
-      result.error.message
-    )
-
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>No statuses available yet.</p>"
-
-    return
-  }
-
-
-  const statuses =
-    result.data || []
-
-
-  if(!statuses.length){
-
-    feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>No new statuses from followed users.</p>"
-
-    return
-  }
-
-
-  await getCreatorProfiles(
-    statuses.map(x => ({
-      creator_id:x.user_id
-    }))
-  )
-
-
-  feed.innerHTML = ""
-
-
-  statuses.forEach(st => {
-
-    const uid =
-      st.user_id
-
-    const profile =
-      creatorProfiles.get(uid) || {}
-
-
-    const name =
-      String(
-        profile.name ||
-        profile.full_name ||
-        profile.display_name ||
-        profile.username ||
-        "BIGULA User"
-      )
-
-
-    const text =
-      String(
-        st.text ||
-        st.content ||
-        st.caption ||
-        ""
-      )
-
-
-    const avatar =
-      String(
-        profile.avatar_url ||
-        profile.avatar ||
-        ""
-      )
-
-
-    const item =
-      document.createElement("div")
-
-
-    item.className =
-      "status-card"
-
-
-    item.innerHTML = `
-      <div class="status-avatar">
-        ${
-          avatar
-          ? `<img src="${avatar.replace(/"/g,"&quot;")}" alt="">`
-          : name.charAt(0).toUpperCase()
-        }
-      </div>
-
-      <div class="status-content">
-
-        <div class="status-name">
-          ${name
-            .replace(/</g,"&lt;")
-            .replace(/>/g,"&gt;")}
-        </div>
-
-        <div class="status-text">
-          ${text
-            .replace(/</g,"&lt;")
-            .replace(/>/g,"&gt;")}
-        </div>
-
-        <div class="status-time">
-          ${
-            st.created_at
-            ? new Date(st.created_at).toLocaleString()
-            : "Recent"
-          }
-        </div>
-
-      </div>
-    `
-
-
-    item.addEventListener(
-      "click",
-      () => openProfile(uid)
-    )
-
-
-    feed.appendChild(item)
-  })
 }
 
 
 /* =========================================================
-   COUNTS
-========================================================= */
-
-async function getCounts(videoId){
-
-  const [
-    {count:likes},
-    {count:comments},
-    {count:views}
-  ] =
-    await Promise.all([
-
-      supabase
-        .from("likes")
-        .select("id",{
-          head:true,
-          count:"exact"
-        })
-        .eq(
-          "video_id",
-          videoId
-        ),
-
-      supabase
-        .from("comments")
-        .select("id",{
-          head:true,
-          count:"exact"
-        })
-        .eq(
-          "video_id",
-          videoId
-        ),
-
-      supabase
-        .from("views")
-        .select("id",{
-          head:true,
-          count:"exact"
-        })
-        .eq(
-          "video_id",
-          videoId
-        )
-    ])
-
-
-  return {
-    likes:likes || 0,
-    comments:comments || 0,
-    views:views || 0
-  }
-}
-
-
-/* =========================================================
-   CREATOR PROFILES
+   LOAD CREATOR PROFILES
 ========================================================= */
 
 async function getCreatorProfiles(videos){
@@ -1869,10 +2004,11 @@ async function getCreatorProfiles(videos){
           )
           .filter(Boolean)
       )
-    ]
+    ];
 
 
-  if(!ids.length) return
+  if(!ids.length)
+    return;
 
 
   const {
@@ -1882,53 +2018,876 @@ async function getCreatorProfiles(videos){
     await supabase
       .from("users")
       .select("*")
-      .in("id",ids)
+      .in(
+        "id",
+        ids
+      );
 
 
   if(error){
 
     console.warn(
       "Could not fetch creator profiles:",
-      error
-    )
+      error.message
+    );
 
-    return
+    return;
+
   }
 
 
-  ;(data || []).forEach(
-    profile =>
+  (data || []).forEach(
+    profile => {
+
       creatorProfiles.set(
         profile.id,
         profile
-      )
-  )
+      );
+
+    }
+  );
+
 }
 
 
-function getCreatorName(video){
+/* =========================================================
+   FETCH VIDEOS
+========================================================= */
 
-  const uid =
-    video.creator_id ||
-    video.user_id
+async function fetchVideos(
+  type = "foryou"
+){
+
+  activeFeedType = type;
+
+  const feed =
+    document.getElementById(
+      "feed"
+    );
+
+  feed.classList.remove(
+    "status-feed"
+  );
+
+  feed.innerHTML =
+    `<div class="empty-message">
+       Loading videos...
+     </div>`;
 
 
-  const profile =
-    uid
-    ? creatorProfiles.get(uid)
-    : null
+  let query =
+    supabase
+      .from("videos")
+      .select("*");
 
 
-  return String(
+  if(type === "latest"){
 
-    profile?.name ||
-    profile?.full_name ||
-    profile?.display_name ||
-    profile?.username ||
-    video.username ||
-    "BIGULA Creator"
+    query =
+      query.order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
-  ).trim()
+  }else if(type === "viral"){
+
+    query =
+      query.order(
+        "views",
+        {
+          ascending:false
+        }
+      );
+
+  }else{
+
+    query =
+      query.order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await query;
+
+
+  if(error){
+
+    console.error(error);
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         Failed to load videos.
+       </div>`;
+
+    return;
+
+  }
+
+
+  const publicVideos =
+    (data || [])
+      .filter(isPublicVideo);
+
+
+  allLoadedVideos =
+    publicVideos;
+
+
+  await getCreatorProfiles(
+    publicVideos
+  );
+
+
+  /*
+     Save creator profiles for
+     search.
+  */
+
+  allLoadedCreators =
+    [
+      ...creatorProfiles.values()
+    ];
+
+
+  renderVideos(
+    publicVideos
+  );
+
+}
+
+
+/* =========================================================
+   SEARCH
+   =========================================================
+
+   Search now works against BOTH:
+
+     1. video title
+     2. video description/caption
+     3. creator name
+     4. creator username
+     5. creator display name
+
+   If the creator matches, all public videos
+   belonging to that creator are shown.
+========================================================= */
+
+async function searchBigula(term){
+
+  const search =
+    String(term || "")
+      .trim()
+      .toLowerCase();
+
+
+  if(!search){
+
+    /*
+       Return to the current feed.
+    */
+
+    if(activeFeedType === "status"){
+
+      await fetchStatuses();
+
+    }else if(activeFeedType === "live"){
+
+      await fetchLive();
+
+    }else{
+
+      await fetchVideos(
+        activeFeedType
+      );
+
+    }
+
+    return;
+
+  }
+
+
+  const feed =
+    document.getElementById(
+      "feed"
+    );
+
+
+  feed.classList.remove(
+    "status-feed"
+  );
+
+
+  feed.innerHTML =
+    `<div class="empty-message">
+       Searching BIGULA...
+     </div>`;
+
+
+  try{
+
+    /*
+       Search creators directly in users.
+       We use ilike so the search is
+       case-insensitive.
+    */
+
+    const {
+      data: creators,
+      error: creatorError
+    } =
+      await supabase
+        .from("users")
+        .select("*")
+        .or(
+          [
+            `name.ilike.%${escapePostgrest(search)}%`,
+            `username.ilike.%${escapePostgrest(search)}%`,
+            `full_name.ilike.%${escapePostgrest(search)}%`,
+            `display_name.ilike.%${escapePostgrest(search)}%`
+          ].join(",")
+        )
+        .limit(100);
+
+
+    if(!creatorError){
+
+      allLoadedCreators =
+        creators || [];
+
+      (creators || []).forEach(
+        profile => {
+
+          creatorProfiles.set(
+            profile.id,
+            profile
+          );
+
+        }
+      );
+
+    }
+
+
+    /*
+       Search videos directly.
+       Some installations may not have
+       description/caption columns, so
+       the local search below remains
+       important.
+    */
+
+    const {
+      data: videos,
+      error: videoError
+    } =
+      await supabase
+        .from("videos")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if(videoError)
+      throw videoError;
+
+
+    const publicVideos =
+      (videos || [])
+        .filter(isPublicVideo);
+
+
+    await getCreatorProfiles(
+      publicVideos
+    );
+
+
+    const creatorIds =
+      new Set(
+        (creators || [])
+          .map(
+            profile =>
+              String(profile.id)
+          )
+      );
+
+
+    const matchingVideos =
+      publicVideos.filter(
+        video => {
+
+          const creatorId =
+            String(
+              video.creator_id ||
+              video.user_id ||
+              ""
+            );
+
+
+          const creator =
+            creatorProfiles.get(
+              creatorId
+            );
+
+
+          const creatorText =
+            [
+
+              creator?.name,
+
+              creator?.username,
+
+              creator?.full_name,
+
+              creator?.display_name,
+
+              video.username
+
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+
+
+          const videoText =
+            [
+
+              video.title,
+
+              video.description,
+
+              video.caption,
+
+              video.category,
+
+              video.tags,
+
+              video.username
+
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
+
+
+          return (
+
+            creatorIds.has(
+              creatorId
+            )
+
+            ||
+
+            creatorText.includes(
+              search
+            )
+
+            ||
+
+            videoText.includes(
+              search
+            )
+
+          );
+
+        }
+      );
+
+
+    allLoadedVideos =
+      matchingVideos;
+
+
+    if(!matchingVideos.length){
+
+      feed.innerHTML =
+        `<div class="empty-message">
+           No creators or videos found for
+           "<strong>${escapeHtml(term)}</strong>".
+         </div>`;
+
+      return;
+
+    }
+
+
+    renderVideos(
+      matchingVideos
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Search failed:",
+      error
+    );
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         Search could not be completed.
+       </div>`;
+
+  }
+
+}
+
+
+/*
+   Protect PostgREST search strings.
+*/
+
+function escapePostgrest(value){
+
+  return String(value)
+    .replace(/\\/g,"\\\\")
+    .replace(/,/g,"\\,")
+    .replace(/\./g,"\\.")
+    .replace(/\(/g,"\\(")
+    .replace(/\)/g,"\\)");
+
+}
+
+
+/* =========================================================
+   LIVE
+========================================================= */
+
+async function fetchLive(){
+
+  activeFeedType = "live";
+
+  const feed =
+    document.getElementById(
+      "feed"
+    );
+
+  feed.classList.remove(
+    "status-feed"
+  );
+
+  feed.innerHTML =
+    `<div class="empty-message">
+       Loading live videos...
+     </div>`;
+
+
+  let query =
+    supabase
+      .from("videos")
+      .select("*");
+
+
+  query =
+    query.or(
+      "is_live.eq.true,live.eq.true,status.eq.live"
+    );
+
+
+  const {
+    data,
+    error
+  } =
+    await query.order(
+      "created_at",
+      {
+        ascending:false
+      }
+    );
+
+
+  if(error){
+
+    console.warn(
+      "Live query failed:",
+      error.message
+    );
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         No users are live right now.
+       </div>`;
+
+    return;
+
+  }
+
+
+  const live =
+    (data || [])
+      .filter(
+        v =>
+          v.is_live === true ||
+          v.live === true ||
+          String(
+            v.status || ""
+          ).toLowerCase() === "live"
+      );
+
+
+  if(!live.length){
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         No users are live right now.
+       </div>`;
+
+    return;
+
+  }
+
+
+  allLoadedVideos =
+    live;
+
+
+  await getCreatorProfiles(
+    live
+  );
+
+
+  renderVideos(live);
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+async function fetchStatuses(){
+
+  activeFeedType = "status";
+
+  const feed =
+    document.getElementById(
+      "feed"
+    );
+
+  feed.classList.add(
+    "status-feed"
+  );
+
+  feed.innerHTML =
+    `<div class="empty-message">
+       Loading statuses...
+     </div>`;
+
+
+  if(!currentUser){
+
+    location.replace(
+      "signup.html"
+    );
+
+    return;
+
+  }
+
+
+  const {
+    data:follows,
+    error:followError
+  } =
+    await supabase
+      .from("followers")
+      .select("following_id")
+      .eq(
+        "follower_id",
+        currentUser.id
+      );
+
+
+  if(followError){
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         Could not load followed users' statuses.
+       </div>`;
+
+    return;
+
+  }
+
+
+  const ids =
+    (follows || [])
+      .map(
+        x => x.following_id
+      )
+      .filter(Boolean);
+
+
+  if(!ids.length){
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         Follow creators to see their statuses here.
+       </div>`;
+
+    return;
+
+  }
+
+
+  const result =
+    await supabase
+      .from("statuses")
+      .select("*")
+      .in(
+        "user_id",
+        ids
+      )
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    console.warn(
+      "statuses table unavailable:",
+      result.error.message
+    );
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         No statuses available yet.
+       </div>`;
+
+    return;
+
+  }
+
+
+  const statuses =
+    result.data || [];
+
+
+  if(!statuses.length){
+
+    feed.innerHTML =
+      `<div class="empty-message">
+         No new statuses from followed users.
+       </div>`;
+
+    return;
+
+  }
+
+
+  await getCreatorProfiles(
+    statuses.map(
+      x => ({
+        creator_id:x.user_id
+      })
+    )
+  );
+
+
+  feed.innerHTML = "";
+
+
+  statuses.forEach(
+    status => {
+
+      const uid =
+        status.user_id;
+
+      const profile =
+        creatorProfiles.get(
+          uid
+        ) || {};
+
+
+      const name =
+        getCreatorNameFromProfile(
+          profile
+        );
+
+
+      const text =
+        String(
+          status.text ||
+          status.content ||
+          status.caption ||
+          ""
+        );
+
+
+      const avatar =
+        getAvatarUrl(
+          profile
+        );
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.className =
+        "status-card";
+
+
+      item.innerHTML = `
+
+        <div class="status-avatar">
+
+          ${
+            avatar
+
+            ?
+
+            `<img
+               src="${escapeHtml(avatar)}"
+               alt=""
+               loading="lazy"
+             >`
+
+            :
+
+            escapeHtml(
+              name
+                .charAt(0)
+                .toUpperCase()
+            )
+
+          }
+
+        </div>
+
+        <div class="status-content">
+
+          <div class="status-name">
+            ${escapeHtml(name)}
+          </div>
+
+          <div class="status-text">
+            ${escapeHtml(text)}
+          </div>
+
+          <div class="status-time">
+            ${
+              status.created_at
+                ? new Date(
+                    status.created_at
+                  ).toLocaleString()
+                : "Recent"
+            }
+          </div>
+
+        </div>
+      `;
+
+
+      item.addEventListener(
+        "click",
+        () => openProfile(uid)
+      );
+
+
+      feed.appendChild(item);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   COUNTS
+========================================================= */
+
+async function getCounts(videoId){
+
+  const [
+
+    { count:likes },
+
+    { count:comments },
+
+    { count:views }
+
+  ] =
+    await Promise.all([
+
+      supabase
+        .from("likes")
+        .select(
+          "id",
+          {
+            head:true,
+            count:"exact"
+          }
+        )
+        .eq(
+          "video_id",
+          videoId
+        ),
+
+      supabase
+        .from("comments")
+        .select(
+          "id",
+          {
+            head:true,
+            count:"exact"
+          }
+        )
+        .eq(
+          "video_id",
+          videoId
+        ),
+
+      supabase
+        .from("views")
+        .select(
+          "id",
+          {
+            head:true,
+            count:"exact"
+          }
+        )
+        .eq(
+          "video_id",
+          videoId
+        )
+
+    ]);
+
+
+  return {
+
+    likes:
+      likes || 0,
+
+    comments:
+      comments || 0,
+
+    views:
+      views || 0
+
+  };
+
 }
 
 
@@ -1939,45 +2898,56 @@ function getCreatorName(video){
 async function renderVideos(videos){
 
   const feed =
-    document.getElementById("feed")
+    document.getElementById(
+      "feed"
+    );
 
 
   feed.classList.remove(
     "status-feed"
-  )
+  );
 
 
-  feed.innerHTML = ""
+  feed.innerHTML = "";
 
 
   if(!videos.length){
 
     feed.innerHTML =
-      "<p style='color:#aaa;text-align:center;margin-top:30px;'>No public videos available.</p>"
+      `<div class="empty-message">
+         No public videos available.
+       </div>`;
 
-    return
+    return;
+
   }
 
 
-  await getCreatorProfiles(videos)
+  await getCreatorProfiles(
+    videos
+  );
 
 
   for(const video of videos){
 
     const counts =
-      await getCounts(video.id)
+      await getCounts(
+        video.id
+      );
 
 
     const card =
-      document.createElement("div")
+      document.createElement(
+        "div"
+      );
 
 
     card.className =
-      "video-card"
+      "video-card";
 
 
     card.dataset.id =
-      video.id
+      video.id;
 
 
     card.dataset.creatorId =
@@ -1985,42 +2955,49 @@ async function renderVideos(videos){
         video.creator_id ||
         video.user_id ||
         ""
-      )
+      );
 
 
     card.dataset.shortCode =
       video.short_code ||
       video.shortCode ||
-      ""
+      "";
 
 
-    const safeUrl =
+    const videoUrl =
       String(
         video.video_url ||
         video.url ||
         ""
-      )
-      .replace(/"/g,"&quot;")
+      );
 
 
     const creatorName =
-      getCreatorName(video)
-
-
-    const safeCreatorName =
-      creatorName
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"&#39;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
+      getCreatorName(
+        video
+      );
 
 
     const title =
       String(
         video.title || ""
-      )
-      .replace(/</g,"&lt;")
-      .replace(/>/g,"&gt;")
+      );
+
+
+    const creatorId =
+      String(
+        video.creator_id ||
+        video.user_id ||
+        ""
+      );
+
+
+    const avatar =
+      getAvatarUrl(
+        creatorProfiles.get(
+          creatorId
+        )
+      );
 
 
     card.innerHTML = `
@@ -2028,16 +3005,25 @@ async function renderVideos(videos){
       <div class="video-stage">
 
         <video
-          src="${safeUrl}"
+          src="${escapeHtml(videoUrl)}"
           autoplay
+          muted
           playsinline
           preload="auto"
         ></video>
 
         ${
           title
-          ? `<div class="title-overlay">${title}</div>`
-          : ""
+
+            ?
+
+            `<div class="title-overlay">
+               ${escapeHtml(title)}
+             </div>`
+
+            :
+
+            ""
         }
 
       </div>
@@ -2049,11 +3035,12 @@ async function renderVideos(videos){
 
           <span
             class="username"
-            title="${safeCreatorName}"
+            title="${escapeHtml(creatorName)}"
             data-action="profile"
           >
-            ${safeCreatorName}
+            ${escapeHtml(creatorName)}
           </span>
+
 
           <button
             class="follow-btn"
@@ -2063,15 +3050,23 @@ async function renderVideos(videos){
             Follow
           </button>
 
+
           ${
-            video.is_live || video.live
-            ? `
+            video.is_live ||
+            video.live
+
+              ?
+
+              `
               <span class="live-badge">
                 <span class="live-dot"></span>
                 LIVE
               </span>
-            `
-            : ""
+              `
+
+              :
+
+              ""
           }
 
         </div>
@@ -2142,36 +3137,29 @@ async function renderVideos(videos){
         </div>
 
       </div>
-    `
+
+    `;
 
 
-    feed.appendChild(card)
+    feed.appendChild(
+      card
+    );
 
 
-    bindCardActions(card)
-
-    setupVideo(card)
-
-
-    const firstVideo =
-      card.querySelector("video")
+    bindCardActions(
+      card
+    );
 
 
-    if(
-      feed.children.length === 1 &&
-      firstVideo
-    ){
+    setupVideo(
+      card
+    );
 
-      firstVideo.muted = false
-
-      firstVideo
-        .play()
-        .catch(() => {})
-    }
   }
 
 
-  setupAutoplay()
+  setupAutoplay();
+
 }
 
 
@@ -2182,19 +3170,24 @@ async function renderVideos(videos){
 function bindCardActions(card){
 
   const creatorId =
-    card.dataset.creatorId || ""
+    card.dataset.creatorId ||
+    "";
 
 
   const videoId =
-    card.dataset.id
+    card.dataset.id;
 
 
   card
-    .querySelector(".username")
+    .querySelector(
+      ".username"
+    )
     ?.addEventListener(
       "click",
-      () => openProfile(creatorId)
-    )
+      () => openProfile(
+        creatorId
+      )
+    );
 
 
   card
@@ -2205,15 +3198,19 @@ function bindCardActions(card){
       "click",
       async e => {
 
-        if(await requireSignIn()){
+        if(
+          await requireSignIn()
+        ){
 
           await toggleLike(
             videoId,
             e.currentTarget
-          )
+          );
+
         }
+
       }
-    )
+    );
 
 
   card
@@ -2224,14 +3221,18 @@ function bindCardActions(card){
       "click",
       async () => {
 
-        if(await requireSignIn()){
+        if(
+          await requireSignIn()
+        ){
 
           await openComments(
             videoId
-          )
+          );
+
         }
+
       }
-    )
+    );
 
 
   card
@@ -2242,15 +3243,19 @@ function bindCardActions(card){
       "click",
       async e => {
 
-        if(await requireSignIn()){
+        if(
+          await requireSignIn()
+        ){
 
           await followUser(
             creatorId,
             e.currentTarget
-          )
+          );
+
         }
+
       }
-    )
+    );
 
 
   card
@@ -2263,7 +3268,7 @@ function bindCardActions(card){
         toggleShare(
           e.currentTarget
         )
-    )
+    );
 
 
   card
@@ -2275,9 +3280,11 @@ function bindCardActions(card){
       () =>
         shareStatus(
           videoId,
-          getCreatorNameFromCard(card)
+          getCreatorNameFromCard(
+            card
+          )
         )
-    )
+    );
 
 
   card
@@ -2289,24 +3296,37 @@ function bindCardActions(card){
       () =>
         shareWhatsApp(
           videoId,
-          getCreatorNameFromCard(card),
+          getCreatorNameFromCard(
+            card
+          ),
           card.querySelector(
             ".title-overlay"
           )?.textContent || ""
         )
-    )
+    );
+
 }
 
+
+/* =========================================================
+   CREATOR NAME FROM CARD
+========================================================= */
 
 function getCreatorNameFromCard(card){
 
   return (
     card
-      .querySelector(".username")
+      .querySelector(
+        ".username"
+      )
       ?.textContent
-      ?.trim() ||
+      ?.trim()
+
+    ||
+
     "BIGULA Creator"
-  )
+  );
+
 }
 
 
@@ -2317,87 +3337,142 @@ function getCreatorNameFromCard(card){
 function setupVideo(card){
 
   const video =
-    card.querySelector("video")
+    card.querySelector(
+      "video"
+    );
 
 
-  let lastTap = 0
+  if(!video) return;
 
-  let viewRecorded = false
 
-  let maxWatched = 0
+  let lastTap = 0;
 
+  let viewRecorded =
+    false;
+
+  let maxWatched =
+    0;
+
+
+  /*
+     When one video starts,
+     pause every other video.
+  */
 
   video.addEventListener(
     "play",
     () => {
 
       document
-        .querySelectorAll("#feed video")
-        .forEach(other => {
+        .querySelectorAll(
+          "#feed video"
+        )
+        .forEach(
+          other => {
 
-          if(other !== video)
-            other.pause()
-        })
+            if(
+              other !== video
+            ){
+
+              other.pause();
+
+            }
+
+          }
+        );
+
     }
-  )
+  );
 
+
+  /*
+     Single tap = play/pause.
+     Double tap = like.
+  */
 
   video.addEventListener(
     "click",
     async e => {
 
-      if(e.target !== video)
-        return
+      if(
+        e.target !== video
+      )
+        return;
 
 
       const now =
-        Date.now()
+        Date.now();
 
 
       if(
         now - lastTap < 350
       ){
 
-        e.preventDefault()
+        e.preventDefault();
 
 
-        if(await requireSignIn()){
+        if(
+          await requireSignIn()
+        ){
 
           await toggleLike(
             card.dataset.id,
             card.querySelector(
-              ".stat-btn"
+              '[data-action="like"]'
             )
-          )
+          );
+
         }
 
 
-        lastTap = 0
+        lastTap = 0;
 
-        return
+        return;
+
       }
 
 
-      lastTap = now
+      lastTap =
+        now;
 
 
       setTimeout(
         () => {
 
-          if(lastTap === now){
+          if(
+            lastTap === now
+          ){
 
-            if(video.paused)
-              video.play().catch(()=>{})
-            else
-              video.pause()
+            if(
+              video.paused
+            ){
+
+              video
+                .play()
+                .catch(
+                  () => {}
+                );
+
+            }else{
+
+              video.pause();
+
+            }
+
           }
 
         },
         350
-      )
-    }
-  )
+      );
 
+    }
+  );
+
+
+  /*
+     Record a view after 50%
+     watched.
+  */
 
   video.addEventListener(
     "timeupdate",
@@ -2407,14 +3482,15 @@ function setupVideo(card){
         viewRecorded ||
         !isFinite(video.duration) ||
         video.duration <= 0
-      ) return
+      )
+        return;
 
 
       maxWatched =
         Math.max(
           maxWatched,
           video.currentTime
-        )
+        );
 
 
       if(
@@ -2422,46 +3498,61 @@ function setupVideo(card){
         video.duration * .5
       ){
 
-        viewRecorded = true
+        viewRecorded = true;
 
 
         const ok =
           await registerCompletedView(
             card.dataset.id
-          )
+          );
 
 
         if(ok){
 
-          const b =
+          const button =
             card.querySelector(
               ".views-btn"
-            )
+            );
 
 
-          const m =
-            b?.textContent.match(/\d+/)
+          if(button){
+
+            const match =
+              button.textContent
+                .match(/\d+/);
 
 
-          if(b){
+            const current =
+              match
+                ? parseInt(
+                    match[0],
+                    10
+                  )
+                : 0;
 
-            b.textContent =
-              `▶ ${
-                (m
-                  ? parseInt(m[0],10)
-                  : 0
-                ) + 1
-              }`
+
+            button.textContent =
+              `▶ ${current + 1}`;
+
           }
 
         }else{
 
-          viewRecorded = false
-        }
-      }
-    }
-  )
+          viewRecorded =
+            false;
 
+        }
+
+      }
+
+    }
+  );
+
+
+  /*
+     When video ends, go to
+     the next complete card.
+  */
 
   video.addEventListener(
     "ended",
@@ -2469,47 +3560,51 @@ function setupVideo(card){
 
       if(!viewRecorded){
 
-        viewRecorded = true
+        viewRecorded = true;
 
 
         const ok =
           await registerCompletedView(
             card.dataset.id
-          )
+          );
 
 
         if(ok){
 
-          const b =
+          const button =
             card.querySelector(
               ".views-btn"
-            )
+            );
 
 
-          const m =
-            b?.textContent.match(/\d+/)
+          if(button){
+
+            const match =
+              button.textContent
+                .match(/\d+/);
 
 
-          if(b){
+            const current =
+              match
+                ? parseInt(
+                    match[0],
+                    10
+                  )
+                : 0;
 
-            b.textContent =
-              `▶ ${
-                (m
-                  ? parseInt(m[0],10)
-                  : 0
-                ) + 1
-              }`
+
+            button.textContent =
+              `▶ ${current + 1}`;
+
           }
 
-        }else{
-
-          viewRecorded = false
         }
+
       }
 
 
       const next =
-        card.nextElementSibling
+        card.nextElementSibling;
 
 
       if(next){
@@ -2517,65 +3612,20 @@ function setupVideo(card){
         next.scrollIntoView({
           behavior:"smooth",
           block:"start"
-        })
+        });
 
-      }else{
-
-        const cards =
-          [
-            ...document.querySelectorAll(
-              ".video-card"
-            )
-          ]
-
-
-        cards
-          .slice(
-            0,
-            Math.min(cards.length,8)
-          )
-          .forEach(original => {
-
-            const clone =
-              original.cloneNode(true)
-
-
-            clone.dataset.id =
-              original.dataset.id
-
-            clone.dataset.creatorId =
-              original.dataset.creatorId
-
-            clone.dataset.shortCode =
-              original.dataset.shortCode
-
-
-            feed.appendChild(clone)
-
-            bindCardActions(clone)
-
-            setupVideo(clone)
-          })
-
-
-        const newNext =
-          card.nextElementSibling
-
-
-        if(newNext){
-
-          newNext.scrollIntoView({
-            behavior:"auto",
-            block:"start"
-          })
-        }
       }
+
     }
-  )
+  );
 
 
-  let sx = null
-  let sy = null
+  /*
+     Swipe left opens video_view.html.
+  */
+
+  let sx = null;
+  let sy = null;
 
 
   video.addEventListener(
@@ -2587,15 +3637,18 @@ function setupVideo(card){
       ){
 
         sx =
-          e.touches[0].clientX
+          e.touches[0].clientX;
 
         sy =
-          e.touches[0].clientY
+          e.touches[0].clientY;
+
       }
 
     },
-    {passive:true}
-  )
+    {
+      passive:true
+    }
+  );
 
 
   video.addEventListener(
@@ -2603,50 +3656,53 @@ function setupVideo(card){
     e => {
 
       if(sx === null)
-        return
+        return;
 
 
       const dx =
         e.changedTouches[0].clientX -
-        sx
+        sx;
 
 
       const dy =
         e.changedTouches[0].clientY -
-        sy
+        sy;
 
 
-      sx = null
-      sy = null
+      sx = null;
+      sy = null;
 
 
       if(
         dx < -70 &&
         Math.abs(dx) >
-        Math.abs(dy) * 1.25
+          Math.abs(dy) * 1.25
       ){
 
         const sc =
-          card.dataset.shortCode
+          card.dataset.shortCode;
 
 
         if(sc){
 
           location.href =
-            `video_view.html?v=${
-              encodeURIComponent(sc)
-            }`
+            `video_view.html?v=${encodeURIComponent(sc)}`;
+
         }
+
       }
 
     },
-    {passive:true}
-  )
+    {
+      passive:true
+    }
+  );
+
 }
 
 
 /* =========================================================
-   VIEW
+   REGISTER VIEW
 ========================================================= */
 
 async function registerCompletedView(
@@ -2656,7 +3712,8 @@ async function registerCompletedView(
   if(
     !currentUser ||
     !navigator.onLine
-  ) return false
+  )
+    return false;
 
 
   const {
@@ -2665,9 +3722,14 @@ async function registerCompletedView(
     await supabase
       .from("views")
       .insert({
-        video_id:videoId,
-        user_id:currentUser.id
-      })
+
+        video_id:
+          videoId,
+
+        user_id:
+          currentUser.id
+
+      });
 
 
   if(error){
@@ -2675,13 +3737,15 @@ async function registerCompletedView(
     console.warn(
       "View could not be recorded:",
       error.message
-    )
+    );
 
-    return false
+    return false;
+
   }
 
 
-  return true
+  return true;
+
 }
 
 
@@ -2691,101 +3755,162 @@ async function registerCompletedView(
 
 function setupAutoplay(){
 
-  const vids =
+  const videos =
     document.querySelectorAll(
       "#feed video"
-    )
+    );
 
 
   const observer =
     new IntersectionObserver(
       entries => {
 
-        entries.forEach(entry => {
+        entries.forEach(
+          entry => {
 
-          const v =
-            entry.target
-
-
-          if(
-            entry.isIntersecting &&
-            entry.intersectionRatio >= .7
-          ){
-
-            vids.forEach(o => {
-
-              if(o !== v)
-                o.pause()
-            })
+            const video =
+              entry.target;
 
 
-            v.muted = false
+            if(
+              entry.isIntersecting &&
+              entry.intersectionRatio >= .7
+            ){
 
-            v.volume = 1
+              videos.forEach(
+                other => {
+
+                  if(
+                    other !== video
+                  )
+                    other.pause();
+
+                }
+              );
 
 
-            v.play().catch(() => {
+              /*
+                 Try sound first.
+                 If browser blocks autoplay
+                 with sound, retry muted.
+              */
 
-              v.muted = true
+              video.muted =
+                false;
 
-              v.play().catch(() => {})
-            })
+              video.volume =
+                1;
 
-          }else{
 
-            v.pause()
+              video
+                .play()
+                .catch(
+                  () => {
+
+                    video.muted =
+                      true;
+
+                    video
+                      .play()
+                      .catch(
+                        () => {}
+                      );
+
+                  }
+                );
+
+            }else{
+
+              video.pause();
+
+            }
+
           }
-
-        })
+        );
 
       },
       {
-        threshold:[0,.7]
+        threshold:[
+          0,
+          .7
+        ]
       }
-    )
+    );
 
 
-  vids.forEach(
-    v => observer.observe(v)
-  )
-
-
-  const unlock = () => {
-
-    const active =
-      [
-        ...document.querySelectorAll(
-          "#feed video"
-        )
-      ].find(
-        v =>
-          v.getBoundingClientRect().top <
-          innerHeight * .65 &&
-          v.getBoundingClientRect().bottom >
-          innerHeight * .35
+  videos.forEach(
+    video =>
+      observer.observe(
+        video
       )
+  );
 
 
-    if(active){
+  /*
+     First user interaction
+     unlocks playback.
+  */
 
-      document
-        .querySelectorAll(
-          "#feed video"
-        )
-        .forEach(v => {
+  const unlock =
+    () => {
 
-          if(v !== active)
-            v.pause()
-        })
+      const active =
+        [
+          ...document.querySelectorAll(
+            "#feed video"
+          )
+        ].find(
+          video => {
+
+            const rect =
+              video.getBoundingClientRect();
 
 
-      active.muted = false
+            return (
+              rect.top <
+                innerHeight * .65 &&
 
-      active.volume = 1
+              rect.bottom >
+                innerHeight * .35
+            );
 
-      active.play().catch(() => {})
-    }
-  }
+          }
+        );
+
+
+      if(active){
+
+        document
+          .querySelectorAll(
+            "#feed video"
+          )
+          .forEach(
+            video => {
+
+              if(
+                video !== active
+              )
+                video.pause();
+
+            }
+          );
+
+
+        active.muted =
+          false;
+
+        active.volume =
+          1;
+
+        active
+          .play()
+          .catch(
+            () => {}
+          );
+
+      }
+
+    };
 
 
   document.addEventListener(
@@ -2795,83 +3920,9 @@ function setupAutoplay(){
       once:true,
       passive:true
     }
-  )
+  );
+
 }
-
-
-/* =========================================================
-   TAB SWIPE
-========================================================= */
-
-let tabTouchX = null
-
-const feedEl =
-  document.getElementById("feed")
-
-
-feedEl.addEventListener(
-  "touchstart",
-  e => {
-
-    if(e.touches.length === 1){
-
-      tabTouchX =
-        e.touches[0].clientX
-    }
-
-  },
-  {passive:true}
-)
-
-
-feedEl.addEventListener(
-  "touchend",
-  e => {
-
-    if(tabTouchX === null)
-      return
-
-
-    const dx =
-      e.changedTouches[0].clientX -
-      tabTouchX
-
-
-    tabTouchX = null
-
-
-    if(dx < 60)
-      return
-
-
-    const tabs =
-      [
-        ...document.querySelectorAll(".tab")
-      ]
-
-
-    const active =
-      tabs.findIndex(
-        t =>
-          t.classList.contains(
-            "active"
-          )
-      )
-
-
-    const next =
-      Math.min(
-        active + 1,
-        tabs.length - 1
-      )
-
-
-    if(next !== active)
-      tabs[next].click()
-
-  },
-  {passive:true}
-)
 
 
 /* =========================================================
@@ -2884,31 +3935,36 @@ function toggleShare(btn){
     .querySelectorAll(
       ".share-options"
     )
-    .forEach(el => {
+    .forEach(
+      menu => {
 
-      if(
-        el !==
-        btn.nextElementSibling
-      ){
+        if(
+          menu !==
+          btn.nextElementSibling
+        ){
 
-        el.style.display =
-          "none"
+          menu.style.display =
+            "none";
+
+        }
+
       }
-    })
+    );
 
 
   const options =
-    btn.nextElementSibling
+    btn.nextElementSibling;
 
 
   if(!options)
-    return
+    return;
 
 
   options.style.display =
     options.style.display === "flex"
-    ? "none"
-    : "flex"
+      ? "none"
+      : "flex";
+
 }
 
 
@@ -2916,23 +3972,26 @@ function encodeVideoToken(id){
 
   const bytes =
     new TextEncoder()
-      .encode(String(id))
+      .encode(
+        String(id)
+      );
 
 
-  let binary = ""
+  let binary = "";
 
 
   bytes.forEach(
     b =>
       binary +=
         String.fromCharCode(b)
-  )
+  );
 
 
   return btoa(binary)
     .replace(/\+/g,"-")
     .replace(/\//g,"_")
-    .replace(/=+$/g,"")
+    .replace(/=+$/g,"");
+
 }
 
 
@@ -2945,37 +4004,38 @@ function createVideoShareUrl(
       ...document.querySelectorAll(
         ".video-card"
       )
-    ]
-    .find(
+    ].find(
       card =>
         card.dataset.id ===
         String(videoId)
-    )
+    );
 
 
   const shortCode =
-    video?.dataset.shortCode
+    video?.dataset.shortCode;
 
 
   if(shortCode){
 
     return new URL(
-      `video_view.html?v=${
-        encodeURIComponent(shortCode)
-      }`,
+      `video_view.html?v=${encodeURIComponent(shortCode)}`,
       window.location.href
-    ).href
+    ).href;
+
   }
 
 
   const token =
-    encodeVideoToken(videoId)
+    encodeVideoToken(
+      videoId
+    );
 
 
   return new URL(
     `video_view.html?v=${token}`,
     window.location.href
-  ).href
+  ).href;
+
 }
 
 
@@ -2988,24 +4048,33 @@ function shareWhatsApp(
   const shareUrl =
     createVideoShareUrl(
       videoId
-    )
+    );
 
 
   const cleanTitle =
-    String(title || "").trim()
+    String(
+      title || ""
+    ).trim();
 
 
   const text =
     cleanTitle
-    ? `Watch "${cleanTitle}" by @${username} on BIGULA\n${shareUrl}`
-    : `Watch this video by @${username} on BIGULA\n${shareUrl}`
+
+      ?
+
+      `Watch "${cleanTitle}" by @${username} on BIGULA\n${shareUrl}`
+
+      :
+
+      `Watch this video by @${username} on BIGULA\n${shareUrl}`;
 
 
   window.open(
     `https://wa.me/?text=${encodeURIComponent(text)}`,
     "_blank",
     "noopener,noreferrer"
-  )
+  );
+
 }
 
 
@@ -3016,22 +4085,24 @@ function shareStatus(
 
   alert(
     `Status portal for video ${videoId} by @${username} coming soon!`
-  )
+  );
+
 }
 
 
 /* =========================================================
-   ACTIONS
+   PROFILE
 ========================================================= */
 
 function openProfile(uid){
 
-  if(!uid) return
+  if(!uid)
+    return;
+
 
   location.href =
-    `creator_profile.html?uid=${
-      encodeURIComponent(uid)
-    }`
+    `creator_profile.html?uid=${encodeURIComponent(uid)}`;
+
 }
 
 
@@ -3045,27 +4116,28 @@ async function toggleLike(
 ){
 
   if(!currentUser)
-    return false
+    return false;
 
 
   if(!navigator.onLine){
 
     alert(
       "Turn on data or connect to your Wi-Fi to like this video."
-    )
+    );
 
-    return false
+    return false;
+
   }
 
 
   const el =
     document.getElementById(
       `like-${videoId}`
-    )
+    );
 
 
   if(!el)
-    return false
+    return false;
 
 
   const {
@@ -3083,7 +4155,7 @@ async function toggleLike(
         "user_id",
         currentUser.id
       )
-      .limit(1)
+      .limit(1);
 
 
   if(checkError){
@@ -3091,9 +4163,10 @@ async function toggleLike(
     console.warn(
       "Like check failed:",
       checkError.message
-    )
+    );
 
-    return false
+    return false;
+
   }
 
 
@@ -3112,7 +4185,7 @@ async function toggleLike(
         .eq(
           "user_id",
           currentUser.id
-        )
+        );
 
 
     if(error){
@@ -3120,9 +4193,10 @@ async function toggleLike(
       console.warn(
         "Unlike failed:",
         error.message
-      )
+      );
 
-      return false
+      return false;
+
     }
 
 
@@ -3133,7 +4207,8 @@ async function toggleLike(
           el.textContent || "0",
           10
         ) - 1
-      )
+      );
+
 
   }else{
 
@@ -3143,9 +4218,14 @@ async function toggleLike(
       await supabase
         .from("likes")
         .insert({
-          video_id:videoId,
-          user_id:currentUser.id
-        })
+
+          video_id:
+            videoId,
+
+          user_id:
+            currentUser.id
+
+        });
 
 
     if(error){
@@ -3153,9 +4233,10 @@ async function toggleLike(
       console.warn(
         "Like could not be recorded:",
         error.message
-      )
+      );
 
-      return false
+      return false;
+
     }
 
 
@@ -3163,11 +4244,13 @@ async function toggleLike(
       parseInt(
         el.textContent || "0",
         10
-      ) + 1
+      ) + 1;
+
   }
 
 
-  return true
+  return true;
+
 }
 
 
@@ -3180,25 +4263,26 @@ async function openComments(
 ){
 
   currentVideoId =
-    videoId
+    videoId;
 
 
   const modal =
     document.getElementById(
       "commentModal"
-    )
+    );
 
 
   const list =
     document.getElementById(
       "commentList"
-    )
+    );
 
 
-  list.innerHTML = ""
+  list.innerHTML = "";
+
 
   modal.style.display =
-    "flex"
+    "flex";
 
 
   const {
@@ -3213,89 +4297,154 @@ async function openComments(
       )
       .order(
         "created_at",
-        {ascending:true}
-      )
+        {
+          ascending:true
+        }
+      );
 
 
   if(comments){
 
-    comments.forEach(c => {
+    comments.forEach(
+      comment => {
 
-      const div =
-        document.createElement("div")
+        const div =
+          document.createElement(
+            "div"
+          );
 
 
-      div.innerHTML =
-        `<strong>${c.username}</strong>: ${c.text}`
+        div.style.padding =
+          "8px 0";
 
 
-      list.appendChild(div)
-    })
+        div.innerHTML =
+          `<strong>
+             ${escapeHtml(
+               comment.username ||
+               "User"
+             )}
+           </strong>
+           :
+           ${escapeHtml(
+             comment.text ||
+             ""
+           )}`;
+
+
+        list.appendChild(
+          div
+        );
+
+      }
+    );
+
   }
+
 }
 
 
-document.getElementById(
-  "postCommentBtn"
-).onclick = async () => {
+/* =========================================================
+   POST COMMENT
+========================================================= */
 
-  if(
-    !currentUser ||
-    !currentVideoId
-  ) return
-
-
-  const input =
-    document.getElementById(
-      "commentText"
-    )
-
-
-  const text =
-    input.value.trim()
-
-
-  if(!text)
-    return
-
-
-  const {
-    data:myProfile
-  } =
-    await supabase
-      .from("users")
-      .select("username")
-      .eq(
-        "id",
-        currentUser.id
-      )
-      .maybeSingle()
-
-
-  await supabase
-    .from("comments")
-    .insert({
-
-      video_id:
-        currentVideoId,
-
-      user_id:
-        currentUser.id,
-
-      username:
-        myProfile?.username ||
-        "user",
-
-      text
-    })
-
-
-  input.value = ""
-
-  openComments(
-    currentVideoId
+document
+  .getElementById(
+    "postCommentBtn"
   )
-}
+  .onclick =
+  async () => {
+
+    if(
+      !currentUser ||
+      !currentVideoId
+    )
+      return;
+
+
+    const input =
+      document.getElementById(
+        "commentText"
+      );
+
+
+    const text =
+      input.value.trim();
+
+
+    if(!text)
+      return;
+
+
+    const {
+      data:myProfile
+    } =
+      await supabase
+        .from("users")
+        .select(
+          "username,name,full_name,display_name"
+        )
+        .eq(
+          "id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+
+    const username =
+      myProfile?.username ||
+      myProfile?.name ||
+      myProfile?.full_name ||
+      myProfile?.display_name ||
+      "user";
+
+
+    const {
+      error
+    } =
+      await supabase
+        .from("comments")
+        .insert({
+
+          video_id:
+            currentVideoId,
+
+          user_id:
+            currentUser.id,
+
+          username:
+            username,
+
+          text:
+            text
+
+        });
+
+
+    if(error){
+
+      console.warn(
+        "Comment failed:",
+        error.message
+      );
+
+      alert(
+        "Comment could not be posted."
+      );
+
+      return;
+
+    }
+
+
+    input.value = "";
+
+
+    await openComments(
+      currentVideoId
+    );
+
+  };
 
 
 /* =========================================================
@@ -3308,7 +4457,20 @@ async function followUser(
 ){
 
   if(!currentUser || !uid)
-    return
+    return;
+
+
+  if(
+    uid === currentUser.id
+  ){
+
+    alert(
+      "You cannot follow yourself."
+    );
+
+    return;
+
+  }
 
 
   const {
@@ -3317,18 +4479,22 @@ async function followUser(
     await supabase
       .from("followers")
       .upsert(
+
         {
           follower_id:
             currentUser.id,
 
           following_id:
             uid
+
         },
+
         {
           onConflict:
             "follower_id,following_id"
         }
-      )
+
+      );
 
 
   if(error){
@@ -3336,36 +4502,66 @@ async function followUser(
     console.warn(
       "Follow failed:",
       error.message
-    )
+    );
 
-    return
+    alert(
+      "Could not follow this creator."
+    );
+
+    return;
+
   }
 
 
   if(button){
 
     button.textContent =
-      "Following"
+      "Following";
 
-    button.disabled =
-      true
+    button.style.color =
+      "#00e5ff";
+
   }
+
 }
 
 
 /* =========================================================
-   AUTH STATE
+   AUTH STATE CHANGES
 ========================================================= */
 
 supabase.auth.onAuthStateChange(
-  (_event,session) => {
+  async (_event, session) => {
 
     currentUser =
-      session?.user || null
+      session?.user || null;
 
-    updateFooterUserState()
+
+    updateFooterUserState();
+
+
+    if(currentUser){
+
+      /*
+         Fetch the real DB profile
+         after authentication.
+      */
+
+      setTimeout(
+        () => {
+
+          loadCurrentUserProfile();
+
+          loadNotificationBadge();
+
+        },
+        0
+      );
+
+    }
+
   }
-)
+);
 
 
 /* =========================================================
@@ -3373,150 +4569,128 @@ supabase.auth.onAuthStateChange(
 ========================================================= */
 
 document
-  .querySelectorAll(".tab")
-  .forEach(tab => {
+  .querySelectorAll(
+    ".tab"
+  )
+  .forEach(
+    tab => {
 
-    tab.onclick = () => {
+      tab.onclick =
+        async () => {
 
-      document
-        .querySelectorAll(".tab")
-        .forEach(t =>
-          t.classList.remove(
+          document
+            .querySelectorAll(
+              ".tab"
+            )
+            .forEach(
+              t =>
+                t.classList.remove(
+                  "active"
+                )
+            );
+
+
+          tab.classList.add(
             "active"
-          )
-        )
+          );
 
 
-      tab.classList.add(
-        "active"
-      )
+          const type =
+            tab.dataset.feed;
 
 
-      if(
-        tab.dataset.feed ===
-        "status"
-      ){
+          activeFeedType =
+            type;
 
-        fetchStatuses()
 
-      }else if(
-        tab.dataset.feed ===
-        "live"
-      ){
+          /*
+             Clear search when changing
+             feed tabs.
+          */
 
-        fetchLive()
+          const searchInput =
+            document.getElementById(
+              "searchInput"
+            );
 
-      }else{
 
-        fetchVideos(
-          tab.dataset.feed
-        )
-      }
+          if(searchInput){
+
+            searchInput.value =
+              "";
+
+          }
+
+
+          if(type === "status"){
+
+            await fetchStatuses();
+
+          }else if(
+            type === "live"
+          ){
+
+            await fetchLive();
+
+          }else{
+
+            await fetchVideos(
+              type
+            );
+
+          }
+
+        };
+
     }
-  })
+  );
 
 
 /* =========================================================
-   SEARCH
+   SEARCH INPUT
 ========================================================= */
 
 document
-  .getElementById("searchInput")
+  .getElementById(
+    "searchInput"
+  )
   .addEventListener(
     "input",
     e => {
 
       const term =
-        e.target.value
-          .toLowerCase()
-          .trim()
+        e.target.value.trim();
 
 
-      document
-        .querySelectorAll(
-          ".video-card"
-        )
-        .forEach(card => {
+      clearTimeout(
+        searchTimer
+      );
 
-          card.style.display =
-            !term ||
-            card.innerText
-              .toLowerCase()
-              .includes(term)
-            ? "flex"
-            : "none"
-        })
+
+      /*
+         Small debounce prevents
+         a database request on every
+         individual keystroke.
+      */
+
+      searchTimer =
+        setTimeout(
+          () => {
+
+            searchBigula(
+              term
+            );
+
+          },
+          250
+        );
+
     }
-)
+  );
 
 
 /* =========================================================
-   ONLINE / OFFLINE
-========================================================= */
-
-window.addEventListener(
-  "offline",
-  () => {
-
-    const f =
-      document.getElementById(
-        "feed"
-      )
-
-
-    if(f){
-
-      f.innerHTML =
-        "<p style='color:#aaa;text-align:center;margin-top:30px;padding:20px;'>Turn on data or connect to your Wi-Fi to load videos.</p>"
-    }
-  }
-)
-
-
-window.addEventListener(
-  "online",
-  () => {
-
-    const t =
-      document
-        .querySelector(
-          ".tab.active"
-        )
-        ?.dataset.feed ||
-      "foryou"
-
-
-    if(t === "status")
-      fetchStatuses()
-
-    else if(t === "live")
-      fetchLive()
-
-    else
-      fetchVideos(t)
-  }
-)
-
-
-/* =========================================================
-   START HOME
-========================================================= */
-
-initUser().then(() => {
-
-  /*
-    Home remains public.
-    Always load For You.
-  */
-  fetchVideos("foryou")
-})
-
-
-updateFooterUserState()
-
-
-/* =========================================================
-   FINAL FOOTER NAVIGATION
+   FOOTER NAVIGATION
 ========================================================= */
 
 document.addEventListener(
@@ -3526,19 +4700,19 @@ document.addEventListener(
     const btn =
       e.target.closest(
         "#footerUpload, #notifBtn, #accountBtn"
-      )
+      );
 
 
     if(!btn)
-      return
+      return;
 
 
-    e.preventDefault()
+    e.preventDefault();
+    e.stopPropagation();
 
-    e.stopPropagation()
 
-
-    let sessionUser = null
+    let sessionUser =
+      null;
 
 
     try{
@@ -3546,11 +4720,11 @@ document.addEventListener(
       const params =
         new URLSearchParams(
           window.location.search
-        )
+        );
 
 
       const code =
-        params.get("code")
+        params.get("code");
 
 
       if(code){
@@ -3559,34 +4733,35 @@ document.addEventListener(
           await supabase.auth
             .exchangeCodeForSession(
               code
-            )
+            );
 
 
         if(result.error)
-          throw result.error
+          throw result.error;
 
 
         sessionUser =
           result.data?.session?.user ||
-          null
+          null;
 
 
         history.replaceState(
           {},
           document.title,
           window.location.pathname
-        )
+        );
 
       }else{
 
         const result =
           await supabase.auth
-            .getSession()
+            .getSession();
 
 
         sessionUser =
           result.data?.session?.user ||
-          null
+          null;
+
       }
 
     }catch(error){
@@ -3594,7 +4769,8 @@ document.addEventListener(
       console.warn(
         "Footer sign-in check failed:",
         error
-      )
+      );
+
     }
 
 
@@ -3606,34 +4782,32 @@ document.addEventListener(
       ){
 
         location.href =
-          "signup.html"
+          "signup.html";
 
-        return
+        return;
+
       }
 
 
       alert(
         "Please sign in first to upload videos."
-      )
+      );
 
 
       location.href =
-        "signup.html"
+        "signup.html";
 
-      return
+
+      return;
+
     }
 
 
     currentUser =
-      sessionUser
+      sessionUser;
 
 
-    /*
-      Refresh profile/avatar before
-      navigation so the account state
-      always uses the current session.
-    */
-    updateFooterUserState()
+    updateFooterUserState();
 
 
     if(
@@ -3642,7 +4816,8 @@ document.addEventListener(
     ){
 
       location.href =
-        "upload.html"
+        "upload.html";
+
     }
 
 
@@ -3652,7 +4827,8 @@ document.addEventListener(
     ){
 
       location.href =
-        "notifications.html"
+        "notifications.html";
+
     }
 
 
@@ -3662,12 +4838,154 @@ document.addEventListener(
     ){
 
       location.href =
-        "account.html"
+        "account.html";
+
     }
 
   },
   true
-)
+);
+
+
+/* =========================================================
+   ONLINE / OFFLINE
+========================================================= */
+
+window.addEventListener(
+  "offline",
+  () => {
+
+    const feed =
+      document.getElementById(
+        "feed"
+      );
+
+
+    if(feed){
+
+      feed.innerHTML =
+        `<div class="empty-message">
+           Turn on data or connect to your Wi-Fi to load videos.
+         </div>`;
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "online",
+  () => {
+
+    const search =
+      document.getElementById(
+        "searchInput"
+      )?.value.trim();
+
+
+    if(search){
+
+      searchBigula(
+        search
+      );
+
+      return;
+
+    }
+
+
+    const active =
+      document.querySelector(
+        ".tab.active"
+      )?.dataset.feed ||
+      "foryou";
+
+
+    if(active === "status"){
+
+      fetchStatuses();
+
+    }else if(
+      active === "live"
+    ){
+
+      fetchLive();
+
+    }else{
+
+      fetchVideos(
+        active
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+initUser()
+  .then(
+    () => {
+
+      /*
+         Home remains public.
+
+         Always load For You first.
+      */
+
+      fetchVideos(
+        "foryou"
+      );
+
+    }
+  );
+
+
+/*
+   Set footer immediately so the
+   page does not briefly show an
+   incorrect state.
+*/
+
+updateFooterUserState();
 
 </script>
 
