@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-content="width=device-width,initial-scale=1,viewport-fit=cover">
+      content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <title>BIGULA • Video</title>
 
@@ -12,202 +11,885 @@ content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <style>
 :root{
- --bg:#07080b;
- --panel:#11131a;
- --text:#f7f7fa;
- --muted:#9ca3af;
- --line:#242833;
- --accent:#ff2d55;
+  --bg:#07080b;
+  --panel:#11131a;
+  --text:#f7f7fa;
+  --muted:#9ca3af;
+  --line:#242833;
+  --accent:#ff2d55;
 }
-*{box-sizing:border-box}
-html,body{
- margin:0;background:var(--bg);color:var(--text);
- font-family:Inter,Arial,sans-serif
+
+*{
+  box-sizing:border-box;
 }
-button{font:inherit;cursor:pointer}
-.wrap{max-width:900px;margin:auto;padding-bottom:80px}
+
+html,
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+   TOP BAR
+========================================================= */
+
 .top{
- position:fixed;top:0;left:0;right:0;height:58px;
- display:flex;align-items:center;justify-content:space-between;
- padding:0 14px;z-index:30;
- background:linear-gradient(#050609ee,transparent)
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:62px;
+
+  display:flex;
+  align-items:center;
+
+  padding:
+    env(safe-area-inset-top)
+    14px
+    0;
+
+  z-index:100;
+
+  background:
+    linear-gradient(
+      #050609f5,
+      #050609aa,
+      transparent
+    );
 }
-.logo{font-weight:900;font-size:20px}
+
+.topLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.backBtn{
+  width:42px;
+  height:42px;
+
+  border:0;
+  border-radius:50%;
+
+  background:#ffffff18;
+  color:#fff;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:25px;
+  line-height:1;
+}
+
+.backBtn:active{
+  transform:scale(.94);
+}
+
+.logo{
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:.2px;
+}
+
 .topbtn{
- width:40px;height:40px;border:0;border-radius:50%;
- background:#ffffff12;color:#fff;font-size:20px
+  margin-left:auto;
+
+  width:42px;
+  height:42px;
+
+  border:0;
+  border-radius:50%;
+
+  background:#ffffff18;
+  color:#fff;
+
+  font-size:22px;
 }
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.wrap{
+  width:100%;
+  max-width:900px;
+  margin:0 auto;
+
+  padding-bottom:40px;
+}
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.loading{
+  min-height:100vh;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  padding:30px;
+
+  color:var(--muted);
+  font-size:15px;
+}
+
+/* =========================================================
+   VIDEO PLAYER
+========================================================= */
+
 .player{
- width:100%;height:min(78vh,760px);min-height:420px;
- background:#000;position:relative;
- display:flex;align-items:center;justify-content:center;
- overflow:hidden
+  width:100%;
+
+  height:
+    min(
+      78vh,
+      760px
+    );
+
+  min-height:420px;
+
+  margin-top:0;
+
+  background:#000;
+
+  position:relative;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  overflow:hidden;
 }
+
 .player video{
- width:100%;height:100%;object-fit:contain;
- background:#000
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  object-fit:contain;
+
+  background:#000;
 }
+
+/* =========================================================
+   CENTER PLAY BUTTON
+========================================================= */
+
 .center{
- position:absolute;left:50%;top:50%;
- transform:translate(-50%,-50%);
- width:70px;height:70px;border:0;border-radius:50%;
- background:#0009;color:#fff;font-size:28px;
- opacity:0;transition:.2s
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  transform:translate(-50%,-50%);
+
+  width:70px;
+  height:70px;
+
+  border:0;
+  border-radius:50%;
+
+  background:#000a;
+
+  color:#fff;
+
+  font-size:28px;
+
+  opacity:0;
+
+  transition:.2s;
+
+  z-index:5;
 }
-.player.paused .center{opacity:1}
+
+.player.paused .center{
+  opacity:1;
+}
+
+/* =========================================================
+   VIDEO CONTROLS
+========================================================= */
+
 .controls{
- position:absolute;bottom:0;left:0;right:0;
- padding:10px 12px 13px;
- background:linear-gradient(transparent,#000e)
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:
+    12px
+    12px
+    14px;
+
+  background:
+    linear-gradient(
+      transparent,
+      #000e
+    );
+
+  z-index:6;
 }
-.progress{width:100%;accent-color:var(--accent)}
-.ctrlrow{display:flex;align-items:center;gap:7px;margin-top:7px}
+
+.progress{
+  width:100%;
+
+  height:4px;
+
+  accent-color:var(--accent);
+
+  cursor:pointer;
+}
+
+.ctrlrow{
+  display:flex;
+  align-items:center;
+
+  gap:7px;
+
+  margin-top:8px;
+}
+
 .ctrl{
- border:0;background:#ffffff14;color:#fff;
- border-radius:9px;min-width:37px;height:36px;padding:0 9px
+  border:0;
+
+  background:#ffffff18;
+
+  color:#fff;
+
+  border-radius:9px;
+
+  min-width:38px;
+  height:37px;
+
+  padding:0 9px;
 }
-.time{font-size:12px;color:#ddd;margin-right:auto}
-.info{padding:16px}
+
+.time{
+  font-size:12px;
+
+  color:#ddd;
+
+  margin-right:auto;
+
+  white-space:nowrap;
+}
+
+/* =========================================================
+   CREATOR INFORMATION
+========================================================= */
+
+.info{
+  padding:18px 16px 10px;
+}
+
 .creator{
- display:flex;align-items:center;gap:11px
+  display:flex;
+  align-items:center;
+
+  gap:11px;
+
+  min-width:0;
 }
+
 .avatar{
- width:46px;height:46px;border-radius:50%;
- object-fit:cover;background:#252936
+  width:48px;
+  height:48px;
+
+  flex:0 0 48px;
+
+  border-radius:50%;
+
+  object-fit:cover;
+
+  background:#252936;
+
+  display:block;
 }
-.meta{flex:1;min-width:0}
-.creatorName{font-weight:850}
-.handle{font-size:12px;color:var(--muted);margin-top:3px}
+
+.meta{
+  flex:1;
+  min-width:0;
+}
+
+.creatorName{
+  font-weight:850;
+
+  font-size:16px;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.handle{
+  font-size:12px;
+
+  color:var(--muted);
+
+  margin-top:4px;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
 .follow{
- border:0;background:#fff;color:#000;
- border-radius:10px;padding:9px 13px;font-weight:850
+  flex:0 0 auto;
+
+  border:0;
+
+  background:#fff;
+
+  color:#000;
+
+  border-radius:10px;
+
+  padding:9px 14px;
+
+  font-weight:850;
 }
-.following{background:#292d38;color:#fff}
-.title{font-size:20px;font-weight:850;margin-top:14px}
-.desc{font-size:14px;color:#d3d5da;line-height:1.5;margin-top:7px;white-space:pre-wrap}
-.date{font-size:12px;color:var(--muted);margin-top:8px}
+
+.following{
+  background:#292d38;
+  color:#fff;
+}
+
+.title{
+  font-size:20px;
+
+  font-weight:850;
+
+  margin-top:15px;
+
+  line-height:1.25;
+}
+
+.desc{
+  font-size:14px;
+
+  color:#d3d5da;
+
+  line-height:1.5;
+
+  margin-top:8px;
+
+  white-space:pre-wrap;
+
+  overflow-wrap:anywhere;
+}
+
+.date{
+  font-size:12px;
+
+  color:var(--muted);
+
+  margin-top:9px;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
 .actions{
- display:flex;gap:8px;overflow:auto;padding:7px 16px 12px
+  display:flex;
+
+  gap:8px;
+
+  overflow-x:auto;
+
+  padding:
+    9px
+    16px
+    14px;
+
+  scrollbar-width:none;
 }
+
+.actions::-webkit-scrollbar{
+  display:none;
+}
+
 .action{
- min-width:76px;background:var(--panel);
- color:#fff;border:1px solid var(--line);
- border-radius:12px;padding:9px;text-align:center
+  min-width:82px;
+
+  background:var(--panel);
+
+  color:#fff;
+
+  border:1px solid var(--line);
+
+  border-radius:12px;
+
+  padding:10px 9px;
+
+  text-align:center;
+
+  flex:0 0 auto;
 }
-.action .ico{display:block;font-size:19px}
-.action small{font-size:11px;color:var(--muted)}
-.action.active{background:#ff2d5515;border-color:#ff2d5555}
+
+.action .ico{
+  display:block;
+
+  font-size:20px;
+
+  line-height:1;
+
+  margin-bottom:5px;
+}
+
+.action small{
+  font-size:11px;
+
+  color:var(--muted);
+
+  white-space:nowrap;
+}
+
+.action.active{
+  background:#ff2d5515;
+
+  border-color:#ff2d5555;
+}
+
+/* =========================================================
+   SOUND
+========================================================= */
+
 .sound{
- margin:7px 16px 12px;padding:12px;
- background:#151923;border:1px solid var(--line);
- border-radius:14px;display:flex;gap:12px;align-items:center
+  margin:
+    6px
+    16px
+    14px;
+
+  padding:12px;
+
+  background:#151923;
+
+  border:1px solid var(--line);
+
+  border-radius:14px;
+
+  display:flex;
+
+  gap:12px;
+
+  align-items:center;
 }
+
 .disc{
- width:42px;height:42px;border-radius:50%;
- background:radial-gradient(circle,#ddd 0 8%,#333 9% 20%,#111 21% 55%,#555 56% 60%,#111 61%);
- animation:spin 3s linear infinite
+  width:42px;
+  height:42px;
+
+  flex:0 0 42px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle,
+      #ddd 0 8%,
+      #333 9% 20%,
+      #111 21% 55%,
+      #555 56% 60%,
+      #111 61%
+    );
+
+  animation:spin 3s linear infinite;
 }
-.disc.stop{animation-play-state:paused}
-.soundText{flex:1;min-width:0}
-.soundTitle{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.soundSub{font-size:12px;color:var(--muted);margin-top:3px}
-.comments{padding:14px 16px;border-top:1px solid var(--line)}
-.commentForm{display:flex;gap:8px}
+
+.disc.stop{
+  animation-play-state:paused;
+}
+
+.soundText{
+  flex:1;
+  min-width:0;
+}
+
+.soundTitle{
+  font-weight:750;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+}
+
+.soundSub{
+  font-size:12px;
+
+  color:var(--muted);
+
+  margin-top:3px;
+}
+
+/* =========================================================
+   COMMENTS
+========================================================= */
+
+.comments{
+  padding:
+    14px
+    16px;
+
+  border-top:1px solid var(--line);
+}
+
+.commentHeading{
+  font-weight:800;
+
+  margin-bottom:11px;
+}
+
+.commentForm{
+  display:flex;
+
+  gap:8px;
+
+  margin-bottom:10px;
+}
+
 .commentForm input{
- flex:1;min-width:0;background:#151820;
- border:1px solid var(--line);border-radius:12px;
- padding:11px;color:#fff
+  flex:1;
+
+  min-width:0;
+
+  background:#151820;
+
+  border:1px solid var(--line);
+
+  border-radius:12px;
+
+  padding:11px;
+
+  color:#fff;
+
+  outline:none;
 }
+
+.commentForm input:focus{
+  border-color:#555c6b;
+}
+
 .send{
- background:var(--accent);color:#fff;
- border:0;border-radius:11px;padding:0 15px
+  background:var(--accent);
+
+  color:#fff;
+
+  border:0;
+
+  border-radius:11px;
+
+  padding:0 15px;
 }
+
 .comment{
- display:flex;gap:9px;padding:10px 0;
- border-bottom:1px solid #1c1f27
+  display:flex;
+
+  gap:9px;
+
+  padding:10px 0;
+
+  border-bottom:1px solid #1c1f27;
 }
-.comment .avatar{width:34px;height:34px}
-.commentBody{flex:1}
-.commentTop{font-size:13px}
-.commentTop span{font-size:11px;color:var(--muted);margin-left:7px}
-.commentText{font-size:13px;color:#ddd;margin-top:4px}
+
+.comment .avatar{
+  width:34px;
+  height:34px;
+
+  flex-basis:34px;
+}
+
+.commentBody{
+  flex:1;
+
+  min-width:0;
+}
+
+.commentTop{
+  font-size:13px;
+}
+
+.commentTop span{
+  font-size:11px;
+
+  color:var(--muted);
+
+  margin-left:7px;
+}
+
+.commentText{
+  font-size:13px;
+
+  color:#ddd;
+
+  margin-top:4px;
+
+  white-space:pre-wrap;
+
+  overflow-wrap:anywhere;
+}
+
+/* =========================================================
+   MORE
+========================================================= */
+
 .more{
- display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  padding:
+    10px
+    16px
+    30px;
 }
+
 .more button{
- background:var(--panel);color:#ddd;
- border:1px solid var(--line);
- border-radius:10px;padding:9px 12px
+  background:var(--panel);
+
+  color:#ddd;
+
+  border:1px solid var(--line);
+
+  border-radius:10px;
+
+  padding:9px 12px;
 }
-.loading{text-align:center;padding:120px 20px;color:var(--muted)}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
 .toast{
- position:fixed;left:50%;bottom:80px;
- transform:translateX(-50%);
- background:#222630;color:#fff;
- border:1px solid #343947;border-radius:12px;
- padding:11px 14px;opacity:0;pointer-events:none;
- transition:.25s;z-index:80
+  position:fixed;
+
+  left:50%;
+  bottom:25px;
+
+  transform:
+    translateX(-50%)
+    translateY(10px);
+
+  background:#222630;
+
+  color:#fff;
+
+  border:1px solid #343947;
+
+  border-radius:12px;
+
+  padding:11px 14px;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:.25s;
+
+  z-index:200;
+
+  max-width:90%;
+
+  text-align:center;
 }
-.toast.show{opacity:1}
-.bottom{
- position:fixed;bottom:0;left:0;right:0;height:67px;
- background:#090a0eef;border-top:1px solid var(--line);
- display:flex;z-index:40
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
 }
-.nav{
- flex:1;border:0;background:none;color:#aaa
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
 }
-.nav span{display:block;font-size:20px}
-.nav b{font-size:10px}
-@keyframes spin{to{transform:rotate(360deg)}}
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
 @media(min-width:760px){
- .player{border-radius:0 0 16px 16px;margin-top:8px}
- .bottom{display:none}
- .info,.actions,.sound,.comments,.more{padding-left:0;padding-right:0}
+
+  .player{
+    margin-top:8px;
+
+    border-radius:
+      0
+      0
+      16px
+      16px;
+  }
+
+  .info,
+  .actions,
+  .sound,
+  .comments,
+  .more{
+    padding-left:0;
+    padding-right:0;
+  }
+
+  .sound{
+    margin-left:0;
+    margin-right:0;
+  }
+
+  .top{
+    max-width:900px;
+
+    margin:auto;
+
+    background:
+      linear-gradient(
+        #050609f5,
+        #05060988,
+        transparent
+      );
+  }
+}
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media(max-width:480px){
+
+  .player{
+    min-height:360px;
+
+    height:
+      calc(
+        100vh - 20px
+      );
+  }
+
+  .info{
+    padding-top:16px;
+  }
+
+  .title{
+    font-size:18px;
+  }
+
+  .follow{
+    padding:8px 12px;
+  }
+
+  .action{
+    min-width:78px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="top">
-  <div class="logo">BIGULA</div>
-  <button id="moreTop" class="topbtn">⋯</button>
-</div>
+<!-- =======================================================
+     TOP BAR
+======================================================== -->
+
+<header class="top">
+
+  <div class="topLeft">
+
+    <button
+      id="backBtn"
+      class="backBtn"
+      aria-label="Go back">
+      ‹
+    </button>
+
+    <div class="logo">
+      BIGULA
+    </div>
+
+  </div>
+
+  <button
+    id="moreTop"
+    class="topbtn"
+    aria-label="More options">
+    ⋯
+  </button>
+
+</header>
+
+
+<!-- =======================================================
+     MAIN APP
+======================================================== -->
 
 <main id="app" class="wrap">
-  <div class="loading">Loading video…</div>
+
+  <div class="loading">
+    Loading video…
+  </div>
+
 </main>
 
-<div id="toast" class="toast"></div>
 
-<nav class="bottom">
-<button class="nav" onclick="location.href='home.html'">
-<span>⌂</span><b>Home</b>
-</button>
+<!-- =======================================================
+     TOAST
+======================================================== -->
 
-<button class="nav" onclick="location.href='explore.html'">
-<span>⌕</span><b>Explore</b>
-</button>
+<div
+  id="toast"
+  class="toast">
+</div>
 
-<button class="nav" onclick="location.href='upload.html'">
-<span>＋</span><b>Upload</b>
-</button>
-
-<button class="nav" onclick="location.href='account.html'">
-<span>◎</span><b>Profile</b>
-</button>
-</nav>
 
 <script>
 
-const SUPABASE_URL=
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
 "https://vfteiggdhthvrrlndtbs.supabase.co";
 
-const SUPABASE_KEY=
+const SUPABASE_KEY =
 "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-const supabase=
+const supabase =
 window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
@@ -221,903 +903,2490 @@ window.supabase.createClient(
   }
 );
 
-const params=new URLSearchParams(location.search);
 
-const shortCode=
-  params.get("v")||
-  params.get("short_code");
+/* =========================================================
+   URL PARAMETERS
+========================================================= */
 
-const legacyId=
-  params.get("id")||
-  params.get("video_id");
+const params =
+new URLSearchParams(location.search);
 
-let video=null;
-let me=null;
-let owner=null;
-let liked=false;
-let following=false;
+const shortCode =
+params.get("v") ||
+params.get("short_code");
 
-const esc=s=>
- String(s??"").replace(
+const legacyId =
+params.get("id") ||
+params.get("video_id");
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let video = null;
+let me = null;
+let owner = null;
+
+let liked = false;
+let following = false;
+
+let likeCount = 0;
+let commentCount = 0;
+let viewCount = 0;
+let followerCount = 0;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const esc = s =>
+String(s ?? "").replace(
   /[&<>"']/g,
-  m=>({
-   "&":"&amp;",
-   "<":"&lt;",
-   ">":"&gt;",
-   '"':"&quot;",
-   "'":"&#39;"
+  m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   }[m])
- );
+);
+
 
 function toast(text){
- const x=document.getElementById("toast");
- x.textContent=text;
- x.classList.add("show");
- clearTimeout(window.toastTimer);
- window.toastTimer=setTimeout(
-  ()=>x.classList.remove("show"),2300
- );
+
+  const x =
+  document.getElementById("toast");
+
+  if(!x)return;
+
+  x.textContent = text;
+
+  x.classList.add("show");
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer =
+  setTimeout(
+    () => x.classList.remove("show"),
+    2300
+  );
 }
+
 
 function fmt(n){
- return Intl.NumberFormat(
-  undefined,
-  {notation:"compact",maximumFractionDigits:1}
- ).format(Number(n)||0);
+
+  return Intl.NumberFormat(
+    undefined,
+    {
+      notation:"compact",
+      maximumFractionDigits:1
+    }
+  ).format(Number(n)||0);
 }
+
 
 function dateFmt(d){
- if(!d)return"—";
- return new Intl.DateTimeFormat(
-  undefined,
-  {
-   year:"numeric",
-   month:"short",
-   day:"numeric",
-   hour:"numeric",
-   minute:"2-digit"
-  }
- ).format(new Date(d));
+
+  if(!d)return "—";
+
+  const date =
+  new Date(d);
+
+  if(Number.isNaN(date.getTime()))
+    return "—";
+
+  return new Intl.DateTimeFormat(
+    undefined,
+    {
+      year:"numeric",
+      month:"short",
+      day:"numeric",
+      hour:"numeric",
+      minute:"2-digit"
+    }
+  ).format(date);
 }
+
 
 function ownerId(row){
- return row?.user_id||
-        row?.creator_id||
-        row?.owner_id||
-        null;
+
+  return row?.user_id ||
+         row?.creator_id ||
+         row?.owner_id ||
+         null;
 }
+
 
 function avatar(u){
- return u?.avatar_url||
-        u?.photo_url||
-        u?.profile_photo||
-        u?.avatar||
-        "";
+
+  if(!u)return "";
+
+  return u.avatar_url ||
+         u.photo_url ||
+         u.profile_photo ||
+         u.profile_image ||
+         u.image_url ||
+         u.picture ||
+         u.avatar ||
+         "";
 }
 
-async function count(table,field,value){
- const {count}=await supabase
-  .from(table)
-  .select("*",{count:"exact",head:true})
-  .eq(field,value);
 
- return count||0;
-}
-
-async function first(table,selects,filters){
-
- let q=supabase.from(table).select(selects);
-
- for(const [k,v] of filters)
-  q=q.eq(k,v);
-
- const {data}=await q.limit(1);
-
- return data?.[0]||null;
-}
+/* =========================================================
+   GET CURRENT USER
+========================================================= */
 
 async function loadMe(){
- const {data:{user}}=
-  await supabase.auth.getUser();
 
- me=user||null;
+  try{
+
+    const {
+      data:{
+        user
+      }
+    } =
+    await supabase.auth.getUser();
+
+    me = user || null;
+
+  }catch(error){
+
+    console.warn(
+      "Could not load current user:",
+      error
+    );
+
+    me = null;
+  }
 }
 
-async function load(){
 
- if(!shortCode&&!legacyId){
-  document.getElementById("app").innerHTML=
-   `<div class="loading">No video selected.</div>`;
-  return;
- }
+/* =========================================================
+   GENERIC COUNT
+========================================================= */
 
- await loadMe();
+async function count(
+  table,
+  field,
+  value
+){
 
- let result;
+  try{
 
- /*
-   Short BIGULA URL first.
- */
- if(shortCode){
-  result=await supabase
-   .from("videos")
-   .select("*")
-   .eq("short_code",shortCode)
-   .maybeSingle();
+    const {
+      count,
+      error
+    } =
+    await supabase
+      .from(table)
+      .select(
+        "*",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(field,value);
 
-  /*
-    If short_code is not available, allow the UUID
-    fallback when supplied.
-  */
-  if((result.error||!result.data)&&legacyId){
-   result=await supabase
-    .from("videos")
-    .select("*")
-    .eq("id",legacyId)
-    .maybeSingle();
+    if(error){
+
+      console.warn(
+        "Count error:",
+        table,
+        error
+      );
+
+      return 0;
+    }
+
+    return count || 0;
+
+  }catch(error){
+
+    console.warn(
+      "Count exception:",
+      table,
+      error
+    );
+
+    return 0;
+  }
+}
+
+
+/* =========================================================
+   LOAD CREATOR
+========================================================= */
+
+async function loadOwner(){
+
+  const oid =
+  ownerId(video);
+
+  if(!oid){
+
+    owner = null;
+
+    return;
   }
 
- }else{
+  try{
 
-  result=await supabase
-   .from("videos")
-   .select("*")
-   .eq("id",legacyId)
-   .maybeSingle();
- }
+    const {
+      data,
+      error
+    } =
+    await supabase
+      .from("users")
+      .select("*")
+      .eq("id",oid)
+      .maybeSingle();
 
- if(result.error){
-  console.error(result.error);
+    if(error){
 
-  document.getElementById("app").innerHTML=
-   `<div class="loading">Could not load this video.</div>`;
+      console.warn(
+        "Creator profile error:",
+        error
+      );
 
-  return;
- }
+      owner = null;
 
- if(!result.data){
+      return;
+    }
 
-  document.getElementById("app").innerHTML=
-   `<div class="loading">Video not found or unavailable.</div>`;
+    owner = data || null;
 
-  return;
- }
+  }catch(error){
 
- video=result.data;
+    console.warn(
+      "Creator profile exception:",
+      error
+    );
 
- const status=String(
-  video.publication_status||
-  ""
- ).toLowerCase();
+    owner = null;
+  }
+}
 
- /*
-   Private videos are visible only to their owner.
- */
- if(
-  status &&
-  !["published","public","approved"].includes(status) &&
-  ownerId(video)!==me?.id
- ){
-  document.getElementById("app").innerHTML=
-   `<div class="loading">This video is not publicly available.</div>`;
-  return;
- }
 
- const oid=ownerId(video);
+/* =========================================================
+   LOAD USER INTERACTIONS
+========================================================= */
 
- if(oid){
-  owner=await first(
-   "users",
-   "*",
-   [["id",oid]]
+async function loadInteractions(){
+
+  if(!me || !video)
+    return;
+
+  const oid =
+  ownerId(video);
+
+  try{
+
+    const likeResult =
+    await supabase
+      .from("likes")
+      .select("id")
+      .eq("video_id",video.id)
+      .eq("user_id",me.id)
+      .limit(1);
+
+    liked =
+      !!likeResult.data?.length;
+
+  }catch(error){
+
+    liked = false;
+  }
+
+
+  if(oid && oid !== me.id){
+
+    try{
+
+      const followResult =
+      await supabase
+        .from("followers")
+        .select("id")
+        .eq(
+          "follower_id",
+          me.id
+        )
+        .eq(
+          "following_id",
+          oid
+        )
+        .limit(1);
+
+      following =
+        !!followResult.data?.length;
+
+    }catch(error){
+
+      following = false;
+    }
+  }
+}
+
+
+/* =========================================================
+   LOAD COUNTS
+========================================================= */
+
+async function loadCounts(){
+
+  if(!video)
+    return;
+
+  const oid =
+  ownerId(video);
+
+  [
+    likeCount,
+    commentCount,
+    viewCount,
+    followerCount
+  ] =
+  await Promise.all([
+
+    count(
+      "likes",
+      "video_id",
+      video.id
+    ),
+
+    count(
+      "comments",
+      "video_id",
+      video.id
+    ),
+
+    count(
+      "views",
+      "video_id",
+      video.id
+    ),
+
+    oid
+      ? count(
+          "followers",
+          "following_id",
+          oid
+        )
+      : Promise.resolve(0)
+
+  ]);
+}
+
+
+/* =========================================================
+   LOAD VIDEO
+========================================================= */
+
+async function loadVideo(){
+
+  if(!shortCode && !legacyId){
+
+    showError(
+      "No video was selected."
+    );
+
+    return;
+  }
+
+
+  /*
+    First finish a Google/Supabase
+    PKCE login if the URL contains ?code=
+  */
+
+  try{
+
+    const code =
+    params.get("code");
+
+    if(code){
+
+      const {
+        error
+      } =
+      await supabase.auth.exchangeCodeForSession(
+        code
+      );
+
+      if(error){
+
+        console.warn(
+          "PKCE exchange:",
+          error
+        );
+      }
+
+      /*
+        Remove the authentication
+        code from the address bar.
+      */
+
+      const cleanUrl =
+        location.origin +
+        location.pathname +
+        (
+          shortCode
+          ? "?v="+encodeURIComponent(shortCode)
+          : legacyId
+            ? "?id="+encodeURIComponent(legacyId)
+            : ""
+        );
+
+      history.replaceState(
+        {},
+        document.title,
+        cleanUrl
+      );
+    }
+
+  }catch(error){
+
+    console.warn(
+      "PKCE error:",
+      error
+    );
+  }
+
+
+  await loadMe();
+
+
+  let result = null;
+
+
+  /*
+    Load by BIGULA short code first.
+  */
+
+  if(shortCode){
+
+    result =
+    await supabase
+      .from("videos")
+      .select("*")
+      .eq(
+        "short_code",
+        shortCode
+      )
+      .maybeSingle();
+
+
+    /*
+      UUID fallback if supplied.
+    */
+
+    if(
+      (!result.data || result.error) &&
+      legacyId
+    ){
+
+      result =
+      await supabase
+        .from("videos")
+        .select("*")
+        .eq(
+          "id",
+          legacyId
+        )
+        .maybeSingle();
+    }
+
+  }else{
+
+    result =
+    await supabase
+      .from("videos")
+      .select("*")
+      .eq(
+        "id",
+        legacyId
+      )
+      .maybeSingle();
+  }
+
+
+  if(result.error){
+
+    console.error(
+      "Video load error:",
+      result.error
+    );
+
+    showError(
+      "Could not load this video."
+    );
+
+    return;
+  }
+
+
+  if(!result.data){
+
+    showError(
+      "Video not found or unavailable."
+    );
+
+    return;
+  }
+
+
+  video =
+  result.data;
+
+
+  /*
+    Check publication status.
+  */
+
+  const publicationStatus =
+  String(
+    video.publication_status || ""
+  ).toLowerCase();
+
+
+  if(
+    publicationStatus &&
+    ![
+      "published",
+      "public",
+      "approved"
+    ].includes(
+      publicationStatus
+    ) &&
+    ownerId(video)!==me?.id
+  ){
+
+    showError(
+      "This video is not publicly available."
+    );
+
+    return;
+  }
+
+
+  /*
+    IMPORTANT:
+    Render the actual video immediately.
+    Creator/count information is loaded
+    separately so it cannot prevent the
+    player from appearing.
+  */
+
+  renderVideoShell();
+
+
+  /*
+    Then load creator/interactions/counts.
+  */
+
+  await Promise.all([
+    loadOwner(),
+    loadInteractions(),
+    loadCounts()
+  ]);
+
+
+  /*
+    Refresh creator + statistics.
+  */
+
+  updateCreatorInfo();
+  updateActionCounts();
+
+
+  /*
+    Load comments separately.
+  */
+
+  loadComments();
+
+
+  /*
+    Record page visit.
+  */
+
+  recordView();
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(message){
+
+  document.getElementById("app").innerHTML = `
+    <div class="loading">
+      ${esc(message)}
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   VIDEO URL
+========================================================= */
+
+function videoUrl(){
+
+  return video?.video_url ||
+         video?.url ||
+         video?.file_url ||
+         video?.public_url ||
+         video?.storage_url ||
+         "";
+}
+
+
+/* =========================================================
+   RENDER VIDEO SHELL
+========================================================= */
+
+function renderVideoShell(){
+
+  const url =
+  videoUrl();
+
+
+  if(!url){
+
+    showError(
+      "This video does not have a playable video URL."
+    );
+
+    return;
+  }
+
+
+  const oid =
+  ownerId(video);
+
+
+  /*
+    Temporary creator information.
+    It gets replaced after users table loads.
+  */
+
+  const initialName =
+    "BIGULA creator";
+
+
+  const initialUsername =
+    "creator";
+
+
+  const canReuse =
+    video.allow_sound_reuse === true ||
+    video.sound_reuse_allowed === true ||
+    video.reuse_allowed === true;
+
+
+  document.getElementById("app").innerHTML = `
+
+    <!-- VIDEO PLAYER -->
+
+    <section
+      class="player paused"
+      id="player">
+
+      <video
+        id="vid"
+        playsinline
+        preload="metadata"
+        src="${esc(url)}">
+      </video>
+
+
+      <button
+        class="center"
+        id="center"
+        aria-label="Play">
+        ▶
+      </button>
+
+
+      <div class="controls">
+
+        <input
+          id="progress"
+          class="progress"
+          type="range"
+          min="0"
+          max="1000"
+          value="0"
+          aria-label="Video progress">
+
+
+        <div class="ctrlrow">
+
+          <button
+            class="ctrl"
+            id="play">
+            ▶
+          </button>
+
+
+          <button
+            class="ctrl"
+            id="mute">
+            🔊
+          </button>
+
+
+          <span
+            class="time"
+            id="time">
+            0:00 / 0:00
+          </span>
+
+
+          <button
+            class="ctrl"
+            id="speed">
+            1×
+          </button>
+
+
+          <button
+            class="ctrl"
+            id="pip">
+            ▣
+          </button>
+
+
+          <button
+            class="ctrl"
+            id="full">
+            ⛶
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- CREATOR INFORMATION -->
+
+    <section class="info">
+
+      <div class="creator">
+
+        <img
+          id="creatorAvatar"
+          class="avatar"
+          src=""
+          alt="Creator"
+          style="display:none">
+
+
+        <div
+          id="creatorFallbackAvatar"
+          class="avatar"
+          style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:21px;
+          ">
+          👤
+        </div>
+
+
+        <div class="meta">
+
+          <div
+            id="creatorName"
+            class="creatorName">
+            ${esc(initialName)}
+          </div>
+
+
+          <div
+            id="creatorHandle"
+            class="handle">
+            @${esc(initialUsername)}
+          </div>
+
+        </div>
+
+
+        ${
+          me?.id !== oid
+          ?
+          `
+          <button
+            id="follow"
+            class="follow">
+            Follow
+          </button>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+
+      <div class="title">
+        ${esc(
+          video.title ||
+          "Untitled video"
+        )}
+      </div>
+
+
+      ${
+        video.description
+        ?
+        `
+        <div class="desc">
+          ${esc(video.description)}
+        </div>
+        `
+        :
+        ""
+      }
+
+
+      <div
+        id="dateLine"
+        class="date">
+        Published ${dateFmt(
+          video.published_at ||
+          video.created_at ||
+          video.updated_at
+        )}
+      </div>
+
+    </section>
+
+
+    <!-- ACTIONS -->
+
+    <div class="actions">
+
+      <button
+        id="like"
+        class="action">
+
+        <span class="ico">
+          ♥
+        </span>
+
+        <small id="likeTxt">
+          Like · 0
+        </small>
+
+      </button>
+
+
+      <button
+        id="commentBtn"
+        class="action">
+
+        <span class="ico">
+          💬
+        </span>
+
+        <small id="commentTxt">
+          0 comments
+        </small>
+
+      </button>
+
+
+      <button
+        id="reuse"
+        class="action"
+        ${canReuse ? "" : "disabled"}>
+
+        <span class="ico">
+          🎵
+        </span>
+
+        <small>
+          ${
+            canReuse
+            ? "Reuse sound"
+            : "Sound reuse off"
+          }
+        </small>
+
+      </button>
+
+
+      <button
+        id="share"
+        class="action">
+
+        <span class="ico">
+          ↗
+        </span>
+
+        <small>
+          Share
+        </small>
+
+      </button>
+
+
+      <button
+        id="copyLink"
+        class="action">
+
+        <span class="ico">
+          🔗
+        </span>
+
+        <small>
+          Copy link
+        </small>
+
+      </button>
+
+    </div>
+
+
+    <!-- SOUND -->
+
+    <div class="sound">
+
+      <div
+        class="disc stop"
+        id="disc">
+      </div>
+
+
+      <div class="soundText">
+
+        <div class="soundTitle">
+          ${esc(
+            video.sound_title ||
+            video.sound_name ||
+            "Original sound"
+          )}
+        </div>
+
+
+        <div class="soundSub">
+
+          ${
+            canReuse
+            ?
+            "Sound can be reused on BIGULA"
+            :
+            "Creator has disabled sound reuse"
+          }
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="ctrl"
+        id="soundInfo">
+        ⓘ
+      </button>
+
+    </div>
+
+
+    <!-- COMMENTS -->
+
+    <section class="comments">
+
+      <div class="commentHeading">
+        Comments
+      </div>
+
+
+      <form
+        id="commentForm"
+        class="commentForm">
+
+        <input
+          id="commentInput"
+          maxlength="500"
+          placeholder="${
+            me
+            ? "Add a comment…"
+            : "Sign in to comment"
+          }"
+          ${me ? "" : "disabled"}>
+
+
+        <button
+          class="send"
+          ${me ? "" : "disabled"}>
+          Post
+        </button>
+
+      </form>
+
+
+      <div id="commentList">
+
+        <div
+          style="
+            color:#888;
+            padding:12px 0;
+          ">
+          Loading comments…
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MORE -->
+
+    <div class="more">
+
+      <button id="notInterested">
+        Not interested
+      </button>
+
+
+      <button id="report">
+        Report
+      </button>
+
+    </div>
+
+  `;
+
+
+  setupPlayer();
+
+  bindActions(
+    canReuse
   );
- }
+}
 
- if(me&&oid){
-  liked=!!await first(
-   "likes",
-   "id",
-   [["video_id",video.id],["user_id",me.id]]
+
+/* =========================================================
+   UPDATE CREATOR INFORMATION
+========================================================= */
+
+function updateCreatorInfo(){
+
+  const nameEl =
+  document.getElementById(
+    "creatorName"
   );
 
-  following=!!await first(
-   "followers",
-   "id",
-   [["follower_id",me.id],["following_id",oid]]
+  const handleEl =
+  document.getElementById(
+    "creatorHandle"
   );
- }
 
- /*
-   Record one view for this page visit.
- */
- await recordView();
+  const avatarEl =
+  document.getElementById(
+    "creatorAvatar"
+  );
 
- const [
-  likes,
-  comments,
-  views,
-  followers
- ]=await Promise.all([
-  count("likes","video_id",video.id),
-  count("comments","video_id",video.id),
-  count("views","video_id",video.id),
-  oid?
-   count("followers","following_id",oid):
-   Promise.resolve(0)
- ]);
+  const fallbackEl =
+  document.getElementById(
+    "creatorFallbackAvatar"
+  );
 
- render({
-  likes,
-  comments,
-  views,
-  followers
- });
 
- loadComments();
+  if(!nameEl)
+    return;
+
+
+  const username =
+    owner?.username ||
+    owner?.user_name ||
+    owner?.handle ||
+    owner?.name ||
+    "creator";
+
+
+  const display =
+    owner?.display_name ||
+    owner?.full_name ||
+    owner?.name ||
+    owner?.username ||
+    "BIGULA creator";
+
+
+  nameEl.textContent =
+  display;
+
+
+  handleEl.textContent =
+  "@" + username +
+  " · " +
+  fmt(followerCount) +
+  " followers";
+
+
+  const img =
+  avatar(owner);
+
+
+  if(img){
+
+    avatarEl.src = img;
+
+    avatarEl.style.display =
+      "block";
+
+    fallbackEl.style.display =
+      "none";
+
+
+    avatarEl.onerror =
+      function(){
+
+        this.style.display =
+          "none";
+
+        fallbackEl.style.display =
+          "flex";
+      };
+
+  }else{
+
+    avatarEl.style.display =
+      "none";
+
+    fallbackEl.style.display =
+      "flex";
+  }
+
+
+  const followBtn =
+  document.getElementById(
+    "follow"
+  );
+
+
+  if(followBtn){
+
+    followBtn.textContent =
+      following
+      ? "Following"
+      : "Follow";
+
+    followBtn.classList.toggle(
+      "following",
+      following
+    );
+  }
 }
 
-function render(c){
 
- const url=
-  video.video_url||
-  video.url||
-  video.file_url||
-  video.public_url||
-  "";
+/* =========================================================
+   UPDATE COUNTS
+========================================================= */
 
- if(!url){
-  document.getElementById("app").innerHTML=
-   `<div class="loading">
-      This video does not have a playable video URL.
-    </div>`;
-  return;
- }
+function updateActionCounts(){
 
- const oid=ownerId(video);
+  const likeTxt =
+  document.getElementById(
+    "likeTxt"
+  );
 
- const username=
-  owner?.username||
-  owner?.user_name||
-  owner?.name||
-  "BIGULA creator";
+  const commentTxt =
+  document.getElementById(
+    "commentTxt"
+  );
 
- const display=
-  owner?.display_name||
-  owner?.full_name||
-  owner?.name||
-  username;
+  const dateLine =
+  document.getElementById(
+    "dateLine"
+  );
 
- const canReuse=
-  video.allow_sound_reuse===true||
-  video.sound_reuse_allowed===true||
-  video.reuse_allowed===true;
 
- document.getElementById("app").innerHTML=`
+  if(likeTxt){
 
-<section class="player paused" id="player">
+    likeTxt.textContent =
+      `${liked ? "Liked" : "Like"} · ${fmt(likeCount)}`;
+  }
 
-<video
- id="vid"
- playsinline
- preload="metadata"
- src="${esc(url)}">
-</video>
 
-<button class="center" id="center">▶</button>
+  if(commentTxt){
 
-<div class="controls">
+    commentTxt.textContent =
+      `${fmt(commentCount)} comments`;
+  }
 
-<input
- id="progress"
- class="progress"
- type="range"
- min="0"
- max="1000"
- value="0">
 
-<div class="ctrlrow">
+  if(dateLine){
 
-<button class="ctrl" id="play">▶</button>
+    dateLine.textContent =
+      `Published ${
+        dateFmt(
+          video.published_at ||
+          video.created_at ||
+          video.updated_at
+        )
+      } · ${fmt(viewCount)} views`;
+  }
 
-<button class="ctrl" id="mute">🔊</button>
 
-<span class="time" id="time">
-0:00 / 0:00
-</span>
+  const likeBtn =
+  document.getElementById(
+    "like"
+  );
 
-<button class="ctrl" id="speed">1×</button>
 
-<button class="ctrl" id="pip">▣</button>
+  if(likeBtn){
 
-<button class="ctrl" id="full">⛶</button>
-
-</div>
-</div>
-</section>
-
-<section class="info">
-
-<div class="creator">
-
-<img
- class="avatar"
- src="${esc(avatar(owner))}"
- onerror="this.style.display='none'">
-
-<div class="meta">
-
-<div class="creatorName">
-${esc(display)}
-</div>
-
-<div class="handle">
-@${esc(username)} · ${fmt(c.followers)} followers
-</div>
-
-</div>
-
-${
- me?.id!==oid
- ?
- `<button id="follow"
- class="follow ${following?"following":""}">
- ${following?"Following":"Follow"}
- </button>`
- :""
+    likeBtn.classList.toggle(
+      "active",
+      liked
+    );
+  }
 }
 
-</div>
 
-<div class="title">
-${esc(video.title||"Untitled video")}
-</div>
-
-${
- video.description
- ?
- `<div class="desc">${esc(video.description)}</div>`
- :""
-}
-
-<div class="date">
-Published ${dateFmt(
- video.published_at||
- video.created_at||
- video.updated_at
- )} · ${fmt(c.views)} views
-</div>
-
-</section>
-
-<div class="actions">
-
-<button id="like"
- class="action ${liked?"active":""}">
-<span class="ico">♥</span>
-<small id="likeTxt">
-${liked?"Liked":"Like"} · ${fmt(c.likes)}
-</small>
-</button>
-
-<button id="commentBtn" class="action">
-<span class="ico">💬</span>
-<small>${fmt(c.comments)} comments</small>
-</button>
-
-<button
- id="reuse"
- class="action"
- ${canReuse?"":"disabled"}>
-<span class="ico">🎵</span>
-<small>
-${canReuse?"Reuse sound":"Sound reuse off"}
-</small>
-</button>
-
-<button id="share" class="action">
-<span class="ico">↗</span>
-<small>Share</small>
-</button>
-
-<button id="copyLink" class="action">
-<span class="ico">🔗</span>
-<small>Copy link</small>
-</button>
-
-</div>
-
-<div class="sound">
-
-<div class="disc stop" id="disc"></div>
-
-<div class="soundText">
-
-<div class="soundTitle">
-${esc(video.sound_title||video.sound_name||"Original sound")}
-</div>
-
-<div class="soundSub">
-${canReuse?
- "Sound can be reused on BIGULA":
- "Creator has disabled sound reuse"}
-</div>
-
-</div>
-
-<button class="ctrl" id="soundInfo">ⓘ</button>
-
-</div>
-
-<section class="comments">
-
-<div style="font-weight:800;margin-bottom:10px">
-Comments
-</div>
-
-<form id="commentForm" class="commentForm">
-
-<input
- id="commentInput"
- maxlength="500"
- placeholder="${me?"Add a comment…":"Sign in to comment"}"
- ${me?"":"disabled"}>
-
-<button
- class="send"
- ${me?"":"disabled"}>
-Post
-</button>
-
-</form>
-
-<div id="commentList"></div>
-
-</section>
-
-<div class="more">
-
-<button id="notInterested">
-Not interested
-</button>
-
-<button id="report">
-Report
-</button>
-
-</div>
-`;
-
- setupPlayer();
- bindActions(canReuse);
-}
+/* =========================================================
+   PLAYER
+========================================================= */
 
 function setupPlayer(){
 
- const v=document.getElementById("vid");
- const shell=document.getElementById("player");
- const play=document.getElementById("play");
- const center=document.getElementById("center");
- const progress=document.getElementById("progress");
- const time=document.getElementById("time");
- const mute=document.getElementById("mute");
+  const v =
+  document.getElementById("vid");
 
- const fmtTime=s=>{
-  s=Math.max(0,Math.floor(s||0));
-  return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
- };
+  const shell =
+  document.getElementById("player");
 
- const toggle=async()=>{
-  if(v.paused){
-   try{await v.play()}
-   catch(e){toast("Tap play to start the video")}
-  }else{
-   v.pause();
-  }
- };
+  const play =
+  document.getElementById("play");
 
- play.onclick=toggle;
- center.onclick=toggle;
+  const center =
+  document.getElementById("center");
 
- v.addEventListener("play",()=>{
-  shell.classList.remove("paused");
-  play.textContent="Ⅱ";
-  document.getElementById("disc")?.classList.remove("stop");
- });
+  const progress =
+  document.getElementById("progress");
 
- v.addEventListener("pause",()=>{
-  shell.classList.add("paused");
-  play.textContent="▶";
-  document.getElementById("disc")?.classList.add("stop");
- });
+  const time =
+  document.getElementById("time");
 
- v.addEventListener("loadedmetadata",()=>{
-  time.textContent=
-   `0:00 / ${fmtTime(v.duration)}`;
- });
+  const mute =
+  document.getElementById("mute");
 
- v.addEventListener("timeupdate",()=>{
-  progress.value=
-   v.duration?
-   (v.currentTime/v.duration)*1000:
-   0;
+  const disc =
+  document.getElementById("disc");
 
-  time.textContent=
-   `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
- });
 
- progress.oninput=()=>{
-  if(v.duration)
-   v.currentTime=
-    Number(progress.value)/1000*v.duration;
- };
-
- mute.onclick=()=>{
-  v.muted=!v.muted;
-  mute.textContent=v.muted?"🔇":"🔊";
- };
-
- document.getElementById("speed").onclick=()=>{
-  const rates=[1,.75,1.25,1.5,2];
-  const i=rates.indexOf(v.playbackRate);
-  v.playbackRate=rates[(i+1)%rates.length];
-  document.getElementById("speed").textContent=
-   v.playbackRate+"×";
- };
-
- document.getElementById("full").onclick=
-  ()=>shell.requestFullscreen?.();
-
- document.getElementById("pip").onclick=
-  ()=>v.requestPictureInPicture?.().catch(()=>{});
-
- shell.onclick=e=>{
-  if(e.target===v)toggle();
- };
-}
-
-async function bindActions(canReuse){
-
- document.getElementById("follow")?.addEventListener(
-  "click",
-  async()=>{
-   if(!me){
-    toast("Sign in to follow creators");
+  if(!v)
     return;
-   }
 
-   const oid=ownerId(video);
 
-   if(following){
+  const fmtTime =
+  seconds => {
 
-    const {error}=await supabase
-     .from("followers")
-     .delete()
-     .eq("follower_id",me.id)
-     .eq("following_id",oid);
+    seconds =
+      Math.max(
+        0,
+        Math.floor(
+          seconds || 0
+        )
+      );
 
-    if(!error)following=false;
+    return (
+      Math.floor(seconds / 60) +
+      ":" +
+      String(
+        seconds % 60
+      ).padStart(2,"0")
+    );
+  };
 
-   }else{
 
-    const {error}=await supabase
-     .from("followers")
-     .insert({
-      follower_id:me.id,
-      following_id:oid
-     });
+  const toggle =
+  async()=>{
 
-    if(!error)following=true;
-   }
+    if(v.paused){
 
-   const b=document.getElementById("follow");
+      try{
 
-   if(b){
-    b.textContent=following?"Following":"Follow";
-    b.classList.toggle("following",following);
-   }
-  }
- );
+        await v.play();
 
- document.getElementById("like").onclick=
- async()=>{
-  if(!me){
-   toast("Sign in to like this video");
-   return;
-  }
+      }catch(error){
 
-  if(liked){
+        toast(
+          "Tap play to start the video"
+        );
+      }
 
-   const {error}=await supabase
-    .from("likes")
-    .delete()
-    .eq("video_id",video.id)
-    .eq("user_id",me.id);
+    }else{
 
-   if(!error)liked=false;
+      v.pause();
+    }
+  };
 
-  }else{
 
-   const {error}=await supabase
-    .from("likes")
-    .insert({
-     video_id:video.id,
-     user_id:me.id
-    });
+  play.onclick =
+    toggle;
 
-   if(!error)liked=true;
-  }
+  center.onclick =
+    toggle;
+
+
+  v.addEventListener(
+    "play",
+    ()=>{
+
+      shell.classList.remove(
+        "paused"
+      );
+
+      play.textContent =
+        "Ⅱ";
+
+      disc?.classList.remove(
+        "stop"
+      );
+    }
+  );
+
+
+  v.addEventListener(
+    "pause",
+    ()=>{
+
+      shell.classList.add(
+        "paused"
+      );
+
+      play.textContent =
+        "▶";
+
+      disc?.classList.add(
+        "stop"
+      );
+    }
+  );
+
+
+  v.addEventListener(
+    "loadedmetadata",
+    ()=>{
+
+      time.textContent =
+        `0:00 / ${fmtTime(v.duration)}`;
+    }
+  );
+
+
+  v.addEventListener(
+    "timeupdate",
+    ()=>{
+
+      progress.value =
+        v.duration
+        ?
+        (
+          v.currentTime /
+          v.duration
+        ) * 1000
+        :
+        0;
+
+
+      time.textContent =
+        `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
+    }
+  );
+
+
+  progress.oninput =
+    ()=>{
+
+      if(v.duration){
+
+        v.currentTime =
+          Number(
+            progress.value
+          ) /
+          1000 *
+          v.duration;
+      }
+    };
+
+
+  mute.onclick =
+    ()=>{
+
+      v.muted =
+        !v.muted;
+
+      mute.textContent =
+        v.muted
+        ? "🔇"
+        : "🔊";
+    };
+
+
+  document
+    .getElementById("speed")
+    .onclick =
+    ()=>{
+
+      const rates =
+        [
+          1,
+          .75,
+          1.25,
+          1.5,
+          2
+        ];
+
+      const index =
+        rates.indexOf(
+          v.playbackRate
+        );
+
+      v.playbackRate =
+        rates[
+          (index + 1) %
+          rates.length
+        ];
+
+
+      document
+        .getElementById("speed")
+        .textContent =
+          v.playbackRate +
+          "×";
+    };
+
+
+  document
+    .getElementById("full")
+    .onclick =
+    async()=>{
+
+      try{
+
+        if(
+          document.fullscreenElement
+        ){
+
+          await document.exitFullscreen();
+
+        }else{
+
+          await shell.requestFullscreen?.();
+        }
+
+      }catch(error){}
+    };
+
+
+  document
+    .getElementById("pip")
+    .onclick =
+    async()=>{
+
+      try{
+
+        if(
+          document.pictureInPictureElement
+        ){
+
+          await document.exitPictureInPicture();
+
+        }else if(
+          document.pictureInPictureEnabled &&
+          !v.disablePictureInPicture
+        ){
+
+          await v.requestPictureInPicture();
+        }
+
+      }catch(error){}
+    };
+
 
   /*
-    FIXED: use video.id, not undefined "id".
+    Clicking the actual video
+    toggles play/pause.
   */
-  const n=await count(
-   "likes",
-   "video_id",
-   video.id
+
+  v.addEventListener(
+    "click",
+    toggle
   );
 
-  const b=document.getElementById("like");
 
-  b.classList.toggle("active",liked);
+  /*
+    Try to start playback.
+    If browser blocks sound,
+    retry muted.
+  */
 
-  document.getElementById("likeTxt").textContent=
-   `${liked?"Liked":"Like"} · ${fmt(n)}`;
- };
+  v.play().catch(
+    async()=>{
 
- document.getElementById("reuse").onclick=()=>{
-  if(canReuse)
-   location.href=
-    "upload.html?sound_video="+
-    encodeURIComponent(video.id);
- };
+      try{
 
- document.getElementById("share").onclick=async()=>{
-  const link=shareLink();
+        v.muted = true;
 
-  if(navigator.share){
-   try{
-    await navigator.share({
-     title:video.title||"BIGULA video",
-     url:link
-    });
-   }catch(e){}
-  }else{
-   await copy(link);
-   toast("BIGULA video link copied");
-  }
- };
+        await v.play();
 
- document.getElementById("copyLink").onclick=
- async()=>{
-  await copy(shareLink());
-  toast("BIGULA video link copied");
- };
+        mute.textContent =
+          "🔇";
 
- document.getElementById("commentBtn").onclick=
-  ()=>document.getElementById("commentInput")?.focus();
-
- document.getElementById("commentForm").onsubmit=
-  postComment;
-
- document.getElementById("soundInfo").onclick=
-  ()=>toast(
-   canReuse?
-   "Other creators can reuse this sound.":
-   "The creator has disabled sound reuse."
+      }catch(error){}
+    }
   );
-
- document.getElementById("notInterested").onclick=
-  ()=>toast("We'll show you fewer videos like this");
-
- document.getElementById("report").onclick=
-  reportVideo;
-
- document.getElementById("moreTop").onclick=
-  ()=>toast("More options are available below");
 }
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+function bindActions(
+  canReuse
+){
+
+  const followBtn =
+  document.getElementById(
+    "follow"
+  );
+
+
+  /* FOLLOW */
+
+  followBtn?.addEventListener(
+    "click",
+    async()=>{
+
+      if(!me){
+
+        toast(
+          "Sign in to follow creators"
+        );
+
+        return;
+      }
+
+
+      const oid =
+      ownerId(video);
+
+
+      if(!oid ||
+         oid === me.id)
+        return;
+
+
+      followBtn.disabled =
+        true;
+
+
+      try{
+
+        if(following){
+
+          const {
+            error
+          } =
+          await supabase
+            .from("followers")
+            .delete()
+            .eq(
+              "follower_id",
+              me.id
+            )
+            .eq(
+              "following_id",
+              oid
+            );
+
+
+          if(error){
+
+            console.error(
+              error
+            );
+
+            toast(
+              "Could not unfollow creator"
+            );
+
+          }else{
+
+            following =
+              false;
+
+            followerCount =
+              Math.max(
+                0,
+                followerCount - 1
+              );
+          }
+
+        }else{
+
+          const {
+            error
+          } =
+          await supabase
+            .from("followers")
+            .insert({
+              follower_id:me.id,
+              following_id:oid
+            });
+
+
+          if(error){
+
+            console.error(
+              error
+            );
+
+            toast(
+              "Could not follow creator"
+            );
+
+          }else{
+
+            following =
+              true;
+
+            followerCount++;
+          }
+        }
+
+
+        updateCreatorInfo();
+
+      }finally{
+
+        followBtn.disabled =
+          false;
+      }
+    }
+  );
+
+
+  /* LIKE */
+
+  document
+    .getElementById("like")
+    .onclick =
+    async()=>{
+
+      if(!me){
+
+        toast(
+          "Sign in to like this video"
+        );
+
+        return;
+      }
+
+
+      const button =
+      document.getElementById(
+        "like"
+      );
+
+
+      button.disabled =
+        true;
+
+
+      try{
+
+        if(liked){
+
+          const {
+            error
+          } =
+          await supabase
+            .from("likes")
+            .delete()
+            .eq(
+              "video_id",
+              video.id
+            )
+            .eq(
+              "user_id",
+              me.id
+            );
+
+
+          if(error){
+
+            console.error(
+              "Unlike:",
+              error
+            );
+
+            toast(
+              "Could not remove like"
+            );
+
+            return;
+          }
+
+
+          liked =
+            false;
+
+          likeCount =
+            Math.max(
+              0,
+              likeCount - 1
+            );
+
+        }else{
+
+          const {
+            error
+          } =
+          await supabase
+            .from("likes")
+            .insert({
+              video_id:video.id,
+              user_id:me.id
+            });
+
+
+          if(error){
+
+            console.error(
+              "Like:",
+              error
+            );
+
+            toast(
+              "Could not like this video"
+            );
+
+            return;
+          }
+
+
+          liked =
+            true;
+
+          likeCount++;
+        }
+
+
+        updateActionCounts();
+
+      }finally{
+
+        button.disabled =
+          false;
+      }
+    };
+
+
+  /* REUSE SOUND */
+
+  document
+    .getElementById("reuse")
+    .onclick =
+    ()=>{
+
+      if(!canReuse)
+        return;
+
+
+      location.href =
+        "upload.html?sound_video=" +
+        encodeURIComponent(
+          video.id
+        );
+    };
+
+
+  /* SHARE */
+
+  document
+    .getElementById("share")
+    .onclick =
+    async()=>{
+
+      const link =
+      shareLink();
+
+
+      if(
+        navigator.share
+      ){
+
+        try{
+
+          await navigator.share({
+            title:
+              video.title ||
+              "BIGULA video",
+
+            url:link
+          });
+
+        }catch(error){}
+
+      }else{
+
+        await copy(link);
+
+        toast(
+          "BIGULA video link copied"
+        );
+      }
+    };
+
+
+  /* COPY */
+
+  document
+    .getElementById("copyLink")
+    .onclick =
+    async()=>{
+
+      await copy(
+        shareLink()
+      );
+
+      toast(
+        "BIGULA video link copied"
+      );
+    };
+
+
+  /* COMMENT BUTTON */
+
+  document
+    .getElementById("commentBtn")
+    .onclick =
+    ()=>{
+
+      document
+        .getElementById(
+          "commentInput"
+        )
+        ?.focus();
+    };
+
+
+  /* COMMENT FORM */
+
+  document
+    .getElementById("commentForm")
+    .onsubmit =
+    postComment;
+
+
+  /* SOUND INFO */
+
+  document
+    .getElementById("soundInfo")
+    .onclick =
+    ()=>{
+
+      toast(
+        canReuse
+        ?
+        "Other creators can reuse this sound."
+        :
+        "The creator has disabled sound reuse."
+      );
+    };
+
+
+  /* NOT INTERESTED */
+
+  document
+    .getElementById("notInterested")
+    .onclick =
+    ()=>{
+
+      toast(
+        "We'll show you fewer videos like this"
+      );
+    };
+
+
+  /* REPORT */
+
+  document
+    .getElementById("report")
+    .onclick =
+    reportVideo;
+
+
+  /* TOP MORE */
+
+  document
+    .getElementById("moreTop")
+    .onclick =
+    ()=>{
+
+      toast(
+        "More options are available below"
+      );
+    };
+}
+
+
+/* =========================================================
+   SHARE LINK
+========================================================= */
 
 function shareLink(){
 
- if(video.short_code){
-  return `${location.origin}${location.pathname}?v=${encodeURIComponent(video.short_code)}`;
- }
+  if(video.short_code){
 
- return `${location.origin}${location.pathname}?id=${encodeURIComponent(video.id)}`;
+    return (
+      location.origin +
+      location.pathname +
+      "?v=" +
+      encodeURIComponent(
+        video.short_code
+      )
+    );
+  }
+
+
+  return (
+    location.origin +
+    location.pathname +
+    "?id=" +
+    encodeURIComponent(
+      video.id
+    )
+  );
 }
+
+
+/* =========================================================
+   COPY
+========================================================= */
 
 async function copy(text){
- try{
-  await navigator.clipboard.writeText(text);
- }catch(e){
-  const input=document.createElement("input");
-  input.value=text;
-  document.body.appendChild(input);
-  input.select();
-  document.execCommand("copy");
-  input.remove();
- }
+
+  try{
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+  }catch(error){
+
+    const input =
+    document.createElement(
+      "input"
+    );
+
+    input.value =
+      text;
+
+    document.body.appendChild(
+      input
+    );
+
+    input.select();
+
+    document.execCommand(
+      "copy"
+    );
+
+    input.remove();
+  }
 }
+
+
+/* =========================================================
+   COMMENTS
+========================================================= */
 
 async function postComment(e){
 
- e.preventDefault();
+  e.preventDefault();
 
- if(!me){
-  toast("Sign in to comment");
-  return;
- }
-
- const input=document.getElementById("commentInput");
- const text=input.value.trim();
-
- if(!text)return;
-
- let result=await supabase
-  .from("comments")
-  .insert({
-   video_id:video.id,
-   user_id:me.id,
-   comment:text,
-   content:text,
-   text
-  });
-
- if(result.error){
-
-  result=await supabase
-   .from("comments")
-   .insert({
-    video_id:video.id,
-    user_id:me.id,
-    content:text
-   });
- }
-
- if(result.error){
-  toast("Could not post comment");
-  return;
- }
-
- input.value="";
- toast("Comment posted");
- loadComments();
-}
-
-async function loadComments(){
-
- const box=document.getElementById("commentList");
-
- if(!box)return;
-
- const {data,error}=await supabase
-  .from("comments")
-  .select("*")
-  .eq("video_id",video.id)
-  .order("created_at",{ascending:false})
-  .limit(50);
-
- if(error||!data?.length){
-  box.innerHTML=
-   `<div style="color:#888;padding:12px 0">
-      No comments yet. Be the first to comment.
-    </div>`;
-  return;
- }
-
- const ids=[
-  ...new Set(
-   data.map(x=>x.user_id).filter(Boolean)
-  )
- ];
-
- let users=[];
-
- if(ids.length){
-  const r=await supabase
-   .from("users")
-   .select("*")
-   .in("id",ids);
-
-  users=r.data||[];
- }
-
- box.innerHTML=data.map(c=>{
-
-  const u=
-   users.find(x=>x.id===c.user_id)||{};
-
-  return `
-  <div class="comment">
-
-  <img
-   class="avatar"
-   src="${esc(avatar(u))}"
-   onerror="this.style.display='none'">
-
-  <div class="commentBody">
-
-  <div class="commentTop">
-   <b>${esc(
-    u.display_name||
-    u.username||
-    u.name||
-    "BIGULA user"
-   )}</b>
-
-   <span>
-   ${dateFmt(c.created_at)}
-   </span>
-  </div>
-
-  <div class="commentText">
-  ${esc(c.comment||c.content||c.text||"")}
-  </div>
-
-  </div>
-  </div>`;
- }).join("");
-}
-
-async function recordView(){
-
- try{
 
   if(!me){
 
-   await supabase
-    .from("views")
-    .insert({
-     video_id:video.id
-    });
+    toast(
+      "Sign in to comment"
+    );
 
-  }else{
-
-   await supabase
-    .from("views")
-    .insert({
-     video_id:video.id,
-     user_id:me.id
-    });
+    return;
   }
 
- }catch(e){
-  console.warn("View:",e);
- }
+
+  const input =
+  document.getElementById(
+    "commentInput"
+  );
+
+
+  const text =
+  input.value.trim();
+
+
+  if(!text)
+    return;
+
+
+  let result =
+  await supabase
+    .from("comments")
+    .insert({
+      video_id:video.id,
+      user_id:me.id,
+      comment:text,
+      content:text,
+      text:text
+    });
+
+
+  /*
+    Fallback for schemas
+    that only contain content.
+  */
+
+  if(result.error){
+
+    result =
+    await supabase
+      .from("comments")
+      .insert({
+        video_id:video.id,
+        user_id:me.id,
+        content:text
+      });
+  }
+
+
+  if(result.error){
+
+    console.error(
+      "Comment:",
+      result.error
+    );
+
+    toast(
+      "Could not post comment"
+    );
+
+    return;
+  }
+
+
+  input.value =
+    "";
+
+  toast(
+    "Comment posted"
+  );
+
+
+  commentCount++;
+
+  updateActionCounts();
+
+  loadComments();
 }
+
+
+/* =========================================================
+   LOAD COMMENTS
+========================================================= */
+
+async function loadComments(){
+
+  const box =
+  document.getElementById(
+    "commentList"
+  );
+
+
+  if(!box ||
+     !video)
+    return;
+
+
+  const {
+    data,
+    error
+  } =
+  await supabase
+    .from("comments")
+    .select("*")
+    .eq(
+      "video_id",
+      video.id
+    )
+    .order(
+      "created_at",
+      {
+        ascending:false
+      }
+    )
+    .limit(50);
+
+
+  if(error){
+
+    console.warn(
+      "Comments:",
+      error
+    );
+
+    box.innerHTML = `
+      <div
+        style="
+          color:#888;
+          padding:12px 0;
+        ">
+        Comments could not be loaded.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  if(!data?.length){
+
+    box.innerHTML = `
+      <div
+        style="
+          color:#888;
+          padding:12px 0;
+        ">
+        No comments yet.
+        Be the first to comment.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  /*
+    Load comment creators.
+  */
+
+  const ids =
+  [
+    ...new Set(
+      data
+        .map(
+          x => x.user_id
+        )
+        .filter(Boolean)
+    )
+  ];
+
+
+  let users = [];
+
+
+  if(ids.length){
+
+    const result =
+    await supabase
+      .from("users")
+      .select("*")
+      .in(
+        "id",
+        ids
+      );
+
+    users =
+      result.data || [];
+  }
+
+
+  box.innerHTML =
+  data.map(
+    c => {
+
+      const u =
+      users.find(
+        x =>
+          x.id === c.user_id
+      ) || {};
+
+
+      const av =
+      avatar(u);
+
+
+      const commentAvatar =
+      av
+      ?
+      `
+      <img
+        class="avatar"
+        src="${esc(av)}"
+        alt=""
+        onerror="
+          this.style.display='none'
+        ">
+      `
+      :
+      `
+      <div
+        class="avatar"
+        style="
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:16px;
+        ">
+        👤
+      </div>
+      `;
+
+
+      return `
+
+        <div class="comment">
+
+          ${commentAvatar}
+
+          <div class="commentBody">
+
+            <div class="commentTop">
+
+              <b>
+                ${esc(
+                  u.display_name ||
+                  u.full_name ||
+                  u.username ||
+                  u.name ||
+                  "BIGULA user"
+                )}
+              </b>
+
+              <span>
+                ${dateFmt(
+                  c.created_at
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="commentText">
+
+              ${esc(
+                c.comment ||
+                c.content ||
+                c.text ||
+                ""
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
+  ).join("");
+}
+
+
+/* =========================================================
+   RECORD VIEW
+========================================================= */
+
+async function recordView(){
+
+  if(!video)
+    return;
+
+
+  try{
+
+    const payload =
+    {
+      video_id:video.id
+    };
+
+
+    if(me?.id){
+
+      payload.user_id =
+        me.id;
+    }
+
+
+    const {
+      error
+    } =
+    await supabase
+      .from("views")
+      .insert(
+        payload
+      );
+
+
+    if(error){
+
+      console.warn(
+        "View:",
+        error
+      );
+
+      return;
+    }
+
+
+    /*
+      Update displayed count
+      immediately.
+    */
+
+    viewCount++;
+
+    const dateLine =
+    document.getElementById(
+      "dateLine"
+    );
+
+
+    if(dateLine){
+
+      dateLine.textContent =
+        `Published ${
+          dateFmt(
+            video.published_at ||
+            video.created_at ||
+            video.updated_at
+          )
+        } · ${fmt(viewCount)} views`;
+    }
+
+  }catch(error){
+
+    console.warn(
+      "View exception:",
+      error
+    );
+  }
+}
+
+
+/* =========================================================
+   REPORT
+========================================================= */
 
 async function reportVideo(){
 
- const reason=prompt(
-  "Why are you reporting this video?\n\n"+
-  "Examples: harmful content, copyright, spam, harassment, other"
- );
+  const reason =
+  prompt(
+    "Why are you reporting this video?\n\n" +
+    "Examples: harmful content, copyright, spam, harassment, other"
+  );
 
- if(!reason)return;
 
- if(!me){
-  toast("Sign in to report a video");
-  return;
- }
+  if(!reason)
+    return;
 
- const {error}=await supabase
-  .from("reports")
-  .insert({
-   video_id:video.id,
-   user_id:me.id,
-   reason:reason.trim(),
-   status:"open"
-  });
 
- toast(
-  error?
-  "Report could not be submitted":
-  "Report submitted. Thank you."
- );
+  if(!me){
+
+    toast(
+      "Sign in to report a video"
+    );
+
+    return;
+  }
+
+
+  const {
+    error
+  } =
+  await supabase
+    .from("reports")
+    .insert({
+      video_id:video.id,
+      user_id:me.id,
+      reason:reason.trim(),
+      status:"open"
+    });
+
+
+  if(error){
+
+    console.error(
+      "Report:",
+      error
+    );
+
+    toast(
+      "Report could not be submitted"
+    );
+
+  }else{
+
+    toast(
+      "Report submitted. Thank you."
+    );
+  }
 }
 
-load();
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+document
+  .getElementById("backBtn")
+  .onclick =
+  ()=>{
+
+    /*
+      If there is browser history,
+      return to the previous page.
+    */
+
+    if(
+      history.length > 1
+    ){
+
+      history.back();
+
+    }else{
+
+      /*
+        Otherwise return to Home.
+      */
+
+      location.href =
+        "home.html";
+    }
+  };
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadVideo();
 
 </script>
+
 </body>
 </html>
-```
