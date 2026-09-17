@@ -24,8 +24,8 @@ main{
   width:100%;
   max-width:700px;
   margin:0 auto;
-  background:#fff;
   min-height:100vh;
+  background:#fff;
   padding:18px;
 }
 
@@ -33,25 +33,28 @@ main{
   display:inline-flex;
   align-items:center;
   gap:6px;
+  border:0;
+  background:none;
   color:#111;
   text-decoration:none;
-  font-size:15px;
-  font-weight:600;
-  margin-bottom:8px;
+  font-size:25px;
+  padding:3px 0;
+  margin:0 0 8px;
+  cursor:pointer;
 }
 
 h1{
-  margin:10px 0 20px;
+  margin:8px 0 20px;
   font-size:26px;
 }
 
 .preview{
   width:100%;
+  min-height:180px;
   background:#000;
   border-radius:14px;
   overflow:hidden;
   margin-bottom:8px;
-  min-height:180px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -67,8 +70,8 @@ h1{
 
 .preview-note{
   text-align:center;
-  font-size:12px;
   color:#777;
+  font-size:12px;
   margin:7px 0 22px;
 }
 
@@ -85,9 +88,9 @@ select{
   padding:12px;
   border:1px solid #ccc;
   border-radius:9px;
-  font:inherit;
   background:#fff;
   color:#111;
+  font:inherit;
   outline:none;
 }
 
@@ -102,46 +105,46 @@ textarea{
   resize:vertical;
 }
 
-button{
+#save{
   width:100%;
-  padding:14px;
   margin-top:22px;
+  padding:14px;
   border:0;
   border-radius:10px;
   background:#111;
   color:#fff;
-  font-weight:bold;
   font-size:15px;
+  font-weight:bold;
   cursor:pointer;
 }
 
-button:disabled{
+#save:disabled{
   opacity:.55;
   cursor:not-allowed;
 }
 
 #loading{
+  padding:40px 15px;
   text-align:center;
   color:#777;
-  padding:40px 15px;
 }
 
 #errorBox{
   display:none;
-  margin-top:15px;
-  padding:12px;
+  padding:13px;
+  margin:15px 0;
   border-radius:10px;
-  background:#ffe9e9;
-  color:#b00020;
+  background:#ffe8e8;
+  color:#a00000;
   font-size:14px;
   line-height:1.45;
   word-break:break-word;
 }
 
 #status{
+  min-height:20px;
   margin-top:12px;
   text-align:center;
-  min-height:20px;
   font-size:14px;
 }
 
@@ -155,11 +158,13 @@ button:disabled{
 
 <main>
 
-<a class="back" href="account.html">‹ Account</a>
+<button id="backBtn" class="back" type="button">‹ Account</button>
 
 <h1>Edit video</h1>
 
-<div id="loading">Loading your video…</div>
+<div id="loading">
+  Loading your video…
+</div>
 
 <div id="errorBox"></div>
 
@@ -179,15 +184,19 @@ button:disabled{
   </div>
 
   <label for="title">Title</label>
+
   <input
     id="title"
     maxlength="150"
     placeholder="Change your video title">
 
+
   <label for="category">Category</label>
 
   <select id="category">
+
     <option value="">Select a category</option>
+
     <option value="Entertainment">Entertainment</option>
     <option value="Comedy">Comedy</option>
     <option value="Music">Music</option>
@@ -209,7 +218,9 @@ button:disabled{
     <option value="People & Blogs">People & Blogs</option>
     <option value="Cars & Vehicles">Cars & Vehicles</option>
     <option value="Other">Other</option>
+
   </select>
+
 
   <label for="description">Description</label>
 
@@ -217,6 +228,7 @@ button:disabled{
     id="description"
     maxlength="5000"
     placeholder="Change your video description"></textarea>
+
 
   <button id="save" type="button">
     Save changes
@@ -228,6 +240,7 @@ button:disabled{
 
 </main>
 
+
 <script type="module">
 
 import {
@@ -236,7 +249,7 @@ import {
 
 
 /* =========================================================
-   BIGULA SUPABASE
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -246,18 +259,19 @@ const SUPABASE_KEY =
   "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
 
-const supabase = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true,
-      flowType:"pkce"
+const supabase =
+  createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true,
+        flowType:"pkce"
+      }
     }
-  }
-);
+  );
 
 
 /* =========================================================
@@ -291,11 +305,12 @@ const saveButton =
 const statusEl =
   document.getElementById("status");
 
+const backBtn =
+  document.getElementById("backBtn");
+
 
 /* =========================================================
    VIDEO ID
-   Accept:
-   edit_video.html?id=VIDEO_ID
 ========================================================= */
 
 const params =
@@ -307,31 +322,82 @@ const videoId =
 
 
 /* =========================================================
-   HELPERS
+   STATE
+========================================================= */
+
+let currentUser =
+  null;
+
+let currentVideo =
+  null;
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+backBtn.addEventListener(
+  "click",
+  () => {
+
+    if(history.length > 1){
+
+      history.back();
+
+    }else{
+
+      location.href =
+        "account.html";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(message){
+
+  statusEl.textContent =
+    message;
+
+}
+
+
+/* =========================================================
+   ERROR
 ========================================================= */
 
 function showError(message){
 
-  loading.style.display = "none";
+  loading.style.display =
+    "none";
 
-  errorBox.textContent = message;
+  editor.classList.add(
+    "hidden"
+  );
 
-  errorBox.style.display = "block";
+  errorBox.textContent =
+    message;
+
+  errorBox.style.display =
+    "block";
 
 }
 
 
-function setStatus(message){
-
-  statusEl.textContent = message;
-
-}
-
+/* =========================================================
+   VIDEO URL
+========================================================= */
 
 function getVideoUrl(video){
 
   /*
-    BIGULA supports several possible URL fields.
+    First use a direct URL if your videos table
+    contains one.
   */
 
   const directUrl =
@@ -342,26 +408,32 @@ function getVideoUrl(video){
     video.playback_url ||
     "";
 
+
   if(directUrl){
+
     return directUrl;
+
   }
 
 
   /*
-    If only storage_path exists,
-    build the public Supabase Storage URL.
+    Otherwise build the Supabase Storage URL
+    from storage_path.
   */
 
-  const path =
+  const storagePath =
     video.storage_path ||
     video.file_path ||
     video.path ||
     "";
 
-  if(path){
+
+  if(storagePath){
 
     const cleanPath =
-      String(path).replace(/^\/+/,"");
+      String(storagePath)
+        .replace(/^\/+/,"");
+
 
     return (
       SUPABASE_URL +
@@ -371,35 +443,117 @@ function getVideoUrl(video){
 
   }
 
+
   return "";
-}
-
-
-function addUnknownCategory(value){
-
-  if(!value) return;
-
-  const exists =
-    [...categoryInput.options]
-      .some(option => option.value === value);
-
-  if(!exists){
-
-    const option =
-      document.createElement("option");
-
-    option.value = value;
-    option.textContent = value;
-
-    categoryInput.appendChild(option);
-
-  }
 
 }
 
 
 /* =========================================================
-   LOAD OWN VIDEO
+   CATEGORY
+========================================================= */
+
+function setCategory(value){
+
+  if(!value){
+
+    categoryInput.value =
+      "";
+
+    return;
+
+  }
+
+
+  const exists =
+    [...categoryInput.options]
+      .some(
+        option =>
+          option.value === value
+      );
+
+
+  if(!exists){
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      value;
+
+    option.textContent =
+      value;
+
+    categoryInput.appendChild(
+      option
+    );
+
+  }
+
+
+  categoryInput.value =
+    value;
+
+}
+
+
+/* =========================================================
+   GET SESSION
+========================================================= */
+
+async function getLoggedInUser(){
+
+  const {
+    data,
+    error
+  } =
+    await supabase.auth.getSession();
+
+
+  if(error){
+
+    console.error(
+      "Session error:",
+      error
+    );
+
+  }
+
+
+  if(data?.session?.user){
+
+    return data.session.user;
+
+  }
+
+
+  /*
+    Try refreshing the persisted Google session.
+  */
+
+  const refreshed =
+    await supabase.auth.refreshSession();
+
+
+  if(
+    !refreshed.error &&
+    refreshed.data?.session?.user
+  ){
+
+    return refreshed.data.session.user;
+
+  }
+
+
+  return null;
+
+}
+
+
+/* =========================================================
+   LOAD VIDEO
 ========================================================= */
 
 async function loadVideo(){
@@ -409,7 +563,30 @@ async function loadVideo(){
     if(!videoId){
 
       showError(
-        "No video ID was supplied. Open Edit from your own video."
+        "No video ID was supplied."
+      );
+
+      return;
+
+    }
+
+
+    /*
+      Get actual authenticated Google user.
+    */
+
+    currentUser =
+      await getLoggedInUser();
+
+
+    if(!currentUser){
+
+      location.replace(
+        "signup.html?next=" +
+        encodeURIComponent(
+          "edit_video.html?id=" +
+          videoId
+        )
       );
 
       return;
@@ -419,69 +596,9 @@ async function loadVideo(){
 
     /*
       IMPORTANT:
-      Get the real logged-in Google/Supabase user.
-    */
+      Your videos table uses user_id.
 
-    let {
-      data:sessionData,
-      error:sessionError
-    } =
-      await supabase.auth.getSession();
-
-
-    if(sessionError){
-
-      console.error(sessionError);
-
-    }
-
-
-    let session =
-      sessionData?.session;
-
-
-    /*
-      If session isn't immediately available,
-      refresh it.
-    */
-
-    if(!session){
-
-      const refreshed =
-        await supabase.auth.refreshSession();
-
-      if(!refreshed.error){
-
-        session =
-          refreshed.data?.session || null;
-
-      }
-
-    }
-
-
-    if(!session?.user){
-
-      location.replace(
-        "signup.html?next=" +
-        encodeURIComponent(
-          "edit_video.html?id=" + videoId
-        )
-      );
-
-      return;
-
-    }
-
-
-    const currentUser =
-      session.user;
-
-
-    /*
-      Fetch the video using the authenticated
-      Supabase client. The user's JWT is automatically
-      attached, unlike the old REST implementation.
+      We therefore DO NOT reference creator_id.
     */
 
     const {
@@ -498,12 +615,12 @@ async function loadVideo(){
     if(error){
 
       console.error(
-        "BIGULA video load error:",
+        "Load video error:",
         error
       );
 
       showError(
-        "Could not load this video: " +
+        "Could not load this video:\n\n" +
         error.message
       );
 
@@ -515,7 +632,7 @@ async function loadVideo(){
     if(!video){
 
       showError(
-        "This video could not be found."
+        "Video not found."
       );
 
       return;
@@ -524,21 +641,18 @@ async function loadVideo(){
 
 
     /*
-      Verify ownership.
-
-      Your BIGULA videos table uses creator_id.
+      YOUR ACTUAL OWNERSHIP COLUMN:
+      
+      videos.user_id
     */
 
-    const ownerId =
-      video.creator_id ||
-      video.user_id ||
-      video.owner_id;
-
-
-    if(!ownerId){
+    if(
+      String(video.user_id) !==
+      String(currentUser.id)
+    ){
 
       showError(
-        "This video does not have a creator assigned to it."
+        "This is not your video. You can only edit videos you own."
       );
 
       return;
@@ -546,19 +660,12 @@ async function loadVideo(){
     }
 
 
-    if(String(ownerId) !== String(currentUser.id)){
-
-      showError(
-        "You can only edit your own videos."
-      );
-
-      return;
-
-    }
+    currentVideo =
+      video;
 
 
     /*
-      Fill editor.
+      Fill fields.
     */
 
     titleInput.value =
@@ -567,19 +674,13 @@ async function loadVideo(){
     descriptionInput.value =
       video.description || "";
 
-    const currentCategory =
-      video.category || "";
-
-    addUnknownCategory(
-      currentCategory
+    setCategory(
+      video.category || ""
     );
-
-    categoryInput.value =
-      currentCategory;
 
 
     /*
-      Video preview.
+      Load video preview.
     */
 
     const videoUrl =
@@ -588,41 +689,33 @@ async function loadVideo(){
 
     if(videoUrl){
 
-      preview.src = videoUrl;
+      preview.src =
+        videoUrl;
 
       preview.load();
-
-      preview.onerror = () => {
-
-        console.error(
-          "Video preview failed:",
-          videoUrl
-        );
-
-        setStatus(
-          "Video preview could not be loaded, but you can still edit the details."
-        );
-
-      };
 
     }else{
 
       setStatus(
-        "Video file URL was not found."
+        "Video file URL is unavailable."
       );
 
     }
 
 
-    /*
-      Store video/user for Save.
-    */
+    preview.onerror =
+      () => {
 
-    window.bigulaVideo =
-      video;
+        console.warn(
+          "Video preview failed:",
+          videoUrl
+        );
 
-    window.bigulaUser =
-      currentUser;
+        setStatus(
+          "The video file could not be previewed."
+        );
+
+      };
 
 
     loading.style.display =
@@ -639,12 +732,12 @@ async function loadVideo(){
   }catch(error){
 
     console.error(
-      "BIGULA Edit Video error:",
+      "Edit video initialization error:",
       error
     );
 
     showError(
-      "Something went wrong: " +
+      "Something went wrong:\n\n" +
       (error.message || error)
     );
 
@@ -654,7 +747,7 @@ async function loadVideo(){
 
 
 /* =========================================================
-   SAVE CHANGES
+   SAVE
 ========================================================= */
 
 saveButton.addEventListener(
@@ -662,12 +755,12 @@ saveButton.addEventListener(
   async () => {
 
     if(
-      !window.bigulaVideo ||
-      !window.bigulaUser
+      !currentVideo ||
+      !currentUser
     ){
 
       setStatus(
-        "Video is not ready yet."
+        "Video is not ready."
       );
 
       return;
@@ -675,17 +768,17 @@ saveButton.addEventListener(
     }
 
 
-    const newTitle =
+    const title =
       titleInput.value.trim();
 
-    const newCategory =
+    const category =
       categoryInput.value;
 
-    const newDescription =
+    const description =
       descriptionInput.value.trim();
 
 
-    if(!newTitle){
+    if(!title){
 
       setStatus(
         "Please enter a video title."
@@ -709,15 +802,14 @@ saveButton.addEventListener(
     try{
 
       /*
-        Re-check the live session immediately before
-        updating the database.
+        Get the latest authenticated user.
       */
 
       const {
         data,
         error:sessionError
       } =
-        await supabase.auth.getSession();
+      await supabase.auth.getSession();
 
 
       if(
@@ -732,46 +824,56 @@ saveButton.addEventListener(
       }
 
 
-      const currentUser =
+      const user =
         data.session.user;
 
 
-      const ownerId =
-        window.bigulaVideo.creator_id ||
-        window.bigulaVideo.user_id ||
-        window.bigulaVideo.owner_id;
+      /*
+        Make absolutely sure the logged-in user
+        owns this video.
 
+        YOUR COLUMN IS videos.user_id.
+      */
 
       if(
-        String(ownerId) !==
-        String(currentUser.id)
+        String(currentVideo.user_id) !==
+        String(user.id)
       ){
 
         throw new Error(
-          "You are not the owner of this video."
+          "You do not own this video."
         );
 
       }
 
 
       /*
-        Update only the editable fields.
+        Update using user_id.
+
+        This is the important correction.
       */
 
       const {
-        data:updatedRows,
+        data:updatedVideo,
         error
       } =
         await supabase
           .from("videos")
           .update({
-            title:newTitle,
-            category:newCategory || null,
-            description:newDescription || null
+            title:title,
+            category:category || null,
+            description:description || null
           })
-          .eq("id",window.bigulaVideo.id)
-          .eq("creator_id",currentUser.id)
-          .select("*");
+          .eq(
+            "id",
+            currentVideo.id
+          )
+          .eq(
+            "user_id",
+            user.id
+          )
+          .select("*")
+          .single();
 
 
       if(error){
@@ -781,20 +883,8 @@ saveButton.addEventListener(
       }
 
 
-      if(
-        !updatedRows ||
-        updatedRows.length === 0
-      ){
-
-        throw new Error(
-          "No video was updated. Check the videos UPDATE policy."
-        );
-
-      }
-
-
-      window.bigulaVideo =
-        updatedRows[0];
+      currentVideo =
+        updatedVideo;
 
 
       setStatus(
@@ -803,13 +893,15 @@ saveButton.addEventListener(
 
 
       /*
-        Return to account after a short delay.
+        Return to account.
       */
 
       setTimeout(
         () => {
+
           location.href =
             "account.html";
+
         },
         700
       );
@@ -818,7 +910,7 @@ saveButton.addEventListener(
     }catch(error){
 
       console.error(
-        "BIGULA video update error:",
+        "BIGULA Save Video error:",
         error
       );
 
@@ -844,8 +936,7 @@ supabase.auth.onAuthStateChange(
   (event,session) => {
 
     if(
-      event === "SIGNED_OUT" ||
-      !session?.user
+      event === "SIGNED_OUT"
     ){
 
       location.replace(
