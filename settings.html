@@ -1,2053 +1,1560 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BIGULA – Account</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Settings</title>
 
 <style>
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family:Segoe UI,sans-serif
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+html,body{
+  background:#f6f6f6;
+  color:#111;
 }
 
 body{
-  background:#0b0b0b;
-  color:#fff;
-  padding-bottom:30px
+  min-height:100vh;
 }
 
-.header{
+header{
   position:sticky;
   top:0;
   z-index:20;
-  background:#111;
-  border-bottom:1px solid #222;
-  padding:12px 16px;
+  height:62px;
+  background:#fff;
+  border-bottom:1px solid #ddd;
   display:flex;
   align-items:center;
-  justify-content:space-between
-}
-
-.logo{
-  font-size:24px;
-  font-weight:900;
-  color:#ff1744;
-  letter-spacing:2px
+  padding:0 18px;
 }
 
 .back{
   border:0;
-  background:#222;
-  color:#fff;
-  padding:9px 14px;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer
+  background:none;
+  font-size:28px;
+  cursor:pointer;
+  margin-right:12px;
+  line-height:1;
 }
 
-.profile{
-  text-align:center;
-  padding:28px 16px 22px;
-  background:linear-gradient(#171717,#0b0b0b);
-  border-bottom:1px solid #222
+header h1{
+  font-size:21px;
+  font-weight:700;
+}
+
+main{
+  max-width:760px;
+  margin:0 auto;
+  padding:18px 14px 50px;
+}
+
+/* ACCOUNT */
+
+.account-card{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
 
 .avatar{
-  width:105px;
-  height:105px;
+  width:54px;
+  height:54px;
   border-radius:50%;
-  object-fit:cover;
-  border:3px solid #ff1744;
-  background:#222
-}
-
-.name{
-  margin-top:12px;
-  font-size:28px;
-  font-weight:900
-}
-
-.handle{
-  color:#aaa;
-  margin-top:3px
-}
-
-.bio{
-  max-width:650px;
-  margin:10px auto;
-  color:#bbb;
-  line-height:1.5
-}
-
-/* STAT BUTTONS */
-
-.stats{
-  display:flex;
-  justify-content:center;
-  gap:9px;
-  margin:20px auto;
-  flex-wrap:wrap
-}
-
-.stat{
-  min-width:105px;
-  background:#161616;
-  border:1px solid #292929;
-  border-radius:14px;
-  padding:11px 15px;
-  color:#fff;
-  cursor:pointer;
-  transition:.2s;
-  font:inherit
-}
-
-.stat:hover{
-  background:#202020;
-  border-color:#ff1744;
-  transform:translateY(-2px)
-}
-
-.stat.active{
-  background:#251116;
-  border-color:#ff1744;
-  box-shadow:0 0 0 1px rgba(255,23,68,.25)
-}
-
-.stat strong{
-  display:block;
-  font-size:20px
-}
-
-.stat span{
-  font-size:12px;
-  color:#999
-}
-
-/* ACTIONS */
-
-.actions{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap
-}
-
-.action{
-  border:0;
-  border-radius:999px;
-  padding:11px 22px;
-  font-weight:800;
-  cursor:pointer
-}
-
-.monetize{
-  background:#ffd54a;
-  color:#111;
-  padding:13px 28px;
-  font-size:15px;
-  border:2px solid #fff;
-  box-shadow:0 6px 22px rgba(255,213,74,.35);
-  transform:scale(1.04);
-}
-
-.monetize:hover{
-  background:#ffe27a;
-  transform:scale(1.07) translateY(-1px);
-}
-
-.share{
-  background:#1683ff;
-  color:#fff
-}
-
-.edit{
-  background:#222;
-  color:#fff;
-  border:1px solid #444
-}
-
-/* SETTINGS BUTTON */
-
-.settings{
-  background:#333;
-  color:#fff;
-  border:1px solid #555
-}
-
-.settings:hover{
-  background:#444;
-  border-color:#777
-}
-
-.logout{
-  background:#ff1744;
-  color:#fff;
-  box-shadow:0 5px 18px rgba(255,23,68,.25)
-}
-
-.logout:hover{
-  background:#ff3159
-}
-
-/* BOTTOM TAB AREA */
-
-.tab-panel{
-  display:none;
-  padding:20px 10px 30px;
-  max-width:950px;
-  margin:0 auto
-}
-
-.tab-panel.active{
-  display:block
-}
-
-.tab-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:14px;
-  padding:0 4px
-}
-
-.tab-title h2{
-  font-size:20px
-}
-
-.tab-close{
-  border:0;
-  background:#222;
-  color:#aaa;
-  border-radius:8px;
-  padding:7px 11px;
-  cursor:pointer
-}
-
-/* USERS */
-
-.user-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px
-}
-
-.user-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  background:#151515;
-  border:1px solid #292929;
-  padding:10px 12px;
-  border-radius:13px
-}
-
-.user-row img{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#222
-}
-
-.user-info{
-  flex:1;
-  min-width:0
-}
-
-.user-name{
-  font-weight:800;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis
-}
-
-.user-handle{
-  color:#888;
-  font-size:13px;
-  margin-top:2px
-}
-
-/* VIDEO GRIDS */
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:4px;
-  max-width:900px;
-  margin:auto
-}
-
-.card{
-  position:relative;
   background:#111;
-  aspect-ratio:9/14;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:700;
   overflow:hidden;
-  cursor:pointer
+  flex-shrink:0;
 }
 
-.card video{
+.avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
-  display:block;
-  background:#000;
-  pointer-events:none
 }
 
-.overlay{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:28px 7px 7px;
-  background:linear-gradient(transparent,rgba(0,0,0,.8));
-  font-size:12px;
-  font-weight:700
+.account-info{
+  min-width:0;
 }
 
-.empty{
-  text-align:center;
+.account-name{
+  font-size:17px;
+  font-weight:700;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.account-email{
+  font-size:13px;
   color:#777;
-  padding:45px 10px;
-  grid-column:1/-1
+  margin-top:3px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
-.loading{
-  text-align:center;
+/* TABS */
+
+.tabs{
+  background:#fff;
+  border-radius:14px;
+  padding:5px;
+  display:flex;
+  overflow-x:auto;
+  gap:3px;
+  margin-bottom:18px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  scrollbar-width:none;
+}
+
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tab{
+  border:0;
+  background:transparent;
+  padding:10px 15px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.tab.active{
+  background:#111;
+  color:#fff;
+}
+
+/* SECTIONS */
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  margin:4px 3px 10px;
+}
+
+.section-description{
+  color:#777;
+  font-size:13px;
+  line-height:1.5;
+  margin:0 3px 14px;
+}
+
+/* SETTING GROUP */
+
+.setting-group{
+  background:#fff;
+  border-radius:15px;
+  overflow:hidden;
+  margin-bottom:18px;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+
+.setting-row{
+  min-height:62px;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  border-bottom:1px solid #eee;
+  cursor:pointer;
+}
+
+.setting-row:last-child{
+  border-bottom:0;
+}
+
+.setting-left{
+  min-width:0;
+}
+
+.setting-name{
+  font-size:15px;
+  font-weight:600;
+}
+
+.setting-description{
+  color:#777;
+  font-size:12px;
+  line-height:1.4;
+  margin-top:3px;
+}
+
+.arrow{
   color:#888;
-  padding:35px 10px;
-  grid-column:1/-1
+  font-size:22px;
+  flex-shrink:0;
 }
 
-.error{
+/* TOGGLE */
+
+.switch{
+  position:relative;
+  width:48px;
+  height:27px;
+  flex-shrink:0;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:30px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:21px;
+  height:21px;
+  left:3px;
+  top:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.2s;
+}
+
+.switch input:checked + .slider{
+  background:#111;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(21px);
+}
+
+/* INTERESTS */
+
+.interests-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:9px;
+}
+
+.interest{
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:12px;
+  padding:13px 10px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
   text-align:center;
-  color:#ff6b6b;
-  padding:30px 10px;
-  grid-column:1/-1
+  transition:.15s;
 }
 
-@media(min-width:700px){
+.interest.selected{
+  background:#111;
+  color:#fff;
+  border-color:#111;
+}
 
-  .grid{
-    grid-template-columns:repeat(4,1fr);
-    gap:8px
+.save-interests{
+  width:100%;
+  margin-top:15px;
+  padding:14px;
+  border:0;
+  border-radius:12px;
+  background:#111;
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.interest-status{
+  text-align:center;
+  min-height:20px;
+  font-size:13px;
+  color:#555;
+  margin-top:9px;
+}
+
+/* CONTENT USE */
+
+.warning-box{
+  background:#fff7e6;
+  border:1px solid #f0d59a;
+  border-radius:13px;
+  padding:14px;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+/* LINKS */
+
+.link-row{
+  text-decoration:none;
+  color:#111;
+}
+
+/* DELETE */
+
+.delete-box{
+  background:#fff;
+  border-radius:15px;
+  padding:18px;
+  box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+
+.delete-box h3{
+  color:#c62828;
+  margin-bottom:8px;
+}
+
+.delete-box p{
+  color:#666;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+
+.delete-btn{
+  width:100%;
+  border:1px solid #d32f2f;
+  background:#fff;
+  color:#d32f2f;
+  border-radius:11px;
+  padding:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.delete-btn:hover{
+  background:#fff0f0;
+}
+
+/* HELP */
+
+.help-search{
+  width:100%;
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  font-size:15px;
+  outline:none;
+  margin-bottom:14px;
+}
+
+.help-search:focus{
+  border-color:#111;
+}
+
+@media(max-width:500px){
+
+  main{
+    padding:12px 10px 40px;
   }
 
-  .section{
-    padding:25px
+  header{
+    padding:0 13px;
   }
 
-  .card{
-    border-radius:8px
+  .tabs{
+    margin-left:-2px;
+    margin-right:-2px;
   }
 
+  .tab{
+    padding:9px 12px;
+  }
+
+  .interests-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 </style>
-
 </head>
 
 <body>
 
-<header class="header">
-
-  <button
-    class="back"
-    onclick="history.back()">
-    ← Back
-  </button>
-
-  <div class="logo">
-    BIGULA
-  </div>
-
-  <div style="width:62px"></div>
-
+<header>
+  <button class="back" id="backBtn" aria-label="Back">‹</button>
+  <h1>Settings</h1>
 </header>
 
+<main>
 
-<section class="profile">
+  <!-- ACCOUNT -->
 
-<img
-  id="avatar"
-  class="avatar"
-  src="https://placehold.co/300x300"
-  alt="Profile"
->
+  <div class="account-card">
 
-<div id="name" class="name">
-  Loading...
-</div>
+    <div class="avatar" id="avatar">
+      B
+    </div>
 
-<div id="handle" class="handle"></div>
-
-<div id="bio" class="bio"></div>
-
-
-<div class="stats">
-
-  <button
-    id="followersStat"
-    class="stat"
-    type="button">
-
-    <strong id="followers">0</strong>
-    <span>Followers</span>
-
-  </button>
-
-
-  <button
-    id="followingStat"
-    class="stat"
-    type="button">
-
-    <strong id="following">0</strong>
-    <span>Following</span>
-
-  </button>
-
-
-  <button
-    id="videosStat"
-    class="stat"
-    type="button">
-
-    <strong id="videos">0</strong>
-    <span>Videos</span>
-
-  </button>
-
-
-  <button
-    id="likesStat"
-    class="stat"
-    type="button">
-
-    <strong id="likes">0</strong>
-    <span>Total Likes</span>
-
-  </button>
-
-</div>
-
-
-<div class="actions">
-
-  <button
-    id="monetizeBtn"
-    class="action monetize"
-    type="button">
-
-    💰 Monetize
-
-  </button>
-
-
-  <button
-    id="shareBtn"
-    class="action share"
-    type="button">
-
-    ↗ Share Profile
-
-  </button>
-
-
-  <button
-    id="editBtn"
-    class="action edit"
-    type="button">
-
-    ✎ Edit Profile
-
-  </button>
-
-
-  <!-- NEW SETTINGS BUTTON -->
-
-  <button
-    id="settingsBtn"
-    class="action settings"
-    type="button">
-
-    ⚙ Settings
-
-  </button>
-
-
-  <button
-    id="logoutBtn"
-    class="action logout"
-    type="button">
-
-    ⇥ Logout
-
-  </button>
-
-</div>
-
-</section>
-
-
-<!-- FOLLOWERS -->
-
-<section
-  id="followersPanel"
-  class="tab-panel">
-
-  <div class="tab-title">
-
-    <h2>Followers</h2>
-
-    <button
-      class="tab-close"
-      onclick="closeTabs()">
-
-      Close
-
-    </button>
-
-  </div>
-
-  <div
-    id="followersList"
-    class="user-list">
-
-    <div class="loading">
-      Loading followers...
+    <div class="account-info">
+      <div class="account-name" id="accountName">BIGULA User</div>
+      <div class="account-email" id="accountEmail">Loading account…</div>
     </div>
 
   </div>
 
-</section>
 
+  <!-- TABS -->
 
-<!-- FOLLOWING -->
+  <div class="tabs">
 
-<section
-  id="followingPanel"
-  class="tab-panel">
+    <button class="tab active" data-tab="privacy">
+      Privacy
+    </button>
 
-  <div class="tab-title">
+    <button class="tab" data-tab="notifications">
+      Notifications
+    </button>
 
-    <h2>Following</h2>
+    <button class="tab" data-tab="interests">
+      Interests
+    </button>
 
-    <button
-      class="tab-close"
-      onclick="closeTabs()">
+    <button class="tab" data-tab="content">
+      Content
+    </button>
 
-      Close
+    <button class="tab" data-tab="help">
+      Help
+    </button>
 
+    <button class="tab" data-tab="policies">
+      Policies
+    </button>
+
+    <button class="tab" data-tab="account">
+      Account
     </button>
 
   </div>
 
-  <div
-    id="followingList"
-    class="user-list">
 
-    <div class="loading">
-      Loading following...
+  <!-- PRIVACY -->
+
+  <section class="section active" id="privacy">
+
+    <div class="section-title">
+      Privacy
     </div>
 
-  </div>
-
-</section>
-
-
-<!-- MY VIDEOS -->
-
-<section
-  id="videosPanel"
-  class="tab-panel">
-
-  <div class="tab-title">
-
-    <h2>My Videos</h2>
-
-    <button
-      class="tab-close"
-      onclick="closeTabs()">
-
-      Close
-
-    </button>
-
-  </div>
-
-  <div
-    id="videoGrid"
-    class="grid">
-
-    <div class="loading">
-      Loading videos...
+    <div class="section-description">
+      Control how your BIGULA account and activity are handled.
     </div>
 
-  </div>
+    <div class="setting-group">
 
-</section>
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Private account
+          </div>
+
+          <div class="setting-description">
+            Only people you approve can follow you and view content restricted to followers.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="privateAccount">
+          <span class="slider"></span>
+        </label>
+
+      </div>
 
 
-<!-- LIKED VIDEOS -->
+      <div class="setting-row">
 
-<section
-  id="likesPanel"
-  class="tab-panel">
+        <div class="setting-left">
+          <div class="setting-name">
+            Show activity status
+          </div>
 
-  <div class="tab-title">
+          <div class="setting-description">
+            Allow other users to see when you are active.
+          </div>
+        </div>
 
-    <h2>Liked Videos</h2>
+        <label class="switch">
+          <input type="checkbox" id="activityStatus" checked>
+          <span class="slider"></span>
+        </label>
 
-    <button
-      class="tab-close"
-      onclick="closeTabs()">
+      </div>
 
-      Close
 
-    </button>
+      <div class="setting-row">
 
-  </div>
+        <div class="setting-left">
+          <div class="setting-name">
+            Allow messages
+          </div>
 
-  <div
-    id="likesGrid"
-    class="grid">
+          <div class="setting-description">
+            Allow other users to send you messages.
+          </div>
+        </div>
 
-    <div class="loading">
-      Loading liked videos...
+        <label class="switch">
+          <input type="checkbox" id="allowMessages" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
     </div>
 
-  </div>
+  </section>
 
-</section>
+
+  <!-- NOTIFICATIONS -->
+
+  <section class="section" id="notifications">
+
+    <div class="section-title">
+      Notifications
+    </div>
+
+    <div class="section-description">
+      Choose which BIGULA notifications you want to receive.
+    </div>
+
+    <div class="setting-group">
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Push notifications
+          </div>
+
+          <div class="setting-description">
+            Receive notifications from BIGULA.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="pushNotifications" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Likes
+          </div>
+
+          <div class="setting-description">
+            Notify me when someone likes my videos.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="likeNotifications" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Comments
+          </div>
+
+          <div class="setting-description">
+            Notify me about comments and replies.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="commentNotifications" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            New followers
+          </div>
+
+          <div class="setting-description">
+            Notify me when someone follows me.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="followerNotifications" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Messages
+          </div>
+
+          <div class="setting-description">
+            Notify me when I receive a new message.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="messageNotifications" checked>
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- INTERESTS -->
+
+  <section class="section" id="interests">
+
+    <div class="section-title">
+      Interests
+    </div>
+
+    <div class="section-description">
+      Choose the categories you want BIGULA to use when building your <strong>For You</strong> feed. You can change these anytime.
+    </div>
+
+    <div class="setting-group" style="padding:15px;">
+
+      <div class="interests-grid">
+
+        <button class="interest" data-interest="Comedy">
+          😂 Comedy
+        </button>
+
+        <button class="interest" data-interest="Entertainment">
+          🎬 Entertainment
+        </button>
+
+        <button class="interest" data-interest="Music">
+          🎵 Music
+        </button>
+
+        <button class="interest" data-interest="Dance">
+          💃 Dance
+        </button>
+
+        <button class="interest" data-interest="Sports">
+          ⚽ Sports
+        </button>
+
+        <button class="interest" data-interest="Gaming">
+          🎮 Gaming
+        </button>
+
+        <button class="interest" data-interest="Education">
+          📚 Education
+        </button>
+
+        <button class="interest" data-interest="Technology">
+          💻 Technology
+        </button>
+
+        <button class="interest" data-interest="News">
+          📰 News
+        </button>
+
+        <button class="interest" data-interest="Lifestyle">
+          🌱 Lifestyle
+        </button>
+
+        <button class="interest" data-interest="Travel">
+          ✈️ Travel
+        </button>
+
+        <button class="interest" data-interest="Food">
+          🍔 Food
+        </button>
+
+        <button class="interest" data-interest="Fashion">
+          👗 Fashion
+        </button>
+
+        <button class="interest" data-interest="Beauty">
+          💄 Beauty
+        </button>
+
+        <button class="interest" data-interest="Health & Fitness">
+          🏃 Health & Fitness
+        </button>
+
+        <button class="interest" data-interest="Business">
+          💼 Business
+        </button>
+
+        <button class="interest" data-interest="Art">
+          🎨 Art
+        </button>
+
+        <button class="interest" data-interest="Animals & Nature">
+          🐾 Animals & Nature
+        </button>
+
+        <button class="interest" data-interest="People & Blogs">
+          👥 People & Blogs
+        </button>
+
+        <button class="interest" data-interest="Cars & Vehicles">
+          🚗 Cars & Vehicles
+        </button>
+
+      </div>
+
+      <button class="save-interests" id="saveInterests">
+        Save interests
+      </button>
+
+      <div class="interest-status" id="interestStatus"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- CONTENT -->
+
+  <section class="section" id="content">
+
+    <div class="section-title">
+      Content
+    </div>
+
+    <div class="section-description">
+      Control how your BIGULA content may be used.
+    </div>
+
+    <div class="warning-box">
+      When you enable this setting, BIGULA will record your preference and your content will be excluded from eligible future uses covered by this setting.
+    </div>
+
+    <div class="setting-group">
+
+      <div class="setting-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Don't use my content
+          </div>
+
+          <div class="setting-description">
+            Don't use my videos or other eligible content for improving BIGULA systems or related development purposes.
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="doNotUseContent">
+          <span class="slider"></span>
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- HELP -->
+
+  <section class="section" id="help">
+
+    <div class="section-title">
+      Help Center
+    </div>
+
+    <div class="section-description">
+      Find answers about using BIGULA, uploading videos, accounts, messages, monetization and more.
+    </div>
+
+    <input
+      class="help-search"
+      id="helpSearch"
+      placeholder="Search Help Center…"
+      autocomplete="off"
+    >
+
+    <div class="setting-group" id="helpItems">
+
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-name">Using BIGULA</div>
+          <div class="setting-description">Learn how feeds, profiles, likes and follows work.</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-name">Uploading videos</div>
+          <div class="setting-description">Learn about uploading and managing your videos.</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-name">Creator monetization</div>
+          <div class="setting-description">Information about creator earnings and monetization.</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-name">Account & login</div>
+          <div class="setting-description">Help with Google login and your BIGULA account.</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-left">
+          <div class="setting-name">Report a problem</div>
+          <div class="setting-description">Tell BIGULA about a technical or content problem.</div>
+        </div>
+        <div class="arrow">›</div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- POLICIES -->
+
+  <section class="section" id="policies">
+
+    <div class="section-title">
+      Privacy Center & Policies
+    </div>
+
+    <div class="section-description">
+      Learn how BIGULA handles your information and the rules for using the platform.
+    </div>
+
+    <div class="setting-group">
+
+      <a href="privacy-center.html" class="setting-row link-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Privacy Center
+          </div>
+
+          <div class="setting-description">
+            Learn about your privacy, data and account controls.
+          </div>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </a>
+
+
+      <a href="terms.html" class="setting-row link-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Terms of Service
+          </div>
+
+          <div class="setting-description">
+            Rules governing use of BIGULA.
+          </div>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </a>
+
+
+      <a href="privacy.html" class="setting-row link-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Privacy Policy
+          </div>
+
+          <div class="setting-description">
+            How BIGULA collects and handles information.
+          </div>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </a>
+
+
+      <a href="community-guidelines.html" class="setting-row link-row">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Community Guidelines
+          </div>
+
+          <div class="setting-description">
+            Standards for content and behavior on BIGULA.
+          </div>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- ACCOUNT -->
+
+  <section class="section" id="account">
+
+    <div class="section-title">
+      Account
+    </div>
+
+    <div class="section-description">
+      Manage your BIGULA account.
+    </div>
+
+    <div class="setting-group">
+
+      <div class="setting-row" id="logoutRow">
+
+        <div class="setting-left">
+          <div class="setting-name">
+            Log out
+          </div>
+
+          <div class="setting-description">
+            Sign out of this BIGULA account on this device.
+          </div>
+        </div>
+
+        <div class="arrow">›</div>
+
+      </div>
+
+    </div>
+
+
+    <div class="delete-box">
+
+      <h3>
+        Delete account
+      </h3>
+
+      <p>
+        Deleting your account is permanent. Your profile, videos and other account information may be removed according to BIGULA's deletion process and applicable policies.
+      </p>
+
+      <button class="delete-btn" id="deleteAccount">
+        Delete my account
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
 
 
 <script type="module">
 
-import {
-  createClient
-} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { createClient } from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
-/* =========================================================
-   SUPABASE
-========================================================= */
+const SUPABASE_URL =
+"https://vfteiggdhthvrrlndtbs.supabase.co";
 
-const supabase =
-  createClient(
-    'https://vfteiggdhthvrrlndtbs.supabase.co',
-    'sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe',
-    {
-      auth:{
-        persistSession:true,
-        autoRefreshToken:true,
-        detectSessionInUrl:true,
-        flowType:'pkce'
-      }
+const SUPABASE_KEY =
+"sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true,
+      flowType:"pkce"
     }
-  );
+  }
+);
 
 
-let currentUser =
-  null;
+/* -----------------------------
+   BACK BUTTON
+----------------------------- */
 
-let myVideos =
-  [];
+document.getElementById("backBtn").onclick = () => {
+
+  if(document.referrer){
+    history.back();
+  }else{
+    location.href = "account.html";
+  }
+
+};
 
 
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
+/* -----------------------------
+   TAB SYSTEM
+----------------------------- */
 
-function esc(v){
+const tabs =
+document.querySelectorAll(".tab");
 
-  return String(v ?? '')
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#39;'
-      }[c])
+const sections =
+document.querySelectorAll(".section");
+
+
+tabs.forEach(tab => {
+
+  tab.addEventListener("click",() => {
+
+    const target =
+    tab.dataset.tab;
+
+    tabs.forEach(t =>
+      t.classList.remove("active")
     );
 
-}
+    sections.forEach(s =>
+      s.classList.remove("active")
+    );
+
+    tab.classList.add("active");
+
+    const section =
+    document.getElementById(target);
+
+    if(section){
+      section.classList.add("active");
+    }
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+  });
+
+});
 
 
-/* =========================================================
-   INIT
-========================================================= */
+/* -----------------------------
+   ACCOUNT
+----------------------------- */
 
-async function init(){
-
-  try{
-
-    const params =
-      new URLSearchParams(
-        location.search
-      );
-
-    const code =
-      params.get('code');
+let currentUser = null;
 
 
-    if(code){
+async function loadAccount(){
 
-      const {
-        error:exchangeError
-      } =
-        await supabase.auth
-          .exchangeCodeForSession(code);
+  let {data,error} =
+  await supabase.auth.getSession();
+
+  if(error){
+    console.error(error);
+  }
+
+  currentUser =
+  data?.session?.user || null;
 
 
-      if(exchangeError){
+  /*
+    Handle Google PKCE callback.
+  */
 
-        console.error(
-          'AUTH CODE EXCHANGE FAILED:',
-          exchangeError
-        );
+  const code =
+  new URLSearchParams(location.search)
+  .get("code");
 
-        location.href =
-          'signup.html';
 
-        return;
+  if(!currentUser && code){
 
-      }
+    const result =
+    await supabase.auth.exchangeCodeForSession(code);
 
+    if(!result.error){
+
+      currentUser =
+      result.data?.user || null;
 
       history.replaceState(
         {},
         document.title,
-        location.pathname +
-        location.hash
+        location.pathname
       );
 
     }
 
-
-    const {
-      data:{
-        session
-      },
-      error
-    } =
-      await supabase.auth
-        .getSession();
-
-
-    if(
-      error ||
-      !session?.user
-    ){
-
-      location.href =
-        'signup.html';
-
-      return;
-
-    }
-
-
-    currentUser =
-      session.user;
-
-
-    /* =====================================================
-       BUTTONS
-    ===================================================== */
-
-    document.getElementById(
-      'editBtn'
-    ).onclick = () => {
-
-      location.href =
-        'edit_profile.html';
-
-    };
-
-
-    document.getElementById(
-      'settingsBtn'
-    ).onclick = () => {
-
-      location.href =
-        'settings.html';
-
-    };
-
-
-    document.getElementById(
-      'monetizeBtn'
-    ).onclick = () => {
-
-      location.href =
-        'monetize.html';
-
-    };
-
-
-    document.getElementById(
-      'shareBtn'
-    ).onclick = async () => {
-
-      if(navigator.share){
-
-        try{
-
-          await navigator.share({
-            title:'My BIGULA Profile',
-            url:location.href
-          });
-
-        }catch(e){}
-
-      }else if(
-        navigator.clipboard
-      ){
-
-        await navigator.clipboard
-          .writeText(location.href);
-
-        alert(
-          'Profile link copied'
-        );
-
-      }
-
-    };
-
-
-    document.getElementById(
-      'logoutBtn'
-    ).onclick =
-      logout;
-
-
-    /* =====================================================
-       STAT BUTTONS
-    ===================================================== */
-
-    document.getElementById(
-      'followersStat'
-    ).onclick = () => {
-
-      openTab('followers');
-
-    };
-
-
-    document.getElementById(
-      'followingStat'
-    ).onclick = () => {
-
-      openTab('following');
-
-    };
-
-
-    document.getElementById(
-      'videosStat'
-    ).onclick = () => {
-
-      openTab('videos');
-
-    };
-
-
-    document.getElementById(
-      'likesStat'
-    ).onclick = () => {
-
-      openTab('likes');
-
-    };
-
-
-    await loadAccount();
-
-
-  }catch(err){
-
-    console.error(
-      'ACCOUNT INIT ERROR:',
-      err
-    );
-
-    alert(
-      'Unable to load your account.'
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   LOAD ACCOUNT
-========================================================= */
-
-async function loadAccount(){
-
-  const {
-    data:user,
-    error:userError
-  } =
-    await supabase
-      .from('users')
-      .select('*')
-      .eq('id',currentUser.id)
-      .maybeSingle();
-
-
-  if(userError){
-
-    console.error(
-      'USER LOAD ERROR:',
-      userError
-    );
-
   }
 
 
-  if(user){
+  if(!currentUser){
 
-    document.getElementById(
-      'name'
-    ).textContent =
-      user.name ||
-      user.full_name ||
-      user.display_name ||
-      user.username ||
-      'BIGULA User';
-
-
-    document.getElementById(
-      'handle'
-    ).textContent =
-      user.username
-        ? '@'+user.username
-        : '';
-
-
-    document.getElementById(
-      'bio'
-    ).textContent =
-      user.bio ||
-      'No bio yet';
-
-
-    const avatar =
-      user.avatar_url ||
-      user.photo_url ||
-      user.profile_photo ||
-      user.avatar;
-
-
-    if(avatar){
-
-      document.getElementById(
-        'avatar'
-      ).src =
-        avatar;
-
-    }
-
-
-    localStorage.setItem(
-      'bigula_user',
-      JSON.stringify(user)
-    );
-
+    location.replace("signup.html");
+    return;
   }
 
 
-  /* =====================================================
-     COUNTS + VIDEOS
-  ===================================================== */
-
-  const [
-    followersResult,
-    followingResult,
-    videosResult
-  ] =
-    await Promise.all([
-
-      supabase
-        .from('followers')
-        .select(
-          'id',
-          {
-            head:true,
-            count:'exact'
-          }
-        )
-        .eq(
-          'following_id',
-          currentUser.id
-        ),
-
-      supabase
-        .from('followers')
-        .select(
-          'id',
-          {
-            head:true,
-            count:'exact'
-          }
-        )
-        .eq(
-          'follower_id',
-          currentUser.id
-        ),
-
-      supabase
-        .from('videos')
-        .select('*')
-        .eq(
-          'user_id',
-          currentUser.id
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        )
-
-    ]);
+  const metadata =
+  currentUser.user_metadata || {};
 
 
-  document.getElementById(
-    'followers'
-  ).textContent =
-    followersResult.count || 0;
+  const name =
+    metadata.full_name ||
+    metadata.name ||
+    metadata.user_name ||
+    "BIGULA User";
 
 
-  document.getElementById(
-    'following'
-  ).textContent =
-    followingResult.count || 0;
+  const email =
+    currentUser.email || "";
 
 
-  if(videosResult.error){
+  document.getElementById("accountName")
+    .textContent = name;
 
-    console.error(
-      'VIDEOS LOAD ERROR:',
-      videosResult.error
-    );
+  document.getElementById("accountEmail")
+    .textContent = email;
 
-    myVideos=[];
+
+  const avatarUrl =
+    metadata.avatar_url ||
+    metadata.picture ||
+    metadata.photo_url ||
+    "";
+
+
+  const avatar =
+    document.getElementById("avatar");
+
+
+  if(avatarUrl){
+
+    avatar.innerHTML =
+    `<img src="${escapeHtml(avatarUrl)}" alt="">`;
 
   }else{
 
-    myVideos =
-      videosResult.data || [];
+    avatar.textContent =
+    name.trim().charAt(0).toUpperCase() || "B";
 
   }
 
 
-  document.getElementById(
-    'videos'
-  ).textContent =
-    myVideos.length;
-
-
-  await calculateTotalLikes();
+  loadSavedSettings();
+  loadInterests();
 
 }
 
 
-/* =========================================================
-   TOTAL LIKES
-========================================================= */
+/* -----------------------------
+   ESCAPE
+----------------------------- */
 
-async function calculateTotalLikes(){
+function escapeHtml(value){
 
-  if(!myVideos.length){
+  return String(value ?? "")
+    .replace(/[&<>"']/g,c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[c]));
 
-    document.getElementById(
-      'likes'
-    ).textContent =
-      '0';
+}
 
-    return;
 
+/* -----------------------------
+   LOCAL SETTINGS
+----------------------------- */
+
+const SETTINGS_KEY =
+"bigula_account_settings";
+
+
+function loadSavedSettings(){
+
+  let settings = {};
+
+  try{
+    settings =
+    JSON.parse(
+      localStorage.getItem(SETTINGS_KEY) || "{}"
+    );
+  }catch(e){
+    settings = {};
   }
 
 
-  let totalLikes =
-    0;
+  document.getElementById("privateAccount").checked =
+    !!settings.privateAccount;
+
+  document.getElementById("activityStatus").checked =
+    settings.activityStatus !== false;
+
+  document.getElementById("allowMessages").checked =
+    settings.allowMessages !== false;
+
+  document.getElementById("pushNotifications").checked =
+    settings.pushNotifications !== false;
+
+  document.getElementById("likeNotifications").checked =
+    settings.likeNotifications !== false;
+
+  document.getElementById("commentNotifications").checked =
+    settings.commentNotifications !== false;
+
+  document.getElementById("followerNotifications").checked =
+    settings.followerNotifications !== false;
+
+  document.getElementById("messageNotifications").checked =
+    settings.messageNotifications !== false;
+
+  document.getElementById("doNotUseContent").checked =
+    !!settings.doNotUseContent;
+
+}
 
 
-  for(
-    const video of myVideos
-  ){
+/* -----------------------------
+   SAVE LOCAL SETTINGS
+----------------------------- */
 
-    const {
-      count,
-      error
-    } =
-      await supabase
-        .from('likes')
-        .select(
-          'id',
-          {
-            head:true,
-            count:'exact'
-          }
-        )
-        .eq(
-          'video_id',
-          video.id
-        );
+const settingInputs =
+document.querySelectorAll(
+  "#privacy input[type=checkbox]," +
+  "#notifications input[type=checkbox]," +
+  "#doNotUseContent"
+);
 
 
-    if(!error){
+settingInputs.forEach(input => {
 
-      totalLikes +=
-        count || 0;
+  input.addEventListener("change",() => {
 
+    let settings = {};
+
+    try{
+      settings =
+      JSON.parse(
+        localStorage.getItem(SETTINGS_KEY) || "{}"
+      );
+    }catch(e){
+      settings = {};
     }
 
-  }
 
-
-  document.getElementById(
-    'likes'
-  ).textContent =
-    totalLikes;
-
-}
-
-
-/* =========================================================
-   OPEN TAB
-========================================================= */
-
-async function openTab(tab){
-
-  closeTabs(false);
-
-
-  const panel =
-    document.getElementById(
-      tab+'Panel'
-    );
-
-
-  if(!panel) return;
-
-
-  panel.classList.add(
-    'active'
-  );
-
-
-  const button =
-    document.getElementById(
-      tab+'Stat'
-    );
-
-
-  if(button){
-
-    button.classList.add(
-      'active'
-    );
-
-  }
-
-
-  if(tab === 'followers')
-    await loadFollowers();
-
-  if(tab === 'following')
-    await loadFollowing();
-
-  if(tab === 'videos')
-    await loadMyVideos();
-
-  if(tab === 'likes')
-    await loadLikedVideos();
-
-
-  panel.scrollIntoView({
-    behavior:'smooth',
-    block:'start'
-  });
-
-}
-
-
-/* =========================================================
-   CLOSE TABS
-========================================================= */
-
-function closeTabs(){
-
-  document
-    .querySelectorAll('.tab-panel')
-    .forEach(panel => {
-
-      panel.classList.remove(
-        'active'
-      );
-
-    });
-
-
-  document
-    .querySelectorAll('.stat')
-    .forEach(button => {
-
-      button.classList.remove(
-        'active'
-      );
-
-    });
-
-}
-
-
-/* =========================================================
-   FOLLOWERS
-========================================================= */
-
-async function loadFollowers(){
-
-  const list =
-    document.getElementById(
-      'followersList'
-    );
-
-
-  list.innerHTML =
-    '<div class="loading">Loading followers...</div>';
-
-
-  const {
-    data:relations,
-    error
-  } =
-    await supabase
-      .from('followers')
-      .select('follower_id')
-      .eq(
-        'following_id',
-        currentUser.id
-      );
-
-
-  if(error){
-
-    console.error(
-      'FOLLOWERS ERROR:',
-      error
-    );
-
-    list.innerHTML =
-      '<div class="empty">Unable to load followers.</div>';
-
-    return;
-
-  }
-
-
-  if(!relations?.length){
-
-    list.innerHTML =
-      '<div class="empty">You have no followers yet.</div>';
-
-    return;
-
-  }
-
-
-  const ids =
-    relations
-      .map(
-        row =>
-          row.follower_id
-      )
-      .filter(Boolean);
-
-
-  const {
-    data:users,
-    error:userError
-  } =
-    await supabase
-      .from('users')
-      .select(
-        'id,username,name,avatar_url,bio'
-      )
-      .in(
-        'id',
-        ids
-      );
-
-
-  if(userError){
-
-    console.error(
-      'FOLLOWER USERS ERROR:',
-      userError
-    );
-
-    list.innerHTML =
-      '<div class="error">Unable to load follower profiles.</div>';
-
-    return;
-
-  }
-
-
-  renderUsers(
-    users || [],
-    list
-  );
-
-}
-
-
-/* =========================================================
-   FOLLOWING
-========================================================= */
-
-async function loadFollowing(){
-
-  const list =
-    document.getElementById(
-      'followingList'
-    );
-
-
-  list.innerHTML =
-    '<div class="loading">Loading following...</div>';
-
-
-  const {
-    data:relations,
-    error
-  } =
-    await supabase
-      .from('followers')
-      .select('following_id')
-      .eq(
-        'follower_id',
-        currentUser.id
-      );
-
-
-  if(error){
-
-    console.error(
-      'FOLLOWING ERROR:',
-      error
-    );
-
-    list.innerHTML =
-      '<div class="empty">Unable to load following.</div>';
-
-    return;
-
-  }
-
-
-  if(!relations?.length){
-
-    list.innerHTML =
-      '<div class="empty">You are not following anyone yet.</div>';
-
-    return;
-
-  }
-
-
-  const ids =
-    relations
-      .map(
-        row =>
-          row.following_id
-      )
-      .filter(Boolean);
-
-
-  const {
-    data:users,
-    error:userError
-  } =
-    await supabase
-      .from('users')
-      .select(
-        'id,username,name,avatar_url,bio'
-      )
-      .in(
-        'id',
-        ids
-      );
-
-
-  if(userError){
-
-    console.error(
-      'FOLLOWING USERS ERROR:',
-      userError
-    );
-
-    list.innerHTML =
-      '<div class="error">Unable to load following profiles.</div>';
-
-    return;
-
-  }
-
-
-  renderUsers(
-    users || [],
-    list
-  );
-
-}
-
-
-/* =========================================================
-   RENDER USERS
-========================================================= */
-
-function renderUsers(
-  users,
-  list
-){
-
-  list.innerHTML='';
-
-
-  if(!users.length){
-
-    list.innerHTML =
-      '<div class="empty">No users found.</div>';
-
-    return;
-
-  }
-
-
-  users.forEach(
-    user => {
-
-      const row =
-        document.createElement(
-          'div'
-        );
-
-
-      row.className =
-        'user-row';
-
-
-      const avatar =
-        user.avatar_url ||
-        'https://placehold.co/100x100';
-
-
-      const displayName =
-        user.name ||
-        user.username ||
-        'BIGULA User';
-
-
-      row.innerHTML = `
-
-        <img
-          src="${esc(avatar)}"
-          alt=""
-        >
-
-        <div class="user-info">
-
-          <div class="user-name">
-            ${esc(displayName)}
-          </div>
-
-          <div class="user-handle">
-            ${
-              user.username
-                ? '@'+esc(user.username)
-                : ''
-            }
-          </div>
-
-        </div>
-
-      `;
-
-
-      row.style.cursor =
-        'pointer';
-
-
-      row.addEventListener(
-        'click',
-        () => {
-
-          location.href =
-            'creator_profile.html?id=' +
-            encodeURIComponent(
-              user.id
-            );
-
-        }
-      );
-
-
-      list.appendChild(
-        row
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   MY VIDEOS
-========================================================= */
-
-async function loadMyVideos(){
-
-  const grid =
-    document.getElementById(
-      'videoGrid'
-    );
-
-
-  grid.innerHTML =
-    '<div class="loading">Loading your videos...</div>';
-
-
-  const {
-    data:videos,
-    error
-  } =
-    await supabase
-      .from('videos')
-      .select('*')
-      .eq(
-        'user_id',
-        currentUser.id
-      )
-      .order(
-        'created_at',
-        {
-          ascending:false
-        }
-      );
-
-
-  if(error){
-
-    console.error(
-      'MY VIDEOS ERROR:',
-      error
-    );
-
-    grid.innerHTML =
-      '<div class="error">Unable to load your videos: ' +
-      esc(error.message || 'Database error') +
-      '</div>';
-
-    return;
-
-  }
-
-
-  myVideos =
-    videos || [];
-
-
-  document.getElementById(
-    'videos'
-  ).textContent =
-    myVideos.length;
-
-
-  await renderVideos(
-    myVideos,
-    'videoGrid'
-  );
-
-}
-
-
-/* =========================================================
-   VIDEO URL
-========================================================= */
-
-function getVideoUrl(video){
-
-  if(
-    video.video_url
-  )
-    return video.video_url;
-
-  if(
-    video.url
-  )
-    return video.url;
-
-  if(
-    video.file_url
-  )
-    return video.file_url;
-
-  if(
-    video.public_url
-  )
-    return video.public_url;
-
-  if(
-    video.storage_path
-  ){
-
-    return (
-      'https://vfteiggdhthvrrlndtbs.supabase.co' +
-      '/storage/v1/object/public/bigula/' +
-      String(
-        video.storage_path
-      ).replace(/^\/+/,'')
-    );
-
-  }
-
-  return '';
-
-}
-
-
-/* =========================================================
-   RENDER VIDEOS
-========================================================= */
-
-async function renderVideos(
-  videos,
-  targetId
-){
-
-  const grid =
-    document.getElementById(
-      targetId
-    );
-
-
-  grid.innerHTML='';
-
-
-  if(!videos.length){
-
-    grid.innerHTML =
-      '<div class="empty">You have not uploaded any videos yet.</div>';
-
-    return;
-
-  }
-
-
-  for(
-    const v of videos
-  ){
-
-    const {
-      count:likes
-    } =
-      await supabase
-        .from('likes')
-        .select(
-          'id',
-          {
-            head:true,
-            count:'exact'
-          }
-        )
-        .eq(
-          'video_id',
-          v.id
-        );
-
-
-    const card =
-      document.createElement(
-        'div'
-      );
-
-
-    card.className =
-      'card';
-
-
-    const videoUrl =
-      getVideoUrl(v);
-
-
-    card.innerHTML = `
-
-      <video
-        src="${esc(videoUrl)}"
-        preload="metadata"
-        playsinline>
-      </video>
-
-      <div class="overlay">
-
-        ${esc(
-          v.title ||
-          'Untitled video'
-        )}
-
-        · ❤️ ${likes || 0}
-
-      </div>
-
-    `;
+    settings[input.id] =
+    input.checked;
 
 
     /*
-      Clicking your own video opens Edit Video.
+      Use stable setting names.
     */
 
-    card.addEventListener(
-      'click',
-      () => {
+    settings.privateAccount =
+      document.getElementById("privateAccount").checked;
 
-        location.href =
-          'edit_video.html?id=' +
-          encodeURIComponent(
-            v.id
-          );
+    settings.activityStatus =
+      document.getElementById("activityStatus").checked;
 
-      }
+    settings.allowMessages =
+      document.getElementById("allowMessages").checked;
+
+    settings.pushNotifications =
+      document.getElementById("pushNotifications").checked;
+
+    settings.likeNotifications =
+      document.getElementById("likeNotifications").checked;
+
+    settings.commentNotifications =
+      document.getElementById("commentNotifications").checked;
+
+    settings.followerNotifications =
+      document.getElementById("followerNotifications").checked;
+
+    settings.messageNotifications =
+      document.getElementById("messageNotifications").checked;
+
+    settings.doNotUseContent =
+      document.getElementById("doNotUseContent").checked;
+
+
+    localStorage.setItem(
+      SETTINGS_KEY,
+      JSON.stringify(settings)
     );
 
+  });
 
-    grid.appendChild(
-      card
-    );
+});
 
-  }
 
-}
+/* -----------------------------
+   INTERESTS
+----------------------------- */
 
+const INTERESTS_KEY =
+"bigula_interests";
 
-/* =========================================================
-   LIKED VIDEOS
-========================================================= */
 
-async function loadLikedVideos(){
+function loadInterests(){
 
-  const grid =
-    document.getElementById(
-      'likesGrid'
-    );
-
-
-  grid.innerHTML =
-    '<div class="loading">Loading liked videos...</div>';
-
-
-  const {
-    data:likes,
-    error
-  } =
-    await supabase
-      .from('likes')
-      .select(
-        'video_id,created_at'
-      )
-      .eq(
-        'user_id',
-        currentUser.id
-      )
-      .order(
-        'created_at',
-        {
-          ascending:false
-        }
-      );
-
-
-  if(error){
-
-    console.error(
-      'LIKED VIDEOS ERROR:',
-      error
-    );
-
-    grid.innerHTML =
-      '<div class="error">Unable to load liked videos.</div>';
-
-    return;
-
-  }
-
-
-  if(!likes?.length){
-
-    grid.innerHTML =
-      '<div class="empty">You have not liked any videos yet.</div>';
-
-    return;
-
-  }
-
-
-  const ids =
-    likes
-      .map(
-        row =>
-          row.video_id
-      )
-      .filter(Boolean);
-
-
-  const {
-    data:videos,
-    error:videoError
-  } =
-    await supabase
-      .from('videos')
-      .select('*')
-      .in(
-        'id',
-        ids
-      );
-
-
-  if(videoError){
-
-    console.error(
-      'LIKED VIDEO LOAD ERROR:',
-      videoError
-    );
-
-    grid.innerHTML =
-      '<div class="error">Unable to load liked videos.</div>';
-
-    return;
-
-  }
-
-
-  const videoMap =
-    new Map(
-      (videos || [])
-        .map(
-          video => [
-            String(video.id),
-            video
-          ]
-        )
-    );
-
-
-  const orderedVideos =
-    ids
-      .map(
-        id =>
-          videoMap.get(
-            String(id)
-          )
-      )
-      .filter(Boolean);
-
-
-  await renderLikedVideos(
-    orderedVideos,
-    grid
-  );
-
-}
-
-
-/* =========================================================
-   RENDER LIKED VIDEOS
-========================================================= */
-
-async function renderLikedVideos(
-  videos,
-  grid
-){
-
-  grid.innerHTML='';
-
-
-  if(!videos.length){
-
-    grid.innerHTML =
-      '<div class="empty">The liked videos are no longer available.</div>';
-
-    return;
-
-  }
-
-
-  for(
-    const v of videos
-  ){
-
-    const {
-      count:likes
-    } =
-      await supabase
-        .from('likes')
-        .select(
-          'id',
-          {
-            head:true,
-            count:'exact'
-          }
-        )
-        .eq(
-          'video_id',
-          v.id
-        );
-
-
-    const card =
-      document.createElement(
-        'div'
-      );
-
-
-    card.className =
-      'card';
-
-
-    const videoUrl =
-      getVideoUrl(v);
-
-
-    card.innerHTML = `
-
-      <video
-        src="${esc(videoUrl)}"
-        preload="metadata"
-        playsinline>
-      </video>
-
-      <div class="overlay">
-
-        ${esc(
-          v.title ||
-          'Untitled video'
-        )}
-
-        · ❤️ ${likes || 0}
-
-      </div>
-
-    `;
-
-
-    card.addEventListener(
-      'click',
-      () => {
-
-        location.href =
-          'video_view.html?id=' +
-          encodeURIComponent(
-            v.id
-          );
-
-      }
-    );
-
-
-    grid.appendChild(
-      card
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-async function logout(){
-
-  const confirmed =
-    confirm(
-      'Are you sure you want to log out of BIGULA?'
-    );
-
-
-  if(!confirmed)
-    return;
-
+  let saved = [];
 
   try{
 
-    const {
-      error
-    } =
-      await supabase.auth.signOut();
-
-
-    if(error){
-
-      console.error(
-        'LOGOUT ERROR:',
-        error
-      );
-
-      alert(
-        'Unable to log out. Please try again.'
-      );
-
-      return;
-
-    }
-
-
-    localStorage.removeItem(
-      'bigula_user'
+    saved =
+    JSON.parse(
+      localStorage.getItem(INTERESTS_KEY) || "[]"
     );
 
+  }catch(e){
 
-    location.replace(
-      'home.html'
-    );
-
-
-  }catch(err){
-
-    console.error(
-      'LOGOUT FAILED:',
-      err
-    );
-
-    alert(
-      'Logout failed. Please try again.'
-    );
+    saved = [];
 
   }
+
+
+  document.querySelectorAll(".interest")
+    .forEach(button => {
+
+      const value =
+      button.dataset.interest;
+
+      if(saved.includes(value)){
+        button.classList.add("selected");
+      }
+
+    });
 
 }
 
 
-/* =========================================================
-   START
-========================================================= */
+document.querySelectorAll(".interest")
+  .forEach(button => {
 
-init();
+    button.addEventListener("click",() => {
+
+      button.classList.toggle("selected");
+
+    });
+
+  });
+
+
+document.getElementById("saveInterests")
+  .onclick = () => {
+
+    const selected =
+    [...document.querySelectorAll(".interest.selected")]
+      .map(button => button.dataset.interest);
+
+
+    localStorage.setItem(
+      INTERESTS_KEY,
+      JSON.stringify(selected)
+    );
+
+
+    /*
+      Also keep a second key so the For You
+      feed can easily recognize that interests
+      have already been configured.
+    */
+
+    localStorage.setItem(
+      "bigula_interests_saved",
+      "true"
+    );
+
+
+    const status =
+    document.getElementById("interestStatus");
+
+
+    status.textContent =
+    selected.length
+      ? `✓ ${selected.length} interest${selected.length === 1 ? "" : "s"} saved.`
+      : "✓ Interests cleared.";
+
+
+    setTimeout(() => {
+      status.textContent = "";
+    },2500);
+
+  };
+
+
+/* -----------------------------
+   HELP SEARCH
+----------------------------- */
+
+const helpSearch =
+document.getElementById("helpSearch");
+
+
+helpSearch.addEventListener("input",() => {
+
+  const query =
+  helpSearch.value
+    .trim()
+    .toLowerCase();
+
+
+  document.querySelectorAll("#helpItems .setting-row")
+    .forEach(row => {
+
+      const text =
+      row.textContent.toLowerCase();
+
+      row.style.display =
+      !query || text.includes(query)
+        ? "flex"
+        : "none";
+
+    });
+
+});
+
+
+/* -----------------------------
+   LOGOUT
+----------------------------- */
+
+document.getElementById("logoutRow")
+  .onclick = async () => {
+
+    const confirmed =
+    confirm("Log out of BIGULA?");
+
+    if(!confirmed)return;
+
+
+    await supabase.auth.signOut();
+
+    localStorage.removeItem(
+      "bigula_current_user"
+    );
+
+    location.replace("signup.html");
+
+  };
+
+
+/* -----------------------------
+   DELETE ACCOUNT
+----------------------------- */
+
+document.getElementById("deleteAccount")
+  .onclick = async () => {
+
+    const first =
+    confirm(
+      "Delete your BIGULA account?\n\n" +
+      "This action is permanent."
+    );
+
+    if(!first)return;
+
+
+    const second =
+    confirm(
+      "Are you absolutely sure?\n\n" +
+      "Your account and associated content " +
+      "may be permanently removed."
+    );
+
+    if(!second)return;
+
+
+    /*
+      We do NOT attempt to delete auth.users
+      directly from browser JavaScript.
+      
+      Supabase Auth user deletion requires a
+      secure server-side/admin process.
+    */
+
+    alert(
+      "Account deletion has not been connected yet. " +
+      "We will connect this button to the secure BIGULA " +
+      "account-deletion process."
+    );
+
+  };
+
+
+/* -----------------------------
+   START
+----------------------------- */
+
+loadAccount();
 
 </script>
 
