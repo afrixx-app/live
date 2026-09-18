@@ -206,6 +206,7 @@ button{
   overflow-x:hidden;
 
   scroll-snap-type:y mandatory;
+  scroll-behavior:smooth;
 
   scrollbar-width:none;
 
@@ -554,9 +555,11 @@ button{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:5px;
+
   box-sizing:border-box;
 
   box-shadow:0 8px 30px rgba(0,0,0,.45);
+
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
 }
@@ -607,19 +610,20 @@ button{
   line-height:1;
 }
 
-.footer-btn.active{
-  color:#fff;
-}
-
 .account-avatar{
   width:28px;
   height:28px;
+
   border-radius:50%;
+
   overflow:hidden;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   background:#222;
+
   font-size:16px;
 }
 
@@ -708,7 +712,10 @@ button{
 
   z-index:200;
 
-  background:rgba(0,0,0,.6);
+  background:rgba(0,0,0,.68);
+
+  backdrop-filter:blur(7px);
+  -webkit-backdrop-filter:blur(7px);
 
   display:none;
 
@@ -722,12 +729,23 @@ button{
 .comments-panel{
   width:100%;
 
-  max-height:88vh;
+  height:min(88dvh,760px);
+  max-height:88dvh;
 
-  background:#fff;
+  background:linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f7f7f8 100%
+  );
+
   color:#111;
 
-  border-radius:24px 24px 0 0;
+  border:1px solid rgba(255,255,255,.9);
+
+  border-radius:28px 28px 0 0;
+
+  box-shadow:
+    0 -18px 60px rgba(0,0,0,.38);
 
   display:flex;
   flex-direction:column;
@@ -738,12 +756,15 @@ button{
 }
 
 @keyframes commentsUp{
+
   from{
     transform:translateY(100%);
   }
+
   to{
     transform:translateY(0);
   }
+
 }
 
 /* =========================================================
@@ -753,21 +774,26 @@ button{
 .comments-header{
   flex-shrink:0;
 
-  padding:15px 16px 10px;
+  padding:17px 16px 12px;
 
-  border-bottom:1px solid #eee;
+  border-bottom:1px solid #e7e7e7;
+
+  background:rgba(255,255,255,.96);
 }
 
 .comment-top{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 }
 
 .comment-heading{
   font-size:18px;
-  font-weight:900;
-  letter-spacing:-.3px;
+
+  font-weight:950;
+
+  letter-spacing:.4px;
 }
 
 .comment-close{
@@ -775,6 +801,7 @@ button{
   height:34px;
 
   border:0;
+
   border-radius:50%;
 
   background:#f0f0f0;
@@ -784,8 +811,10 @@ button{
 
 .comment-subheading{
   font-size:12px;
+
   color:#777;
-  margin-top:3px;
+
+  margin-top:4px;
 }
 
 /* =========================================================
@@ -794,11 +823,13 @@ button{
 
 .reactions{
   display:flex;
+
   gap:7px;
 
   margin-top:12px;
 
   overflow-x:auto;
+
   scrollbar-width:none;
 }
 
@@ -826,6 +857,7 @@ button{
 
 .comment-sort{
   display:flex;
+
   gap:8px;
 
   margin-top:10px;
@@ -859,11 +891,13 @@ button{
 #commentsList{
   flex:1;
 
+  min-height:0;
+
   overflow-y:auto;
 
-  padding:8px 14px 15px;
+  overscroll-behavior:contain;
 
-  min-height:180px;
+  padding:12px 14px 18px;
 
   scrollbar-width:none;
 }
@@ -877,30 +911,39 @@ button{
 
   gap:10px;
 
-  padding:12px 2px;
+  padding:10px 9px;
 
-  position:relative;
+  margin-bottom:7px;
+
+  border-radius:17px;
+
+  background:#fff;
+
+  border:1px solid #ececef;
+
+  box-shadow:
+    0 2px 10px rgba(0,0,0,.035);
 }
 
 .comment-avatar{
-  width:36px;
-  height:36px;
+  width:38px;
+  height:38px;
 
   border-radius:50%;
 
+  overflow:hidden;
+
   flex-shrink:0;
 
-  background:#ddd;
-
-  overflow:hidden;
+  background:#e8e8e8;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  font-weight:800;
+  font-weight:900;
 
-  font-size:13px;
+  color:#444;
 }
 
 .comment-avatar img{
@@ -917,43 +960,54 @@ button{
 .comment-author-line{
   display:flex;
   align-items:center;
+  flex-wrap:wrap;
+
   gap:6px;
 
-  margin-bottom:3px;
+  margin-bottom:4px;
 }
 
 .comment-author{
   font-size:13px;
-  font-weight:800;
+
+  font-weight:900;
+
+  color:#111;
 }
 
 .comment-time{
   font-size:10px;
+
   color:#999;
 }
 
 .comment-creator{
-  background:#111;
-  color:#fff;
-
-  border-radius:6px;
+  font-size:9px;
 
   padding:2px 5px;
 
-  font-size:8px;
+  border-radius:6px;
 
-  font-weight:900;
+  background:#111;
+
+  color:#fff;
+
+  font-weight:800;
 }
 
 .comment-text{
-  font-size:14px;
+  font-size:13px;
+
   line-height:1.4;
+
+  color:#222;
 
   word-break:break-word;
 }
 
 .comment-meta{
   display:flex;
+
   align-items:center;
 
   gap:13px;
@@ -963,63 +1017,65 @@ button{
 
 .comment-action{
   border:0;
-  background:none;
 
-  padding:0;
+  background:none;
 
   color:#777;
 
-  font-size:11px;
+  padding:0;
+
+  font-size:10px;
+
   font-weight:700;
 }
 
-.comment-action.reacted{
-  color:#e51d4f;
+.comment-action:hover{
+  color:#111;
 }
 
-.comment-actions-more{
-  margin-left:auto;
+.comment-action.reacted{
+  color:#e51d48;
 }
 
 .reply-list{
   margin-top:8px;
-  padding-left:8px;
 
-  border-left:2px solid #eee;
+  margin-left:5px;
+
+  padding-left:10px;
+
+  border-left:2px solid #e5e5e8;
 }
 
 .reply{
-  display:flex;
-  gap:8px;
+  margin-top:9px;
 
-  padding:7px 0;
+  padding:8px;
+
+  border-radius:14px;
+
+  background:#f5f5f7;
 }
 
 .reply .comment-avatar{
-  width:27px;
-  height:27px;
-  font-size:10px;
+  width:32px;
+  height:32px;
 }
 
 .reply .comment-text{
-  font-size:13px;
+  font-size:12px;
 }
 
-.pinned{
-  background:#f7f7f7;
-
-  border-radius:12px;
-
-  padding:10px;
-
-  margin:4px 0;
+.reply .comment-meta{
+  margin-top:5px;
 }
 
 .pin-label{
   font-size:9px;
-  font-weight:900;
 
   color:#777;
+
+  font-weight:800;
 
   margin-bottom:4px;
 }
@@ -1040,6 +1096,14 @@ button{
   font-size:16px;
 
   margin-bottom:5px;
+}
+
+.comments-empty span{
+  display:block;
+
+  font-size:12px;
+
+  line-height:1.45;
 }
 
 /* =========================================================
@@ -1233,6 +1297,19 @@ button{
     height:39px;
   }
 
+  .footer{
+    left:7px;
+    right:7px;
+    bottom:7px;
+    height:64px;
+  }
+
+  .comments-panel{
+    height:91dvh;
+    max-height:91dvh;
+    border-radius:24px 24px 0 0;
+  }
+
 }
 </style>
 </head>
@@ -1241,260 +1318,252 @@ button{
 
 <div id="app">
 
-  <!-- =====================================================
-       TOP
-  ====================================================== -->
+<header class="topbar">
 
-  <header class="topbar">
+  <img
+    class="logo"
+    src="https://bit.ly/4rgV7E7"
+    alt="BIGULA"
+    onerror="this.onerror=null;this.src='https://afrixx-app.github.io/live/logo.png';"
+  >
 
-    <img
-      class="logo"
-      src="https://bit.ly/4rgV7E7"
-      alt="BIGULA"
+  <div class="search-wrap">
+
+    <input
+      id="search"
+      type="search"
+      autocomplete="off"
+      placeholder="Search BIGULA"
     >
-
-    <div class="search-wrap">
-
-      <input
-        id="search"
-        type="search"
-        autocomplete="off"
-        placeholder="Search BIGULA"
-      >
-
-      <button
-        id="searchClear"
-        class="search-clear"
-      >×</button>
-
-    </div>
-
-  </header>
-
-
-  <!-- =====================================================
-       TABS
-  ====================================================== -->
-
-  <nav class="tabs">
-
-    <button class="tab active" data-tab="foryou">
-      For You
-    </button>
-
-    <button class="tab" data-tab="latest">
-      Latest
-    </button>
-
-    <button class="tab" data-tab="viral">
-      Viral
-    </button>
-
-    <button class="tab" data-tab="live">
-      Live
-    </button>
-
-    <button class="tab" data-tab="status">
-      Status
-    </button>
-
-  </nav>
-
-
-  <!-- =====================================================
-       FEED
-  ====================================================== -->
-
-  <main id="feed">
-
-    <div class="center-message">
-      Loading BIGULA…
-    </div>
-
-  </main>
-
-
-  <!-- =====================================================
-       FOOTER
-  ====================================================== -->
-
-  <footer class="footer">
 
     <button
-      class="footer-btn"
-      id="uploadBtn"
-    >
-      <span class="footer-icon">＋</span>
-      Upload
-    </button>
+      id="searchClear"
+      class="search-clear"
+    >×</button>
 
+  </div>
 
-    <button
-      class="footer-btn"
-      id="notificationsBtn"
+</header>
+
+<nav class="tabs">
+
+  <button class="tab active" data-tab="foryou">
+    For You
+  </button>
+
+  <button class="tab" data-tab="latest">
+    Latest
+  </button>
+
+  <button class="tab" data-tab="viral">
+    Viral
+  </button>
+
+  <button class="tab" data-tab="live">
+    Live
+  </button>
+
+  <button class="tab" data-tab="status">
+    Status
+  </button>
+
+</nav>
+
+<main id="feed">
+
+  <div class="center-message">
+    Loading BIGULA…
+  </div>
+
+</main>
+
+<footer class="footer">
+
+  <button
+    class="footer-btn"
+    id="uploadBtn"
+  >
+    <span class="footer-icon">＋</span>
+    Upload
+  </button>
+
+  <button
+    class="footer-btn"
+    id="notificationsBtn"
+  >
+    <span class="footer-icon notification-wrap">
+      ♡
+
+      <span
+        id="notificationBadge"
+        class="notification-badge"
+      >0</span>
+
+    </span>
+
+    Notifications
+
+  </button>
+
+  <button
+    class="footer-btn"
+    id="accountBtn"
+  >
+
+    <span
+      class="footer-icon account-avatar"
+      id="accountAvatar"
     >
-      <span class="footer-icon notification-wrap">
-        ♡
-        <span
-          id="notificationBadge"
-          class="notification-badge"
-        >0</span>
+      <span class="account-avatar-fallback">
+        ●
       </span>
-      Notifications
-    </button>
+    </span>
 
+    Account
 
-    <button
-      class="footer-btn"
-      id="accountBtn"
-    >
-      <span class="footer-icon account-avatar" id="accountAvatar">
-        <span class="account-avatar-fallback">●</span>
-      </span>
-      Account
-    </button>
+  </button>
 
-  </footer>
+</footer>
 
 </div>
 
-
 <!-- =======================================================
-     BIGULA CONVERSATION
+     BIGULA CONVERSATIONS
 ======================================================= -->
 
 <div id="commentsOverlay">
 
-  <section class="comments-panel">
+<section class="comments-panel">
 
-    <div class="comments-header">
+<div class="comments-header">
 
-      <div class="comment-top">
+  <div class="comment-top">
 
-        <div>
-          <div class="comment-heading">
-            THE CONVERSATION
-          </div>
+    <div>
 
-          <div
-            id="commentSubheading"
-            class="comment-subheading"
-          >
-            Join the conversation
-          </div>
-        </div>
-
-        <button
-          id="commentClose"
-          class="comment-close"
-        >
-          ×
-        </button>
-
+      <div class="comment-heading">
+        CONVERSATIONS
       </div>
-
-
-      <div class="reactions">
-
-        <button class="reaction" data-reaction="😂">
-          😂
-        </button>
-
-        <button class="reaction" data-reaction="❤️">
-          ❤️
-        </button>
-
-        <button class="reaction" data-reaction="🔥">
-          🔥
-        </button>
-
-        <button class="reaction" data-reaction="👀">
-          👀
-        </button>
-
-        <button class="reaction" data-reaction="👏">
-          👏
-        </button>
-
-        <button class="reaction" data-reaction="🤣">
-          🤣
-        </button>
-
-      </div>
-
-
-      <div class="comment-sort">
-
-        <button
-          class="sort-btn active"
-          data-sort="interesting"
-        >
-          Interesting
-        </button>
-
-        <button
-          class="sort-btn"
-          data-sort="newest"
-        >
-          Newest
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <div id="replyBar">
-
-      <span>
-        Replying to <strong id="replyName"></strong>
-      </span>
-
-      <button id="cancelReply">
-        Cancel
-      </button>
-
-    </div>
-
-
-    <div id="commentsList">
-
-      <div class="comments-empty">
-        Loading conversation…
-      </div>
-
-    </div>
-
-
-    <div class="comment-composer">
 
       <div
-        id="composerAvatar"
-        class="composer-avatar"
+        id="commentSubheading"
+        class="comment-subheading"
       >
-        B
+        Join the conversation
       </div>
-
-      <textarea
-        id="commentInput"
-        rows="1"
-        maxlength="1000"
-        placeholder="Join the conversation…"
-      ></textarea>
-
-      <button
-        id="commentSend"
-        disabled
-      >
-        ➤
-      </button>
 
     </div>
 
-  </section>
+    <button
+      id="commentClose"
+      class="comment-close"
+    >
+      ×
+    </button>
+
+  </div>
+
+  <div class="reactions">
+
+    <button class="reaction" data-reaction="😂">
+      😂
+    </button>
+
+    <button class="reaction" data-reaction="❤️">
+      ❤️
+    </button>
+
+    <button class="reaction" data-reaction="🔥">
+      🔥
+    </button>
+
+    <button class="reaction" data-reaction="👀">
+      👀
+    </button>
+
+    <button class="reaction" data-reaction="👏">
+      👏
+    </button>
+
+    <button class="reaction" data-reaction="🤣">
+      🤣
+    </button>
+
+  </div>
+
+  <div class="comment-sort">
+
+    <button
+      class="sort-btn active"
+      data-sort="interesting"
+    >
+      Interesting
+    </button>
+
+    <button
+      class="sort-btn"
+      data-sort="newest"
+    >
+      Newest
+    </button>
+
+  </div>
 
 </div>
 
+<div id="replyBar">
+
+  <span>
+    Replying to
+    <strong id="replyName"></strong>
+  </span>
+
+  <button id="cancelReply">
+    Cancel
+  </button>
+
+</div>
+
+<div id="commentsList">
+
+  <div class="comments-empty">
+
+    <strong>
+      Loading conversation…
+    </strong>
+
+  </div>
+
+</div>
+
+<div class="comment-composer">
+
+  <div
+    id="composerAvatar"
+    class="composer-avatar"
+  >
+    B
+  </div>
+
+  <textarea
+    id="commentInput"
+    rows="1"
+    maxlength="1000"
+    placeholder="Join the conversation…"
+  ></textarea>
+
+  <button
+    id="commentSend"
+    disabled
+  >
+    ➤
+  </button>
+
+</div>
+
+</section>
+
+</div>
 
 <script type="module">
 
@@ -1513,7 +1582,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
 "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-
 
 const supabase =
 createClient(
@@ -1615,28 +1683,21 @@ let loadingFeed = false;
 
 async function getCurrentUser(){
 
-  /*
-    Complete Google PKCE callback first.
-  */
+  const params =
+  new URLSearchParams(
+    location.search
+  );
 
   const code =
-  new URLSearchParams(location.search)
-  .get("code");
-
+  params.get("code");
 
   if(code){
 
-    const result =
-    await supabase.auth.exchangeCodeForSession(code);
+    try{
 
-    if(result.error){
-
-      console.error(
-        "PKCE exchange failed:",
-        result.error
+      await supabase.auth.exchangeCodeForSession(
+        code
       );
-
-    }else{
 
       history.replaceState(
         {},
@@ -1644,60 +1705,59 @@ async function getCurrentUser(){
         location.pathname
       );
 
+    }catch(error){
+
+      console.error(
+        "PKCE exchange error:",
+        error
+      );
+
     }
 
   }
 
-
-  const result =
+  const {
+    data
+  } =
   await supabase.auth.getSession();
 
+  return data?.session?.user || null;
 
-  if(result.data?.session?.user){
-
-    return result.data.session.user;
-
-  }
-
-
-  const refreshed =
-  await supabase.auth.refreshSession();
-
-
-  if(
-    !refreshed.error &&
-    refreshed.data?.session?.user
-  ){
-
-    return refreshed.data.session.user;
-
-  }
-
-
-  return null;
 }
 
 
 /* =========================================================
-   USER DATA
+   USER PROFILE
 ========================================================= */
 
-async function getUserProfile(userId){
+async function getUserProfile(
+  userId
+){
 
-  if(!userId)return null;
+  if(!userId)
+    return {};
 
-  if(userCache.has(userId)){
-    return userCache.get(userId);
+  if(
+    userCache.has(
+      userId
+    )
+  ){
+
+    return userCache.get(
+      userId
+    );
+
   }
 
-
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
   await supabase
     .from("users")
     .select("*")
     .eq("id",userId)
     .maybeSingle();
-
 
   if(error){
 
@@ -1708,13 +1768,16 @@ async function getUserProfile(userId){
 
   }
 
+  const profile =
+  data || {};
 
-  if(data){
-    userCache.set(userId,data);
-  }
+  userCache.set(
+    userId,
+    profile
+  );
 
+  return profile;
 
-  return data || null;
 }
 
 
@@ -1722,15 +1785,18 @@ async function getUserProfile(userId){
    NAME
 ========================================================= */
 
-function getName(user,profile){
+function getName(
+  user,
+  profile={}
+){
 
   return (
-    profile?.full_name ||
-    profile?.name ||
-    profile?.display_name ||
+    profile.full_name ||
+    profile.name ||
+    profile.display_name ||
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
-    user?.user_metadata?.user_name ||
+    user?.user_metadata?.display_name ||
     "BIGULA User"
   );
 
@@ -1741,13 +1807,16 @@ function getName(user,profile){
    AVATAR
 ========================================================= */
 
-function getAvatar(user,profile){
+function getAvatar(
+  user,
+  profile={}
+){
 
   return (
-    profile?.avatar_url ||
-    profile?.photo_url ||
-    profile?.profile_photo ||
-    profile?.avatar ||
+    profile.avatar_url ||
+    profile.photo_url ||
+    profile.profile_photo ||
+    profile.avatar ||
     user?.user_metadata?.avatar_url ||
     user?.user_metadata?.picture ||
     ""
@@ -1762,56 +1831,140 @@ function getAvatar(user,profile){
 
 function esc(value){
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[c])
-    );
+  return String(
+    value ??
+    ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
 /* =========================================================
-   TIME
+   FORMAT COUNT
 ========================================================= */
 
-function timeAgo(date){
+function formatCount(
+  value
+){
 
-  if(!date)return "";
+  const n =
+  Number(value || 0);
 
-  const seconds =
-  Math.floor(
-    (Date.now() - new Date(date).getTime())
-    / 1000
+  if(n >= 1000000)
+    return (
+      (n / 1000000)
+      .toFixed(
+        n >= 10000000
+        ? 0
+        : 1
+      )
+      .replace(
+        ".0",
+        ""
+      ) +
+      "M"
+    );
+
+  if(n >= 1000)
+    return (
+      (n / 1000)
+      .toFixed(
+        n >= 10000
+        ? 0
+        : 1
+      )
+      .replace(
+        ".0",
+        ""
+      ) +
+      "K"
+    );
+
+  return String(n);
+
+}
+
+
+/* =========================================================
+   TIME AGO
+========================================================= */
+
+function timeAgo(
+  date
+){
+
+  if(!date)
+    return "";
+
+  const time =
+  new Date(date).getTime();
+
+  if(
+    Number.isNaN(time)
+  )
+    return "";
+
+  const diff =
+  Math.max(
+    0,
+    Date.now() - time
   );
 
+  const minute =
+  60000;
 
-  if(seconds < 60)
-    return `${seconds}s`;
+  const hour =
+  minute * 60;
 
-  const minutes =
-  Math.floor(seconds / 60);
+  const day =
+  hour * 24;
 
-  if(minutes < 60)
-    return `${minutes}m`;
+  const week =
+  day * 7;
 
-  const hours =
-  Math.floor(minutes / 60);
+  if(diff < minute)
+    return "now";
 
-  if(hours < 24)
-    return `${hours}h`;
+  if(diff < hour)
+    return (
+      Math.floor(
+        diff / minute
+      ) + "m"
+    );
 
-  const days =
-  Math.floor(hours / 24);
+  if(diff < day)
+    return (
+      Math.floor(
+        diff / hour
+      ) + "h"
+    );
 
-  if(days < 7)
-    return `${days}d`;
+  if(diff < week)
+    return (
+      Math.floor(
+        diff / day
+      ) + "d"
+    );
 
   return new Date(date)
     .toLocaleDateString();
@@ -1820,53 +1973,41 @@ function timeAgo(date){
 
 
 /* =========================================================
-   VIDEO URL
+   VIDEO USER ID
 ========================================================= */
 
-function getVideoUrl(video){
+function getVideoUserId(
+  video={}
+){
 
-  if(!video)return "";
-
-  if(video.video_url)
-    return video.video_url;
-
-  if(video.url)
-    return video.url;
-
-  if(video.file_url)
-    return video.file_url;
-
-  if(video.public_url)
-    return video.public_url;
-
-  if(video.storage_path){
-
-    return (
-      SUPABASE_URL +
-      "/storage/v1/object/public/bigula/" +
-      video.storage_path
-    );
-
-  }
-
-  return "";
+  return (
+    video.user_id ||
+    video.creator_id ||
+    video.owner_id ||
+    video.created_by ||
+    null
+  );
 
 }
 
 
 /* =========================================================
-   USER ID
+   VIDEO URL
 ========================================================= */
 
-function getVideoUserId(video){
+function getVideoUrl(
+  video={}
+){
 
-  /*
-    IMPORTANT:
-    BIGULA videos use user_id.
-    Do not use creator_id.
-  */
-
-  return video?.user_id || null;
+  return (
+    video.video_url ||
+    video.url ||
+    video.public_url ||
+    video.file_url ||
+    video.storage_url ||
+    video.path ||
+    ""
+  );
 
 }
 
@@ -1877,7 +2018,8 @@ function getVideoUserId(video){
 
 async function loadVideos(){
 
-  if(loadingFeed)return;
+  if(loadingFeed)
+    return;
 
   loadingFeed = true;
 
@@ -1887,56 +2029,54 @@ async function loadVideos(){
     </div>
   `;
 
+  try{
 
-  let query =
-  supabase
-    .from("videos")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(100);
+    const {
+      data,
+      error
+    } =
+    await supabase
+      .from("videos")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
+    if(error)
+      throw error;
 
-  /*
-    Public feed should not show obviously
-    unavailable/private rows when those columns
-    exist. We avoid filtering on optional columns
-    because your existing videos table may differ.
-  */
+    videos =
+    data || [];
 
+    await prepareFeed();
 
-  const {data,error} =
-  await query;
-
-
-  if(error){
+  }catch(error){
 
     console.error(
-      "Video feed error:",
+      "Videos load error:",
       error
     );
 
     feed.innerHTML = `
       <div class="center-message">
-        <strong>BIGULA couldn't load videos</strong>
-        <span>${esc(error.message)}</span>
-        <button onclick="location.reload()">
-          Try again
-        </button>
+        <strong>
+          BIGULA could not load videos
+        </strong>
+
+        <span>
+          ${esc(error.message)}
+        </span>
       </div>
     `;
 
+  }finally{
+
     loadingFeed = false;
 
-    return;
-
   }
-
-
-  videos = data || [];
-
-  await prepareFeed();
-
-  loadingFeed = false;
 
 }
 
@@ -1950,132 +2090,97 @@ async function prepareFeed(){
   let list =
   [...videos];
 
+  const q =
+  search.value
+    .trim()
+    .toLowerCase();
 
-  const interests =
-  getSavedInterests();
+  if(q){
 
+    list =
+    list.filter(
+      video => {
+
+        const text =
+        [
+          video.title,
+          video.description,
+          video.category
+        ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+        return text.includes(q);
+
+      }
+    );
+
+  }
 
   if(currentTab === "latest"){
 
     list.sort(
       (a,b) =>
-        new Date(b.created_at || 0) -
-        new Date(a.created_at || 0)
-    );
-
-  }
-
-
-  else if(currentTab === "viral"){
-
-    /*
-      Use available counters when present.
-      The exact database counters are not required.
-    */
-
-    list.sort(
-      (a,b) => {
-
-        const av =
-          Number(
-            a.views_count ??
-            a.view_count ??
-            a.views ??
-            0
-          );
-
-        const bv =
-          Number(
-            b.views_count ??
-            b.view_count ??
-            b.views ??
-            0
-          );
-
-        return bv-av;
-
-      }
-    );
-
-  }
-
-
-  else if(currentTab === "foryou"){
-
-    /*
-      For You:
-      1. Saved interests
-      2. Followed creators can be prioritized
-      3. Newer content
-    */
-
-    const scores =
-    new Map();
-
-
-    for(const video of list){
-
-      let score = 0;
-
-      const category =
-      String(video.category || "")
-        .toLowerCase();
-
-
-      if(
-        interests.some(
-          i =>
-          String(i).toLowerCase() === category
+        new Date(
+          b.created_at || 0
+        ) -
+        new Date(
+          a.created_at || 0
         )
-      ){
+    );
 
-        score += 100;
+  }
 
-      }
-
-
-      score +=
-      new Date(video.created_at || 0)
-        .getTime()
-        / 100000000;
-
-
-      scores.set(video.id,score);
-
-    }
-
+  if(currentTab === "viral"){
 
     list.sort(
       (a,b) =>
-        (scores.get(b.id) || 0) -
-        (scores.get(a.id) || 0)
+        Number(
+          b.views_count ||
+          b.views ||
+          0
+        ) -
+        Number(
+          a.views_count ||
+          a.views ||
+          0
+        )
     );
 
   }
 
+  if(currentTab === "foryou"){
 
-  else if(currentTab === "live"){
-
-    list =
-    list.filter(video => {
-
-      return (
-        video.is_live === true ||
-        video.live === true
-      );
-
-    });
+    list.sort(
+      (a,b) =>
+        new Date(
+          b.created_at || 0
+        ) -
+        new Date(
+          a.created_at || 0
+        )
+    );
 
   }
 
+  if(
+    currentTab === "live"
+  ){
 
-  else if(currentTab === "status"){
+    list =
+    list.filter(
+      video =>
+        video.is_live === true ||
+        video.live === true ||
+        video.status === "live"
+    );
 
-    /*
-      Status is handled separately when a statuses
-      table exists. We don't pretend ordinary videos
-      are statuses.
-    */
+  }
+
+  if(
+    currentTab === "status"
+  ){
 
     await loadStatuses();
 
@@ -2083,142 +2188,12 @@ async function prepareFeed(){
 
   }
 
+  visibleVideos =
+  list;
 
-  if(search.value.trim()){
-
-    list =
-    await filterSearch(list,search.value);
-
-  }
-
-
-  visibleVideos = list;
-
-  renderFeed(list);
-
-}
-
-
-/* =========================================================
-   INTERESTS
-========================================================= */
-
-function getSavedInterests(){
-
-  try{
-
-    const raw =
-    localStorage.getItem("bigula_interests");
-
-    const result =
-    JSON.parse(raw || "[]");
-
-    return Array.isArray(result)
-      ? result
-      : [];
-
-  }catch(e){
-
-    return [];
-
-  }
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-async function filterSearch(list,text){
-
-  const q =
-  text.trim().toLowerCase();
-
-  if(!q)return list;
-
-
-  const creatorIds =
-  new Set();
-
-
-  for(const video of list){
-
-    const userId =
-    getVideoUserId(video);
-
-    if(userId)
-      creatorIds.add(userId);
-
-  }
-
-
-  const creators = {};
-
-
-  if(creatorIds.size){
-
-    const {data} =
-    await supabase
-      .from("users")
-      .select("*")
-      .in("id",[...creatorIds]);
-
-
-    for(const user of data || []){
-
-      const name =
-      String(
-        user.full_name ||
-        user.name ||
-        user.display_name ||
-        ""
-      ).toLowerCase();
-
-
-      creators[user.id] = name;
-
-    }
-
-  }
-
-
-  return list.filter(video => {
-
-    const title =
-    String(
-      video.title ||
-      ""
-    ).toLowerCase();
-
-
-    const description =
-    String(
-      video.description ||
-      ""
-    ).toLowerCase();
-
-
-    const category =
-    String(
-      video.category ||
-      ""
-    ).toLowerCase();
-
-
-    const creator =
-    creators[getVideoUserId(video)] ||
-    "";
-
-
-    return (
-      title.includes(q) ||
-      description.includes(q) ||
-      category.includes(q) ||
-      creator.includes(q)
-    );
-
-  });
+  await renderFeed(
+    list
+  );
 
 }
 
@@ -2227,14 +2202,23 @@ async function filterSearch(list,text){
    RENDER FEED
 ========================================================= */
 
-async function renderFeed(list){
+async function renderFeed(
+  list
+){
 
   if(!list.length){
 
     feed.innerHTML = `
       <div class="center-message">
-        <strong>No videos here yet</strong>
-        <span>Try another tab or search.</span>
+
+        <strong>
+          No videos found
+        </strong>
+
+        <span>
+          Try another tab or search.
+        </span>
+
       </div>
     `;
 
@@ -2242,16 +2226,21 @@ async function renderFeed(list){
 
   }
 
-
   feed.innerHTML = "";
 
+  if(observer)
+    observer.disconnect();
 
-  for(const video of list){
+  for(
+    const video
+    of list
+  ){
 
-    await addVideoCard(video);
+    await addVideoCard(
+      video
+    );
 
   }
-
 
   setupObserver();
 
@@ -2262,21 +2251,25 @@ async function renderFeed(list){
    ADD VIDEO CARD
 ========================================================= */
 
-async function addVideoCard(video){
+async function addVideoCard(
+  video
+){
 
   const userId =
-  getVideoUserId(video);
+  getVideoUserId(
+    video
+  );
 
   const profile =
-  await getUserProfile(userId);
-
+  await getUserProfile(
+    userId
+  );
 
   const creatorName =
   profile?.full_name ||
   profile?.name ||
   profile?.display_name ||
   "BIGULA Creator";
-
 
   const avatar =
   profile?.avatar_url ||
@@ -2285,19 +2278,21 @@ async function addVideoCard(video){
   profile?.avatar ||
   "";
 
-
   const url =
-  getVideoUrl(video);
-
+  getVideoUrl(
+    video
+  );
 
   const card =
-  document.createElement("article");
+  document.createElement(
+    "article"
+  );
 
-  card.className = "feed-card";
+  card.className =
+  "feed-card";
 
   card.dataset.videoId =
   video.id;
-
 
   card.innerHTML = `
 
@@ -2305,7 +2300,6 @@ async function addVideoCard(video){
       class="video"
       playsinline
       muted
-      loop
       preload="metadata"
       ${url ? `src="${esc(url)}"` : ""}
     ></video>
@@ -2324,7 +2318,6 @@ async function addVideoCard(video){
       ❤️
     </div>
 
-
     <div class="video-info">
 
       <div class="creator-line">
@@ -2333,12 +2326,17 @@ async function addVideoCard(video){
 
           ${
             avatar
-            ? `<img src="${esc(avatar)}" alt="">`
-            : esc(
-                creatorName
-                  .charAt(0)
-                  .toUpperCase()
-              )
+            ?
+            `<img
+              src="${esc(avatar)}"
+              alt=""
+            >`
+            :
+            esc(
+              creatorName
+                .charAt(0)
+                .toUpperCase()
+            )
           }
 
         </div>
@@ -2356,18 +2354,15 @@ async function addVideoCard(video){
 
       </div>
 
-
       <div class="video-title">
         ${esc(video.title || "")}
       </div>
-
 
       <div class="video-description">
         ${esc(video.description || "")}
       </div>
 
     </div>
-
 
     <div class="actions">
 
@@ -2386,7 +2381,6 @@ async function addVideoCard(video){
 
       </button>
 
-
       <button
         class="action comment-button"
         data-video-id="${esc(video.id)}"
@@ -2401,7 +2395,6 @@ async function addVideoCard(video){
         </span>
 
       </button>
-
 
       <button
         class="action share-button"
@@ -2421,45 +2414,118 @@ async function addVideoCard(video){
     </div>
   `;
 
-
-  feed.appendChild(card);
-
+  feed.appendChild(
+    card
+  );
 
   const videoEl =
-  card.querySelector(".video");
-
+  card.querySelector(
+    ".video"
+  );
 
   videoEl.addEventListener(
     "click",
-    () => handleVideoTap(
-      card,
-      videoEl,
-      video
-    )
+    () =>
+      handleVideoTap(
+        card,
+        videoEl,
+        video
+      )
   );
 
+  /*
+    IMPORTANT:
+    Do not loop the video.
+    When it completely finishes,
+    move to the next full 100dvh card.
+  */
 
-  // When the current video finishes, smoothly snap to the next
-  // complete video card.
-  videoEl.addEventListener("ended", () => {
-    const nextCard = card.nextElementSibling;
+  videoEl.addEventListener(
+    "ended",
+    () => {
 
-    if(nextCard && nextCard.classList.contains("feed-card")){
-      nextCard.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
+      const nextCard =
+      card.nextElementSibling;
+
+      if(
+        !nextCard ||
+        !nextCard.classList.contains(
+          "feed-card"
+        )
+      )
+        return;
+
+      /*
+        Scroll the feed itself to the exact
+        top position of the next card.
+      */
+
+      feed.scrollTo({
+
+        top:
+          nextCard.offsetTop,
+
+        behavior:
+          "smooth"
+
       });
-    }
-  });
 
+      /*
+        Stop every other video.
+      */
+
+      document
+        .querySelectorAll(
+          ".feed-card .video"
+        )
+        .forEach(
+          other => {
+
+            if(
+              other !==
+              nextCard.querySelector(
+                ".video"
+              )
+            ){
+
+              other.pause();
+
+            }
+
+          }
+        );
+
+      const nextVideo =
+      nextCard.querySelector(
+        ".video"
+      );
+
+      if(nextVideo){
+
+        activeVideo =
+        nextVideo;
+
+        activeVideoId =
+        nextCard.dataset.videoId;
+
+        nextVideo
+          .play()
+          .catch(
+            () => {}
+          );
+
+      }
+
+    }
+  );
 
   card.querySelector(
     ".like-button"
   ).addEventListener(
     "click",
-    e => {
+    event => {
 
-      e.stopPropagation();
+      event.stopPropagation();
 
       toggleLike(
         video.id,
@@ -2469,51 +2535,51 @@ async function addVideoCard(video){
     }
   );
 
-
   card.querySelector(
     ".comment-button"
   ).addEventListener(
     "click",
-    e => {
+    event => {
 
-      e.stopPropagation();
+      event.stopPropagation();
 
-      openComments(video.id);
-
-    }
-  );
-
-
-  card.querySelector(
-    ".share-button"
-  ).addEventListener(
-    "click",
-    e => {
-
-      e.stopPropagation();
-
-      shareVideo(video);
-
-    }
-  );
-
-
-  card.querySelector(
-    ".follow-btn"
-  ).addEventListener(
-    "click",
-    e => {
-
-      e.stopPropagation();
-
-      toggleFollow(
-        userId,
-        e.currentTarget
+      openComments(
+        video.id
       );
 
     }
   );
 
+  card.querySelector(
+    ".share-button"
+  ).addEventListener(
+    "click",
+    event => {
+
+      event.stopPropagation();
+
+      shareVideo(
+        video
+      );
+
+    }
+  );
+
+  card.querySelector(
+    ".follow-btn"
+  ).addEventListener(
+    "click",
+    event => {
+
+      event.stopPropagation();
+
+      toggleFollow(
+        userId,
+        event.currentTarget
+      );
+
+    }
+  );
 
   await loadCardStats(
     video.id,
@@ -2527,7 +2593,10 @@ async function addVideoCard(video){
    CARD STATS
 ========================================================= */
 
-async function loadCardStats(videoId,card){
+async function loadCardStats(
+  videoId,
+  card
+){
 
   const [
     likesResult,
@@ -2538,21 +2607,47 @@ async function loadCardStats(videoId,card){
 
     supabase
       .from("likes")
-      .select("id",{count:"exact",head:true})
-      .eq("video_id",videoId),
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "video_id",
+        videoId
+      ),
 
     supabase
       .from("comments")
-      .select("id",{count:"exact",head:true})
-      .eq("video_id",videoId),
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "video_id",
+        videoId
+      ),
 
     supabase
       .from("views")
-      .select("id",{count:"exact",head:true})
-      .eq("video_id",videoId)
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "video_id",
+        videoId
+      )
 
   ]);
-
 
   const likeCount =
   likesResult.count || 0;
@@ -2563,81 +2658,65 @@ async function loadCardStats(videoId,card){
   const viewCount =
   viewsResult.count || 0;
 
-
   const likeEl =
-  card.querySelector(".like-count");
+  card.querySelector(
+    ".like-count"
+  );
 
   const commentEl =
-  card.querySelector(".comment-count");
-
+  card.querySelector(
+    ".comment-count"
+  );
 
   if(likeEl)
     likeEl.textContent =
-    formatCount(likeCount);
-
+    formatCount(
+      likeCount
+    );
 
   if(commentEl)
     commentEl.textContent =
-    formatCount(commentCount);
-
+    formatCount(
+      commentCount
+    );
 
   if(currentUser){
 
-    const {data} =
+    const {
+      data
+    } =
     await supabase
       .from("likes")
       .select("id")
-      .eq("video_id",videoId)
-      .eq("user_id",currentUser.id)
+      .eq(
+        "video_id",
+        videoId
+      )
+      .eq(
+        "user_id",
+        currentUser.id
+      )
       .maybeSingle();
 
-
     const button =
-    card.querySelector(".like-button");
-
+    card.querySelector(
+      ".like-button"
+    );
 
     if(data){
 
-      button.classList.add("liked");
+      button.classList.add(
+        "liked"
+      );
 
       button.querySelector(
         ".action-icon"
-      ).textContent = "♥";
+      ).textContent =
+      "♥";
 
     }
 
   }
-
-}
-
-
-/* =========================================================
-   FORMAT COUNT
-========================================================= */
-
-function formatCount(number){
-
-  number =
-  Number(number || 0);
-
-
-  if(number >= 1000000)
-    return (
-      (number / 1000000)
-        .toFixed(number >= 10000000 ? 0 : 1)
-      + "M"
-    );
-
-
-  if(number >= 1000)
-    return (
-      (number / 1000)
-        .toFixed(number >= 10000 ? 0 : 1)
-      + "K"
-    );
-
-
-  return String(number);
 
 }
 
@@ -2646,60 +2725,76 @@ function formatCount(number){
    VIDEO TAP
 ========================================================= */
 
-function handleVideoTap(card,video,videoData){
+function handleVideoTap(
+  card,
+  videoEl,
+  video
+){
 
   const now =
   Date.now();
 
+  const sameVideo =
+  lastTapVideoId ===
+  video.id;
 
   const isDouble =
-  lastTapVideoId === videoData.id &&
+  sameVideo &&
   now - lastTap < 350;
 
+  lastTap =
+  now;
 
-  lastTap = now;
-  lastTapVideoId = videoData.id;
-
+  lastTapVideoId =
+  video.id;
 
   if(isDouble){
 
-    showDoubleHeart(card);
+    showDoubleHeart(
+      card
+    );
 
-    if(!card.querySelector(".like-button")
-      .classList.contains("liked")){
-
-      toggleLike(
-        videoData.id,
-        card
-      );
-
-    }
+    toggleLike(
+      video.id,
+      card
+    );
 
     return;
 
   }
 
+  if(videoEl.paused){
 
-  if(video.paused){
-
-    video.play().catch(()=>{});
-
-    card.querySelector(
-      ".pause-indicator"
-    ).classList.remove("show");
-
-  }else{
-
-    video.pause();
+    videoEl
+      .play()
+      .catch(
+        () => {}
+      );
 
     const indicator =
     card.querySelector(
       ".pause-indicator"
     );
 
-    indicator.textContent = "▶";
+    indicator.classList.remove(
+      "show"
+    );
 
-    indicator.classList.add("show");
+  }else{
+
+    videoEl.pause();
+
+    const indicator =
+    card.querySelector(
+      ".pause-indicator"
+    );
+
+    indicator.textContent =
+    "▶";
+
+    indicator.classList.add(
+      "show"
+    );
 
   }
 
@@ -2710,17 +2805,24 @@ function handleVideoTap(card,video,videoData){
    DOUBLE HEART
 ========================================================= */
 
-function showDoubleHeart(card){
+function showDoubleHeart(
+  card
+){
 
   const heart =
-  card.querySelector(".double-heart");
+  card.querySelector(
+    ".double-heart"
+  );
 
-
-  heart.classList.remove("animate");
+  heart.classList.remove(
+    "animate"
+  );
 
   void heart.offsetWidth;
 
-  heart.classList.add("animate");
+  heart.classList.add(
+    "animate"
+  );
 
 }
 
@@ -2734,66 +2836,91 @@ function setupObserver(){
   if(observer)
     observer.disconnect();
 
-
   observer =
   new IntersectionObserver(
+
     entries => {
 
-      entries.forEach(entry => {
+      entries.forEach(
+        entry => {
 
-        const video =
-        entry.target.querySelector(
-          ".video"
-        );
-
-
-        if(!video)return;
-
-
-        if(
-          entry.isIntersecting &&
-          entry.intersectionRatio >= .75
-        ){
-
-          activeVideo =
-          video;
-
-
-          document
-            .querySelectorAll(".feed-card .video")
-            .forEach(other => {
-
-              if(other !== video)
-                other.pause();
-
-            });
-
-
-          video.play().catch(()=>{});
-
-          recordViewOnce(
-            entry.target.dataset.videoId
+          const video =
+          entry.target.querySelector(
+            ".video"
           );
 
-        }else{
+          if(!video)
+            return;
 
-          video.pause();
+          if(
+            entry.isIntersecting &&
+            entry.intersectionRatio >= .75
+          ){
+
+            activeVideo =
+            video;
+
+            activeVideoId =
+            entry.target.dataset.videoId;
+
+            document
+              .querySelectorAll(
+                ".feed-card .video"
+              )
+              .forEach(
+                other => {
+
+                  if(
+                    other !== video
+                  ){
+
+                    other.pause();
+
+                  }
+
+                }
+              );
+
+            video
+              .play()
+              .catch(
+                () => {}
+              );
+
+            recordViewOnce(
+              entry.target.dataset.videoId
+            );
+
+          }else{
+
+            video.pause();
+
+          }
 
         }
-
-      });
+      );
 
     },
+
     {
-      threshold:[0,.75]
+      threshold:[
+        0,
+        .75,
+        1
+      ]
     }
+
   );
 
-
   document
-    .querySelectorAll(".feed-card")
-    .forEach(card =>
-      observer.observe(card)
+    .querySelectorAll(
+      ".feed-card"
+    )
+    .forEach(
+      card =>
+        observer.observe(
+          card
+        )
     );
 
 }
@@ -2806,38 +2933,40 @@ function setupObserver(){
 const viewedVideos =
 new Set();
 
+async function recordViewOnce(
+  videoId
+){
 
-async function recordViewOnce(videoId){
-
-  if(!currentUser)return;
-
-  if(viewedVideos.has(videoId))
+  if(!currentUser)
     return;
 
+  if(
+    viewedVideos.has(
+      videoId
+    )
+  )
+    return;
 
-  viewedVideos.add(videoId);
+  viewedVideos.add(
+    videoId
+  );
 
-
-  /*
-    View is recorded only after the card is
-    actually visible enough to become active.
-  */
-
-  const {error} =
+  const {
+    error
+  } =
   await supabase
     .from("views")
     .insert({
-      video_id:videoId,
-      user_id:currentUser.id
+
+      video_id:
+        videoId,
+
+      user_id:
+        currentUser.id
+
     });
 
-
   if(error){
-
-    /*
-      Do not crash the feed if the views
-      table has a stricter policy.
-    */
 
     console.warn(
       "View record:",
@@ -2853,11 +2982,16 @@ async function recordViewOnce(videoId){
    LIKE
 ========================================================= */
 
-async function toggleLike(videoId,card){
+async function toggleLike(
+  videoId,
+  card
+){
 
   if(!currentUser){
 
-    alert("Please sign in to like videos.");
+    alert(
+      "Please sign in to like videos."
+    );
 
     location.href =
     "signup.html";
@@ -2866,35 +3000,47 @@ async function toggleLike(videoId,card){
 
   }
 
-
   const button =
-  card.querySelector(".like-button");
-
+  card.querySelector(
+    ".like-button"
+  );
 
   const icon =
-  button.querySelector(".action-icon");
+  button.querySelector(
+    ".action-icon"
+  );
 
+  button.disabled =
+  true;
 
-  const countEl =
-  button.querySelector(".like-count");
+  const {
+    data
+  } =
+  await supabase
+    .from("likes")
+    .select("id")
+    .eq(
+      "video_id",
+      videoId
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
 
+  if(data){
 
-  const wasLiked =
-  button.classList.contains("liked");
-
-
-  button.disabled = true;
-
-
-  if(wasLiked){
-
-    const {error} =
+    const {
+      error
+    } =
     await supabase
       .from("likes")
       .delete()
-      .eq("video_id",videoId)
-      .eq("user_id",currentUser.id);
-
+      .eq(
+        "id",
+        data.id
+      );
 
     if(error){
 
@@ -2904,48 +3050,41 @@ async function toggleLike(videoId,card){
       );
 
       alert(
-        "Could not remove your like: " +
-        error.message
+        "Could not unlike video."
       );
 
-      button.disabled = false;
+      button.disabled =
+      false;
 
       return;
 
     }
 
-
-    button.classList.remove("liked");
-
-    icon.textContent = "♡";
-
-    countEl.textContent =
-    formatCount(
-      Math.max(
-        0,
-        Number(
-          parseCount(countEl.textContent)
-        ) - 1
-      )
+    button.classList.remove(
+      "liked"
     );
+
+    icon.textContent =
+    "♡";
 
   }else{
 
-    const {error} =
+    const {
+      error
+    } =
     await supabase
       .from("likes")
       .insert({
-        video_id:videoId,
-        user_id:currentUser.id
+
+        video_id:
+          videoId,
+
+        user_id:
+          currentUser.id
+
       });
 
-
     if(error){
-
-      /*
-        If duplicate insert happens because
-        another event already liked it, refresh.
-      */
 
       console.error(
         "Like error:",
@@ -2953,57 +3092,56 @@ async function toggleLike(videoId,card){
       );
 
       alert(
-        "Could not like this video: " +
+        "Could not like video: " +
         error.message
       );
 
-      button.disabled = false;
+      button.disabled =
+      false;
 
       return;
 
     }
 
-
-    button.classList.add("liked");
-
-    icon.textContent = "♥";
-
-    countEl.textContent =
-    formatCount(
-      Number(
-        parseCount(countEl.textContent)
-      ) + 1
+    button.classList.add(
+      "liked"
     );
+
+    icon.textContent =
+    "♥";
 
   }
 
+  const {
+    count
+  } =
+  await supabase
+    .from("likes")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "video_id",
+      videoId
+    );
 
-  button.disabled = false;
+  const countEl =
+  card.querySelector(
+    ".like-count"
+  );
 
-}
+  if(countEl)
+    countEl.textContent =
+    formatCount(
+      count || 0
+    );
 
-
-/* =========================================================
-   PARSE COUNT
-========================================================= */
-
-function parseCount(value){
-
-  const s =
-  String(value || "0")
-    .toUpperCase()
-    .trim();
-
-
-  if(s.endsWith("K"))
-    return parseFloat(s) * 1000;
-
-
-  if(s.endsWith("M"))
-    return parseFloat(s) * 1000000;
-
-
-  return parseInt(s,10) || 0;
+  button.disabled =
+  false;
 
 }
 
@@ -3012,11 +3150,16 @@ function parseCount(value){
    FOLLOW
 ========================================================= */
 
-async function toggleFollow(userId,button){
+async function toggleFollow(
+  userId,
+  button
+){
 
   if(!currentUser){
 
-    alert("Please sign in to follow creators.");
+    alert(
+      "Please sign in to follow creators."
+    );
 
     location.href =
     "signup.html";
@@ -3025,97 +3168,102 @@ async function toggleFollow(userId,button){
 
   }
 
-
-  if(!userId || userId === currentUser.id)
+  if(
+    !userId ||
+    userId ===
+    currentUser.id
+  )
     return;
 
+  button.disabled =
+  true;
 
-  button.disabled = true;
-
-
-  const {data,error} =
+  const {
+    data
+  } =
   await supabase
     .from("followers")
     .select("id")
-    .eq("follower_id",currentUser.id)
-    .eq("following_id",userId)
+    .eq(
+      "follower_id",
+      currentUser.id
+    )
+    .eq(
+      "following_id",
+      userId
+    )
     .maybeSingle();
-
-
-  if(error){
-
-    console.error(
-      "Follow check:",
-      error
-    );
-
-    button.disabled = false;
-
-    return;
-
-  }
-
 
   if(data){
 
-    const result =
+    const {
+      error
+    } =
     await supabase
       .from("followers")
       .delete()
-      .eq("id",data.id);
+      .eq(
+        "id",
+        data.id
+      );
 
-
-    if(result.error){
+    if(error){
 
       alert(
         "Could not unfollow: " +
-        result.error.message
+        error.message
       );
 
     }else{
-
-      button.textContent =
-      "Follow";
 
       button.classList.remove(
         "following"
       );
 
+      button.textContent =
+      "Follow";
+
     }
 
   }else{
 
-    const result =
+    const {
+      error
+    } =
     await supabase
       .from("followers")
       .insert({
-        follower_id:currentUser.id,
-        following_id:userId
+
+        follower_id:
+          currentUser.id,
+
+        following_id:
+          userId
+
       });
 
-
-    if(result.error){
+    if(error){
 
       alert(
         "Could not follow: " +
-        result.error.message
+        error.message
       );
 
     }else{
-
-      button.textContent =
-      "Following";
 
       button.classList.add(
         "following"
       );
 
+      button.textContent =
+      "Following";
+
     }
 
   }
 
-
-  button.disabled = false;
+  button.disabled =
+  false;
 
 }
 
@@ -3124,7 +3272,9 @@ async function toggleFollow(userId,button){
    COMMENTS
 ========================================================= */
 
-async function openComments(videoId){
+async function openComments(
+  videoId
+){
 
   commentsVideoId =
   videoId;
@@ -3132,28 +3282,33 @@ async function openComments(videoId){
   replyToComment =
   null;
 
-  replyBar.classList.remove("show");
+  replyBar.classList.remove(
+    "show"
+  );
 
-  commentInput.value = "";
+  commentInput.value =
+  "";
 
-  commentSend.disabled = true;
+  commentInput.style.height =
+  "40px";
 
+  commentSend.disabled =
+  true;
 
   commentsOverlay.classList.add(
     "open"
   );
 
-
   document.body.style.overflow =
   "hidden";
 
-
   commentsList.innerHTML = `
     <div class="comments-empty">
-      Loading conversation…
+      <strong>
+        Loading conversations…
+      </strong>
     </div>
   `;
-
 
   await loadComments();
 
@@ -3169,26 +3324,33 @@ async function loadComments(){
   if(!commentsVideoId)
     return;
 
-
-  /*
-    Select * deliberately.
-    BIGULA's comment table may have additional
-    reaction/reply fields.
-  */
-
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
   await supabase
     .from("comments")
-    .select("*")
-    .eq("video_id",commentsVideoId)
+    .select(
+      "id,video_id,user_id,comment,parent_id,likes_count,created_at,updated_at,display_name"
+    )
+    .eq(
+      "video_id",
+      commentsVideoId
+    )
+    .order(
+      commentsSort === "newest"
+        ? "created_at"
+        : "likes_count",
+      {
+        ascending:false
+      }
+    )
     .order(
       "created_at",
       {
-        ascending:
-          commentsSort === "newest"
+        ascending:false
       }
     );
-
 
   if(error){
 
@@ -3197,11 +3359,17 @@ async function loadComments(){
       error
     );
 
-
     commentsList.innerHTML = `
       <div class="comments-empty">
-        <strong>Conversation unavailable</strong>
-        <span>${esc(error.message)}</span>
+
+        <strong>
+          Conversations unavailable
+        </strong>
+
+        <span>
+          ${esc(error.message)}
+        </span>
+
       </div>
     `;
 
@@ -3209,10 +3377,8 @@ async function loadComments(){
 
   }
 
-
   commentRows =
   data || [];
-
 
   await renderComments();
 
@@ -3223,13 +3389,12 @@ async function loadComments(){
    COMMENT BODY
 ========================================================= */
 
-function getCommentText(comment){
+function getCommentText(
+  comment
+){
 
   return (
     comment.comment ??
-    comment.content ??
-    comment.text ??
-    comment.body ??
     ""
   );
 
@@ -3240,12 +3405,12 @@ function getCommentText(comment){
    COMMENT PARENT
 ========================================================= */
 
-function getParentId(comment){
+function getParentId(
+  comment
+){
 
   return (
-    comment.parent_id ??
-    comment.parent_comment_id ??
-    comment.reply_to ??
+    comment.parent_id ||
     null
   );
 
@@ -3256,12 +3421,12 @@ function getParentId(comment){
    COMMENT USER
 ========================================================= */
 
-function getCommentUserId(comment){
+function getCommentUserId(
+  comment
+){
 
   return (
-    comment.user_id ??
-    comment.author_id ??
-    comment.creator_id ??
+    comment.user_id ||
     null
   );
 
@@ -3278,10 +3443,16 @@ async function renderComments(){
 
     commentsList.innerHTML = `
       <div class="comments-empty">
-        <strong>Start the conversation.</strong>
+
+        <strong>
+          Start the conversation.
+        </strong>
+
         <span>
-          Be the first person to say something about this video.
+          Be the first person to say something
+          about this video.
         </span>
+
       </div>
     `;
 
@@ -3292,35 +3463,41 @@ async function renderComments(){
 
   }
 
-
   const userIds =
   [
     ...new Set(
       commentRows
-        .map(getCommentUserId)
+        .map(
+          getCommentUserId
+        )
         .filter(Boolean)
     )
   ];
 
-
   await Promise.all(
     userIds.map(
-      id => getUserProfile(id)
+      id =>
+        getUserProfile(
+          id
+        )
     )
   );
 
-
   const topLevel =
   commentRows.filter(
-    c => !getParentId(c)
+    comment =>
+      !getParentId(
+        comment
+      )
   );
-
 
   const replies =
   commentRows.filter(
-    c => getParentId(c)
+    comment =>
+      getParentId(
+        comment
+      )
   );
-
 
   commentSubheading.textContent =
   `${commentRows.length} ${
@@ -3329,27 +3506,32 @@ async function renderComments(){
       : "people"
   } joined the conversation`;
 
-
   commentsList.innerHTML =
   topLevel
-    .map(comment => {
+    .map(
+      comment => {
 
-      const childReplies =
-      replies.filter(
-        r =>
-          getParentId(r) ===
-          comment.id
-      );
+        const childReplies =
+        replies.filter(
+          reply =>
+            String(
+              getParentId(
+                reply
+              )
+            ) ===
+            String(
+              comment.id
+            )
+        );
 
+        return renderComment(
+          comment,
+          childReplies
+        );
 
-      return renderComment(
-        comment,
-        childReplies
-      );
-
-    })
+      }
+    )
     .join("");
-
 
   bindCommentButtons();
 
@@ -3360,22 +3542,27 @@ async function renderComments(){
    RENDER SINGLE COMMENT
 ========================================================= */
 
-function renderComment(comment,replies=[]){
+function renderComment(
+  comment,
+  replies=[]
+){
 
   const userId =
-  getCommentUserId(comment);
-
+  getCommentUserId(
+    comment
+  );
 
   const profile =
-  userCache.get(userId) || {};
-
+  userCache.get(
+    userId
+  ) || {};
 
   const name =
+  comment.display_name ||
   profile.full_name ||
   profile.name ||
   profile.display_name ||
   "BIGULA User";
-
 
   const avatar =
   profile.avatar_url ||
@@ -3384,25 +3571,20 @@ function renderComment(comment,replies=[]){
   profile.avatar ||
   "";
 
-
   const isCreator =
   userId &&
-  currentVideoOwnerId() === userId;
-
+  currentVideoOwnerId() ===
+  userId;
 
   const pinned =
   comment.is_pinned === true ||
   comment.pinned === true;
 
-
   const likeCount =
   Number(
-    comment.likes_count ??
-    comment.like_count ??
-    comment.likes ??
+    comment.likes_count ||
     0
   );
-
 
   return `
 
@@ -3415,25 +3597,34 @@ function renderComment(comment,replies=[]){
 
         ${
           avatar
-          ? `<img src="${esc(avatar)}" alt="">`
-          : esc(
-              name
-                .charAt(0)
-                .toUpperCase()
-            )
+          ?
+          `<img
+            src="${esc(avatar)}"
+            alt=""
+          >`
+          :
+          esc(
+            name
+              .charAt(0)
+              .toUpperCase()
+          )
         }
 
       </div>
-
 
       <div class="comment-body">
 
         ${
           pinned
-          ? `<div class="pin-label">📌 PINNED BY CREATOR</div>`
-          : ""
+          ?
+          `
+          <div class="pin-label">
+            📌 PINNED BY CREATOR
+          </div>
+          `
+          :
+          ""
         }
-
 
         <div class="comment-author-line">
 
@@ -3443,21 +3634,33 @@ function renderComment(comment,replies=[]){
 
           ${
             isCreator
-            ? `<span class="comment-creator">CREATOR</span>`
-            : ""
+            ?
+            `
+            <span class="comment-creator">
+              CREATOR
+            </span>
+            `
+            :
+            ""
           }
 
           <span class="comment-time">
-            ${esc(timeAgo(comment.created_at))}
+            ${esc(
+              timeAgo(
+                comment.created_at
+              )
+            )}
           </span>
 
         </div>
 
-
         <div class="comment-text">
-          ${esc(getCommentText(comment))}
+          ${esc(
+            getCommentText(
+              comment
+            )
+          )}
         </div>
-
 
         <div class="comment-meta">
 
@@ -3467,11 +3670,15 @@ function renderComment(comment,replies=[]){
           >
             ${
               likeCount
-                ? "♥ " + formatCount(likeCount)
-                : "♡"
+              ?
+              "♥ " +
+              formatCount(
+                likeCount
+              )
+              :
+              "♡"
             }
           </button>
-
 
           <button
             class="comment-action comment-reply"
@@ -3481,37 +3688,51 @@ function renderComment(comment,replies=[]){
             Reply
           </button>
 
-
           ${
             currentUser &&
-            userId === currentUser.id
+            userId ===
+            currentUser.id
             ?
-            `<button
+            `
+            <button
               class="comment-action comment-delete"
               data-id="${esc(comment.id)}"
             >
               Delete
-            </button>`
+            </button>
+            `
             :
-            `<button
+            `
+            <button
               class="comment-action comment-report"
               data-id="${esc(comment.id)}"
             >
               Report
-            </button>`
+            </button>
+            `
           }
 
         </div>
 
-
         ${
           replies.length
           ?
-          `<div class="reply-list">
-            ${replies.map(
-              r => renderReply(r)
-            ).join("")}
-          </div>`
+          `
+          <div class="reply-list">
+
+            ${
+              replies
+                .map(
+                  reply =>
+                    renderReply(
+                      reply
+                    )
+                )
+                .join("")
+            }
+
+          </div>
+          `
           :
           ""
         }
@@ -3529,22 +3750,26 @@ function renderComment(comment,replies=[]){
    RENDER REPLY
 ========================================================= */
 
-function renderReply(comment){
+function renderReply(
+  comment
+){
 
   const userId =
-  getCommentUserId(comment);
-
+  getCommentUserId(
+    comment
+  );
 
   const profile =
-  userCache.get(userId) || {};
-
+  userCache.get(
+    userId
+  ) || {};
 
   const name =
+  comment.display_name ||
   profile.full_name ||
   profile.name ||
   profile.display_name ||
   "BIGULA User";
-
 
   const avatar =
   profile.avatar_url ||
@@ -3553,6 +3778,11 @@ function renderReply(comment){
   profile.avatar ||
   "";
 
+  const likeCount =
+  Number(
+    comment.likes_count ||
+    0
+  );
 
   return `
 
@@ -3565,16 +3795,20 @@ function renderReply(comment){
 
         ${
           avatar
-          ? `<img src="${esc(avatar)}" alt="">`
-          : esc(
-              name
-                .charAt(0)
-                .toUpperCase()
-            )
+          ?
+          `<img
+            src="${esc(avatar)}"
+            alt=""
+          >`
+          :
+          esc(
+            name
+              .charAt(0)
+              .toUpperCase()
+          )
         }
 
       </div>
-
 
       <div class="comment-body">
 
@@ -3585,16 +3819,22 @@ function renderReply(comment){
           </span>
 
           <span class="comment-time">
-            ${esc(timeAgo(comment.created_at))}
+            ${esc(
+              timeAgo(
+                comment.created_at
+              )
+            )}
           </span>
 
         </div>
 
-
         <div class="comment-text">
-          ${esc(getCommentText(comment))}
+          ${esc(
+            getCommentText(
+              comment
+            )
+          )}
         </div>
-
 
         <div class="comment-meta">
 
@@ -3602,27 +3842,40 @@ function renderReply(comment){
             class="comment-action comment-react"
             data-id="${esc(comment.id)}"
           >
-            ♡
+            ${
+              likeCount
+              ?
+              "♥ " +
+              formatCount(
+                likeCount
+              )
+              :
+              "♡"
+            }
           </button>
-
 
           ${
             currentUser &&
-            userId === currentUser.id
+            userId ===
+            currentUser.id
             ?
-            `<button
+            `
+            <button
               class="comment-action comment-delete"
               data-id="${esc(comment.id)}"
             >
               Delete
-            </button>`
+            </button>
+            `
             :
-            `<button
+            `
+            <button
               class="comment-action comment-report"
               data-id="${esc(comment.id)}"
             >
               Report
-            </button>`
+            </button>
+            `
           }
 
         </div>
@@ -3644,11 +3897,14 @@ function currentVideoOwnerId(){
 
   const video =
   videos.find(
-    v => String(v.id) === String(commentsVideoId)
+    item =>
+      String(item.id) ===
+      String(commentsVideoId)
   );
 
-
-  return getVideoUserId(video);
+  return getVideoUserId(
+    video
+  );
 
 }
 
@@ -3660,90 +3916,191 @@ function currentVideoOwnerId(){
 function bindCommentButtons(){
 
   document
-    .querySelectorAll(".comment-reply")
-    .forEach(button => {
+    .querySelectorAll(
+      ".comment-reply"
+    )
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick =
+        () => {
 
-        if(!currentUser){
+          if(!currentUser){
 
-          alert(
-            "Please sign in to reply."
+            alert(
+              "Please sign in to reply."
+            );
+
+            location.href =
+            "signup.html";
+
+            return;
+
+          }
+
+          replyToComment =
+          button.dataset.id;
+
+          replyName.textContent =
+          button.dataset.name;
+
+          replyBar.classList.add(
+            "show"
           );
 
-          location.href =
-          "signup.html";
+          commentInput.focus();
 
-          return;
+        };
 
-        }
-
-
-        replyToComment =
-        button.dataset.id;
-
-
-        replyName.textContent =
-        button.dataset.name;
-
-
-        replyBar.classList.add(
-          "show"
-        );
-
-
-        commentInput.focus();
-
-      };
-
-    });
+      }
+    );
 
 
   document
-    .querySelectorAll(".comment-react")
-    .forEach(button => {
+    .querySelectorAll(
+      ".comment-react"
+    )
+    .forEach(
+      button => {
 
-      button.onclick = () => {
+        button.onclick =
+        async () => {
 
-        /*
-          Comment reactions are visually supported.
-          Actual persistence is attempted only if
-          the comments table exposes a usable
-          likes_count field; otherwise the main
-          comments table remains untouched.
-        */
+          if(!currentUser){
 
-        button.classList.toggle(
-          "reacted"
-        );
+            alert(
+              "Please sign in to like a comment."
+            );
 
-      };
+            location.href =
+            "signup.html";
 
-    });
+            return;
+
+          }
+
+          const id =
+          button.dataset.id;
+
+          const row =
+          commentRows.find(
+            comment =>
+              String(
+                comment.id
+              ) ===
+              String(id)
+          );
+
+          if(!row)
+            return;
+
+          const currentCount =
+          Number(
+            row.likes_count ||
+            0
+          );
+
+          const alreadyReacted =
+          button.classList.contains(
+            "reacted"
+          );
+
+          const nextCount =
+          Math.max(
+            0,
+            currentCount +
+            (
+              alreadyReacted
+              ? -1
+              : 1
+            )
+          );
+
+          button.disabled =
+          true;
+
+          const {
+            error
+          } =
+          await supabase
+            .from("comments")
+            .update({
+
+              likes_count:
+                nextCount,
+
+              updated_at:
+                new Date()
+                  .toISOString()
+
+            })
+            .eq(
+              "id",
+              id
+            );
+
+          if(error){
+
+            console.error(
+              "Comment like error:",
+              error
+            );
+
+            alert(
+              "Could not update comment reaction: " +
+              error.message
+            );
+
+            button.disabled =
+            false;
+
+            return;
+
+          }
+
+          row.likes_count =
+          nextCount;
+
+          await renderComments();
+
+        };
+
+      }
+    );
 
 
   document
-    .querySelectorAll(".comment-delete")
-    .forEach(button => {
+    .querySelectorAll(
+      ".comment-delete"
+    )
+    .forEach(
+      button => {
 
-      button.onclick = () =>
-        deleteComment(
-          button.dataset.id
-        );
+        button.onclick =
+        () =>
+          deleteComment(
+            button.dataset.id
+          );
 
-    });
+      }
+    );
 
 
   document
-    .querySelectorAll(".comment-report")
-    .forEach(button => {
+    .querySelectorAll(
+      ".comment-report"
+    )
+    .forEach(
+      button => {
 
-      button.onclick = () =>
-        reportComment(
-          button.dataset.id
-        );
+        button.onclick =
+        () =>
+          reportComment(
+            button.dataset.id
+          );
 
-    });
+      }
+    );
 
 }
 
@@ -3767,128 +4124,88 @@ async function sendComment(){
 
   }
 
-
   const text =
   commentInput.value.trim();
 
+  if(
+    !text ||
+    !commentsVideoId
+  )
+    return;
 
-  if(!text)return;
+  commentSend.disabled =
+  true;
 
-  if(!commentsVideoId)return;
-
-
-  commentSend.disabled = true;
-
-
-  /*
-    Your comments table may use "comment"
-    or "content". Try the BIGULA "comment"
-    field first, then content if necessary.
-  */
-
-  let payload = {
+  const payload = {
 
     video_id:
-    commentsVideoId,
+      commentsVideoId,
 
     user_id:
-    currentUser.id,
+      currentUser.id,
 
     comment:
-    text
+      text,
+
+    ...(replyToComment
+      ?
+      {
+        parent_id:
+          replyToComment
+      }
+      :
+      {})
 
   };
 
-
-  if(replyToComment){
-
-    payload.parent_id =
-    replyToComment;
-
-  }
-
-
-  let result =
+  const {
+    error
+  } =
   await supabase
     .from("comments")
-    .insert(payload);
+    .insert(
+      payload
+    );
 
-
-  /*
-    If the table does not have "comment",
-    retry using "content".
-  */
-
-  if(
-    result.error &&
-    /comment/i.test(
-      result.error.message || ""
-    )
-  ){
-
-    payload =
-    {
-      video_id:
-      commentsVideoId,
-
-      user_id:
-      currentUser.id,
-
-      content:
-      text
-    };
-
-
-    if(replyToComment){
-
-      payload.parent_id =
-      replyToComment;
-
-    }
-
-
-    result =
-    await supabase
-      .from("comments")
-      .insert(payload);
-
-  }
-
-
-  if(result.error){
+  if(error){
 
     console.error(
       "Comment insert error:",
-      result.error
+      error
     );
-
 
     alert(
       "Comment could not be posted: " +
-      result.error.message
+      error.message
     );
 
-
-    commentSend.disabled = false;
+    commentSend.disabled =
+    false;
 
     return;
 
   }
 
+  commentInput.value =
+  "";
 
-  commentInput.value = "";
+  commentInput.style.height =
+  "40px";
 
-  replyToComment = null;
+  replyToComment =
+  null;
 
   replyBar.classList.remove(
     "show"
   );
 
-
-  commentSend.disabled = true;
-
+  commentSend.disabled =
+  true;
 
   await loadComments();
+
+  commentsList.scrollTop =
+  commentsList.scrollHeight;
 
 }
 
@@ -3897,27 +4214,35 @@ async function sendComment(){
    DELETE COMMENT
 ========================================================= */
 
-async function deleteComment(commentId){
+async function deleteComment(
+  commentId
+){
 
-  if(!currentUser)return;
-
+  if(!currentUser)
+    return;
 
   const yes =
   confirm(
     "Delete this comment?"
   );
 
+  if(!yes)
+    return;
 
-  if(!yes)return;
-
-
-  const {error} =
+  const {
+    error
+  } =
   await supabase
     .from("comments")
     .delete()
-    .eq("id",commentId)
-    .eq("user_id",currentUser.id);
-
+    .eq(
+      "id",
+      commentId
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    );
 
   if(error){
 
@@ -3930,7 +4255,6 @@ async function deleteComment(commentId){
 
   }
 
-
   await loadComments();
 
 }
@@ -3940,7 +4264,9 @@ async function deleteComment(commentId){
    REPORT COMMENT
 ========================================================= */
 
-async function reportComment(commentId){
+async function reportComment(
+  commentId
+){
 
   if(!currentUser){
 
@@ -3952,50 +4278,81 @@ async function reportComment(commentId){
 
   }
 
-
-  /*
-    Keep reporting available without assuming
-    extra columns in the reports table.
-  */
-
   const reason =
   prompt(
     "Why are you reporting this comment?",
     "Inappropriate content"
   );
 
+  if(!reason)
+    return;
 
-  if(!reason)return;
+  /*
+    Use the existing reports table without
+    assuming extra columns.
+  */
 
+  const payload = {
 
-  const {error} =
+    user_id:
+      currentUser.id,
+
+    reason:
+      reason
+
+  };
+
+  /*
+    Try the comment-specific structure first.
+  */
+
+  let result =
   await supabase
     .from("reports")
     .insert({
 
-      user_id:
-      currentUser.id,
+      ...payload,
 
       comment_id:
-      commentId,
-
-      reason:
-      reason.trim()
+        commentId
 
     });
 
+  /*
+    If comment_id is not available in the
+    current reports table, retry with a
+    generic content reference.
+  */
 
-  if(error){
+  if(result.error){
+
+    result =
+    await supabase
+      .from("reports")
+      .insert({
+
+        ...payload,
+
+        target_id:
+          commentId,
+
+        target_type:
+          "comment"
+
+      });
+
+  }
+
+  if(result.error){
 
     alert(
       "Report could not be submitted: " +
-      error.message
+      result.error.message
     );
 
     return;
 
   }
-
 
   alert(
     "Thanks. BIGULA received your report."
@@ -4005,31 +4362,34 @@ async function reportComment(commentId){
 
 
 /* =========================================================
-   COMMENT REACTIONS
+   COMMENT REACTION STRIP
 ========================================================= */
 
 document
-  .querySelectorAll(".reaction")
-  .forEach(button => {
+  .querySelectorAll(
+    ".reaction"
+  )
+  .forEach(
+    button => {
 
-    button.onclick = () => {
+      button.onclick =
+      () => {
 
-      const emoji =
-      button.dataset.reaction;
+        const emoji =
+        button.dataset.reaction;
 
+        commentInput.value +=
+        emoji + " ";
 
-      commentInput.value +=
-      emoji + " ";
+        commentInput.focus();
 
+        commentSend.disabled =
+        !commentInput.value.trim();
 
-      commentInput.focus();
+      };
 
-      commentSend.disabled =
-      !commentInput.value.trim();
-
-    };
-
-  });
+    }
+  );
 
 
 /* =========================================================
@@ -4037,30 +4397,39 @@ document
 ========================================================= */
 
 document
-  .querySelectorAll(".sort-btn")
-  .forEach(button => {
+  .querySelectorAll(
+    ".sort-btn"
+  )
+  .forEach(
+    button => {
 
-    button.onclick = async () => {
+      button.onclick =
+      async () => {
 
-      document
-        .querySelectorAll(".sort-btn")
-        .forEach(b =>
-          b.classList.remove("active")
+        document
+          .querySelectorAll(
+            ".sort-btn"
+          )
+          .forEach(
+            item =>
+              item.classList.remove(
+                "active"
+              )
+          );
+
+        button.classList.add(
+          "active"
         );
 
+        commentsSort =
+        button.dataset.sort;
 
-      button.classList.add("active");
+        await loadComments();
 
+      };
 
-      commentsSort =
-      button.dataset.sort;
-
-
-      await loadComments();
-
-    };
-
-  });
+    }
+  );
 
 
 /* =========================================================
@@ -4110,17 +4479,25 @@ commentSend.onclick =
 sendComment;
 
 
-document.getElementById(
-  "cancelReply"
-).onclick = () => {
+/* =========================================================
+   CANCEL REPLY
+========================================================= */
 
-  replyToComment = null;
+document
+  .getElementById(
+    "cancelReply"
+  )
+  .onclick =
+  () => {
 
-  replyBar.classList.remove(
-    "show"
-  );
+    replyToComment =
+    null;
 
-};
+    replyBar.classList.remove(
+      "show"
+    );
+
+  };
 
 
 /* =========================================================
@@ -4138,6 +4515,13 @@ function closeComments(){
 
   commentsVideoId =
   null;
+
+  replyToComment =
+  null;
+
+  replyBar.classList.remove(
+    "show"
+  );
 
 }
 
@@ -4167,25 +4551,27 @@ commentsOverlay.addEventListener(
    SHARE
 ========================================================= */
 
-async function shareVideo(video){
+async function shareVideo(
+  video
+){
 
   const code =
   video.short_code ||
   video.shortCode ||
   "";
 
-
   const url =
   code
-  ? `${location.origin}${location.pathname.replace(
-      "home.html",
-      ""
-    )}video_view.html?short_code=${encodeURIComponent(code)}`
-  : `${location.origin}${location.pathname.replace(
-      "home.html",
-      ""
-    )}video_view.html?id=${encodeURIComponent(video.id)}`;
-
+  ?
+  `${location.origin}${location.pathname.replace(
+    "home.html",
+    ""
+  )}video_view.html?short_code=${encodeURIComponent(code)}`
+  :
+  `${location.origin}${location.pathname.replace(
+    "home.html",
+    ""
+  )}video_view.html?id=${encodeURIComponent(video.id)}`;
 
   if(
     navigator.share
@@ -4194,25 +4580,31 @@ async function shareVideo(video){
     try{
 
       await navigator.share({
+
         title:
           video.title ||
           "BIGULA video",
+
         text:
           "Watch this on BIGULA",
+
         url
+
       });
 
       return;
 
-    }catch(e){
+    }catch(error){
 
-      if(e.name === "AbortError")
+      if(
+        error.name ===
+        "AbortError"
+      )
         return;
 
     }
 
   }
-
 
   try{
 
@@ -4224,7 +4616,7 @@ async function shareVideo(video){
       "BIGULA video link copied."
     );
 
-  }catch(e){
+  }catch(error){
 
     prompt(
       "Copy this BIGULA link:",
@@ -4242,61 +4634,67 @@ async function shareVideo(video){
 
 async function loadStatuses(){
 
-  /*
-    Statuses are intentionally kept separate
-    from ordinary videos.
-  */
-
-  const {data,error} =
+  const {
+    data,
+    error
+  } =
   await supabase
     .from("statuses")
     .select("*")
-    .eq("is_active",true)
+    .eq(
+      "is_active",
+      true
+    )
     .gt(
       "expires_at",
       new Date().toISOString()
     )
     .order(
       "created_at",
-      {ascending:false}
+      {
+        ascending:false
+      }
     );
 
-
   if(error){
-
-    /*
-      If statuses table has not been created yet,
-      show a useful state instead of crashing Home.
-    */
 
     console.warn(
       "Status feed:",
       error.message
     );
 
-
     feed.innerHTML = `
       <div class="center-message">
-        <strong>Status is coming to BIGULA</strong>
+
+        <strong>
+          Status is coming to BIGULA
+        </strong>
+
         <span>
           Status posts will appear here when enabled.
         </span>
+
       </div>
     `;
 
     return;
 
   }
-
 
   if(!data?.length){
 
     feed.innerHTML = `
       <div class="center-message">
-        <strong>No active statuses</strong>
+
+        <strong>
+          No active statuses
+        </strong>
+
         <span>
-          Follow creators and friends to see their status posts here.
+          Follow creators and friends to see
+          their status posts here.
         </span>
+
       </div>
     `;
 
@@ -4304,24 +4702,23 @@ async function loadStatuses(){
 
   }
 
-
-  /*
-    A status can reference video_id.
-    Load those videos and display them using
-    the normal video-card system.
-  */
-
   const videoIds =
   data
-    .map(s => s.video_id)
+    .map(
+      item =>
+        item.video_id
+    )
     .filter(Boolean);
-
 
   if(!videoIds.length){
 
     feed.innerHTML = `
       <div class="center-message">
-        <strong>No video statuses yet</strong>
+
+        <strong>
+          No video statuses yet
+        </strong>
+
       </div>
     `;
 
@@ -4329,19 +4726,28 @@ async function loadStatuses(){
 
   }
 
-
-  const {data:statusVideos} =
+  const {
+    data:statusVideos
+  } =
   await supabase
     .from("videos")
     .select("*")
-    .in("id",videoIds);
+    .in(
+      "id",
+      videoIds
+    );
 
-
-  if(!statusVideos?.length){
+  if(
+    !statusVideos?.length
+  ){
 
     feed.innerHTML = `
       <div class="center-message">
-        <strong>No active statuses</strong>
+
+        <strong>
+          No active statuses
+        </strong>
+
       </div>
     `;
 
@@ -4349,10 +4755,8 @@ async function loadStatuses(){
 
   }
 
-
   visibleVideos =
   statusVideos;
-
 
   await renderFeed(
     statusVideos
@@ -4366,41 +4770,50 @@ async function loadStatuses(){
 ========================================================= */
 
 document
-  .querySelectorAll(".tab")
-  .forEach(tab => {
+  .querySelectorAll(
+    ".tab"
+  )
+  .forEach(
+    tab => {
 
-    tab.onclick = async () => {
+      tab.onclick =
+      async () => {
 
-      document
-        .querySelectorAll(".tab")
-        .forEach(t =>
-          t.classList.remove("active")
+        document
+          .querySelectorAll(
+            ".tab"
+          )
+          .forEach(
+            item =>
+              item.classList.remove(
+                "active"
+              )
+          );
+
+        tab.classList.add(
+          "active"
         );
 
+        currentTab =
+        tab.dataset.tab;
 
-      tab.classList.add("active");
+        feed.scrollTop =
+        0;
 
+        await prepareFeed();
 
-      currentTab =
-      tab.dataset.tab;
+      };
 
-
-      feed.scrollTop = 0;
-
-
-      await prepareFeed();
-
-    };
-
-  });
+    }
+  );
 
 
 /* =========================================================
    SEARCH
 ========================================================= */
 
-let searchTimer = null;
-
+let searchTimer =
+null;
 
 search.addEventListener(
   "input",
@@ -4408,18 +4821,19 @@ search.addEventListener(
 
     searchClear.style.display =
     search.value
-      ? "block"
-      : "none";
-
+      ?
+      "block"
+      :
+      "none";
 
     clearTimeout(
       searchTimer
     );
 
-
     searchTimer =
     setTimeout(
-      () => prepareFeed(),
+      () =>
+        prepareFeed(),
       250
     );
 
@@ -4427,9 +4841,11 @@ search.addEventListener(
 );
 
 
-searchClear.onclick = () => {
+searchClear.onclick =
+() => {
 
-  search.value = "";
+  search.value =
+  "";
 
   searchClear.style.display =
   "none";
@@ -4445,82 +4861,78 @@ searchClear.onclick = () => {
    FOOTER NAVIGATION
 ========================================================= */
 
-document.getElementById(
-  "homeBtn"
-).onclick = () => {
+document
+  .getElementById(
+    "uploadBtn"
+  )
+  .onclick =
+  () => {
 
-  location.href =
-  "home.html";
+    if(!currentUser){
 
-};
+      alert(
+        "Please sign in to upload."
+      );
 
+      location.href =
+      "signup.html";
 
-document.getElementById(
-  "uploadBtn"
-).onclick = () => {
+      return;
 
-  if(!currentUser){
-
-    alert(
-      "Please sign in to upload."
-    );
-
-    location.href =
-    "signup.html";
-
-    return;
-
-  }
-
-
-  location.href =
-  "upload.html";
-
-};
-
-
-document.getElementById(
-  "notificationsBtn"
-).onclick = () => {
-
-  if(!currentUser){
-
-    alert(
-      "Please sign in to view notifications."
-    );
+    }
 
     location.href =
-    "signup.html";
+    "upload.html";
 
-    return;
-
-  }
+  };
 
 
-  location.href =
-  "notifications.html";
+document
+  .getElementById(
+    "notificationsBtn"
+  )
+  .onclick =
+  () => {
 
-};
+    if(!currentUser){
 
+      alert(
+        "Please sign in to view notifications."
+      );
 
-document.getElementById(
-  "accountBtn"
-).onclick = () => {
+      location.href =
+      "signup.html";
 
-  if(!currentUser){
+      return;
+
+    }
 
     location.href =
-    "signup.html";
+    "notifications.html";
 
-    return;
-
-  }
+  };
 
 
-  location.href =
-  "account.html";
+document
+  .getElementById(
+    "accountBtn"
+  )
+  .onclick =
+  () => {
 
-};
+    if(!currentUser){
+
+      location.href =
+      "signup.html";
+
+      return;
+
+    }
+
+    location.href =
+    "account.html";
+
+  };
 
 
 /* =========================================================
@@ -4529,51 +4941,67 @@ document.getElementById(
 
 async function loadNotificationBadge(){
 
-  if(!currentUser)return;
-
-
-  /*
-    BIGULA notifications may use either
-    user_id or recipient_id depending on
-    the existing version of the table.
-  */
+  if(!currentUser)
+    return;
 
   let result =
   await supabase
     .from("notifications")
-    .select("id",{count:"exact",head:true})
-    .eq("user_id",currentUser.id)
-    .eq("is_read",false);
-
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .eq(
+      "is_read",
+      false
+    );
 
   if(result.error){
 
     result =
     await supabase
       .from("notifications")
-      .select("id",{count:"exact",head:true})
-      .eq("recipient_id",currentUser.id)
-      .eq("is_read",false);
+      .select(
+        "id",
+        {
+          count:"exact",
+          head:true
+        }
+      )
+      .eq(
+        "recipient_id",
+        currentUser.id
+      )
+      .eq(
+        "is_read",
+        false
+      );
 
   }
 
-
   const count =
   result.count || 0;
-
 
   const badge =
   document.getElementById(
     "notificationBadge"
   );
 
-
   if(count > 0){
 
     badge.textContent =
     count > 99
-      ? "99+"
-      : String(count);
+      ?
+      "99+"
+      :
+      String(count);
 
     badge.style.display =
     "flex";
@@ -4594,14 +5022,32 @@ async function loadNotificationBadge(){
 
 async function setupComposer(){
 
-  if(!currentUser)return;
+  if(!currentUser){
 
+    if(accountAvatar){
+
+      accountAvatar.innerHTML =
+      `
+      <span class="account-avatar-fallback">
+        ●
+      </span>
+      `;
+
+    }
+
+    return;
+
+  }
+
+  /*
+    This deliberately reads the current user's
+    row from the users table.
+  */
 
   const profile =
   await getUserProfile(
     currentUser.id
   );
-
 
   const name =
   getName(
@@ -4609,23 +5055,31 @@ async function setupComposer(){
     profile
   );
 
-
   const avatar =
   getAvatar(
     currentUser,
     profile
   );
 
-
   if(avatar){
 
     composerAvatar.innerHTML =
-    `<img src="${esc(avatar)}" alt="">`;
+    `
+    <img
+      src="${esc(avatar)}"
+      alt=""
+    >
+    `;
 
     if(accountAvatar){
 
       accountAvatar.innerHTML =
-      `<img src="${esc(avatar)}" alt="">`;
+      `
+      <img
+        src="${esc(avatar)}"
+        alt=""
+      >
+      `;
 
     }
 
@@ -4642,7 +5096,11 @@ async function setupComposer(){
     if(accountAvatar){
 
       accountAvatar.innerHTML =
-      `<span class="account-avatar-fallback">${esc(initial)}</span>`;
+      `
+      <span class="account-avatar-fallback">
+        ${esc(initial)}
+      </span>
+      `;
 
     }
 
@@ -4656,15 +5114,18 @@ async function setupComposer(){
 ========================================================= */
 
 supabase.auth.onAuthStateChange(
-  async (event,session) => {
+  async (
+    event,
+    session
+  ) => {
 
     currentUser =
-    session?.user || null;
+    session?.user ||
+    null;
 
+    await setupComposer();
 
     if(currentUser){
-
-      await setupComposer();
 
       await loadNotificationBadge();
 
@@ -4683,20 +5144,17 @@ async function init(){
   currentUser =
   await getCurrentUser();
 
+  await setupComposer();
 
   if(currentUser){
-
-    await setupComposer();
 
     await loadNotificationBadge();
 
   }
 
-
   await loadVideos();
 
 }
-
 
 init();
 
