@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +25,7 @@ button{cursor:pointer}
 .message{display:none;margin-top:14px;padding:11px 12px;border-radius:12px;background:#181818;border:1px solid #292929;color:#bbb;font-size:12px;line-height:1.45}.message.show{display:block}.message.error{color:#ff9d9d;border-color:#512929}.message.success{color:#9af2aa;border-color:#285331}
 .recording{display:none;color:#ff6c6c;font-size:12px;font-weight:800;margin-top:13px;text-align:center}.recording.show{display:block}.recording i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3030;margin-right:6px}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.btn{min-height:49px;border:0;border-radius:13px;padding:12px 16px;font-weight:900;font-size:14px}.btn.primary{background:#fff;color:#000}.btn.secondary{background:#242424;color:#fff;border:1px solid #303030}.btn:disabled{opacity:.4;cursor:not-allowed}.back-link{width:100%;border:0;background:transparent;color:#777;margin-top:10px;padding:10px;font-size:12px}
+
 /* EDITOR */
 .editor-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:15px}.editor-title{font-size:23px;font-weight:900}.editor-sub{color:#777;font-size:12px;margin-top:5px;line-height:1.4}.badge{border:1px solid #343434;border-radius:30px;padding:7px 10px;color:#888;font-size:9px;font-weight:900;letter-spacing:1.4px;white-space:nowrap}
 .editor-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}.preview-card{background:#090909;border:1px solid #292929;border-radius:19px;padding:10px;position:sticky;top:15px}.preview-head{display:flex;justify-content:space-between;align-items:center;color:#777;font-size:10px;padding:2px 3px 8px}.preview-head b{color:#aaa}.phone{width:100%;aspect-ratio:9/16;background:#000;border-radius:14px;overflow:hidden;position:relative;border:1px solid #242424}.phone video{width:100%;height:100%;display:block;object-fit:cover;background:#000;transition:filter .15s,transform .15s}.overlay-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.overlay{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.overlay:active{cursor:grabbing}.text-overlay{max-width:88%;padding:5px 9px;color:#fff;font-size:28px;font-weight:900;line-height:1.1;text-align:center;white-space:pre-wrap;text-shadow:0 2px 7px #000;display:none}.text-overlay.boxed{background:rgba(0,0,0,.68);border-radius:8px;text-shadow:none}.emoji-overlay{font-size:58px;line-height:1;display:none}
@@ -41,31 +43,92 @@ button{cursor:pointer}
     <div class="brand">BIGULA<small>CREATE</small></div>
     <div class="header-label" id="headerLabel">Step 1 of 3</div>
   </header>
-  <div class="steps"><div class="step active" id="dot1"></div><div class="step" id="dot2"></div><div class="step" id="dot3"></div></div>
+
+  <div class="steps">
+    <div class="step active" id="dot1"></div>
+    <div class="step" id="dot2"></div>
+    <div class="step" id="dot3"></div>
+  </div>
 
   <section id="step1" class="section active">
     <div class="card">
-      <div class="eyebrow">Start here</div><h1 class="heading">Create a video</h1>
+      <div class="eyebrow">Start here</div>
+      <h1 class="heading">Create a video</h1>
       <p class="subheading">Choose how you want to bring your video into BIGULA.</p>
+
       <input id="videoFileInput" class="hidden-input" type="file" accept="video/*">
       <input id="cameraFileInput" class="hidden-input" type="file" accept="video/*" capture="environment">
+
       <div class="source-list">
-        <button class="source-btn" id="chooseVideoBtn" type="button"><div class="source-icon">▣</div><div class="source-copy"><strong>Choose Video</strong><span>Select a video from your device</span></div></button>
-        <button class="source-btn" id="recordVideoBtn" type="button"><div class="source-icon">●</div><div class="source-copy"><strong>Record Video</strong><span>Record a new video with your camera</span></div></button>
-        <button class="source-btn live" id="goLiveBtn" type="button" disabled><div class="source-icon">◉</div><div class="source-copy"><strong>Go Live</strong><span id="liveRequirement">Available at 100 followers · 0/100</span></div></button>
+        <button class="source-btn" id="chooseVideoBtn" type="button">
+          <div class="source-icon">▣</div>
+          <div class="source-copy">
+            <strong>Choose Video</strong>
+            <span>Select a video from your device</span>
+          </div>
+        </button>
+
+        <button class="source-btn" id="recordVideoBtn" type="button">
+          <div class="source-icon">●</div>
+          <div class="source-copy">
+            <strong>Record Video</strong>
+            <span>Record a new video with your camera</span>
+          </div>
+        </button>
+
+        <button class="source-btn live" id="goLiveBtn" type="button" disabled>
+          <div class="source-icon">◉</div>
+          <div class="source-copy">
+            <strong>Go Live</strong>
+            <span id="liveRequirement">Available at 100 followers · 0/100</span>
+          </div>
+        </button>
       </div>
-      <div class="selected-file" id="selectedFileBox"><div class="file-name" id="selectedFileName"></div><div class="file-info" id="selectedFileInfo"></div></div>
-      <div class="recording" id="recordingBox"><i></i>Recording · maximum 15 seconds</div>
+
+      <div class="selected-file" id="selectedFileBox">
+        <div class="file-name" id="selectedFileName"></div>
+        <div class="file-info" id="selectedFileInfo"></div>
+      </div>
+
+      <div class="recording" id="recordingBox">
+        <i></i>Recording · maximum 15 seconds
+      </div>
+
       <div class="message" id="step1Message"></div>
-      <button class="btn primary" id="nextToEditBtn" type="button" disabled style="width:100%;margin-top:16px">Continue to Editor</button>
+
+      <button class="btn primary" id="nextToEditBtn" type="button" disabled style="width:100%;margin-top:16px">
+        Continue to Editor
+      </button>
     </div>
   </section>
 
   <section id="step2" class="section">
     <div class="card">
-      <div class="editor-top"><div><div class="eyebrow">Step 2</div><div class="editor-title">Edit your video</div><div class="editor-sub">Make changes from the toolbar. Your preview updates immediately.</div></div><div class="badge">EDITOR</div></div>
+      <div class="editor-top">
+        <div>
+          <div class="eyebrow">Step 2</div>
+          <div class="editor-title">Edit your video</div>
+          <div class="editor-sub">Make changes from the toolbar. Your preview updates immediately.</div>
+        </div>
+        <div class="badge">EDITOR</div>
+      </div>
+
       <div class="editor-layout">
-        <div class="preview-card"><div class="preview-head"><b>PREVIEW</b><span id="previewStatus">Ready</span></div><div class="phone" id="previewPhone"><video id="previewVideo" playsinline controls></video><div class="overlay-layer" id="overlayLayer"><div id="textOverlay" class="overlay text-overlay"></div><div id="emojiOverlay" class="overlay emoji-overlay"></div></div></div></div>
+        <div class="preview-card">
+          <div class="preview-head">
+            <b>PREVIEW</b>
+            <span id="previewStatus">Ready</span>
+          </div>
+
+          <div class="phone" id="previewPhone">
+            <video id="previewVideo" playsinline controls></video>
+            <div class="overlay-layer" id="overlayLayer">
+              <div id="textOverlay" class="overlay text-overlay"></div>
+              <div id="emojiOverlay" class="overlay emoji-overlay"></div>
+            </div>
+          </div>
+        </div>
+
         <div class="editor-main">
           <div class="toolbar">
             <button class="tool-main" data-tab="filters" type="button"><span class="ico">◐</span>Filters</button>
@@ -77,40 +140,255 @@ button{cursor:pointer}
             <button class="tool-main" data-tab="sound" type="button"><span class="ico">♫</span>Sound</button>
             <button class="tool-main" data-tab="none" type="button"><span class="ico">×</span>Close</button>
           </div>
-          <div class="panel empty" id="editorEmpty"><div><b>Select an editing tool</b><span>Choose a tool above. Options stay hidden until you open them.</span></div></div>
-          <div class="panel editor-panel" data-panel="filters"><div class="panel-title">Filters</div><div class="panel-note">Choose a visual look.</div><div class="option-row">
-            <button class="option active" data-filter="none">Original</button><button class="option" data-filter="cinematic">Cinematic</button><button class="option" data-filter="vivid">Vivid</button><button class="option" data-filter="warm">Warm</button><button class="option" data-filter="cool">Cool</button><button class="option" data-filter="film">Film</button><button class="option" data-filter="retro">Retro</button><button class="option" data-filter="dream">Dream</button><button class="option" data-filter="noir">Noir</button><button class="option" data-filter="sepia">Sepia</button><button class="option" data-filter="bw">B&W</button><button class="option" data-filter="bright">Bright</button>
-          </div></div>
-          <div class="panel editor-panel" data-panel="effects"><div class="panel-title">Effects</div><div class="panel-note">Add a visual effect to the preview.</div><div class="option-grid"><button class="option active" data-effect="none">None</button><button class="option" data-effect="glow">Glow</button><button class="option" data-effect="dramatic">Dramatic</button><button class="option" data-effect="vintage">Vintage</button><button class="option" data-effect="vhs">VHS</button><button class="option" data-effect="negative">Negative</button><button class="option" data-effect="flash">Flash</button><button class="option" data-effect="mirror">Mirror</button><button class="option" data-effect="blur">Blur</button></div><div class="effect-status" id="effectStatus">No effect selected.</div></div>
-          <div class="panel editor-panel" data-panel="crop"><div class="panel-title">Crop & frame</div><div class="panel-note">Choose how the source fills the BIGULA preview.</div><div class="option-grid"><button class="option active" data-crop="fill">Fill</button><button class="option" data-crop="fit">Fit</button><button class="option" data-crop="top">Top</button><button class="option" data-crop="center">Center</button><button class="option" data-crop="bottom">Bottom</button></div></div>
-          <div class="panel editor-panel" data-panel="speed"><div class="panel-title">Speed</div><div class="panel-note">Change playback speed. The editor preview follows your selection.</div><div class="option-grid"><button class="option" data-speed="0.25">0.25×</button><button class="option" data-speed="0.5">0.5×</button><button class="option active" data-speed="1">1×</button><button class="option" data-speed="1.5">1.5×</button><button class="option" data-speed="2">2×</button><button class="option" data-speed="3">3×</button></div></div>
-          <div class="panel editor-panel" data-panel="text"><div class="panel-title">Text</div><div class="panel-note">Type your text, then drag it directly on the video.</div><div class="field"><label>TEXT</label><textarea id="textInput" maxlength="200" placeholder="Write something..."></textarea></div><div class="two"><div class="field"><label>SIZE</label><select id="textSize"><option value="20">Small</option><option value="28" selected>Medium</option><option value="40">Large</option><option value="54">Extra large</option></select></div><div class="field"><label>COLOR</label><input id="textColor" type="color" value="#ffffff"></div></div><button class="option" id="textBackgroundBtn" type="button" style="margin-top:10px">Add background</button><div class="hint">Drag the text on the preview to place it. The position is saved for the rendered upload.</div></div>
-          <div class="panel editor-panel" data-panel="emoji"><div class="panel-title">Emoji</div><div class="panel-note">Choose an emoji, then drag it directly on the video.</div><div class="emoji-grid" id="emojiList"><button class="emoji" data-emoji="😂">😂</button><button class="emoji" data-emoji="🤣">🤣</button><button class="emoji" data-emoji="😍">😍</button><button class="emoji" data-emoji="❤️">❤️</button><button class="emoji" data-emoji="🔥">🔥</button><button class="emoji" data-emoji="👏">👏</button><button class="emoji" data-emoji="😎">😎</button><button class="emoji" data-emoji="😱">😱</button><button class="emoji" data-emoji="😭">😭</button><button class="emoji" data-emoji="💯">💯</button><button class="emoji" data-emoji="🎉">🎉</button><button class="emoji" data-emoji="👍">👍</button><button class="emoji" data-emoji="👀">👀</button><button class="emoji" data-emoji="💔">💔</button><button class="emoji" data-emoji="🥳">🥳</button><button class="emoji" data-emoji="🤯">🤯</button><button class="emoji" data-emoji="🙏">🙏</button><button class="emoji" data-emoji="😈">😈</button></div><div class="range-row"><input id="emojiSize" type="range" min="30" max="130" value="58"><span class="range-val" id="emojiSizeValue">58px</span></div><div class="hint">Drag the emoji on the preview to place it. The position is saved for the rendered upload.</div></div>
-          <div class="panel editor-panel" data-panel="sound"><div class="panel-title">Sound effects</div><div class="panel-note">Select a sound marker. Audio insertion is prepared for the editor render where supported.</div><div class="option-row"><button class="option active" data-sfx="none">None</button><button class="option" data-sfx="pop">Pop</button><button class="option" data-sfx="beep">Beep</button><button class="option" data-sfx="click">Click</button><button class="option" data-sfx="whoosh">Whoosh</button><button class="option" data-sfx="ding">Ding</button><button class="option" data-sfx="laugh">Laugh</button></div><div class="range-row"><input id="sfxPosition" type="range" min="0" max="100" value="50"><span class="range-val" id="sfxPositionValue">50%</span></div><div class="range-row"><input id="sfxVolume" type="range" min="0" max="100" value="70"><span class="range-val" id="sfxVolumeValue">70%</span></div><div class="effect-status" id="sfxStatus">No sound effect selected.</div></div>
-          <div class="editor-status"><span id="editorStatus">No edits selected</span><button class="reset" id="resetEditor" type="button">Reset edits</button></div>
-          <div class="btn-row"><button class="btn secondary" id="backToStep1" type="button">← Back</button><button class="btn primary" id="goStep3" type="button">Continue →</button></div>
+
+          <div class="panel empty" id="editorEmpty">
+            <div>
+              <b>Select an editing tool</b>
+              <span>Choose a tool above. Options stay hidden until you open them.</span>
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="filters">
+            <div class="panel-title">Filters</div>
+            <div class="panel-note">Choose a visual look.</div>
+            <div class="option-row">
+              <button class="option active" data-filter="none">Original</button>
+              <button class="option" data-filter="cinematic">Cinematic</button>
+              <button class="option" data-filter="vivid">Vivid</button>
+              <button class="option" data-filter="warm">Warm</button>
+              <button class="option" data-filter="cool">Cool</button>
+              <button class="option" data-filter="film">Film</button>
+              <button class="option" data-filter="retro">Retro</button>
+              <button class="option" data-filter="dream">Dream</button>
+              <button class="option" data-filter="noir">Noir</button>
+              <button class="option" data-filter="sepia">Sepia</button>
+              <button class="option" data-filter="bw">B&W</button>
+              <button class="option" data-filter="bright">Bright</button>
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="effects">
+            <div class="panel-title">Effects</div>
+            <div class="panel-note">Add a visual effect to the preview.</div>
+            <div class="option-grid">
+              <button class="option active" data-effect="none">None</button>
+              <button class="option" data-effect="glow">Glow</button>
+              <button class="option" data-effect="dramatic">Dramatic</button>
+              <button class="option" data-effect="vintage">Vintage</button>
+              <button class="option" data-effect="vhs">VHS</button>
+              <button class="option" data-effect="negative">Negative</button>
+              <button class="option" data-effect="flash">Flash</button>
+              <button class="option" data-effect="mirror">Mirror</button>
+              <button class="option" data-effect="blur">Blur</button>
+            </div>
+            <div class="effect-status" id="effectStatus">No effect selected.</div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="crop">
+            <div class="panel-title">Crop & frame</div>
+            <div class="panel-note">Choose how the source fills the BIGULA preview.</div>
+            <div class="option-grid">
+              <button class="option active" data-crop="fill">Fill</button>
+              <button class="option" data-crop="fit">Fit</button>
+              <button class="option" data-crop="top">Top</button>
+              <button class="option" data-crop="center">Center</button>
+              <button class="option" data-crop="bottom">Bottom</button>
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="speed">
+            <div class="panel-title">Speed</div>
+            <div class="panel-note">Change playback speed. The editor preview follows your selection.</div>
+            <div class="option-grid">
+              <button class="option" data-speed="0.25">0.25×</button>
+              <button class="option" data-speed="0.5">0.5×</button>
+              <button class="option active" data-speed="1">1×</button>
+              <button class="option" data-speed="1.5">1.5×</button>
+              <button class="option" data-speed="2">2×</button>
+              <button class="option" data-speed="3">3×</button>
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="text">
+            <div class="panel-title">Text</div>
+            <div class="panel-note">Type your text, then drag it directly on the video.</div>
+
+            <div class="field">
+              <label>TEXT</label>
+              <textarea id="textInput" maxlength="200" placeholder="Write something..."></textarea>
+            </div>
+
+            <div class="two">
+              <div class="field">
+                <label>SIZE</label>
+                <select id="textSize">
+                  <option value="20">Small</option>
+                  <option value="28" selected>Medium</option>
+                  <option value="40">Large</option>
+                  <option value="54">Extra large</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>COLOR</label>
+                <input id="textColor" type="color" value="#ffffff">
+              </div>
+            </div>
+
+            <button class="option" id="textBackgroundBtn" type="button" style="margin-top:10px">
+              Add background
+            </button>
+
+            <div class="hint">
+              Drag the text on the preview to place it. The position is saved for the rendered upload.
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="emoji">
+            <div class="panel-title">Emoji</div>
+            <div class="panel-note">Choose an emoji, then drag it directly on the video.</div>
+
+            <div class="emoji-grid" id="emojiList">
+              <button class="emoji" data-emoji="😂">😂</button>
+              <button class="emoji" data-emoji="🤣">🤣</button>
+              <button class="emoji" data-emoji="😍">😍</button>
+              <button class="emoji" data-emoji="❤️">❤️</button>
+              <button class="emoji" data-emoji="🔥">🔥</button>
+              <button class="emoji" data-emoji="👏">👏</button>
+              <button class="emoji" data-emoji="😎">😎</button>
+              <button class="emoji" data-emoji="😱">😱</button>
+              <button class="emoji" data-emoji="😭">😭</button>
+              <button class="emoji" data-emoji="💯">💯</button>
+              <button class="emoji" data-emoji="🎉">🎉</button>
+              <button class="emoji" data-emoji="👍">👍</button>
+              <button class="emoji" data-emoji="👀">👀</button>
+              <button class="emoji" data-emoji="💔">💔</button>
+              <button class="emoji" data-emoji="🥳">🥳</button>
+              <button class="emoji" data-emoji="🤯">🤯</button>
+              <button class="emoji" data-emoji="🙏">🙏</button>
+              <button class="emoji" data-emoji="😈">😈</button>
+            </div>
+
+            <div class="range-row">
+              <input id="emojiSize" type="range" min="30" max="130" value="58">
+              <span class="range-val" id="emojiSizeValue">58px</span>
+            </div>
+
+            <div class="hint">
+              Drag the emoji on the preview to place it. The position is saved for the rendered upload.
+            </div>
+          </div>
+
+          <div class="panel editor-panel" data-panel="sound">
+            <div class="panel-title">Sound effects</div>
+            <div class="panel-note">
+              Select a sound marker. Audio insertion is prepared for the editor render where supported.
+            </div>
+
+            <div class="option-row">
+              <button class="option active" data-sfx="none">None</button>
+              <button class="option" data-sfx="pop">Pop</button>
+              <button class="option" data-sfx="beep">Beep</button>
+              <button class="option" data-sfx="click">Click</button>
+              <button class="option" data-sfx="whoosh">Whoosh</button>
+              <button class="option" data-sfx="ding">Ding</button>
+              <button class="option" data-sfx="laugh">Laugh</button>
+            </div>
+
+            <div class="range-row">
+              <input id="sfxPosition" type="range" min="0" max="100" value="50">
+              <span class="range-val" id="sfxPositionValue">50%</span>
+            </div>
+
+            <div class="range-row">
+              <input id="sfxVolume" type="range" min="0" max="100" value="70">
+              <span class="range-val" id="sfxVolumeValue">70%</span>
+            </div>
+
+            <div class="effect-status" id="sfxStatus">No sound effect selected.</div>
+          </div>
+
+          <div class="editor-status">
+            <span id="editorStatus">No edits selected</span>
+            <button class="reset" id="resetEditor" type="button">Reset edits</button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn secondary" id="backToStep1" type="button">← Back</button>
+            <button class="btn primary" id="goStep3" type="button">Continue →</button>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <section id="step3" class="section">
-    <div class="card"><div class="eyebrow">Step 3</div><h1 class="heading">Video details</h1><p class="subheading">Add the information viewers will see with your video.</p>
+    <div class="card">
+      <div class="eyebrow">Step 3</div>
+      <h1 class="heading">Video details</h1>
+      <p class="subheading">Add the information viewers will see with your video.</p>
+
       <div class="details">
-        <div class="field"><label for="title">TITLE</label><input id="title" maxlength="150" placeholder="Give your video a title"><div class="counter" id="titleCounter">0/150</div></div>
-        <div class="field"><label for="category">CATEGORY</label><select id="category"><option value="">Select category</option><option value="music">Music</option><option value="dance">Dance</option><option value="animals">Animals</option><option value="film and animation">Film & Animation</option><option value="people and blogs">People & Blogs</option><option value="autos and vehicles">Autos & Vehicles</option><option value="sports">Sports</option><option value="comedy">Comedy</option><option value="entertainment">Entertainment</option><option value="news and politics">News & Politics</option><option value="fashion and style">Fashion & Style</option><option value="education">Education</option><option value="science and technology">Science & Technology</option></select></div>
-        <div class="field"><label for="description">DESCRIPTION</label><textarea id="description" maxlength="2000" placeholder="Describe your video"></textarea><div class="counter" id="descriptionCounter">0/2000</div></div>
+        <div class="field">
+          <label for="title">TITLE</label>
+          <input id="title" maxlength="150" placeholder="Give your video a title">
+          <div class="counter" id="titleCounter">0/150</div>
+        </div>
+
+        <div class="field">
+          <label for="category">CATEGORY</label>
+          <select id="category">
+            <option value="">Select category</option>
+            <option value="music">Music</option>
+            <option value="dance">Dance</option>
+            <option value="animals">Animals</option>
+            <option value="film and animation">Film & Animation</option>
+            <option value="people and blogs">People & Blogs</option>
+            <option value="autos and vehicles">Autos & Vehicles</option>
+            <option value="sports">Sports</option>
+            <option value="comedy">Comedy</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="news and politics">News & Politics</option>
+            <option value="fashion and style">Fashion & Style</option>
+            <option value="education">Education</option>
+            <option value="science and technology">Science & Technology</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="description">DESCRIPTION</label>
+          <textarea id="description" maxlength="2000" placeholder="Describe your video"></textarea>
+          <div class="counter" id="descriptionCounter">0/2000</div>
+        </div>
       </div>
-      <button class="btn primary" id="uploadBtn" type="button" style="width:100%;margin-top:18px">Upload to BIGULA</button>
-      <div class="progress" id="progressBox"><div class="progress-line"><span id="progressText">Preparing…</span><span id="progressPercent">0%</span></div><div class="track"><div class="fill" id="progressFill"></div></div></div>
+
+      <button class="btn primary" id="uploadBtn" type="button" style="width:100%;margin-top:18px">
+        Upload to BIGULA
+      </button>
+
+      <div class="progress" id="progressBox">
+        <div class="progress-line">
+          <span id="progressText">Preparing…</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="track">
+          <div class="fill" id="progressFill"></div>
+        </div>
+      </div>
+
       <div class="message" id="step3Message"></div>
-      <div class="btn-row"><button class="btn secondary" id="backToStep2Btn" type="button">← Back to Editor</button><button class="btn secondary" id="cancelUploadBtn" type="button">Cancel</button></div>
+
+      <div class="btn-row">
+        <button class="btn secondary" id="backToStep2Btn" type="button">← Back to Editor</button>
+        <button class="btn secondary" id="cancelUploadBtn" type="button">Cancel</button>
+      </div>
     </div>
   </section>
 </div>
 
 <script type="module">
 import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
 const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
 const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -118,62 +396,1077 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 let selectedFile=null,currentUser=null,currentProfile=null,cameraStream=null,mediaRecorder=null,recordedChunks=[];
 let selectedFilter="none",selectedEffect="none",selectedSpeed=1,selectedCrop="fill",textX=50,textY=78,emojiX=50,emojiY=32,textBackground=false,selectedEmoji="",selectedSfx="none";
 let objectUrl=null;
+
 const $=id=>document.getElementById(id);
 const step1=$("step1"),step2=$("step2"),step3=$("step3"),dots=[$("dot1"),$("dot2"),$("dot3")];
 const previewVideo=$("previewVideo"),textOverlay=$("textOverlay"),emojiOverlay=$("emojiOverlay");
-function msg(el,text,type=""){el.textContent=text;el.className="message show "+type}
-function showStep(n){[step1,step2,step3].forEach(x=>x.classList.remove("active"));dots.forEach(x=>x.classList.remove("active"));[step1,step2,step3][n-1].classList.add("active");for(let i=0;i<n;i++)dots[i].classList.add("active");$("headerLabel").textContent=`Step ${n} of 3`;window.scrollTo({top:0,behavior:"smooth"})}
-async function getCurrentUser(){try{let {data}=await supabase.auth.getSession();if(data?.session?.user)return data.session.user;const code=new URLSearchParams(location.search).get("code");if(code){const r=await supabase.auth.exchangeCodeForSession(code);if(r.data?.session?.user){history.replaceState({},document.title,location.pathname);return r.data.session.user}}}catch(e){console.warn(e)}return null}
-async function loadProfile(){if(!currentUser)return;try{const {data}=await supabase.from("users").select("*").eq("id",currentUser.id).maybeSingle();if(data){currentProfile=data;localStorage.setItem("bigula_profile",JSON.stringify(data))}}catch(e){console.warn(e)}}
-function followerCount(){return Number(currentProfile?.followers??currentProfile?.followers_count??0)||0}
-function updateLive(){const n=followerCount();$("goLiveBtn").disabled=n<100;$("goLiveBtn").classList.toggle("live",n<100);$("liveRequirement").textContent=n>=100?"Start a live broadcast":"Available at 100 followers · "+n+"/100"}
-function acceptVideo(file){if(!file||!file.type.startsWith("video/")){msg($("step1Message"),"Please select a video file.","error");return}selectedFile=file;$("selectedFileName").textContent=file.name;$("selectedFileInfo").textContent=`${(file.size/1048576).toFixed(2)} MB · ${file.type||"video"}`;$("selectedFileBox").classList.add("show");$("nextToEditBtn").disabled=false;msg($("step1Message"),"Video selected. Continue to the editor.","success");if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(file);previewVideo.src=objectUrl;previewVideo.load()}
-$("chooseVideoBtn").onclick=()=>$("videoFileInput").click();$("videoFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);$("cameraFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);
-$("recordVideoBtn").onclick=()=>$("cameraFileInput").click();
-async function startRecorder(){if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){msg($("step1Message"),"Camera recording is not supported in this build. Please use Choose Video.","error");return}try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:true});recordedChunks=[];const type=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(t=>MediaRecorder.isTypeSupported(t))||"";mediaRecorder=new MediaRecorder(cameraStream,type?{mimeType:type}:undefined);mediaRecorder.ondataavailable=e=>e.data.size&&recordedChunks.push(e.data);mediaRecorder.onstop=()=>{const blob=new Blob(recordedChunks,{type:type||"video/webm"});stopCamera();acceptVideo(new File([blob],`bigula_recording_${Date.now()}.webm`,{type:blob.type}))};mediaRecorder.start(250);$("recordingBox").classList.add("show");msg($("step1Message"),"Recording… it will stop automatically after 15 seconds.");setTimeout(()=>{if(mediaRecorder?.state==="recording")mediaRecorder.stop()},15000)}catch(e){stopCamera();msg($("step1Message"),e.name==="NotAllowedError"?"Camera or microphone permission was denied.":"Camera could not be opened. Please use Choose Video.","error")}}
-function stopCamera(){cameraStream?.getTracks().forEach(t=>t.stop());cameraStream=null;$("recordingBox").classList.remove("show")}
-$("nextToEditBtn").onclick=()=>{if(selectedFile){showStep(2);previewVideo.play().catch(()=>{})}};
 
-function applyVisuals(){let f="";const m={cinematic:"contrast(1.15) saturate(.86) brightness(.95)",vivid:"contrast(1.12) saturate(1.45)",warm:"sepia(.15) saturate(1.2) contrast(1.05)",cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",film:"contrast(1.15) saturate(.8)",retro:"sepia(.35) contrast(1.05) saturate(.85)",dream:"brightness(1.08) saturate(.9) blur(.3px)",noir:"grayscale(1) contrast(1.35)",sepia:"sepia(.8)",bw:"grayscale(1)",bright:"brightness(1.2) contrast(1.03)"};f+=m[selectedFilter]||"";const e={glow:" brightness(1.08) saturate(1.15)",dramatic:" contrast(1.4) saturate(1.1)",vintage:" sepia(.25) contrast(1.15) saturate(.8)",vhs:" contrast(1.15) saturate(.75)",negative:" invert(1)",flash:" brightness(1.28)",blur:" blur(2px)"};f+=e[selectedEffect]||"";previewVideo.style.filter=f;previewVideo.style.transform=selectedEffect==="mirror"?"scaleX(-1)":"scaleX(1)"}
-function applyCrop(){previewVideo.style.objectFit=selectedCrop==="fit"?"contain":"cover";previewVideo.style.objectPosition=selectedCrop==="top"?"center top":selectedCrop==="bottom"?"center bottom":"center center"}
-function updateOverlays(){textOverlay.style.left=textX+"%";textOverlay.style.top=textY+"%";emojiOverlay.style.left=emojiX+"%";emojiOverlay.style.top=emojiY+"%"}
-function editorState(){return selectedFilter!=="none"||selectedEffect!=="none"||selectedSpeed!==1||selectedCrop!=="fill"||textOverlay.style.display!=="none"||emojiOverlay.style.display!=="none"||selectedSfx!=="none"}
-function updateStatus(){let a=[];if(selectedFilter!=="none")a.push(selectedFilter);if(selectedEffect!=="none")a.push(selectedEffect);if(selectedSpeed!==1)a.push(selectedSpeed+"×");if(selectedCrop!=="fill")a.push("crop");if(textOverlay.style.display!=="none")a.push("text");if(emojiOverlay.style.display!=="none")a.push("emoji");if(selectedSfx!=="none")a.push(selectedSfx);$("editorStatus").textContent=a.length?a.join(" · "):"No edits selected";$("previewStatus").textContent=a.length?"Edited":"Ready"}
-function openPanel(name){document.querySelectorAll(".tool-main").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));$("editorEmpty").style.display=name==="none"?"flex":"none";document.querySelectorAll(".editor-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===name))}
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>openPanel(b.dataset.tab));
-document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedFilter=b.dataset.filter;applyVisuals();updateStatus()});
-document.querySelectorAll("[data-effect]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-effect]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedEffect=b.dataset.effect;$("effectStatus").textContent=selectedEffect==="none"?"No effect selected.":selectedEffect+" selected.";applyVisuals();updateStatus()});
-document.querySelectorAll("[data-crop]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-crop]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedCrop=b.dataset.crop;applyCrop();updateStatus()});
-document.querySelectorAll("[data-speed]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-speed]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedSpeed=Number(b.dataset.speed);previewVideo.playbackRate=selectedSpeed;updateStatus()});
-$("textInput").oninput=e=>{textOverlay.textContent=e.target.value.trim();textOverlay.style.display=e.target.value.trim()?"block":"none";updateStatus()};$("textSize").onchange=e=>{textOverlay.style.fontSize=e.target.value+"px"};$("textColor").oninput=e=>textOverlay.style.color=e.target.value;$("textBackgroundBtn").onclick=()=>{textBackground=!textBackground;textOverlay.classList.toggle("boxed",textBackground);$("textBackgroundBtn").textContent=textBackground?"Remove background":"Add background"};
-document.querySelectorAll("[data-emoji]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedEmoji=b.dataset.emoji;emojiOverlay.textContent=selectedEmoji;emojiOverlay.style.display="block";updateStatus()});$("emojiSize").oninput=e=>{$("emojiSizeValue").textContent=e.target.value+"px";emojiOverlay.style.fontSize=e.target.value+"px"};
-document.querySelectorAll("[data-sfx]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));b.classList.add("active");selectedSfx=b.dataset.sfx;$("sfxStatus").textContent=selectedSfx==="none"?"No sound effect selected.":selectedSfx+" selected at "+$("sfxPosition").value+"%.";updateStatus()});$("sfxPosition").oninput=e=>{$("sfxPositionValue").textContent=e.target.value+"%";if(selectedSfx!=="none")$("sfxStatus").textContent=selectedSfx+" selected at "+e.target.value+"%."};$("sfxVolume").oninput=e=>$("sfxVolumeValue").textContent=e.target.value+"%";
-function makeDraggable(el,type){let drag=false;const move=e=>{if(!drag)return;const r=$("previewPhone").getBoundingClientRect();const p=e.touches?e.touches[0]:e;let x=Math.max(3,Math.min(97,((p.clientX-r.left)/r.width)*100));let y=Math.max(3,Math.min(97,((p.clientY-r.top)/r.height)*100));if(type==="text"){textX=x;textY=y}else{emojiX=x;emojiY=y}updateOverlays()};const end=()=>{drag=false;document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",end);document.removeEventListener("touchmove",move)};el.addEventListener("pointerdown",e=>{drag=true;e.preventDefault();document.addEventListener("pointermove",move);document.addEventListener("pointerup",end)});el.addEventListener("touchstart",e=>{drag=true;e.preventDefault();document.addEventListener("touchmove",move,{passive:false});document.addEventListener("touchend",end)},{passive:false})}
-makeDraggable(textOverlay,"text");makeDraggable(emojiOverlay,"emoji");
-$("resetEditor").onclick=()=>{selectedFilter="none";selectedEffect="none";selectedSpeed=1;selectedCrop="fill";selectedSfx="none";textX=50;textY=78;emojiX=50;emojiY=32;textBackground=false;selectedEmoji="";$("textInput").value="";textOverlay.textContent="";textOverlay.style.display="none";emojiOverlay.textContent="";emojiOverlay.style.display="none";document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter==="none"));document.querySelectorAll("[data-effect]").forEach(x=>x.classList.toggle("active",x.dataset.effect==="none"));document.querySelectorAll("[data-crop]").forEach(x=>x.classList.toggle("active",x.dataset.crop==="fill"));document.querySelectorAll("[data-speed]").forEach(x=>x.classList.toggle("active",x.dataset.speed==="1"));document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.toggle("active",x.dataset.sfx==="none"));$("textBackgroundBtn").textContent="Add background";previewVideo.playbackRate=1;applyVisuals();applyCrop();updateOverlays();updateStatus();openPanel("none")};
-$("goStep3").onclick=()=>showStep(3);$("backToStep1").onclick=()=>showStep(1);$("backToStep2Btn").onclick=()=>showStep(2);$("cancelUploadBtn").onclick=()=>{if(!$("uploadBtn").disabled)showStep(1)};$("goLiveBtn").onclick=()=>{if(followerCount()>=100)location.href="live.html"};
-$("title").oninput=e=>$("titleCounter").textContent=e.target.value.length+"/150";$("description").oninput=e=>$("descriptionCounter").textContent=e.target.value.length+"/2000";
-
-async function renderEditedVideo(){
-  if(!selectedFile||!editorState())return selectedFile;
-  if(!window.MediaRecorder||!previewVideo.captureStream)return selectedFile;
-  try{
-    const source=document.createElement("video");source.src=objectUrl;source.muted=true;source.playsInline=true;await new Promise((res,rej)=>{source.onloadedmetadata=res;source.onerror=rej});
-    const w=source.videoWidth||720,h=source.videoHeight||1280;const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;const ctx=canvas.getContext("2d");
-    const stream=canvas.captureStream(30);const type=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(t=>MediaRecorder.isTypeSupported(t))||"video/webm";const rec=new MediaRecorder(stream,{mimeType:type});const chunks=[];
-    source.currentTime=0;source.playbackRate=selectedSpeed;rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);const stopped=new Promise(resolve=>rec.onstop=resolve);rec.start(250);await source.play();
-    const start=performance.now();
-    await new Promise(resolve=>{const draw=()=>{if(source.ended||source.paused){resolve();return}ctx.save();let filter="";const fm={cinematic:"contrast(1.15) saturate(.86) brightness(.95)",vivid:"contrast(1.12) saturate(1.45)",warm:"sepia(.15) saturate(1.2) contrast(1.05)",cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",film:"contrast(1.15) saturate(.8)",retro:"sepia(.35) contrast(1.05) saturate(.85)",dream:"brightness(1.08) saturate(.9) blur(.3px)",noir:"grayscale(1) contrast(1.35)",sepia:"sepia(.8)",bw:"grayscale(1)",bright:"brightness(1.2) contrast(1.03)"};filter+=fm[selectedFilter]||"";const em={glow:" brightness(1.08)",dramatic:" contrast(1.4)",vintage:" sepia(.25) contrast(1.15)",vhs:" contrast(1.15) saturate(.75)",negative:" invert(1)",flash:" brightness(1.28)",blur:" blur(2px)"};filter+=em[selectedEffect]||"";ctx.filter=filter||"none";if(selectedEffect==="mirror"){ctx.translate(w,0);ctx.scale(-1,1)}ctx.drawImage(source,0,0,w,h);ctx.restore();ctx.filter="none";
-      if(textOverlay.style.display!=="none"&&$("textInput").value.trim()){ctx.save();ctx.font=`900 ${Number($("textSize").value)}px Arial`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle=$("textColor").value;ctx.shadowColor="rgba(0,0,0,.9)";ctx.shadowBlur=8;const x=w*textX/100,y=h*textY/100;const lines=$("textInput").value.trim().split("\n");lines.forEach((line,i)=>ctx.fillText(line,x,y+(i-(lines.length-1)/2)*Number($("textSize").value)*1.15));if(textBackground){ctx.shadowBlur=0;ctx.fillStyle="rgba(0,0,0,.68)";ctx.fillRect(x-w*.25,y-Number($("textSize").value)*.75,w*.5,Number($("textSize").value)*1.5)}ctx.restore()}
-      if(emojiOverlay.style.display!=="none"&&selectedEmoji){ctx.save();ctx.font=`${Number($("emojiSize").value)}px Arial`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(selectedEmoji,w*emojiX/100,h*emojiY/100);ctx.restore()}
-      if(performance.now()-start>Math.max(1000,source.duration*1000/Math.max(.25,selectedSpeed)+500)){source.pause();resolve();return}requestAnimationFrame(draw)};draw()});rec.stop();await stopped;source.pause();return new File([new Blob(chunks,{type})],`bigula_edited_${Date.now()}.webm`,{type})
-  }catch(e){console.warn("Editor render fallback:",e);return selectedFile}
+function msg(el,text,type=""){
+  el.textContent=text;
+  el.className="message show "+type
 }
 
-async function uploadVideo(){const btn=$("uploadBtn"),box=$("progressBox"),fill=$("progressFill"),pt=$("progressText"),pp=$("progressPercent");const title=$("title").value.trim(),category=$("category").value,description=$("description").value.trim();if(!selectedFile){msg($("step3Message"),"No video selected.","error");return}if(!title){msg($("step3Message"),"Please enter a title.","error");return}if(!category){msg($("step3Message"),"Please select a category.","error");return}if(!currentUser)currentUser=await getCurrentUser();if(!currentUser){msg($("step3Message"),"You are not signed in. Please sign in first.","error");return}btn.disabled=true;box.classList.add("show");const progress=(n,t)=>{fill.style.width=n+"%";pp.textContent=Math.round(n)+"%";pt.textContent=t};try{progress(3,"Preparing video…");const file=await renderEditedVideo();progress(12,"Uploading video…");const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");const path=`${currentUser.id}/${crypto.randomUUID()}_${safe}`;const {data,error}=await supabase.storage.from("videos").upload(path,file,{cacheControl:"3600",upsert:false,contentType:file.type||"video/webm"});if(error)throw error;progress(78,"Creating video record…");const {data:pub}=supabase.storage.from("videos").getPublicUrl(data.path);const url=pub.publicUrl;let row,error2;({data:row,error:error2}=await supabase.from("videos").insert({user_id:currentUser.id,title,category,description,video_url:url,visibility:"private",status:"pending"}).select().single());if(error2){const fallback=await supabase.from("videos").insert({user_id:currentUser.id,title,category,description,video_url:url}).select().single();if(fallback.error)throw new Error("Video uploaded but database record failed: "+fallback.error.message);row=fallback.data}progress(100,"Upload complete.");setTimeout(()=>location.href="uploaded.html?id="+encodeURIComponent(row.id),450)}catch(e){console.error(e);msg($("step3Message"),"Upload failed: "+(e.message||e),"error");btn.disabled=false}}
+function showStep(n){
+  [step1,step2,step3].forEach(x=>x.classList.remove("active"));
+  dots.forEach(x=>x.classList.remove("active"));
+  [step1,step2,step3][n-1].classList.add("active");
+  for(let i=0;i<n;i++)dots[i].classList.add("active");
+  $("headerLabel").textContent=`Step ${n} of 3`;
+  window.scrollTo({top:0,behavior:"smooth"})
+}
+
+async function getCurrentUser(){
+  try{
+    let {data}=await supabase.auth.getSession();
+    if(data?.session?.user)return data.session.user;
+
+    const code=new URLSearchParams(location.search).get("code");
+
+    if(code){
+      const r=await supabase.auth.exchangeCodeForSession(code);
+      if(r.data?.session?.user){
+        history.replaceState({},document.title,location.pathname);
+        return r.data.session.user
+      }
+    }
+  }catch(e){
+    console.warn(e)
+  }
+
+  return null
+}
+
+async function loadProfile(){
+  if(!currentUser)return;
+
+  try{
+    const {data}=await supabase
+      .from("users")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+    if(data){
+      currentProfile=data;
+      localStorage.setItem("bigula_profile",JSON.stringify(data))
+    }
+  }catch(e){
+    console.warn(e)
+  }
+}
+
+function followerCount(){
+  return Number(currentProfile?.followers??currentProfile?.followers_count??0)||0
+}
+
+function updateLive(){
+  const n=followerCount();
+  $("goLiveBtn").disabled=n<100;
+  $("goLiveBtn").classList.toggle("live",n<100);
+  $("liveRequirement").textContent=n>=100?"Start a live broadcast":"Available at 100 followers · "+n+"/100"
+}
+
+function acceptVideo(file){
+  if(!file||!file.type.startsWith("video/")){
+    msg($("step1Message"),"Please select a video file.","error");
+    return
+  }
+
+  selectedFile=file;
+  $("selectedFileName").textContent=file.name;
+  $("selectedFileInfo").textContent=`${(file.size/1048576).toFixed(2)} MB · ${file.type||"video"}`;
+  $("selectedFileBox").classList.add("show");
+  $("nextToEditBtn").disabled=false;
+
+  msg($("step1Message"),"Video selected. Continue to the editor.","success");
+
+  if(objectUrl)URL.revokeObjectURL(objectUrl);
+
+  objectUrl=URL.createObjectURL(file);
+  previewVideo.src=objectUrl;
+  previewVideo.load()
+}
+
+$("chooseVideoBtn").onclick=()=>$("videoFileInput").click();
+$("videoFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);
+$("cameraFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);
+$("recordVideoBtn").onclick=()=>$("cameraFileInput").click();
+
+async function startRecorder(){
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
+    msg($("step1Message"),"Camera recording is not supported in this build. Please use Choose Video.","error");
+    return
+  }
+
+  try{
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:"user"},
+      audio:true
+    });
+
+    recordedChunks=[];
+
+    const type=[
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm"
+    ].find(t=>MediaRecorder.isTypeSupported(t))||"";
+
+    mediaRecorder=new MediaRecorder(
+      cameraStream,
+      type?{mimeType:type}:undefined
+    );
+
+    mediaRecorder.ondataavailable=e=>{
+      if(e.data.size)recordedChunks.push(e.data)
+    };
+
+    mediaRecorder.onstop=()=>{
+      const blob=new Blob(
+        recordedChunks,
+        {type:type||"video/webm"}
+      );
+
+      stopCamera();
+
+      acceptVideo(
+        new File(
+          [blob],
+          `bigula_recording_${Date.now()}.webm`,
+          {type:blob.type}
+        )
+      )
+    };
+
+    mediaRecorder.start(250);
+    $("recordingBox").classList.add("show");
+
+    msg($("step1Message"),"Recording… it will stop automatically after 15 seconds.");
+
+    setTimeout(()=>{
+      if(mediaRecorder?.state==="recording")mediaRecorder.stop()
+    },15000)
+
+  }catch(e){
+    stopCamera();
+
+    msg(
+      $("step1Message"),
+      e.name==="NotAllowedError"
+        ?"Camera or microphone permission was denied."
+        :"Camera could not be opened. Please use Choose Video.",
+      "error"
+    )
+  }
+}
+
+function stopCamera(){
+  cameraStream?.getTracks().forEach(t=>t.stop());
+  cameraStream=null;
+  $("recordingBox").classList.remove("show")
+}
+
+$("nextToEditBtn").onclick=()=>{
+  if(selectedFile){
+    showStep(2);
+    previewVideo.play().catch(()=>{})
+  }
+};
+
+function applyVisuals(){
+  let f="";
+
+  const m={
+    cinematic:"contrast(1.15) saturate(.86) brightness(.95)",
+    vivid:"contrast(1.12) saturate(1.45)",
+    warm:"sepia(.15) saturate(1.2) contrast(1.05)",
+    cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",
+    film:"contrast(1.15) saturate(.8)",
+    retro:"sepia(.35) contrast(1.05) saturate(.85)",
+    dream:"brightness(1.08) saturate(.9) blur(.3px)",
+    noir:"grayscale(1) contrast(1.35)",
+    sepia:"sepia(.8)",
+    bw:"grayscale(1)",
+    bright:"brightness(1.2) contrast(1.03)"
+  };
+
+  f+=m[selectedFilter]||"";
+
+  const e={
+    glow:" brightness(1.08) saturate(1.15)",
+    dramatic:" contrast(1.4) saturate(1.1)",
+    vintage:" sepia(.25) contrast(1.15) saturate(.8)",
+    vhs:" contrast(1.15) saturate(.75)",
+    negative:" invert(1)",
+    flash:" brightness(1.28)",
+    blur:" blur(2px)"
+  };
+
+  f+=e[selectedEffect]||"";
+
+  previewVideo.style.filter=f;
+  previewVideo.style.transform=selectedEffect==="mirror"?"scaleX(-1)":"scaleX(1)"
+}
+
+function applyCrop(){
+  previewVideo.style.objectFit=selectedCrop==="fit"?"contain":"cover";
+  previewVideo.style.objectPosition=
+    selectedCrop==="top"
+      ?"center top"
+      :selectedCrop==="bottom"
+        ?"center bottom"
+        :"center center"
+}
+
+function updateOverlays(){
+  textOverlay.style.left=textX+"%";
+  textOverlay.style.top=textY+"%";
+  emojiOverlay.style.left=emojiX+"%";
+  emojiOverlay.style.top=emojiY+"%"
+}
+
+function editorState(){
+  return selectedFilter!=="none"||
+    selectedEffect!=="none"||
+    selectedSpeed!==1||
+    selectedCrop!=="fill"||
+    textOverlay.style.display!=="none"||
+    emojiOverlay.style.display!=="none"||
+    selectedSfx!=="none"
+}
+
+function updateStatus(){
+  let a=[];
+
+  if(selectedFilter!=="none")a.push(selectedFilter);
+  if(selectedEffect!=="none")a.push(selectedEffect);
+  if(selectedSpeed!==1)a.push(selectedSpeed+"×");
+  if(selectedCrop!=="fill")a.push("crop");
+  if(textOverlay.style.display!=="none")a.push("text");
+  if(emojiOverlay.style.display!=="none")a.push("emoji");
+  if(selectedSfx!=="none")a.push(selectedSfx);
+
+  $("editorStatus").textContent=a.length?a.join(" · "):"No edits selected";
+  $("previewStatus").textContent=a.length?"Edited":"Ready"
+}
+
+function openPanel(name){
+  document.querySelectorAll(".tool-main").forEach(b=>
+    b.classList.toggle("active",b.dataset.tab===name)
+  );
+
+  $("editorEmpty").style.display=name==="none"?"flex":"none";
+
+  document.querySelectorAll(".editor-panel").forEach(p=>
+    p.classList.toggle("active",p.dataset.panel===name)
+  )
+}
+
+document.querySelectorAll("[data-tab]").forEach(b=>
+  b.onclick=()=>openPanel(b.dataset.tab)
+);
+
+document.querySelectorAll("[data-filter]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedFilter=b.dataset.filter;
+    applyVisuals();
+    updateStatus()
+  }
+);
+
+document.querySelectorAll("[data-effect]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-effect]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedEffect=b.dataset.effect;
+    $("effectStatus").textContent=
+      selectedEffect==="none"
+        ?"No effect selected."
+        :selectedEffect+" selected.";
+    applyVisuals();
+    updateStatus()
+  }
+);
+
+document.querySelectorAll("[data-crop]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-crop]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedCrop=b.dataset.crop;
+    applyCrop();
+    updateStatus()
+  }
+);
+
+document.querySelectorAll("[data-speed]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-speed]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedSpeed=Number(b.dataset.speed);
+    previewVideo.playbackRate=selectedSpeed;
+    updateStatus()
+  }
+);
+
+$("textInput").oninput=e=>{
+  textOverlay.textContent=e.target.value.trim();
+  textOverlay.style.display=e.target.value.trim()?"block":"none";
+  updateStatus()
+};
+
+$("textSize").onchange=e=>{
+  textOverlay.style.fontSize=e.target.value+"px"
+};
+
+$("textColor").oninput=e=>{
+  textOverlay.style.color=e.target.value
+};
+
+$("textBackgroundBtn").onclick=()=>{
+  textBackground=!textBackground;
+  textOverlay.classList.toggle("boxed",textBackground);
+  $("textBackgroundBtn").textContent=
+    textBackground?"Remove background":"Add background"
+};
+
+document.querySelectorAll("[data-emoji]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedEmoji=b.dataset.emoji;
+    emojiOverlay.textContent=selectedEmoji;
+    emojiOverlay.style.display="block";
+    updateStatus()
+  }
+);
+
+$("emojiSize").oninput=e=>{
+  $("emojiSizeValue").textContent=e.target.value+"px";
+  emojiOverlay.style.fontSize=e.target.value+"px"
+};
+
+document.querySelectorAll("[data-sfx]").forEach(b=>
+  b.onclick=()=>{
+    document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    selectedSfx=b.dataset.sfx;
+
+    $("sfxStatus").textContent=
+      selectedSfx==="none"
+        ?"No sound effect selected."
+        :selectedSfx+" selected at "+$("sfxPosition").value+"%.";
+
+    updateStatus()
+  }
+);
+
+$("sfxPosition").oninput=e=>{
+  $("sfxPositionValue").textContent=e.target.value+"%";
+
+  if(selectedSfx!=="none"){
+    $("sfxStatus").textContent=
+      selectedSfx+" selected at "+e.target.value+"%.";
+  }
+};
+
+$("sfxVolume").oninput=e=>{
+  $("sfxVolumeValue").textContent=e.target.value+"%"
+};
+
+function makeDraggable(el,type){
+  let drag=false;
+
+  const move=e=>{
+    if(!drag)return;
+
+    const r=$("previewPhone").getBoundingClientRect();
+    const p=e.touches?e.touches[0]:e;
+
+    let x=Math.max(
+      3,
+      Math.min(
+        97,
+        ((p.clientX-r.left)/r.width)*100
+      )
+    );
+
+    let y=Math.max(
+      3,
+      Math.min(
+        97,
+        ((p.clientY-r.top)/r.height)*100
+      )
+    );
+
+    if(type==="text"){
+      textX=x;
+      textY=y
+    }else{
+      emojiX=x;
+      emojiY=y
+    }
+
+    updateOverlays()
+  };
+
+  const end=()=>{
+    drag=false;
+    document.removeEventListener("pointermove",move);
+    document.removeEventListener("pointerup",end);
+    document.removeEventListener("touchmove",move);
+  };
+
+  el.addEventListener("pointerdown",e=>{
+    drag=true;
+    e.preventDefault();
+    document.addEventListener("pointermove",move);
+    document.addEventListener("pointerup",end)
+  });
+
+  el.addEventListener("touchstart",e=>{
+    drag=true;
+    e.preventDefault();
+
+    document.addEventListener(
+      "touchmove",
+      move,
+      {passive:false}
+    );
+
+    document.addEventListener(
+      "touchend",
+      end
+    )
+  },{passive:false})
+}
+
+makeDraggable(textOverlay,"text");
+makeDraggable(emojiOverlay,"emoji");
+
+$("resetEditor").onclick=()=>{
+  selectedFilter="none";
+  selectedEffect="none";
+  selectedSpeed=1;
+  selectedCrop="fill";
+  selectedSfx="none";
+
+  textX=50;
+  textY=78;
+  emojiX=50;
+  emojiY=32;
+
+  textBackground=false;
+  selectedEmoji="";
+
+  $("textInput").value="";
+  textOverlay.textContent="";
+  textOverlay.style.display="none";
+
+  emojiOverlay.textContent="";
+  emojiOverlay.style.display="none";
+
+  document.querySelectorAll("[data-filter]").forEach(x=>
+    x.classList.toggle("active",x.dataset.filter==="none")
+  );
+
+  document.querySelectorAll("[data-effect]").forEach(x=>
+    x.classList.toggle("active",x.dataset.effect==="none")
+  );
+
+  document.querySelectorAll("[data-crop]").forEach(x=>
+    x.classList.toggle("active",x.dataset.crop==="fill")
+  );
+
+  document.querySelectorAll("[data-speed]").forEach(x=>
+    x.classList.toggle("active",x.dataset.speed==="1")
+  );
+
+  document.querySelectorAll("[data-sfx]").forEach(x=>
+    x.classList.toggle("active",x.dataset.sfx==="none")
+  );
+
+  $("textBackgroundBtn").textContent="Add background";
+
+  previewVideo.playbackRate=1;
+
+  applyVisuals();
+  applyCrop();
+  updateOverlays();
+  updateStatus();
+  openPanel("none")
+};
+
+$("goStep3").onclick=()=>showStep(3);
+$("backToStep1").onclick=()=>showStep(1);
+$("backToStep2Btn").onclick=()=>showStep(2);
+
+$("cancelUploadBtn").onclick=()=>{
+  if(!$("uploadBtn").disabled)showStep(1)
+};
+
+$("goLiveBtn").onclick=()=>{
+  if(followerCount()>=100)location.href="live.html"
+};
+
+$("title").oninput=e=>
+  $("titleCounter").textContent=e.target.value.length+"/150";
+
+$("description").oninput=e=>
+  $("descriptionCounter").textContent=e.target.value.length+"/2000";
+
+
+/*
+=========================================================
+FIXED VIDEO RENDERER
+=========================================================
+
+IMPORTANT CHANGE:
+
+Previously:
+- source.muted=true
+- canvas.captureStream() contained VIDEO ONLY
+- MediaRecorder therefore created a muted edited file
+
+Now:
+- source is NOT muted
+- source.captureStream() is used to obtain the original AUDIO
+- canvas.captureStream() supplies the edited VIDEO
+- original audio tracks are added to the final recording stream
+- MediaRecorder records BOTH video + audio
+=========================================================
+*/
+
+async function renderEditedVideo(){
+
+  if(!selectedFile||!editorState()){
+    return selectedFile
+  }
+
+  if(
+    !window.MediaRecorder||
+    !previewVideo.captureStream||
+    !HTMLCanvasElement.prototype.captureStream
+  ){
+    return selectedFile
+  }
+
+  let source=null;
+  let sourceStream=null;
+  let finalStream=null;
+
+  try{
+
+    source=document.createElement("video");
+
+    /*
+     * DO NOT MUTE THE SOURCE.
+     * We need its audio track for the final MediaRecorder stream.
+     */
+    source.src=objectUrl;
+    source.playsInline=true;
+    source.preload="auto";
+
+    await new Promise((res,rej)=>{
+      source.onloadedmetadata=res;
+      source.onerror=rej
+    });
+
+    const w=source.videoWidth||720;
+    const h=source.videoHeight||1280;
+
+    const canvas=document.createElement("canvas");
+    canvas.width=w;
+    canvas.height=h;
+
+    const ctx=canvas.getContext("2d");
+
+    /*
+     * Canvas provides the edited video track.
+     */
+    const videoStream=canvas.captureStream(30);
+
+    /*
+     * Capture the ORIGINAL video's media stream.
+     * This gives us the original audio track.
+     */
+    sourceStream=
+      typeof source.captureStream==="function"
+        ?source.captureStream()
+        :typeof source.mozCaptureStream==="function"
+          ?source.mozCaptureStream()
+          :null;
+
+    /*
+     * Build one final stream containing:
+     *
+     * 1. Edited canvas video
+     * 2. Original source audio
+     */
+    finalStream=new MediaStream();
+
+    videoStream.getVideoTracks().forEach(track=>{
+      finalStream.addTrack(track)
+    });
+
+    if(sourceStream){
+      sourceStream.getAudioTracks().forEach(track=>{
+        finalStream.addTrack(track)
+      });
+    }
+
+    /*
+     * If the browser cannot expose the source audio stream,
+     * fall back to the normal selected file rather than
+     * creating a deliberately muted upload.
+     */
+    const hasAudio=finalStream.getAudioTracks().length>0;
+
+    if(!hasAudio){
+      console.warn(
+        "Could not capture original audio track. Returning original file."
+      );
+      return selectedFile
+    }
+
+    const type=[
+      "video/webm;codecs=vp9,opus",
+      "video/webm;codecs=vp8,opus",
+      "video/webm"
+    ].find(t=>MediaRecorder.isTypeSupported(t))||"video/webm";
+
+    /*
+     * MediaRecorder now receives BOTH tracks.
+     */
+    const rec=new MediaRecorder(
+      finalStream,
+      {mimeType:type}
+    );
+
+    const chunks=[];
+
+    source.currentTime=0;
+    source.playbackRate=selectedSpeed;
+
+    rec.ondataavailable=e=>{
+      if(e.data.size)chunks.push(e.data)
+    };
+
+    const stopped=new Promise(resolve=>{
+      rec.onstop=resolve
+    });
+
+    rec.start(250);
+
+    /*
+     * IMPORTANT:
+     * The source is NOT muted.
+     * Its audio is being captured by source.captureStream().
+     */
+    await source.play();
+
+    const start=performance.now();
+
+    await new Promise(resolve=>{
+
+      const draw=()=>{
+
+        if(source.ended||source.paused){
+          resolve();
+          return
+        }
+
+        ctx.save();
+
+        let filter="";
+
+        const fm={
+          cinematic:"contrast(1.15) saturate(.86) brightness(.95)",
+          vivid:"contrast(1.12) saturate(1.45)",
+          warm:"sepia(.15) saturate(1.2) contrast(1.05)",
+          cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",
+          film:"contrast(1.15) saturate(.8)",
+          retro:"sepia(.35) contrast(1.05) saturate(.85)",
+          dream:"brightness(1.08) saturate(.9) blur(.3px)",
+          noir:"grayscale(1) contrast(1.35)",
+          sepia:"sepia(.8)",
+          bw:"grayscale(1)",
+          bright:"brightness(1.2) contrast(1.03)"
+        };
+
+        filter+=fm[selectedFilter]||"";
+
+        const em={
+          glow:" brightness(1.08)",
+          dramatic:" contrast(1.4) saturate(1.1)",
+          vintage:" sepia(.25) contrast(1.15)",
+          vhs:" contrast(1.15) saturate(.75)",
+          negative:" invert(1)",
+          flash:" brightness(1.28)",
+          blur:" blur(2px)"
+        };
+
+        filter+=em[selectedEffect]||"";
+
+        ctx.filter=filter||"none";
+
+        if(selectedEffect==="mirror"){
+          ctx.translate(w,0);
+          ctx.scale(-1,1)
+        }
+
+        ctx.drawImage(
+          source,
+          0,
+          0,
+          w,
+          h
+        );
+
+        ctx.restore();
+        ctx.filter="none";
+
+
+        /*
+         * TEXT
+         */
+        if(
+          textOverlay.style.display!=="none"&&
+          $("textInput").value.trim()
+        ){
+
+          ctx.save();
+
+          ctx.font=
+            `900 ${Number($("textSize").value)}px Arial`;
+
+          ctx.textAlign="center";
+          ctx.textBaseline="middle";
+
+          ctx.fillStyle=$("textColor").value;
+
+          ctx.shadowColor="rgba(0,0,0,.9)";
+          ctx.shadowBlur=8;
+
+          const x=w*textX/100;
+          const y=h*textY/100;
+
+          const lines=$("textInput")
+            .value
+            .trim()
+            .split("\n");
+
+          lines.forEach((line,i)=>{
+            ctx.fillText(
+              line,
+              x,
+              y+
+              (i-(lines.length-1)/2)*
+              Number($("textSize").value)*
+              1.15
+            )
+          });
+
+          if(textBackground){
+
+            ctx.shadowBlur=0;
+            ctx.fillStyle="rgba(0,0,0,.68)";
+
+            ctx.fillRect(
+              x-w*.25,
+              y-Number($("textSize").value)*.75,
+              w*.5,
+              Number($("textSize").value)*1.5
+            )
+          }
+
+          ctx.restore()
+        }
+
+
+        /*
+         * EMOJI
+         */
+        if(
+          emojiOverlay.style.display!=="none"&&
+          selectedEmoji
+        ){
+
+          ctx.save();
+
+          ctx.font=
+            `${Number($("emojiSize").value)}px Arial`;
+
+          ctx.textAlign="center";
+          ctx.textBaseline="middle";
+
+          ctx.fillText(
+            selectedEmoji,
+            w*emojiX/100,
+            h*emojiY/100
+          );
+
+          ctx.restore()
+        }
+
+
+        /*
+         * Stop when source finishes.
+         *
+         * Keep the existing speed behavior.
+         */
+        if(
+          performance.now()-start>
+          Math.max(
+            1000,
+            source.duration*1000/
+            Math.max(.25,selectedSpeed)+500
+          )
+        ){
+
+          source.pause();
+          resolve();
+          return
+        }
+
+        requestAnimationFrame(draw)
+      };
+
+      draw()
+    });
+
+    /*
+     * Stop recording after the final video frame.
+     */
+    rec.stop();
+
+    await stopped;
+
+    source.pause();
+
+    /*
+     * Release captured tracks.
+     */
+    sourceStream?.getTracks().forEach(track=>track.stop());
+    videoStream.getTracks().forEach(track=>track.stop());
+
+    return new File(
+      [
+        new Blob(
+          chunks,
+          {type}
+        )
+      ],
+      `bigula_edited_${Date.now()}.webm`,
+      {type}
+    )
+
+  }catch(e){
+
+    console.warn(
+      "Editor render fallback:",
+      e
+    );
+
+    /*
+     * If anything prevents the browser from rendering
+     * audio correctly, preserve the original file instead
+     * of uploading a muted version.
+     */
+    try{
+      source?.pause();
+      sourceStream?.getTracks().forEach(track=>track.stop());
+      finalStream?.getTracks().forEach(track=>track.stop());
+    }catch(_){}
+
+    return selectedFile
+  }
+}
+
+
+async function uploadVideo(){
+
+  const btn=$("uploadBtn");
+  const box=$("progressBox");
+  const fill=$("progressFill");
+  const pt=$("progressText");
+  const pp=$("progressPercent");
+
+  const title=$("title").value.trim();
+  const category=$("category").value;
+  const description=$("description").value.trim();
+
+  if(!selectedFile){
+    msg($("step3Message"),"No video selected.","error");
+    return
+  }
+
+  if(!title){
+    msg($("step3Message"),"Please enter a title.","error");
+    return
+  }
+
+  if(!category){
+    msg($("step3Message"),"Please select a category.","error");
+    return
+  }
+
+  if(!currentUser)
+    currentUser=await getCurrentUser();
+
+  if(!currentUser){
+    msg($("step3Message"),"You are not signed in. Please sign in first.","error");
+    return
+  }
+
+  btn.disabled=true;
+  box.classList.add("show");
+
+  const progress=(n,t)=>{
+    fill.style.width=n+"%";
+    pp.textContent=Math.round(n)+"%";
+    pt.textContent=t
+  };
+
+  try{
+
+    progress(3,"Preparing video…");
+
+    /*
+     * This now preserves original audio when an edited
+     * video is rendered.
+     */
+    const file=await renderEditedVideo();
+
+    progress(12,"Uploading video…");
+
+    const safe=file.name.replace(
+      /[^a-zA-Z0-9._-]/g,
+      "_"
+    );
+
+    const path=
+      `${currentUser.id}/${crypto.randomUUID()}_${safe}`;
+
+    const {data,error}=
+      await supabase
+        .storage
+        .from("videos")
+        .upload(
+          path,
+          file,
+          {
+            cacheControl:"3600",
+            upsert:false,
+            contentType:file.type||"video/webm"
+          }
+        );
+
+    if(error)throw error;
+
+    progress(78,"Creating video record…");
+
+    const {data:pub}=
+      supabase
+        .storage
+        .from("videos")
+        .getPublicUrl(data.path);
+
+    const url=pub.publicUrl;
+
+    let row,error2;
+
+    ({
+      data:row,
+      error:error2
+    }=
+      await supabase
+        .from("videos")
+        .insert({
+          user_id:currentUser.id,
+          title,
+          category,
+          description,
+          video_url:url,
+          visibility:"private",
+          status:"pending"
+        })
+        .select()
+        .single()
+    );
+
+    if(error2){
+
+      const fallback=
+        await supabase
+          .from("videos")
+          .insert({
+            user_id:currentUser.id,
+            title,
+            category,
+            description,
+            video_url:url
+          })
+          .select()
+          .single();
+
+      if(fallback.error){
+        throw new Error(
+          "Video uploaded but database record failed: "+
+          fallback.error.message
+        )
+      }
+
+      row=fallback.data
+    }
+
+    progress(100,"Upload complete.");
+
+    setTimeout(
+      ()=>location.href=
+        "uploaded.html?id="+
+        encodeURIComponent(row.id),
+      450
+    )
+
+  }catch(e){
+
+    console.error(e);
+
+    msg(
+      $("step3Message"),
+      "Upload failed: "+(e.message||e),
+      "error"
+    );
+
+    btn.disabled=false
+  }
+}
+
 $("uploadBtn").onclick=uploadVideo;
-supabase.auth.onAuthStateChange((event,session)=>{if(session?.user)currentUser=session.user});
-(async()=>{currentUser=await getCurrentUser();if(currentUser){await loadProfile();updateLive()}else{msg($("step1Message"),"Sign in to BIGULA before uploading a video.")}})();
+
+supabase.auth.onAuthStateChange(
+  (event,session)=>{
+    if(session?.user)
+      currentUser=session.user
+  }
+);
+
+(async()=>{
+  currentUser=await getCurrentUser();
+
+  if(currentUser){
+    await loadProfile();
+    updateLive()
+  }else{
+    msg(
+      $("step1Message"),
+      "Sign in to BIGULA before uploading a video."
+    )
+  }
+})();
 </script>
 </body>
 </html>
+```
