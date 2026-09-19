@@ -42,14 +42,19 @@ header{
 }
 
 .logo{
-  font-size:23px;
-  font-weight:900;
-  letter-spacing:-1px;
-  white-space:nowrap;
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-.logo span{
-  color:#20b957;
+.logo img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  display:block;
 }
 
 .header-title{
@@ -57,6 +62,7 @@ header{
   text-align:center;
   font-size:19px;
   font-weight:800;
+  margin-left:8px;
 }
 
 /* =========================
@@ -99,7 +105,7 @@ header{
   transition:background .2s ease;
 }
 
-/* UNREAD NOTIFICATION */
+/* UNREAD */
 
 .notification.unread{
   background:#e9f9ee;
@@ -183,11 +189,18 @@ header{
   }
 
   .logo{
-    font-size:21px;
+    width:40px;
+    height:40px;
+  }
+
+  .logo img{
+    width:40px;
+    height:40px;
   }
 
   .header-title{
     font-size:17px;
+    margin-left:5px;
   }
 
   .home-btn{
@@ -207,15 +220,22 @@ header{
 
 <header>
 
+  <!-- REAL BIGULA LOGO -->
   <div class="logo">
-    BIGU<span>LA</span>
+    <img
+      src="https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/photos/icon.png"
+      alt="BIGULA"
+    >
   </div>
 
   <div class="header-title">
     Notifications
   </div>
 
-  <button class="home-btn" onclick="goHome()">
+  <button
+    class="home-btn"
+    onclick="goHome()"
+  >
     Home
   </button>
 
@@ -324,7 +344,7 @@ function timeAgo(date){
 
 
 /* =========================================================
-   ICON
+   NOTIFICATION ICON
 ========================================================= */
 
 function getNotificationIcon(type){
@@ -353,24 +373,13 @@ function getNotificationIcon(type){
 
 
 /* =========================================================
-   GET ACTOR NAME
+   ACTOR NAME
 ========================================================= */
 
 function getActorName(user){
 
   if(!user)
     return "Someone";
-
-  /*
-    USERNAME FIRST.
-    This gives:
-
-    geofrey commented on your video.
-
-    instead of:
-
-    @geofrey commented...
-  */
 
   return (
     user.username ||
@@ -382,13 +391,19 @@ function getActorName(user){
 
 
 /* =========================================================
-   BUILD MESSAGE
+   NOTIFICATION MESSAGE
 ========================================================= */
 
-function buildNotificationMessage(notification,actor){
+function buildNotificationMessage(
+  notification,
+  actor
+){
 
   const type =
-    String(notification.type || "").toLowerCase();
+    String(
+      notification.type || ""
+    ).toLowerCase();
+
 
   if(type.includes("comment")){
 
@@ -397,12 +412,14 @@ function buildNotificationMessage(notification,actor){
 
   }
 
+
   if(type.includes("like")){
 
     return actor +
       " liked your video.";
 
   }
+
 
   if(type.includes("follow")){
 
@@ -411,12 +428,14 @@ function buildNotificationMessage(notification,actor){
 
   }
 
+
   if(type.includes("reply")){
 
     return actor +
       " replied to your comment.";
 
   }
+
 
   if(type.includes("mention")){
 
@@ -425,11 +444,6 @@ function buildNotificationMessage(notification,actor){
 
   }
 
-  /*
-    If the database contains its own
-    message for another notification type,
-    preserve it.
-  */
 
   if(notification.message){
 
@@ -439,21 +453,17 @@ function buildNotificationMessage(notification,actor){
 
   }
 
+
   return "You have a new notification.";
 
 }
 
 
 /* =========================================================
-   LOAD USER SESSION
+   GET CURRENT USER
 ========================================================= */
 
 async function getCurrentUser(){
-
-  /*
-    Finish Google PKCE login if the page
-    was opened with ?code=...
-  */
 
   const params =
     new URLSearchParams(
@@ -463,14 +473,17 @@ async function getCurrentUser(){
   const code =
     params.get("code");
 
+
+  /* Google PKCE */
+
   if(code){
 
     const {
       error
     } =
-      await supabaseClient.auth.exchangeCodeForSession(
-        code
-      );
+      await supabaseClient.auth
+        .exchangeCodeForSession(code);
+
 
     if(error){
 
@@ -480,11 +493,6 @@ async function getCurrentUser(){
       );
 
     }else{
-
-      /*
-        Remove ?code= from the URL
-        after successful login.
-      */
 
       window.history.replaceState(
         {},
@@ -534,6 +542,7 @@ async function loadNotifications(){
       "notifications"
     );
 
+
   container.innerHTML = `
     <div class="loading">
       Loading notifications...
@@ -548,7 +557,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       NO LOGIN
+       NOT SIGNED IN
     ----------------------------------------- */
 
     if(!user){
@@ -565,56 +574,61 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       FIRST: USE user_id
+       LOAD BY user_id
     ----------------------------------------- */
-
-    let notifications = null;
-    let notificationError = null;
-
 
     const firstQuery =
       await supabaseClient
         .from("notifications")
         .select("*")
-        .eq("user_id",user.id)
+        .eq(
+          "user_id",
+          user.id
+        )
         .order(
           "created_at",
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
-    notifications =
+    let notifications =
       firstQuery.data;
 
-    notificationError =
+    let notificationError =
       firstQuery.error;
 
 
     /* -----------------------------------------
-       FALLBACK: recipient_id
-
-       Only used if the table/query requires
-       recipient_id instead.
+       FALLBACK TO recipient_id ONLY IF
+       THE DATABASE SAYS IT IS NEEDED
     ----------------------------------------- */
 
     if(
       notificationError &&
       String(
         notificationError.message || ""
-      ).toLowerCase().includes(
-        "recipient_id"
       )
+      .toLowerCase()
+      .includes("recipient_id")
     ){
 
       const secondQuery =
         await supabaseClient
           .from("notifications")
           .select("*")
-          .eq("recipient_id",user.id)
+          .eq(
+            "recipient_id",
+            user.id
+          )
           .order(
             "created_at",
-            {ascending:false}
+            {
+              ascending:false
+            }
           );
+
 
       notifications =
         secondQuery.data;
@@ -626,7 +640,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       REAL DATABASE ERROR
+       DATABASE ERROR
     ----------------------------------------- */
 
     if(notificationError){
@@ -635,6 +649,7 @@ async function loadNotifications(){
         "Notifications query error:",
         notificationError
       );
+
 
       container.innerHTML = `
         <div class="error">
@@ -659,7 +674,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       NO NOTIFICATIONS
+       EMPTY
     ----------------------------------------- */
 
     if(
@@ -679,7 +694,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       FIND ACTOR IDs
+       ACTOR IDs
     ----------------------------------------- */
 
     const actorIds =
@@ -699,10 +714,10 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       FETCH ACTOR USERS
+       LOAD ACTORS
     ----------------------------------------- */
 
-    if(actorIds.length > 0){
+    if(actorIds.length){
 
       const {
         data,
@@ -726,14 +741,6 @@ async function loadNotifications(){
           error
         );
 
-        /*
-          Do not break the entire
-          notification page just because
-          an actor profile cannot be read.
-        */
-
-        actors = [];
-
       }else{
 
         actors =
@@ -745,10 +752,11 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       ACTOR LOOKUP MAP
+       ACTOR MAP
     ----------------------------------------- */
 
     const actorMap = {};
+
 
     actors.forEach(user => {
 
@@ -759,7 +767,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       DISPLAY NOTIFICATIONS
+       RENDER
     ----------------------------------------- */
 
     container.innerHTML =
@@ -785,9 +793,12 @@ async function loadNotifications(){
 
 
           return `
+
             <div
               class="notification ${
-                isUnread ? "unread" : ""
+                isUnread
+                  ? "unread"
+                  : ""
               }"
               data-id="${
                 escapeHtml(
@@ -825,6 +836,7 @@ async function loadNotifications(){
               </div>
 
             </div>
+
           `;
 
         })
@@ -832,7 +844,7 @@ async function loadNotifications(){
 
 
     /* -----------------------------------------
-       MARK UNREAD NOTIFICATIONS AS READ
+       MARK UNREAD AS READ
     ----------------------------------------- */
 
     const unreadIds =
@@ -847,7 +859,7 @@ async function loadNotifications(){
         );
 
 
-    if(unreadIds.length > 0){
+    if(unreadIds.length){
 
       const {
         error
@@ -880,6 +892,7 @@ async function loadNotifications(){
       "Notification page error:",
       error
     );
+
 
     container.innerHTML = `
       <div class="error">
