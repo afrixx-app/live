@@ -1,359 +1,624 @@
-<!doctype html>
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIGULA — Notifications</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIGULA – Notifications</title>
 
 <style>
-*{box-sizing:border-box}
-body{
+*{
   margin:0;
-  font-family:Arial,sans-serif;
-  color:#111;
-  background:#fff
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
 }
+
+html,body{
+  width:100%;
+  min-height:100%;
+  background:#f7f7f7;
+  color:#111;
+}
+
+body{
+  padding-bottom:80px;
+}
+
 header{
-  height:64px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  height:60px;
+  background:#fff;
   border-bottom:1px solid #ddd;
   display:flex;
   align-items:center;
   padding:0 16px;
-  gap:12px
 }
-a{
-  color:#111;
-  text-decoration:none
+
+.back{
+  border:none;
+  background:none;
+  font-size:25px;
+  cursor:pointer;
+  margin-right:12px;
 }
-h1{
-  font-size:20px;
-  margin:0
+
+.logo{
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-1px;
 }
-main{
-  max-width:760px;
+
+.logo span{
+  color:#22b455;
+}
+
+.title{
+  text-align:center;
+  font-size:19px;
+  font-weight:800;
+  flex:1;
+  margin-right:35px;
+}
+
+.notifications{
+  max-width:700px;
   margin:auto;
-  padding:8px 12px
+  padding:10px 0;
 }
-.item{
+
+.notification{
   display:flex;
   gap:12px;
-  padding:15px 8px;
-  border-bottom:1px solid #eee;
-  align-items:center
+  padding:15px;
+  background:#fff;
+  border-bottom:1px solid #e5e5e5;
+  transition:.2s;
 }
+
+.notification.unread{
+  background:#eefbf2;
+  border-left:4px solid #22b455;
+  padding-left:11px;
+}
+
+.notification.unread .body{
+  font-weight:600;
+}
+
 .icon{
-  width:42px;
-  height:42px;
+  width:44px;
+  height:44px;
+  min-width:44px;
   border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#eee;
-  font-size:20px
+  background:#22b455;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:19px;
+  font-weight:800;
 }
+
 .body{
-  flex:1
+  flex:1;
+  line-height:1.4;
 }
+
+.text{
+  font-size:15px;
+}
+
 .time{
+  margin-top:4px;
   font-size:12px;
-  color:#777;
-  margin-top:4px
+  color:#888;
 }
+
 .empty{
   text-align:center;
-  color:#777;
-  padding:50px 10px
+  padding:70px 20px;
+  color:#888;
 }
-.unread{
-  background:#f5fff7
+
+.loading{
+  text-align:center;
+  padding:40px;
+  color:#888;
+}
+
+.error{
+  text-align:center;
+  padding:40px 20px;
+  color:#d33;
+}
+
+footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:70px;
+  background:#fff;
+  border-top:1px solid #ddd;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  z-index:200;
+}
+
+.footer-btn{
+  border:none;
+  background:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  color:#555;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.footer-btn .ficon{
+  font-size:22px;
+}
+
+.footer-btn.active{
+  color:#22b455;
+  font-weight:700;
+}
+
+@media(max-width:500px){
+  header{
+    padding:0 12px;
+  }
+
+  .notifications{
+    width:100%;
+  }
+
+  .notification{
+    padding:14px 12px;
+  }
 }
 </style>
-
 </head>
 
 <body>
 
 <header>
-  <a href="home.html" style="font-size:25px">‹</a>
-  <h1>Notifications</h1>
+  <button class="back" onclick="history.back()">‹</button>
+
+  <div class="logo">
+    BIGU<span>LA</span>
+  </div>
+
+  <div class="title">Notifications</div>
 </header>
 
-<main id="list">
-  <div class="empty">Loading…</div>
+<main class="notifications" id="notifications">
+  <div class="loading">Loading notifications...</div>
 </main>
 
-<!-- Supabase -->
+<footer>
+
+  <button class="footer-btn" onclick="goHome()">
+    <div class="ficon">⌂</div>
+    <div>Home</div>
+  </button>
+
+  <button class="footer-btn" onclick="goUpload()">
+    <div class="ficon">＋</div>
+    <div>Upload</div>
+  </button>
+
+  <button class="footer-btn active">
+    <div class="ficon">♡</div>
+    <div>Notifications</div>
+  </button>
+
+  <button class="footer-btn" onclick="goAccount()">
+    <div class="ficon">◉</div>
+    <div>Account</div>
+  </button>
+
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-const SB_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
-const SB_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const SUPABASE_URL =
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
 
-const supabaseClient = window.supabase.createClient(
-  SB_URL,
-  SB_KEY
-);
+const SUPABASE_KEY =
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-async function api(path, options = {}) {
-
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    throw new Error("NO_SESSION");
-  }
-
-  return fetch(
-    SB_URL + "/rest/v1/" + path,
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
     {
-      ...options,
-      headers: {
-        apikey: SB_KEY,
-        Authorization: "Bearer " + session.access_token,
-        "Content-Type": "application/json",
-        ...(options.headers || {})
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
       }
     }
   );
+
+
+/* --------------------------------
+   ESCAPE HTML
+-------------------------------- */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
 
 
-async function load() {
+/* --------------------------------
+   TIME FORMAT
+-------------------------------- */
 
-  const list = document.getElementById("list");
+function timeAgo(date){
 
-  try {
-
-    /*
-     * IMPORTANT:
-     * Get the REAL Supabase session.
-     * Do NOT call /auth/v1/user using the publishable key.
-     */
-    const {
-      data: { session },
-      error: sessionError
-    } = await supabaseClient.auth.getSession();
-
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      location.href = "signup.html";
-      return;
-    }
-
-    if (!session || !session.user) {
-      console.warn("No active Supabase session.");
-      location.href = "signup.html";
-      return;
-    }
-
-    const me = session.user;
-
-    console.log("BIGULA notifications user:", me.id);
-
-
-    /*
-     * Load notifications belonging to the logged-in user.
-     */
-    const r = await api(
-      "notifications?user_id=eq." +
-      encodeURIComponent(me.id) +
-      "&order=created_at.desc&limit=100"
+  const seconds =
+    Math.floor(
+      (Date.now() - new Date(date).getTime()) / 1000
     );
 
-    if (!r.ok) {
+  if(seconds < 60)
+    return "just now";
 
-      console.error(
-        "Notifications load failed:",
-        await r.text()
-      );
+  const minutes = Math.floor(seconds / 60);
 
-      list.innerHTML =
-        '<div class="empty">No notifications yet.</div>';
+  if(minutes < 60)
+    return minutes + "m ago";
 
-      return;
-    }
+  const hours = Math.floor(minutes / 60);
 
+  if(hours < 24)
+    return hours + "h ago";
 
-    const rows = await r.json();
+  const days = Math.floor(hours / 24);
 
-    if (!Array.isArray(rows) || !rows.length) {
+  if(days < 7)
+    return days + "d ago";
 
-      list.innerHTML =
-        '<div class="empty">No notifications yet.</div>';
+  const weeks = Math.floor(days / 7);
 
-      return;
-    }
+  if(weeks < 5)
+    return weeks + "w ago";
 
+  return new Date(date).toLocaleDateString();
 
-    /*
-     * Get actor IDs.
-     */
-    const actorIds = [
-      ...new Set(
-        rows
-          .map(x => x.actor_id)
-          .filter(Boolean)
-      )
-    ];
-
-    const names = {};
+}
 
 
-    /*
-     * Load actor names.
-     */
-    if (actorIds.length) {
+/* --------------------------------
+   NOTIFICATION ICON
+-------------------------------- */
 
-      const u = await api(
-        "users?id=in.(" +
-        actorIds.map(id => encodeURIComponent(id)).join(",") +
-        ")&select=id,name,username"
-      );
+function notificationIcon(type){
 
-      if (u.ok) {
+  type = String(type || "").toLowerCase();
 
-        const users = await u.json();
+  if(type.includes("like"))
+    return "♥";
 
-        users.forEach(x => {
+  if(type.includes("comment"))
+    return "💬";
 
-          names[x.id] =
-            x.name ||
-            ("@" + (x.username || "user"));
+  if(type.includes("follow"))
+    return "＋";
 
-        });
+  if(type.includes("reply"))
+    return "↩";
+
+  if(type.includes("mention"))
+    return "@";
+
+  return "●";
+
+}
+
+
+/* --------------------------------
+   BUILD NOTIFICATION TEXT
+-------------------------------- */
+
+function notificationText(notification,actor){
+
+  const type =
+    String(notification.type || "").toLowerCase();
+
+  const person =
+    actor || "Someone";
+
+  /*
+    Use the actor username/name for the
+    notifications where the action was
+    triggered by another user.
+  */
+
+  if(type.includes("comment")){
+    return person + " commented on your video.";
+  }
+
+  if(type.includes("like")){
+    return person + " liked your video.";
+  }
+
+  if(type.includes("follow")){
+    return person + " followed you.";
+  }
+
+  if(type.includes("reply")){
+    return person + " replied to your comment.";
+  }
+
+  if(type.includes("mention")){
+    return person + " mentioned you.";
+  }
+
+  /*
+    Preserve custom notification messages
+    for other notification types.
+  */
+
+  if(notification.message){
+    return notification.message;
+  }
+
+  return "You have a new notification.";
+
+}
+
+
+/* --------------------------------
+   LOAD NOTIFICATIONS
+-------------------------------- */
+
+async function loadNotifications(){
+
+  const container =
+    document.getElementById("notifications");
+
+  try{
+
+    const {
+      data:{
+        session
       }
-    }
+    } =
+      await supabaseClient.auth.getSession();
 
+    if(!session || !session.user){
 
-    /*
-     * Render notifications.
-     */
-    list.innerHTML = rows.map(x => {
-
-      const actor =
-        names[x.actor_id] || "Someone";
-
-      const type =
-        (x.type || "").toLowerCase();
-
-      const icon =
-        type.includes("like")
-          ? "♥"
-          : type.includes("comment")
-          ? "💬"
-          : type.includes("follow")
-          ? "👤"
-          : "🔔";
-
-      const text =
-        x.message ||
-        (
-          type.includes("like")
-            ? actor + " liked your video."
-            : type.includes("comment")
-            ? actor + " commented on your video."
-            : type.includes("follow")
-            ? actor + " followed you."
-            : "You have a new notification."
-        );
-
-      return `
-        <div class="item ${!x.is_read ? "unread" : ""}">
-          <div class="icon">${icon}</div>
-
-          <div class="body">
-
-            <div>
-              ${escapeHtml(text)}
-            </div>
-
-            <div class="time">
-              ${new Date(
-                x.created_at || Date.now()
-              ).toLocaleString()}
-            </div>
-
-          </div>
+      container.innerHTML = `
+        <div class="empty">
+          Please sign in to view your notifications.
         </div>
       `;
 
-    }).join("");
-
-
-    /*
-     * Mark notifications as read.
-     */
-    const unread =
-      rows
-        .filter(x => !x.is_read)
-        .map(x => x.id)
-        .filter(Boolean);
-
-
-    if (unread.length) {
-
-      await api(
-        "notifications?id=in.(" +
-        unread.map(id => encodeURIComponent(id)).join(",") +
-        ")",
-        {
-          method: "PATCH",
-
-          headers: {
-            Prefer: "return=minimal"
-          },
-
-          body: JSON.stringify({
-            is_read: true
-          })
-        }
-      );
-    }
-
-
-  } catch (err) {
-
-    console.error(
-      "Notifications error:",
-      err
-    );
-
-    /*
-     * Only redirect when there really is no session.
-     * Database/API errors must NOT send the user
-     * back to signup.
-     */
-    if (err.message === "NO_SESSION") {
-
-      location.href = "signup.html";
       return;
     }
 
-    list.innerHTML =
-      '<div class="empty">Unable to load notifications.</div>';
+    const userId =
+      session.user.id;
+
+
+    /*
+      Fetch notifications belonging to
+      the current user.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from("notifications")
+        .select("*")
+        .or(`user_id.eq.${userId},recipient_id.eq.${userId}`)
+        .order("created_at",{ascending:false});
+
+
+    if(error)
+      throw error;
+
+
+    if(!data || !data.length){
+
+      container.innerHTML = `
+        <div class="empty">
+          No notifications yet.
+        </div>
+      `;
+
+      return;
+    }
+
+
+    /*
+      Collect actor IDs.
+    */
+
+    const actorIds =
+      [
+        ...new Set(
+          data
+            .map(x => x.actor_id)
+            .filter(Boolean)
+        )
+      ];
+
+
+    let users = [];
+
+    if(actorIds.length){
+
+      const {
+        data:userData,
+        error:userError
+      } =
+        await supabaseClient
+          .from("users")
+          .select("id,name,username")
+          .in("id",actorIds);
+
+      if(!userError && userData)
+        users = userData;
+    }
+
+
+    /*
+      Create actor lookup.
+    */
+
+    const actorMap = {};
+
+    users.forEach(x => {
+
+      /*
+        Prefer username so a notification
+        can read naturally as:
+
+        geofrey commented on your video.
+      */
+
+      actorMap[x.id] =
+        x.username ||
+        x.name ||
+        "Someone";
+
+    });
+
+
+    container.innerHTML =
+      data.map(x => {
+
+        const actor =
+          actorMap[x.actor_id] || "Someone";
+
+        const text =
+          notificationText(
+            x,
+            actor
+          );
+
+        const unread =
+          x.is_read === false;
+
+        return `
+          <div
+            class="notification ${unread ? "unread" : ""}"
+            data-id="${escapeHtml(x.id)}"
+          >
+
+            <div class="icon">
+              ${notificationIcon(x.type)}
+            </div>
+
+            <div class="body">
+
+              <div class="text">
+                ${escapeHtml(text)}
+              </div>
+
+              <div class="time">
+                ${timeAgo(x.created_at)}
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+
+
+    /*
+      Mark unread notifications as read
+      after displaying them.
+    */
+
+    const unreadIds =
+      data
+        .filter(x => x.is_read === false)
+        .map(x => x.id);
+
+    if(unreadIds.length){
+
+      await supabaseClient
+        .from("notifications")
+        .update({
+          is_read:true
+        })
+        .in("id",unreadIds);
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Notification loading error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="error">
+        Unable to load notifications.
+      </div>
+    `;
+
   }
+
 }
 
 
-function escapeHtml(s) {
+/* --------------------------------
+   NAVIGATION
+-------------------------------- */
 
-  return String(s ?? "").replace(
-    /[&<>"']/g,
-    c => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[c])
-  );
+function goHome(){
+
+  window.location.href =
+    "home.html";
+
+}
+
+function goUpload(){
+
+  window.location.href =
+    "upload.html";
+
+}
+
+function goAccount(){
+
+  window.location.href =
+    "account.html";
+
 }
 
 
-load();
+/* --------------------------------
+   START
+-------------------------------- */
+
+loadNotifications();
 
 </script>
 
