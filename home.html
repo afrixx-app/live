@@ -451,39 +451,87 @@ button{
 }
 
 .action-icon{
-  width:42px;
-  height:42px;
+  width:46px;
+  height:46px;
 
-  border-radius:50%;
+  border-radius:15px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  background:rgba(0,0,0,.45);
+  background:linear-gradient(
+    145deg,
+    rgba(255,255,255,.18),
+    rgba(0,0,0,.58)
+  );
 
-  font-size:21px;
+  border:1px solid rgba(255,255,255,.22);
+
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.14);
+
+  font-size:23px;
+
+  transition:
+    transform .16s ease,
+    background .16s ease,
+    border-color .16s ease;
+}
+
+.action:hover .action-icon{
+  transform:translateY(-2px) scale(1.04);
+  background:linear-gradient(
+    145deg,
+    rgba(255,255,255,.25),
+    rgba(0,0,0,.62)
+  );
+  border-color:rgba(255,255,255,.38);
+}
+
+.action:active .action-icon{
+  transform:scale(.94);
 }
 
 .action-count{
-  font-size:10px;
-  font-weight:700;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.1px;
+  text-shadow:0 2px 6px #000;
+}
+
+.like-button .action-icon{
+  color:#fff;
 }
 
 .like-button.liked .action-icon{
-  color:#ff3b5f;
+  color:#ff4f72;
+  background:linear-gradient(
+    145deg,
+    rgba(255,79,114,.28),
+    rgba(0,0,0,.62)
+  );
+  border-color:rgba(255,79,114,.48);
 }
 
 .comment-button .action-icon{
-  font-size:20px;
-}
-
-.share-button .action-icon{
-  font-size:19px;
+  font-size:22px;
 }
 
 .view-button .action-icon{
-  font-size:19px;
+  font-size:21px;
+}
+
+.share-button .action-icon{
+  font-size:21px;
+}
+
+.like-button,
+.comment-button,
+.view-button,
+.share-button{
+  min-width:52px;
 }
 
 /* =========================================================
@@ -1312,8 +1360,9 @@ button{
   }
 
   .action-icon{
-    width:39px;
-    height:39px;
+    width:42px;
+    height:42px;
+    border-radius:14px;
   }
 
   .footer{
@@ -4245,9 +4294,15 @@ async function sendComment(){
       commentsVideoId, 
 
     user_id: 
-      currentUser.id, 
+      currentUser.id,
 
-    comment: 
+    display_name:
+      currentUser.user_metadata?.name ||
+      currentUser.user_metadata?.display_name ||
+      currentUser.user_metadata?.username ||
+      "BIGULA User",
+
+    comment:
       text, 
 
     ...(replyToComment 
