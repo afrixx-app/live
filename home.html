@@ -2730,9 +2730,9 @@ async function addVideoCard(
           "";
 
         const targetUrl = code
-          ? "view_video.html?short_code=" +
+          ? "video_view.html?short_code=" +
             encodeURIComponent(code)
-          : "view_video.html?id=" +
+          : "video_view.html?id=" +
             encodeURIComponent(video.id);
 
         location.href = targetUrl;
