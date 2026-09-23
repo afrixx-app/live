@@ -415,6 +415,69 @@ button:disabled{
 }
 
 /* =========================================================
+   VIDEO ANALYTICS
+========================================================= */
+
+.analytics{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:12px 16px 4px;
+}
+
+.analyticsItem{
+  background:#11131a;
+  border:1px solid #242833;
+  border-radius:12px;
+  padding:11px 8px;
+  text-align:center;
+  min-width:0;
+}
+
+.analyticsValue{
+  display:block;
+  font-size:15px;
+  font-weight:850;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.analyticsLabel{
+  display:block;
+  margin-top:4px;
+  font-size:10px;
+  color:#9ca3af;
+  text-transform:uppercase;
+  letter-spacing:.35px;
+}
+
+.profileLink{
+  color:#fff;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.profileLink:hover{
+  text-decoration:underline;
+}
+
+@media(max-width:480px){
+  .analytics{
+    margin-left:12px;
+    margin-right:12px;
+    gap:6px;
+  }
+  .analyticsItem{
+    padding:10px 5px;
+  }
+  .analyticsValue{
+    font-size:14px;
+  }
+}
+
+/* =========================================================
    ACTIONS
 ========================================================= */
 
@@ -1035,6 +1098,39 @@ function avatar(u){
 
 
 /* =========================================================
+   SAFE ASYNC HELPERS
+========================================================= */
+
+function withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(label + " timed out")), ms)
+    )
+  ]);
+}
+
+function creatorProfileUrl(){
+  const oid = ownerId(video);
+  return oid
+    ? "creator_profile.html?uid=" + encodeURIComponent(oid)
+    : "#";
+}
+
+async function safeCount(table, field, value){
+  try{
+    return await withTimeout(
+      count(table, field, value),
+      8000,
+      table + " count"
+    );
+  }catch(error){
+    console.warn("Could not load " + table + " count:", error);
+    return 0;
+  }
+}
+
+/* =========================================================
    GET CURRENT USER
 ========================================================= */
 
@@ -1239,46 +1335,29 @@ async function loadCounts(){
   if(!video)
     return;
 
-  const oid =
-  ownerId(video);
+  const oid=ownerId(video);
 
-  [
-    likeCount,
-    commentCount,
-    viewCount,
-    followerCount
-  ] =
-  await Promise.all([
+  likeCount=await safeCount("likes","video_id",video.id);
+  commentCount=await safeCount("comments","video_id",video.id);
+  viewCount=await safeCount("views","video_id",video.id);
 
-    count(
-      "likes",
-      "video_id",
-      video.id
-    ),
-
-    count(
-      "comments",
-      "video_id",
-      video.id
-    ),
-
-    count(
-      "views",
-      "video_id",
-      video.id
-    ),
-
-    oid
-      ? count(
-          "followers",
-          "following_id",
-          oid
-        )
-      : Promise.resolve(0)
-
-  ]);
+  followerCount=oid
+    ? await safeCount("followers","following_id",oid)
+    : 0;
 }
 
+async function loadCountsSafe(){
+
+  try{
+    await withTimeout(loadCounts(),12000,"video analytics");
+  }catch(error){
+    console.warn("Analytics load:",error);
+    likeCount=Number(likeCount)||0;
+    commentCount=Number(commentCount)||0;
+    viewCount=Number(viewCount)||0;
+    followerCount=Number(followerCount)||0;
+  }
+}
 
 /* =========================================================
    LOAD VIDEO
@@ -1286,235 +1365,174 @@ async function loadCounts(){
 
 async function loadVideo(){
 
-  if(!shortCode && !legacyId){
-
-    showError(
-      "No video was selected."
-    );
-
-    return;
-  }
-
-
-  /*
-    First finish a Google/Supabase
-    PKCE login if the URL contains ?code=
-  */
-
   try{
 
-    const code =
-    params.get("code");
+    if(!shortCode && !legacyId){
+      showError("No video was selected.");
+      return;
+    }
 
-    if(code){
+    /* PKCE must never be allowed to hold the video page forever. */
+    try{
+      const code = params.get("code");
 
-      const {
-        error
-      } =
-      await supabase.auth.exchangeCodeForSession(
-        code
-      );
-
-      if(error){
-
-        console.warn(
-          "PKCE exchange:",
-          error
+      if(code){
+        const result = await withTimeout(
+          supabase.auth.exchangeCodeForSession(code),
+          10000,
+          "PKCE exchange"
         );
+
+        if(result.error)
+          console.warn("PKCE exchange:", result.error);
+
+        const cleanUrl =
+          location.origin +
+          location.pathname +
+          (
+            shortCode
+              ? "?v=" + encodeURIComponent(shortCode)
+              : legacyId
+                ? "?id=" + encodeURIComponent(legacyId)
+                : ""
+          );
+
+        history.replaceState({}, document.title, cleanUrl);
+      }
+    }catch(error){
+      console.warn("PKCE step skipped:", error);
+    }
+
+    /* Viewing a public video does not require login. */
+    try{
+      await withTimeout(loadMe(),8000,"current-user lookup");
+    }catch(error){
+      console.warn("Could not load current user:",error);
+      me=null;
+    }
+
+    let result=null;
+
+    if(shortCode){
+
+      try{
+        result=await withTimeout(
+          supabase
+            .from("videos")
+            .select("*")
+            .eq("short_code",shortCode)
+            .maybeSingle(),
+          10000,
+          "short-code video lookup"
+        );
+      }catch(error){
+        console.error("Short-code lookup:",error);
+        result={data:null,error};
       }
 
-      /*
-        Remove the authentication
-        code from the address bar.
-      */
+      /* Also support older links where v contains the video UUID. */
+      if(!result.data || result.error){
+        try{
+          result=await withTimeout(
+            supabase
+              .from("videos")
+              .select("*")
+              .eq("id",shortCode)
+              .maybeSingle(),
+            10000,
+            "video id fallback"
+          );
+        }catch(error){
+          console.warn("Video id fallback:",error);
+        }
+      }
 
-      const cleanUrl =
-        location.origin +
-        location.pathname +
-        (
-          shortCode
-          ? "?v="+encodeURIComponent(shortCode)
-          : legacyId
-            ? "?id="+encodeURIComponent(legacyId)
-            : ""
+    }else{
+
+      try{
+        result=await withTimeout(
+          supabase
+            .from("videos")
+            .select("*")
+            .eq("id",legacyId)
+            .maybeSingle(),
+          10000,
+          "video lookup"
         );
-
-      history.replaceState(
-        {},
-        document.title,
-        cleanUrl
-      );
+      }catch(error){
+        console.error("Video lookup:",error);
+        result={data:null,error};
+      }
     }
+
+    if(result && result.error){
+      console.error("Video load error:",result.error);
+      showError("Could not load this video.");
+      return;
+    }
+
+    if(!result || !result.data){
+      showError("Video not found or unavailable.");
+      return;
+    }
+
+    video=result.data;
+
+    const publicationStatus =
+      String(video.publication_status || "").toLowerCase();
+
+    if(
+      publicationStatus &&
+      !["published","public","approved"].includes(publicationStatus) &&
+      ownerId(video)!==me?.id
+    ){
+      showError("This video is not publicly available.");
+      return;
+    }
+
+    /*
+      RENDER FIRST.
+      Creator data, analytics and interaction checks can never
+      prevent the player from appearing.
+    */
+    renderVideoShell();
+
+    try{
+      await withTimeout(loadOwner(),8000,"creator profile");
+    }catch(error){
+      console.warn("Creator profile load:",error);
+      owner=null;
+    }
+
+    try{
+      await withTimeout(loadInteractions(),8000,"user interactions");
+    }catch(error){
+      console.warn("Interaction load:",error);
+      liked=false;
+      following=false;
+    }
+
+    await loadCountsSafe();
+
+    updateCreatorInfo();
+    updateActionCounts();
+    updateCreatorLinks();
+
+    loadComments().catch(error =>
+      console.warn("Comments load:",error)
+    );
+
+    recordView().catch(error =>
+      console.warn("View record:",error)
+    );
 
   }catch(error){
 
-    console.warn(
-      "PKCE error:",
-      error
-    );
+    console.error("VIDEO PAGE ERROR:",error);
+    showError("Could not load this video. Please try again.");
+
   }
-
-
-  await loadMe();
-
-
-  let result = null;
-
-
-  /*
-    Load by BIGULA short code first.
-  */
-
-  if(shortCode){
-
-    result =
-    await supabase
-      .from("videos")
-      .select("*")
-      .eq(
-        "short_code",
-        shortCode
-      )
-      .maybeSingle();
-
-
-    /*
-      UUID fallback if supplied.
-    */
-
-    if(
-      (!result.data || result.error) &&
-      legacyId
-    ){
-
-      result =
-      await supabase
-        .from("videos")
-        .select("*")
-        .eq(
-          "id",
-          legacyId
-        )
-        .maybeSingle();
-    }
-
-  }else{
-
-    result =
-    await supabase
-      .from("videos")
-      .select("*")
-      .eq(
-        "id",
-        legacyId
-      )
-      .maybeSingle();
-  }
-
-
-  if(result.error){
-
-    console.error(
-      "Video load error:",
-      result.error
-    );
-
-    showError(
-      "Could not load this video."
-    );
-
-    return;
-  }
-
-
-  if(!result.data){
-
-    showError(
-      "Video not found or unavailable."
-    );
-
-    return;
-  }
-
-
-  video =
-  result.data;
-
-
-  /*
-    Check publication status.
-  */
-
-  const publicationStatus =
-  String(
-    video.publication_status || ""
-  ).toLowerCase();
-
-
-  if(
-    publicationStatus &&
-    ![
-      "published",
-      "public",
-      "approved"
-    ].includes(
-      publicationStatus
-    ) &&
-    ownerId(video)!==me?.id
-  ){
-
-    showError(
-      "This video is not publicly available."
-    );
-
-    return;
-  }
-
-
-  /*
-    IMPORTANT:
-    Render the actual video immediately.
-    Creator/count information is loaded
-    separately so it cannot prevent the
-    player from appearing.
-  */
-
-  renderVideoShell();
-
-
-  /*
-    Then load creator/interactions/counts.
-  */
-
-  await Promise.all([
-    loadOwner(),
-    loadInteractions(),
-    loadCounts()
-  ]);
-
-
-  /*
-    Refresh creator + statistics.
-  */
-
-  updateCreatorInfo();
-  updateActionCounts();
-
-
-  /*
-    Load comments separately.
-  */
-
-  loadComments();
-
-
-  /*
-    Record page visit.
-  */
-
-  recordView();
 }
-
 
 /* =========================================================
    ERROR
@@ -1703,18 +1721,22 @@ function renderVideoShell(){
 
         <div class="meta">
 
-          <div
+          <a
             id="creatorName"
-            class="creatorName">
+            class="creatorName profileLink"
+            href="#"
+            aria-label="Open creator profile">
             ${esc(initialName)}
-          </div>
+          </a>
 
 
-          <div
+          <a
             id="creatorHandle"
-            class="handle">
+            class="handle profileLink"
+            href="#"
+            aria-label="Open creator profile">
             @${esc(initialUsername)}
-          </div>
+          </a>
 
         </div>
 
@@ -1767,6 +1789,26 @@ function renderVideoShell(){
         )}
       </div>
 
+    </section>
+
+    <!-- VIDEO ANALYTICS -->
+    <section class="analytics" aria-label="Video analytics">
+      <div class="analyticsItem">
+        <span class="analyticsValue" id="createdAtStat">—</span>
+        <span class="analyticsLabel">Created</span>
+      </div>
+      <div class="analyticsItem">
+        <span class="analyticsValue" id="commentsStat">0</span>
+        <span class="analyticsLabel">Comments</span>
+      </div>
+      <div class="analyticsItem">
+        <span class="analyticsValue" id="viewsStat">0</span>
+        <span class="analyticsLabel">Views</span>
+      </div>
+      <div class="analyticsItem">
+        <span class="analyticsValue" id="likesStat">0</span>
+        <span class="analyticsLabel">Likes</span>
+      </div>
     </section>
 
 
@@ -1972,6 +2014,8 @@ function renderVideoShell(){
   bindActions(
     canReuse
   );
+
+  updateCreatorLinks();
 }
 
 
@@ -2086,6 +2130,19 @@ function updateCreatorInfo(){
       following
     );
   }
+
+  updateCreatorLinks();
+}
+
+function updateCreatorLinks(){
+
+  const url=creatorProfileUrl();
+
+  const nameEl=document.getElementById("creatorName");
+  const handleEl=document.getElementById("creatorHandle");
+
+  if(nameEl) nameEl.href=url;
+  if(handleEl) handleEl.href=url;
 }
 
 
@@ -2095,64 +2152,41 @@ function updateCreatorInfo(){
 
 function updateActionCounts(){
 
-  const likeTxt =
-  document.getElementById(
-    "likeTxt"
-  );
+  const likeTxt=document.getElementById("likeTxt");
+  const commentTxt=document.getElementById("commentTxt");
+  const dateLine=document.getElementById("dateLine");
 
-  const commentTxt =
-  document.getElementById(
-    "commentTxt"
-  );
+  const createdAt =
+    video.created_at ||
+    video.published_at ||
+    video.updated_at;
 
-  const dateLine =
-  document.getElementById(
-    "dateLine"
-  );
-
-
-  if(likeTxt){
-
+  if(likeTxt)
     likeTxt.textContent =
-      `${liked ? "Liked" : "Like"} · ${fmt(likeCount)}`;
-  }
+      `${liked ? "Unlike" : "Like"} · ${fmt(likeCount)}`;
 
-
-  if(commentTxt){
-
+  if(commentTxt)
     commentTxt.textContent =
       `${fmt(commentCount)} comments`;
-  }
 
-
-  if(dateLine){
-
+  if(dateLine)
     dateLine.textContent =
-      `Published ${
-        dateFmt(
-          video.published_at ||
-          video.created_at ||
-          video.updated_at
-        )
-      } · ${fmt(viewCount)} views`;
-  }
+      `Created ${dateFmt(createdAt)} · ${fmt(viewCount)} views`;
 
+  const createdAtStat=document.getElementById("createdAtStat");
+  const commentsStat=document.getElementById("commentsStat");
+  const viewsStat=document.getElementById("viewsStat");
+  const likesStat=document.getElementById("likesStat");
 
-  const likeBtn =
-  document.getElementById(
-    "like"
-  );
+  if(createdAtStat) createdAtStat.textContent=dateFmt(createdAt);
+  if(commentsStat) commentsStat.textContent=fmt(commentCount);
+  if(viewsStat) viewsStat.textContent=fmt(viewCount);
+  if(likesStat) likesStat.textContent=fmt(likeCount);
 
-
-  if(likeBtn){
-
-    likeBtn.classList.toggle(
-      "active",
-      liked
-    );
-  }
+  const likeBtn=document.getElementById("like");
+  if(likeBtn)
+    likeBtn.classList.toggle("active",liked);
 }
-
 
 /* =========================================================
    PLAYER
@@ -2945,34 +2979,14 @@ async function postComment(e){
     return;
 
 
-  let result =
+  const result =
   await supabase
     .from("comments")
     .insert({
       video_id:video.id,
       user_id:me.id,
-      comment:text,
-      content:text,
-      text:text
+      comment:text
     });
-
-
-  /*
-    Fallback for schemas
-    that only contain content.
-  */
-
-  if(result.error){
-
-    result =
-    await supabase
-      .from("comments")
-      .insert({
-        video_id:video.id,
-        user_id:me.id,
-        content:text
-      });
-  }
 
 
   if(result.error){
@@ -3384,7 +3398,10 @@ document
    START
 ========================================================= */
 
-loadVideo();
+loadVideo().catch(error=>{
+  console.error("BIGULA video_view startup error:",error);
+  showError("Could not load this video. Please try again.");
+});
 
 </script>
 
