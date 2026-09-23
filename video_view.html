@@ -1,12 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>BIGULA • Video</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -17,42 +15,33 @@
   --muted:#9ca3af;
   --line:#242833;
   --accent:#ff2d55;
+  --cyan:#00e5ff
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
-html,
-body{
+html,body{
   margin:0;
   padding:0;
   background:var(--bg);
   color:var(--text);
-  font-family:Inter,Arial,sans-serif;
+  font-family:Inter,Arial,sans-serif
 }
 
-body{
-  min-height:100vh;
-}
+body{min-height:100vh}
 
-button,
-input{
-  font:inherit;
+button,input{
+  font:inherit
 }
 
 button{
-  cursor:pointer;
+  cursor:pointer
 }
 
 button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
+  opacity:.5;
+  cursor:not-allowed
 }
-
-/* =========================================================
-   TOP BAR
-========================================================= */
 
 .top{
   position:fixed;
@@ -60,766 +49,487 @@ button:disabled{
   left:0;
   right:0;
   height:62px;
-
   display:flex;
   align-items:center;
-
-  padding:
-    env(safe-area-inset-top)
-    14px
-    0;
-
+  padding:8px 14px 0;
   z-index:100;
-
-  background:
-    linear-gradient(
-      #050609f5,
-      #050609aa,
-      transparent
-    );
+  background:linear-gradient(#050609f5,#050609aa,transparent)
 }
 
 .topLeft{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:10px
+}
+
+.backBtn,
+.topbtn{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:#ffffff18;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center
 }
 
 .backBtn{
-  width:42px;
-  height:42px;
-
-  border:0;
-  border-radius:50%;
-
-  background:#ffffff18;
-  color:#fff;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  font-size:25px;
-  line-height:1;
-}
-
-.backBtn:active{
-  transform:scale(.94);
-}
-
-.logo{
-  font-weight:900;
-  font-size:20px;
-  letter-spacing:.2px;
+  font-size:25px
 }
 
 .topbtn{
   margin-left:auto;
-
-  width:42px;
-  height:42px;
-
-  border:0;
-  border-radius:50%;
-
-  background:#ffffff18;
-  color:#fff;
-
-  font-size:22px;
+  font-size:22px
 }
 
-/* =========================================================
-   MAIN
-========================================================= */
+.logo{
+  font-weight:900;
+  font-size:20px
+}
 
 .wrap{
   width:100%;
   max-width:900px;
   margin:0 auto;
-
-  padding-bottom:40px;
+  padding-bottom:40px
 }
-
-/* =========================================================
-   LOADING / ERROR
-========================================================= */
 
 .loading{
   min-height:100vh;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   text-align:center;
-
   padding:30px;
-
   color:var(--muted);
-  font-size:15px;
+  font-size:15px
 }
 
-/* =========================================================
-   VIDEO PLAYER
-========================================================= */
+.errorBox{
+  max-width:520px;
+  margin:auto;
+  text-align:center
+}
+
+.errorBox button{
+  margin-top:14px;
+  padding:10px 16px;
+  border:0;
+  border-radius:10px;
+  background:#fff;
+  color:#000;
+  font-weight:800
+}
 
 .player{
   width:100%;
-
-  height:
-    min(
-      78vh,
-      760px
-    );
-
+  height:min(78vh,760px);
   min-height:420px;
-
-  margin-top:0;
-
   background:#000;
-
   position:relative;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
-  overflow:hidden;
+  overflow:hidden
 }
 
 .player video{
   width:100%;
   height:100%;
-
   display:block;
-
   object-fit:contain;
-
-  background:#000;
+  background:#000
 }
-
-/* =========================================================
-   CENTER PLAY BUTTON
-========================================================= */
 
 .center{
   position:absolute;
-
   left:50%;
   top:50%;
-
   transform:translate(-50%,-50%);
-
   width:70px;
   height:70px;
-
   border:0;
   border-radius:50%;
-
   background:#000a;
-
   color:#fff;
-
   font-size:28px;
-
   opacity:0;
-
   transition:.2s;
-
-  z-index:5;
+  z-index:5
 }
 
 .player.paused .center{
-  opacity:1;
+  opacity:1
 }
-
-/* =========================================================
-   VIDEO CONTROLS
-========================================================= */
 
 .controls{
   position:absolute;
-
   left:0;
   right:0;
   bottom:0;
-
-  padding:
-    12px
-    12px
-    14px;
-
-  background:
-    linear-gradient(
-      transparent,
-      #000e
-    );
-
-  z-index:6;
+  padding:12px 12px 14px;
+  background:linear-gradient(transparent,#000e);
+  z-index:6
 }
 
 .progress{
   width:100%;
-
   height:4px;
-
   accent-color:var(--accent);
-
-  cursor:pointer;
+  cursor:pointer
 }
 
 .ctrlrow{
   display:flex;
   align-items:center;
-
   gap:7px;
-
-  margin-top:8px;
+  margin-top:8px
 }
 
 .ctrl{
   border:0;
-
   background:#ffffff18;
-
   color:#fff;
-
   border-radius:9px;
-
   min-width:38px;
   height:37px;
-
-  padding:0 9px;
+  padding:0 9px
 }
 
 .time{
   font-size:12px;
-
   color:#ddd;
-
   margin-right:auto;
-
-  white-space:nowrap;
+  white-space:nowrap
 }
 
-/* =========================================================
-   CREATOR INFORMATION
-========================================================= */
-
 .info{
-  padding:18px 16px 10px;
+  padding:18px 16px 10px
 }
 
 .creator{
   display:flex;
   align-items:center;
-
   gap:11px;
-
-  min-width:0;
+  min-width:0
 }
 
 .avatar{
   width:48px;
   height:48px;
-
   flex:0 0 48px;
-
   border-radius:50%;
-
   object-fit:cover;
-
   background:#252936;
-
-  display:block;
+  display:block
 }
 
 .meta{
   flex:1;
-  min-width:0;
+  min-width:0
+}
+
+.creatorLink{
+  color:#fff;
+  text-decoration:none;
+  display:inline-block;
+  max-width:100%
+}
+
+.creatorLink:hover{
+  text-decoration:underline
 }
 
 .creatorName{
   font-weight:850;
-
   font-size:16px;
-
   white-space:nowrap;
   overflow:hidden;
-  text-overflow:ellipsis;
+  text-overflow:ellipsis
 }
 
 .handle{
   font-size:12px;
-
   color:var(--muted);
-
   margin-top:4px;
-
   white-space:nowrap;
   overflow:hidden;
-  text-overflow:ellipsis;
+  text-overflow:ellipsis
 }
 
 .follow{
   flex:0 0 auto;
-
   border:0;
-
   background:#fff;
-
   color:#000;
-
   border-radius:10px;
-
   padding:9px 14px;
-
-  font-weight:850;
+  font-weight:850
 }
 
 .following{
   background:#292d38;
-  color:#fff;
+  color:#fff
 }
 
 .title{
   font-size:20px;
-
   font-weight:850;
-
   margin-top:15px;
-
-  line-height:1.25;
+  line-height:1.25
 }
 
 .desc{
   font-size:14px;
-
   color:#d3d5da;
-
   line-height:1.5;
-
   margin-top:8px;
-
   white-space:pre-wrap;
+  overflow-wrap:anywhere
+}
 
-  overflow-wrap:anywhere;
+.analytics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:15px
+}
+
+.stat{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:10px;
+  text-align:center
+}
+
+.stat strong{
+  display:block;
+  font-size:16px
+}
+
+.stat span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px
 }
 
 .date{
   font-size:12px;
-
   color:var(--muted);
-
-  margin-top:9px;
+  margin-top:10px
 }
-
-/* =========================================================
-   VIDEO ANALYTICS
-========================================================= */
-
-.analytics{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:8px;
-  margin:12px 16px 4px;
-}
-
-.analyticsItem{
-  background:#11131a;
-  border:1px solid #242833;
-  border-radius:12px;
-  padding:11px 8px;
-  text-align:center;
-  min-width:0;
-}
-
-.analyticsValue{
-  display:block;
-  font-size:15px;
-  font-weight:850;
-  color:#fff;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.analyticsLabel{
-  display:block;
-  margin-top:4px;
-  font-size:10px;
-  color:#9ca3af;
-  text-transform:uppercase;
-  letter-spacing:.35px;
-}
-
-.profileLink{
-  color:#fff;
-  text-decoration:none;
-  cursor:pointer;
-}
-
-.profileLink:hover{
-  text-decoration:underline;
-}
-
-@media(max-width:480px){
-  .analytics{
-    margin-left:12px;
-    margin-right:12px;
-    gap:6px;
-  }
-  .analyticsItem{
-    padding:10px 5px;
-  }
-  .analyticsValue{
-    font-size:14px;
-  }
-}
-
-/* =========================================================
-   ACTIONS
-========================================================= */
 
 .actions{
   display:flex;
-
   gap:8px;
-
   overflow-x:auto;
-
-  padding:
-    9px
-    16px
-    14px;
-
-  scrollbar-width:none;
+  padding:9px 16px 14px;
+  scrollbar-width:none
 }
 
 .actions::-webkit-scrollbar{
-  display:none;
+  display:none
 }
 
 .action{
   min-width:82px;
-
   background:var(--panel);
-
   color:#fff;
-
   border:1px solid var(--line);
-
   border-radius:12px;
-
   padding:10px 9px;
-
   text-align:center;
-
-  flex:0 0 auto;
+  flex:0 0 auto
 }
 
 .action .ico{
   display:block;
-
   font-size:20px;
-
   line-height:1;
-
-  margin-bottom:5px;
+  margin-bottom:5px
 }
 
 .action small{
   font-size:11px;
-
   color:var(--muted);
-
-  white-space:nowrap;
+  white-space:nowrap
 }
 
 .action.active{
   background:#ff2d5515;
-
-  border-color:#ff2d5555;
+  border-color:#ff2d5555
 }
 
-/* =========================================================
-   SOUND
-========================================================= */
-
 .sound{
-  margin:
-    6px
-    16px
-    14px;
-
+  margin:6px 16px 14px;
   padding:12px;
-
   background:#151923;
-
   border:1px solid var(--line);
-
   border-radius:14px;
-
   display:flex;
-
   gap:12px;
-
-  align-items:center;
+  align-items:center
 }
 
 .disc{
   width:42px;
   height:42px;
-
   flex:0 0 42px;
-
   border-radius:50%;
-
-  background:
-    radial-gradient(
-      circle,
-      #ddd 0 8%,
-      #333 9% 20%,
-      #111 21% 55%,
-      #555 56% 60%,
-      #111 61%
-    );
-
-  animation:spin 3s linear infinite;
+  background:radial-gradient(
+    circle,
+    #ddd 0 8%,
+    #333 9% 20%,
+    #111 21% 55%,
+    #555 56% 60%,
+    #111 61%
+  );
+  animation:spin 3s linear infinite
 }
 
 .disc.stop{
-  animation-play-state:paused;
+  animation-play-state:paused
 }
 
 .soundText{
   flex:1;
-  min-width:0;
+  min-width:0
 }
 
 .soundTitle{
   font-weight:750;
-
   white-space:nowrap;
-
   overflow:hidden;
-
-  text-overflow:ellipsis;
+  text-overflow:ellipsis
 }
 
 .soundSub{
   font-size:12px;
-
   color:var(--muted);
-
-  margin-top:3px;
+  margin-top:3px
 }
 
-/* =========================================================
-   COMMENTS
-========================================================= */
-
 .comments{
-  padding:
-    14px
-    16px;
-
-  border-top:1px solid var(--line);
+  padding:14px 16px;
+  border-top:1px solid var(--line)
 }
 
 .commentHeading{
   font-weight:800;
-
-  margin-bottom:11px;
+  margin-bottom:11px
 }
 
 .commentForm{
   display:flex;
-
   gap:8px;
-
-  margin-bottom:10px;
+  margin-bottom:10px
 }
 
 .commentForm input{
   flex:1;
-
   min-width:0;
-
   background:#151820;
-
   border:1px solid var(--line);
-
   border-radius:12px;
-
   padding:11px;
-
   color:#fff;
-
-  outline:none;
-}
-
-.commentForm input:focus{
-  border-color:#555c6b;
+  outline:none
 }
 
 .send{
   background:var(--accent);
-
   color:#fff;
-
   border:0;
-
   border-radius:11px;
-
-  padding:0 15px;
+  padding:0 15px
 }
 
 .comment{
   display:flex;
-
   gap:9px;
-
   padding:10px 0;
-
-  border-bottom:1px solid #1c1f27;
+  border-bottom:1px solid #1c1f27
 }
 
 .comment .avatar{
   width:34px;
   height:34px;
-
-  flex-basis:34px;
+  flex-basis:34px
 }
 
 .commentBody{
   flex:1;
-
-  min-width:0;
+  min-width:0
 }
 
 .commentTop{
-  font-size:13px;
+  font-size:13px
 }
 
 .commentTop span{
   font-size:11px;
-
   color:var(--muted);
-
-  margin-left:7px;
+  margin-left:7px
 }
 
 .commentText{
   font-size:13px;
-
   color:#ddd;
-
   margin-top:4px;
-
   white-space:pre-wrap;
-
-  overflow-wrap:anywhere;
+  overflow-wrap:anywhere
 }
-
-/* =========================================================
-   MORE
-========================================================= */
 
 .more{
   display:flex;
-
   gap:8px;
-
   flex-wrap:wrap;
-
-  padding:
-    10px
-    16px
-    30px;
+  padding:10px 16px 30px
 }
 
 .more button{
   background:var(--panel);
-
   color:#ddd;
-
   border:1px solid var(--line);
-
   border-radius:10px;
-
-  padding:9px 12px;
+  padding:9px 12px
 }
-
-/* =========================================================
-   TOAST
-========================================================= */
 
 .toast{
   position:fixed;
-
   left:50%;
   bottom:25px;
-
-  transform:
-    translateX(-50%)
-    translateY(10px);
-
+  transform:translateX(-50%) translateY(10px);
   background:#222630;
-
   color:#fff;
-
   border:1px solid #343947;
-
   border-radius:12px;
-
   padding:11px 14px;
-
   opacity:0;
-
   pointer-events:none;
-
   transition:.25s;
-
   z-index:200;
-
   max-width:90%;
-
-  text-align:center;
+  text-align:center
 }
 
 .toast.show{
   opacity:1;
-
-  transform:
-    translateX(-50%)
-    translateY(0);
+  transform:translateX(-50%) translateY(0)
 }
-
-/* =========================================================
-   ANIMATION
-========================================================= */
 
 @keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
+  to{transform:rotate(360deg)}
 }
 
-/* =========================================================
-   DESKTOP
-========================================================= */
-
 @media(min-width:760px){
-
   .player{
     margin-top:8px;
-
-    border-radius:
-      0
-      0
-      16px
-      16px;
+    border-radius:0 0 16px 16px
   }
 
   .info,
@@ -828,57 +538,40 @@ button:disabled{
   .comments,
   .more{
     padding-left:0;
-    padding-right:0;
+    padding-right:0
   }
 
   .sound{
     margin-left:0;
-    margin-right:0;
+    margin-right:0
   }
 
   .top{
     max-width:900px;
-
-    margin:auto;
-
-    background:
-      linear-gradient(
-        #050609f5,
-        #05060988,
-        transparent
-      );
+    margin:auto
   }
 }
 
-/* =========================================================
-   SMALL PHONES
-========================================================= */
-
 @media(max-width:480px){
-
   .player{
     min-height:360px;
-
-    height:
-      calc(
-        100vh - 20px
-      );
-  }
-
-  .info{
-    padding-top:16px;
+    height:calc(100vh - 20px)
   }
 
   .title{
-    font-size:18px;
+    font-size:18px
+  }
+
+  .analytics{
+    grid-template-columns:repeat(2,1fr)
   }
 
   .follow{
-    padding:8px 12px;
+    padding:8px 12px
   }
 
   .action{
-    min-width:78px;
+    min-width:78px
   }
 }
 </style>
@@ -886,74 +579,27 @@ button:disabled{
 
 <body>
 
-<!-- =======================================================
-     TOP BAR
-======================================================== -->
-
 <header class="top">
-
   <div class="topLeft">
-
-    <button
-      id="backBtn"
-      class="backBtn"
-      aria-label="Go back">
-      ‹
-    </button>
-
-    <div class="logo">
-      BIGULA
-    </div>
-
+    <button id="backBtn" class="backBtn" aria-label="Go back">‹</button>
+    <div class="logo">BIGULA</div>
   </div>
 
-  <button
-    id="moreTop"
-    class="topbtn"
-    aria-label="More options">
-    ⋯
-  </button>
-
+  <button id="moreTop" class="topbtn" aria-label="More options">⋯</button>
 </header>
 
-
-<!-- =======================================================
-     MAIN APP
-======================================================== -->
-
 <main id="app" class="wrap">
-
-  <div class="loading">
-    Loading video…
-  </div>
-
+  <div class="loading" id="loading">Loading video…</div>
 </main>
 
-
-<!-- =======================================================
-     TOAST
-======================================================== -->
-
-<div
-  id="toast"
-  class="toast">
-</div>
-
+<div id="toast" class="toast"></div>
 
 <script>
+const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
 
-/* =========================================================
-   SUPABASE
-========================================================= */
+const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-const SUPABASE_URL =
-"https://vfteiggdhthvrrlndtbs.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-
-const supabase =
-window.supabase.createClient(
+const supabase=window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
   {
@@ -966,48 +612,31 @@ window.supabase.createClient(
   }
 );
 
+const params=new URLSearchParams(location.search);
 
-/* =========================================================
-   URL PARAMETERS
-========================================================= */
+let token=params.get("v")||params.get("short_code")||"";
+const legacyId=params.get("id")||params.get("video_id")||"";
 
-const params =
-new URLSearchParams(location.search);
+let video=null;
+let me=null;
+let owner=null;
 
-const shortCode =
-params.get("v") ||
-params.get("short_code");
+let liked=false;
+let following=false;
 
-const legacyId =
-params.get("id") ||
-params.get("video_id");
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let video = null;
-let me = null;
-let owner = null;
-
-let liked = false;
-let following = false;
-
-let likeCount = 0;
-let commentCount = 0;
-let viewCount = 0;
-let followerCount = 0;
+let likeCount=0;
+let commentCount=0;
+let viewCount=0;
+let followerCount=0;
 
 
-/* =========================================================
+/* =========================
    HELPERS
-========================================================= */
+========================= */
 
-const esc = s =>
-String(s ?? "").replace(
+const esc=s=>String(s??"").replace(
   /[&<>"']/g,
-  m => ({
+  m=>({
     "&":"&amp;",
     "<":"&lt;",
     ">":"&gt;",
@@ -1016,49 +645,20 @@ String(s ?? "").replace(
   }[m])
 );
 
+const fmt=n=>Intl.NumberFormat(
+  undefined,
+  {
+    notation:"compact",
+    maximumFractionDigits:1
+  }
+).format(Number(n)||0);
 
-function toast(text){
+const dateFmt=d=>{
+  if(!d)return"—";
 
-  const x =
-  document.getElementById("toast");
+  const x=new Date(d);
 
-  if(!x)return;
-
-  x.textContent = text;
-
-  x.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer =
-  setTimeout(
-    () => x.classList.remove("show"),
-    2300
-  );
-}
-
-
-function fmt(n){
-
-  return Intl.NumberFormat(
-    undefined,
-    {
-      notation:"compact",
-      maximumFractionDigits:1
-    }
-  ).format(Number(n)||0);
-}
-
-
-function dateFmt(d){
-
-  if(!d)return "—";
-
-  const date =
-  new Date(d);
-
-  if(Number.isNaN(date.getTime()))
-    return "—";
+  if(Number.isNaN(x.getTime()))return"—";
 
   return new Intl.DateTimeFormat(
     undefined,
@@ -1069,101 +669,219 @@ function dateFmt(d){
       hour:"numeric",
       minute:"2-digit"
     }
-  ).format(date);
+  ).format(x);
+};
+
+const ownerId=v=>
+  v?.user_id||
+  v?.creator_id||
+  v?.owner_id||
+  null;
+
+const avatar=u=>
+  u?.avatar_url||
+  u?.photo_url||
+  u?.profile_photo||
+  u?.profile_image||
+  u?.image_url||
+  u?.picture||
+  u?.avatar||
+  "";
+
+
+/*
+  IMPORTANT:
+
+  BIGULA Supabase Storage bucket is:
+      videos
+
+  Uploaded files are inside:
+      videos/<filename>
+
+  If storage_path already contains "videos/",
+  it will not be duplicated.
+*/
+
+const videoUrl=v=>{
+
+  if(
+    v?.video_url||
+    v?.url||
+    v?.file_url||
+    v?.public_url||
+    v?.storage_url
+  ){
+    return (
+      v.video_url||
+      v.url||
+      v.file_url||
+      v.public_url||
+      v.storage_url
+    );
+  }
+
+  if(v?.storage_path){
+
+    const rawPath=String(v.storage_path)
+      .replace(/^\/+/,"");
+
+    /*
+      The bucket itself is "videos".
+
+      The folder can also be named "videos".
+      Therefore:
+        storage_path = videos/file.mp4
+      becomes:
+        bucket videos
+        path videos/file.mp4
+
+      while:
+        storage_path = file.mp4
+      becomes:
+        bucket videos
+        path videos/file.mp4
+    */
+
+    const storagePath=
+      rawPath.startsWith("videos/")
+        ? rawPath
+        : `videos/${rawPath}`;
+
+    const result=
+      supabase
+        .storage
+        .from("videos")
+        .getPublicUrl(storagePath);
+
+    return result?.data?.publicUrl||"";
+  }
+
+  return "";
+};
+
+
+function toast(t){
+
+  const x=document.getElementById("toast");
+
+  x.textContent=t;
+
+  x.classList.add("show");
+
+  clearTimeout(window._toast);
+
+  window._toast=setTimeout(
+    ()=>x.classList.remove("show"),
+    2300
+  );
 }
 
 
-function ownerId(row){
+function showError(t){
 
-  return row?.user_id ||
-         row?.creator_id ||
-         row?.owner_id ||
-         null;
+  document.getElementById("app").innerHTML=`
+    <div class="loading">
+      <div class="errorBox">
+        <div>${esc(t)}</div>
+        <button onclick="location.reload()">Try again</button>
+      </div>
+    </div>
+  `;
 }
 
 
-function avatar(u){
+function profileUrl(){
 
-  if(!u)return "";
-
-  return u.avatar_url ||
-         u.photo_url ||
-         u.profile_photo ||
-         u.profile_image ||
-         u.image_url ||
-         u.picture ||
-         u.avatar ||
-         "";
-}
-
-
-/* =========================================================
-   SAFE ASYNC HELPERS
-========================================================= */
-
-function withTimeout(promise, ms, label){
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error(label + " timed out")), ms)
-    )
-  ]);
-}
-
-function creatorProfileUrl(){
-  const oid = ownerId(video);
-  return oid
-    ? "creator_profile.html?uid=" + encodeURIComponent(oid)
+  return owner?.id
+    ? `creator_profile.html?uid=${encodeURIComponent(owner.id)}`
     : "#";
 }
 
-async function safeCount(table, field, value){
+
+function decodeToken(t){
+
   try{
-    return await withTimeout(
-      count(table, field, value),
-      8000,
-      table + " count"
+
+    let s=t
+      .replace(/-/g,"+")
+      .replace(/_/g,"/");
+
+    while(s.length%4)s+="=";
+
+    const b=atob(s);
+
+    return decodeURIComponent(
+      Array.from(
+        b,
+        c=>"%"+
+        c.charCodeAt(0)
+          .toString(16)
+          .padStart(2,"0")
+      ).join("")
     );
-  }catch(error){
-    console.warn("Could not load " + table + " count:", error);
-    return 0;
+
+  }catch(e){
+
+    return null;
   }
 }
 
-/* =========================================================
-   GET CURRENT USER
-========================================================= */
+
+async function withTimeout(p,ms=12000){
+
+  let timer;
+
+  const timeout=new Promise(
+    (_,rej)=>
+      timer=setTimeout(
+        ()=>rej(new Error("Request timed out")),
+        ms
+      )
+  );
+
+  try{
+
+    return await Promise.race([
+      p,
+      timeout
+    ]);
+
+  }finally{
+
+    clearTimeout(timer);
+  }
+}
+
+
+/* =========================
+   AUTH
+========================= */
 
 async function loadMe(){
 
   try{
 
-    const {
-      data:{
-        user
-      }
-    } =
-    await supabase.auth.getUser();
-
-    me = user || null;
-
-  }catch(error){
-
-    console.warn(
-      "Could not load current user:",
-      error
+    const {data}=await withTimeout(
+      supabase.auth.getUser(),
+      8000
     );
 
-    me = null;
+    me=data?.user||null;
+
+  }catch(e){
+
+    me=null;
+
+    console.warn("Auth:",e);
   }
 }
 
 
-/* =========================================================
-   GENERIC COUNT
-========================================================= */
+/* =========================
+   DATABASE COUNTS
+========================= */
 
-async function count(
+async function countRows(
   table,
   field,
   value
@@ -1171,407 +889,309 @@ async function count(
 
   try{
 
-    const {
-      count,
-      error
-    } =
-    await supabase
-      .from(table)
-      .select(
-        "*",
-        {
-          count:"exact",
-          head:true
-        }
-      )
-      .eq(field,value);
-
-    if(error){
-
-      console.warn(
-        "Count error:",
-        table,
-        error
-      );
-
-      return 0;
-    }
-
-    return count || 0;
-
-  }catch(error){
-
-    console.warn(
-      "Count exception:",
-      table,
-      error
+    const r=await withTimeout(
+      supabase
+        .from(table)
+        .select("*",{count:"exact",head:true})
+        .eq(field,value),
+      9000
     );
+
+    return r.error
+      ? 0
+      : (r.count||0);
+
+  }catch(e){
+
+    console.warn("Count",table,e);
 
     return 0;
   }
 }
 
 
-/* =========================================================
-   LOAD CREATOR
-========================================================= */
+/* =========================
+   FIND VIDEO
+========================= */
+
+async function findVideo(){
+
+  let r=null;
+
+  /*
+    1. Try short_code.
+  */
+
+  if(token){
+
+    r=await withTimeout(
+      supabase
+        .from("videos")
+        .select("*")
+        .eq("short_code",token)
+        .maybeSingle(),
+      12000
+    ).catch(
+      e=>({
+        error:e,
+        data:null
+      })
+    );
+
+    if(r?.data)
+      return r.data;
+
+
+    /*
+      2. v= can also contain the UUID.
+    */
+
+    if(
+      /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i
+        .test(token)
+    ){
+
+      r=await withTimeout(
+        supabase
+          .from("videos")
+          .select("*")
+          .eq("id",token)
+          .maybeSingle(),
+        12000
+      ).catch(
+        e=>({
+          error:e,
+          data:null
+        })
+      );
+
+      if(r?.data)
+        return r.data;
+    }
+
+
+    /*
+      3. URL-safe base64 UUID.
+    */
+
+    const decoded=decodeToken(token);
+
+    if(
+      decoded &&
+      /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i
+        .test(decoded)
+    ){
+
+      r=await withTimeout(
+        supabase
+          .from("videos")
+          .select("*")
+          .eq("id",decoded)
+          .maybeSingle(),
+        12000
+      ).catch(
+        e=>({
+          error:e,
+          data:null
+        })
+      );
+
+      if(r?.data)
+        return r.data;
+    }
+
+    if(r?.error)
+      console.warn("Video lookup:",r.error);
+  }
+
+
+  /*
+    Legacy ?id=
+  */
+
+  if(legacyId){
+
+    r=await withTimeout(
+      supabase
+        .from("videos")
+        .select("*")
+        .eq("id",legacyId)
+        .maybeSingle(),
+      12000
+    );
+
+    if(r.data)
+      return r.data;
+
+    if(r.error)
+      throw r.error;
+  }
+
+  return null;
+}
+
+
+/* =========================
+   CREATOR
+========================= */
 
 async function loadOwner(){
 
-  const oid =
-  ownerId(video);
+  const oid=ownerId(video);
 
-  if(!oid){
-
-    owner = null;
-
-    return;
-  }
+  if(!oid)
+    return null;
 
   try{
 
-    const {
-      data,
-      error
-    } =
-    await supabase
-      .from("users")
-      .select("*")
-      .eq("id",oid)
-      .maybeSingle();
-
-    if(error){
-
-      console.warn(
-        "Creator profile error:",
-        error
-      );
-
-      owner = null;
-
-      return;
-    }
-
-    owner = data || null;
-
-  }catch(error){
-
-    console.warn(
-      "Creator profile exception:",
-      error
+    const r=await withTimeout(
+      supabase
+        .from("users")
+        .select("*")
+        .eq("id",oid)
+        .maybeSingle(),
+      9000
     );
 
-    owner = null;
+    if(r.error)
+      console.warn(
+        "Creator profile:",
+        r.error
+      );
+
+    return r.data||null;
+
+  }catch(e){
+
+    console.warn(
+      "Creator profile:",
+      e
+    );
+
+    return null;
   }
 }
 
 
-/* =========================================================
-   LOAD USER INTERACTIONS
-========================================================= */
+/* =========================
+   LIKE + FOLLOW STATUS
+========================= */
 
 async function loadInteractions(){
 
-  if(!me || !video)
-    return;
-
-  const oid =
-  ownerId(video);
-
-  try{
-
-    const likeResult =
-    await supabase
-      .from("likes")
-      .select("id")
-      .eq("video_id",video.id)
-      .eq("user_id",me.id)
-      .limit(1);
-
-    liked =
-      !!likeResult.data?.length;
-
-  }catch(error){
-
-    liked = false;
-  }
-
-
-  if(oid && oid !== me.id){
-
-    try{
-
-      const followResult =
-      await supabase
-        .from("followers")
-        .select("id")
-        .eq(
-          "follower_id",
-          me.id
-        )
-        .eq(
-          "following_id",
-          oid
-        )
-        .limit(1);
-
-      following =
-        !!followResult.data?.length;
-
-    }catch(error){
-
-      following = false;
-    }
-  }
-}
-
-
-/* =========================================================
-   LOAD COUNTS
-========================================================= */
-
-async function loadCounts(){
-
-  if(!video)
+  if(!me||!video)
     return;
 
   const oid=ownerId(video);
 
-  likeCount=await safeCount("likes","video_id",video.id);
-  commentCount=await safeCount("comments","video_id",video.id);
-  viewCount=await safeCount("views","video_id",video.id);
+  const results=await Promise.allSettled([
 
-  followerCount=oid
-    ? await safeCount("followers","following_id",oid)
-    : 0;
-}
+    withTimeout(
+      supabase
+        .from("likes")
+        .select("id")
+        .eq("video_id",video.id)
+        .eq("user_id",me.id)
+        .limit(1),
+      7000
+    ),
 
-async function loadCountsSafe(){
+    oid&&oid!==me.id
 
-  try{
-    await withTimeout(loadCounts(),12000,"video analytics");
-  }catch(error){
-    console.warn("Analytics load:",error);
-    likeCount=Number(likeCount)||0;
-    commentCount=Number(commentCount)||0;
-    viewCount=Number(viewCount)||0;
-    followerCount=Number(followerCount)||0;
-  }
-}
-
-/* =========================================================
-   LOAD VIDEO
-========================================================= */
-
-async function loadVideo(){
-
-  try{
-
-    if(!shortCode && !legacyId){
-      showError("No video was selected.");
-      return;
-    }
-
-    /* PKCE must never be allowed to hold the video page forever. */
-    try{
-      const code = params.get("code");
-
-      if(code){
-        const result = await withTimeout(
-          supabase.auth.exchangeCodeForSession(code),
-          10000,
-          "PKCE exchange"
-        );
-
-        if(result.error)
-          console.warn("PKCE exchange:", result.error);
-
-        const cleanUrl =
-          location.origin +
-          location.pathname +
-          (
-            shortCode
-              ? "?v=" + encodeURIComponent(shortCode)
-              : legacyId
-                ? "?id=" + encodeURIComponent(legacyId)
-                : ""
-          );
-
-        history.replaceState({}, document.title, cleanUrl);
-      }
-    }catch(error){
-      console.warn("PKCE step skipped:", error);
-    }
-
-    /* Viewing a public video does not require login. */
-    try{
-      await withTimeout(loadMe(),8000,"current-user lookup");
-    }catch(error){
-      console.warn("Could not load current user:",error);
-      me=null;
-    }
-
-    let result=null;
-
-    if(shortCode){
-
-      try{
-        result=await withTimeout(
+      ? withTimeout(
           supabase
-            .from("videos")
-            .select("*")
-            .eq("short_code",shortCode)
-            .maybeSingle(),
-          10000,
-          "short-code video lookup"
-        );
-      }catch(error){
-        console.error("Short-code lookup:",error);
-        result={data:null,error};
-      }
+            .from("followers")
+            .select("id")
+            .eq("follower_id",me.id)
+            .eq("following_id",oid)
+            .limit(1),
+          7000
+        )
 
-      /* Also support older links where v contains the video UUID. */
-      if(!result.data || result.error){
-        try{
-          result=await withTimeout(
-            supabase
-              .from("videos")
-              .select("*")
-              .eq("id",shortCode)
-              .maybeSingle(),
-            10000,
-            "video id fallback"
-          );
-        }catch(error){
-          console.warn("Video id fallback:",error);
-        }
-      }
+      : Promise.resolve({
+          data:[]
+        })
+  ]);
 
-    }else{
 
-      try{
-        result=await withTimeout(
-          supabase
-            .from("videos")
-            .select("*")
-            .eq("id",legacyId)
-            .maybeSingle(),
-          10000,
-          "video lookup"
-        );
-      }catch(error){
-        console.error("Video lookup:",error);
-        result={data:null,error};
-      }
-    }
+  liked=
+    results[0].status==="fulfilled" &&
+    !!results[0].value.data?.length;
 
-    if(result && result.error){
-      console.error("Video load error:",result.error);
-      showError("Could not load this video.");
-      return;
-    }
 
-    if(!result || !result.data){
-      showError("Video not found or unavailable.");
-      return;
-    }
-
-    video=result.data;
-
-    const publicationStatus =
-      String(video.publication_status || "").toLowerCase();
-
-    if(
-      publicationStatus &&
-      !["published","public","approved"].includes(publicationStatus) &&
-      ownerId(video)!==me?.id
-    ){
-      showError("This video is not publicly available.");
-      return;
-    }
-
-    /*
-      RENDER FIRST.
-      Creator data, analytics and interaction checks can never
-      prevent the player from appearing.
-    */
-    renderVideoShell();
-
-    try{
-      await withTimeout(loadOwner(),8000,"creator profile");
-    }catch(error){
-      console.warn("Creator profile load:",error);
-      owner=null;
-    }
-
-    try{
-      await withTimeout(loadInteractions(),8000,"user interactions");
-    }catch(error){
-      console.warn("Interaction load:",error);
-      liked=false;
-      following=false;
-    }
-
-    await loadCountsSafe();
-
-    updateCreatorInfo();
-    updateActionCounts();
-    updateCreatorLinks();
-
-    loadComments().catch(error =>
-      console.warn("Comments load:",error)
-    );
-
-    recordView().catch(error =>
-      console.warn("View record:",error)
-    );
-
-  }catch(error){
-
-    console.error("VIDEO PAGE ERROR:",error);
-    showError("Could not load this video. Please try again.");
-
-  }
-}
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showError(message){
-
-  document.getElementById("app").innerHTML = `
-    <div class="loading">
-      ${esc(message)}
-    </div>
-  `;
+  following=
+    results[1].status==="fulfilled" &&
+    !!results[1].value.data?.length;
 }
 
 
-/* =========================================================
-   VIDEO URL
-========================================================= */
+/* =========================
+   COUNTS
+========================= */
 
-function videoUrl(){
+async function loadCounts(){
 
-  return video?.video_url ||
-         video?.url ||
-         video?.file_url ||
-         video?.public_url ||
-         video?.storage_url ||
-         "";
+  const oid=ownerId(video);
+
+  const results=await Promise.allSettled([
+
+    countRows(
+      "likes",
+      "video_id",
+      video.id
+    ),
+
+    countRows(
+      "comments",
+      "video_id",
+      video.id
+    ),
+
+    countRows(
+      "views",
+      "video_id",
+      video.id
+    ),
+
+    oid
+      ? countRows(
+          "followers",
+          "following_id",
+          oid
+        )
+      : Promise.resolve(0)
+  ]);
+
+
+  likeCount=
+    results[0].status==="fulfilled"
+      ? results[0].value
+      : 0;
+
+  commentCount=
+    results[1].status==="fulfilled"
+      ? results[1].value
+      : 0;
+
+  viewCount=
+    results[2].status==="fulfilled"
+      ? results[2].value
+      : 0;
+
+  followerCount=
+    results[3].status==="fulfilled"
+      ? results[3].value
+      : 0;
 }
 
 
-/* =========================================================
-   RENDER VIDEO SHELL
-========================================================= */
+/* =========================
+   RENDER
+========================= */
 
-function renderVideoShell(){
+function render(){
 
-  const url =
-  videoUrl();
-
+  const url=videoUrl(video);
 
   if(!url){
 
@@ -1583,52 +1203,45 @@ function renderVideoShell(){
   }
 
 
-  const oid =
-  ownerId(video);
+  const oid=ownerId(video);
 
-
-  /*
-    Temporary creator information.
-    It gets replaced after users table loads.
-  */
-
-  const initialName =
-    "BIGULA creator";
-
-
-  const initialUsername =
+  const uname=
+    owner?.username||
+    owner?.user_name||
+    owner?.handle||
+    owner?.name||
     "creator";
 
+  const display=
+    owner?.display_name||
+    owner?.full_name||
+    owner?.name||
+    uname;
 
-  const canReuse =
-    video.allow_sound_reuse === true ||
-    video.sound_reuse_allowed === true ||
-    video.reuse_allowed === true;
+  const av=avatar(owner);
+
+  const reuse=
+    video.allow_sound_reuse===true||
+    video.sound_reuse_allowed===true||
+    video.reuse_allowed===true;
 
 
-  document.getElementById("app").innerHTML = `
+  document.getElementById("app").innerHTML=`
 
-    <!-- VIDEO PLAYER -->
-
-    <section
-      class="player paused"
-      id="player">
+    <section class="player paused" id="player">
 
       <video
         id="vid"
         playsinline
         preload="metadata"
-        src="${esc(url)}">
-      </video>
-
+        src="${esc(url)}"
+      ></video>
 
       <button
         class="center"
         id="center"
-        aria-label="Play">
-        ▶
-      </button>
-
+        aria-label="Play"
+      >▶</button>
 
       <div class="controls">
 
@@ -1639,337 +1252,273 @@ function renderVideoShell(){
           min="0"
           max="1000"
           value="0"
-          aria-label="Video progress">
-
+          aria-label="Video progress"
+        >
 
         <div class="ctrlrow">
 
-          <button
-            class="ctrl"
-            id="play">
-            ▶
-          </button>
+          <button class="ctrl" id="play">▶</button>
 
-
-          <button
-            class="ctrl"
-            id="mute">
-            🔊
-          </button>
-
+          <button class="ctrl" id="mute">🔊</button>
 
           <span
             class="time"
-            id="time">
-            0:00 / 0:00
-          </span>
-
+            id="time"
+          >0:00 / 0:00</span>
 
           <button
             class="ctrl"
-            id="speed">
-            1×
-          </button>
-
+            id="speed"
+          >1×</button>
 
           <button
             class="ctrl"
-            id="pip">
-            ▣
-          </button>
-
+            id="pip"
+          >▣</button>
 
           <button
             class="ctrl"
-            id="full">
-            ⛶
-          </button>
+            id="full"
+          >⛶</button>
 
         </div>
-
       </div>
 
     </section>
 
 
-    <!-- CREATOR INFORMATION -->
-
     <section class="info">
 
       <div class="creator">
 
-        <img
-          id="creatorAvatar"
-          class="avatar"
-          src=""
-          alt="Creator"
-          style="display:none">
+        ${
+          av
 
+          ? `<img
+              id="creatorAvatar"
+              class="avatar"
+              src="${esc(av)}"
+              alt="Creator"
+              onerror="this.style.display='none'"
+            >`
 
-        <div
-          id="creatorFallbackAvatar"
-          class="avatar"
-          style="
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:21px;
-          ">
-          👤
-        </div>
+          : `<div
+              class="avatar"
+              style="display:flex;align-items:center;justify-content:center;font-size:21px"
+            >👤</div>`
+        }
 
 
         <div class="meta">
 
           <a
-            id="creatorName"
-            class="creatorName profileLink"
-            href="#"
-            aria-label="Open creator profile">
-            ${esc(initialName)}
+            id="creatorProfileLink"
+            class="creatorLink"
+            href="${profileUrl()}"
+          >
+
+            <div
+              id="creatorName"
+              class="creatorName"
+            >${esc(display)}</div>
+
           </a>
 
-
-          <a
+          <div
             id="creatorHandle"
-            class="handle profileLink"
-            href="#"
-            aria-label="Open creator profile">
-            @${esc(initialUsername)}
-          </a>
+            class="handle"
+          >
+            @${esc(uname)} · ${fmt(followerCount)} followers
+          </div>
 
         </div>
 
 
         ${
-          me?.id !== oid
-          ?
-          `
-          <button
-            id="follow"
-            class="follow">
-            Follow
-          </button>
-          `
-          :
-          ""
+          me?.id!==oid&&oid
+
+          ? `<button
+              id="follow"
+              class="follow ${following?"following":""}"
+            >
+              ${following?"Following":"Follow"}
+            </button>`
+
+          : ""
         }
 
       </div>
 
 
       <div class="title">
-        ${esc(
-          video.title ||
-          "Untitled video"
-        )}
+        ${esc(video.title||"Untitled video")}
       </div>
 
 
       ${
         video.description
-        ?
-        `
-        <div class="desc">
-          ${esc(video.description)}
-        </div>
-        `
-        :
-        ""
+
+        ? `<div class="desc">
+            ${esc(video.description)}
+          </div>`
+
+        : ""
       }
 
 
-      <div
-        id="dateLine"
-        class="date">
-        Published ${dateFmt(
-          video.published_at ||
-          video.created_at ||
-          video.updated_at
-        )}
+      <div class="analytics">
+
+        <div class="stat">
+          <strong>${fmt(viewCount)}</strong>
+          <span>Views</span>
+        </div>
+
+        <div class="stat">
+          <strong>${fmt(likeCount)}</strong>
+          <span>Likes</span>
+        </div>
+
+        <div class="stat">
+          <strong>${fmt(commentCount)}</strong>
+          <span>Comments</span>
+        </div>
+
+        <div class="stat">
+          <strong>${dateFmt(video.created_at)}</strong>
+          <span>Created at</span>
+        </div>
+
+      </div>
+
+
+      <div class="date">
+        Created ${esc(dateFmt(video.created_at))}
+        ${
+          video.updated_at &&
+          video.updated_at!==video.created_at
+
+          ? ` · Updated ${esc(dateFmt(video.updated_at))}`
+
+          : ""
+        }
       </div>
 
     </section>
 
-    <!-- VIDEO ANALYTICS -->
-    <section class="analytics" aria-label="Video analytics">
-      <div class="analyticsItem">
-        <span class="analyticsValue" id="createdAtStat">—</span>
-        <span class="analyticsLabel">Created</span>
-      </div>
-      <div class="analyticsItem">
-        <span class="analyticsValue" id="commentsStat">0</span>
-        <span class="analyticsLabel">Comments</span>
-      </div>
-      <div class="analyticsItem">
-        <span class="analyticsValue" id="viewsStat">0</span>
-        <span class="analyticsLabel">Views</span>
-      </div>
-      <div class="analyticsItem">
-        <span class="analyticsValue" id="likesStat">0</span>
-        <span class="analyticsLabel">Likes</span>
-      </div>
-    </section>
-
-
-    <!-- ACTIONS -->
 
     <div class="actions">
 
       <button
         id="like"
-        class="action">
-
-        <span class="ico">
-          ♥
-        </span>
-
+        class="action ${liked?"active":""}"
+      >
+        <span class="ico">♥</span>
         <small id="likeTxt">
-          Like · 0
+          ${liked?"Unlike":"Like"} · ${fmt(likeCount)}
         </small>
-
       </button>
 
 
       <button
         id="commentBtn"
-        class="action">
-
-        <span class="ico">
-          💬
-        </span>
-
+        class="action"
+      >
+        <span class="ico">💬</span>
         <small id="commentTxt">
-          0 comments
+          ${fmt(commentCount)} comments
         </small>
+      </button>
 
+
+      <button
+        id="share"
+        class="action"
+      >
+        <span class="ico">↗</span>
+        <small>Share</small>
+      </button>
+
+
+      <button
+        id="copyLink"
+        class="action"
+      >
+        <span class="ico">🔗</span>
+        <small>Copy link</small>
       </button>
 
 
       <button
         id="reuse"
         class="action"
-        ${canReuse ? "" : "disabled"}>
-
-        <span class="ico">
-          🎵
-        </span>
-
+        ${reuse?"":"disabled"}
+      >
+        <span class="ico">🎵</span>
         <small>
-          ${
-            canReuse
-            ? "Reuse sound"
-            : "Sound reuse off"
-          }
+          ${reuse?"Reuse sound":"Sound reuse off"}
         </small>
-
-      </button>
-
-
-      <button
-        id="share"
-        class="action">
-
-        <span class="ico">
-          ↗
-        </span>
-
-        <small>
-          Share
-        </small>
-
-      </button>
-
-
-      <button
-        id="copyLink"
-        class="action">
-
-        <span class="ico">
-          🔗
-        </span>
-
-        <small>
-          Copy link
-        </small>
-
       </button>
 
     </div>
 
-
-    <!-- SOUND -->
 
     <div class="sound">
 
       <div
         class="disc stop"
-        id="disc">
-      </div>
-
+        id="disc"
+      ></div>
 
       <div class="soundText">
 
         <div class="soundTitle">
           ${esc(
-            video.sound_title ||
-            video.sound_name ||
+            video.sound_title||
+            video.sound_name||
             "Original sound"
           )}
         </div>
 
-
         <div class="soundSub">
-
           ${
-            canReuse
-            ?
-            "Sound can be reused on BIGULA"
-            :
-            "Creator has disabled sound reuse"
+            reuse
+              ? "Sound can be reused on BIGULA"
+              : "Creator has disabled sound reuse"
           }
-
         </div>
 
       </div>
 
-
-      <button
-        class="ctrl"
-        id="soundInfo">
-        ⓘ
-      </button>
-
     </div>
 
-
-    <!-- COMMENTS -->
 
     <section class="comments">
 
       <div class="commentHeading">
-        Comments
+        Comments · ${fmt(commentCount)}
       </div>
 
 
       <form
         id="commentForm"
-        class="commentForm">
+        class="commentForm"
+      >
 
         <input
           id="commentInput"
           maxlength="500"
           placeholder="${
             me
-            ? "Add a comment…"
-            : "Sign in to comment"
+              ? "Add a comment…"
+              : "Sign in to comment"
           }"
-          ${me ? "" : "disabled"}>
-
+          ${me?"":"disabled"}
+        >
 
         <button
           class="send"
-          ${me ? "" : "disabled"}>
+          ${me?"":"disabled"}
+        >
           Post
         </button>
 
@@ -1977,21 +1526,15 @@ function renderVideoShell(){
 
 
       <div id="commentList">
-
         <div
-          style="
-            color:#888;
-            padding:12px 0;
-          ">
+          style="color:#888;padding:12px 0"
+        >
           Loading comments…
         </div>
-
       </div>
 
     </section>
 
-
-    <!-- MORE -->
 
     <div class="more">
 
@@ -1999,253 +1542,188 @@ function renderVideoShell(){
         Not interested
       </button>
 
-
       <button id="report">
         Report
       </button>
 
     </div>
-
   `;
 
 
   setupPlayer();
 
-  bindActions(
-    canReuse
-  );
-
-  updateCreatorLinks();
+  bindActions(reuse);
 }
 
 
-/* =========================================================
-   UPDATE CREATOR INFORMATION
-========================================================= */
+/* =========================
+   UPDATE UI
+========================= */
 
-function updateCreatorInfo(){
+function updateUI(){
 
-  const nameEl =
-  document.getElementById(
-    "creatorName"
-  );
+  const likeTxt=
+    document.getElementById("likeTxt");
 
-  const handleEl =
-  document.getElementById(
-    "creatorHandle"
-  );
+  const commentTxt=
+    document.getElementById("commentTxt");
 
-  const avatarEl =
-  document.getElementById(
-    "creatorAvatar"
-  );
+  const analytics=
+    document.querySelector(".analytics");
 
-  const fallbackEl =
-  document.getElementById(
-    "creatorFallbackAvatar"
-  );
+  const handle=
+    document.getElementById("creatorHandle");
 
+  const name=
+    document.getElementById("creatorName");
 
-  if(!nameEl)
-    return;
+  const profile=
+    document.getElementById("creatorProfileLink");
+
+  const likeBtn=
+    document.getElementById("like");
 
 
-  const username =
-    owner?.username ||
-    owner?.user_name ||
-    owner?.handle ||
-    owner?.name ||
+  const uname=
+    owner?.username||
+    owner?.user_name||
+    owner?.handle||
+    owner?.name||
     "creator";
 
-
-  const display =
-    owner?.display_name ||
-    owner?.full_name ||
-    owner?.name ||
-    owner?.username ||
-    "BIGULA creator";
+  const display=
+    owner?.display_name||
+    owner?.full_name||
+    owner?.name||
+    uname;
 
 
-  nameEl.textContent =
-  display;
+  if(name)
+    name.textContent=display;
 
 
-  handleEl.textContent =
-  "@" + username +
-  " · " +
-  fmt(followerCount) +
-  " followers";
+  if(handle)
+    handle.textContent=
+      `@${uname} · ${fmt(followerCount)} followers`;
 
 
-  const img =
-  avatar(owner);
+  if(profile)
+    profile.href=profileUrl();
 
 
-  if(img){
-
-    avatarEl.src = img;
-
-    avatarEl.style.display =
-      "block";
-
-    fallbackEl.style.display =
-      "none";
+  if(likeTxt)
+    likeTxt.textContent=
+      `${liked?"Unlike":"Like"} · ${fmt(likeCount)}`;
 
 
-    avatarEl.onerror =
-      function(){
+  if(commentTxt)
+    commentTxt.textContent=
+      `${fmt(commentCount)} comments`;
 
-        this.style.display =
-          "none";
 
-        fallbackEl.style.display =
-          "flex";
-      };
+  if(likeBtn)
+    likeBtn.classList.toggle(
+      "active",
+      liked
+    );
 
-  }else{
 
-    avatarEl.style.display =
-      "none";
+  if(analytics){
 
-    fallbackEl.style.display =
-      "flex";
+    analytics.innerHTML=`
+
+      <div class="stat">
+        <strong>${fmt(viewCount)}</strong>
+        <span>Views</span>
+      </div>
+
+      <div class="stat">
+        <strong>${fmt(likeCount)}</strong>
+        <span>Likes</span>
+      </div>
+
+      <div class="stat">
+        <strong>${fmt(commentCount)}</strong>
+        <span>Comments</span>
+      </div>
+
+      <div class="stat">
+        <strong>${dateFmt(video.created_at)}</strong>
+        <span>Created at</span>
+      </div>
+    `;
   }
 
 
-  const followBtn =
-  document.getElementById(
-    "follow"
-  );
+  const f=
+    document.getElementById("follow");
 
+  if(f){
 
-  if(followBtn){
-
-    followBtn.textContent =
+    f.textContent=
       following
-      ? "Following"
-      : "Follow";
+        ? "Following"
+        : "Follow";
 
-    followBtn.classList.toggle(
+    f.classList.toggle(
       "following",
       following
     );
   }
-
-  updateCreatorLinks();
-}
-
-function updateCreatorLinks(){
-
-  const url=creatorProfileUrl();
-
-  const nameEl=document.getElementById("creatorName");
-  const handleEl=document.getElementById("creatorHandle");
-
-  if(nameEl) nameEl.href=url;
-  if(handleEl) handleEl.href=url;
 }
 
 
-/* =========================================================
-   UPDATE COUNTS
-========================================================= */
-
-function updateActionCounts(){
-
-  const likeTxt=document.getElementById("likeTxt");
-  const commentTxt=document.getElementById("commentTxt");
-  const dateLine=document.getElementById("dateLine");
-
-  const createdAt =
-    video.created_at ||
-    video.published_at ||
-    video.updated_at;
-
-  if(likeTxt)
-    likeTxt.textContent =
-      `${liked ? "Unlike" : "Like"} · ${fmt(likeCount)}`;
-
-  if(commentTxt)
-    commentTxt.textContent =
-      `${fmt(commentCount)} comments`;
-
-  if(dateLine)
-    dateLine.textContent =
-      `Created ${dateFmt(createdAt)} · ${fmt(viewCount)} views`;
-
-  const createdAtStat=document.getElementById("createdAtStat");
-  const commentsStat=document.getElementById("commentsStat");
-  const viewsStat=document.getElementById("viewsStat");
-  const likesStat=document.getElementById("likesStat");
-
-  if(createdAtStat) createdAtStat.textContent=dateFmt(createdAt);
-  if(commentsStat) commentsStat.textContent=fmt(commentCount);
-  if(viewsStat) viewsStat.textContent=fmt(viewCount);
-  if(likesStat) likesStat.textContent=fmt(likeCount);
-
-  const likeBtn=document.getElementById("like");
-  if(likeBtn)
-    likeBtn.classList.toggle("active",liked);
-}
-
-/* =========================================================
-   PLAYER
-========================================================= */
+/* =========================
+   VIDEO PLAYER
+========================= */
 
 function setupPlayer(){
 
-  const v =
-  document.getElementById("vid");
+  const v=
+    document.getElementById("vid");
 
-  const shell =
-  document.getElementById("player");
+  const shell=
+    document.getElementById("player");
 
-  const play =
-  document.getElementById("play");
+  const play=
+    document.getElementById("play");
 
-  const center =
-  document.getElementById("center");
+  const center=
+    document.getElementById("center");
 
-  const progress =
-  document.getElementById("progress");
+  const progress=
+    document.getElementById("progress");
 
-  const time =
-  document.getElementById("time");
+  const time=
+    document.getElementById("time");
 
-  const mute =
-  document.getElementById("mute");
+  const mute=
+    document.getElementById("mute");
 
-  const disc =
-  document.getElementById("disc");
+  const disc=
+    document.getElementById("disc");
 
 
   if(!v)
     return;
 
 
-  const fmtTime =
-  seconds => {
+  const ft=s=>{
 
-    seconds =
-      Math.max(
-        0,
-        Math.floor(
-          seconds || 0
-        )
-      );
+    s=Math.max(
+      0,
+      Math.floor(s||0)
+    );
 
     return (
-      Math.floor(seconds / 60) +
-      ":" +
-      String(
-        seconds % 60
-      ).padStart(2,"0")
+      Math.floor(s/60)+
+      ":"+
+      String(s%60).padStart(2,"0")
     );
   };
 
 
-  const toggle =
-  async()=>{
+  const toggle=async()=>{
 
     if(v.paused){
 
@@ -2253,7 +1731,7 @@ function setupPlayer(){
 
         await v.play();
 
-      }catch(error){
+      }catch(e){
 
         toast(
           "Tap play to start the video"
@@ -2267,27 +1745,21 @@ function setupPlayer(){
   };
 
 
-  play.onclick =
-    toggle;
+  play.onclick=toggle;
 
-  center.onclick =
-    toggle;
+  center.onclick=toggle;
+
+  v.onclick=toggle;
 
 
   v.addEventListener(
     "play",
     ()=>{
+      shell.classList.remove("paused");
 
-      shell.classList.remove(
-        "paused"
-      );
+      play.textContent="Ⅱ";
 
-      play.textContent =
-        "Ⅱ";
-
-      disc?.classList.remove(
-        "stop"
-      );
+      disc?.classList.remove("stop");
     }
   );
 
@@ -2295,17 +1767,11 @@ function setupPlayer(){
   v.addEventListener(
     "pause",
     ()=>{
+      shell.classList.add("paused");
 
-      shell.classList.add(
-        "paused"
-      );
+      play.textContent="▶";
 
-      play.textContent =
-        "▶";
-
-      disc?.classList.add(
-        "stop"
-      );
+      disc?.classList.add("stop");
     }
   );
 
@@ -2313,9 +1779,8 @@ function setupPlayer(){
   v.addEventListener(
     "loadedmetadata",
     ()=>{
-
-      time.textContent =
-        `0:00 / ${fmtTime(v.duration)}`;
+      time.textContent=
+        `0:00 / ${ft(v.duration)}`;
     }
   );
 
@@ -2324,147 +1789,130 @@ function setupPlayer(){
     "timeupdate",
     ()=>{
 
-      progress.value =
+      progress.value=
         v.duration
-        ?
-        (
-          v.currentTime /
-          v.duration
-        ) * 1000
-        :
-        0;
+          ? (v.currentTime/v.duration)*1000
+          : 0;
 
-
-      time.textContent =
-        `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
+      time.textContent=
+        `${ft(v.currentTime)} / ${ft(v.duration)}`;
     }
   );
 
 
-  progress.oninput =
-    ()=>{
-
-      if(v.duration){
-
-        v.currentTime =
-          Number(
-            progress.value
-          ) /
-          1000 *
-          v.duration;
-      }
-    };
-
-
-  mute.onclick =
-    ()=>{
-
-      v.muted =
-        !v.muted;
-
-      mute.textContent =
-        v.muted
-        ? "🔇"
-        : "🔊";
-    };
-
-
-  document
-    .getElementById("speed")
-    .onclick =
-    ()=>{
-
-      const rates =
-        [
-          1,
-          .75,
-          1.25,
-          1.5,
-          2
-        ];
-
-      const index =
-        rates.indexOf(
-          v.playbackRate
-        );
-
-      v.playbackRate =
-        rates[
-          (index + 1) %
-          rates.length
-        ];
-
-
-      document
-        .getElementById("speed")
-        .textContent =
-          v.playbackRate +
-          "×";
-    };
-
-
-  document
-    .getElementById("full")
-    .onclick =
-    async()=>{
-
-      try{
-
-        if(
-          document.fullscreenElement
-        ){
-
-          await document.exitFullscreen();
-
-        }else{
-
-          await shell.requestFullscreen?.();
-        }
-
-      }catch(error){}
-    };
-
-
-  document
-    .getElementById("pip")
-    .onclick =
-    async()=>{
-
-      try{
-
-        if(
-          document.pictureInPictureElement
-        ){
-
-          await document.exitPictureInPicture();
-
-        }else if(
-          document.pictureInPictureEnabled &&
-          !v.disablePictureInPicture
-        ){
-
-          await v.requestPictureInPicture();
-        }
-
-      }catch(error){}
-    };
-
-
-  /*
-    Clicking the actual video
-    toggles play/pause.
-  */
-
   v.addEventListener(
-    "click",
-    toggle
+    "error",
+    ()=>{
+
+      console.error(
+        "Video element error:",
+        v.error
+      );
+
+      toast(
+        "Video could not be played"
+      );
+    }
   );
 
 
+  progress.oninput=()=>{
+
+    if(v.duration){
+
+      v.currentTime=
+        Number(progress.value)/
+        1000*
+        v.duration;
+    }
+  };
+
+
+  mute.onclick=()=>{
+
+    v.muted=!v.muted;
+
+    mute.textContent=
+      v.muted
+        ? "🔇"
+        : "🔊";
+  };
+
+
+  document.getElementById(
+    "speed"
+  ).onclick=()=>{
+
+    const rates=[
+      1,
+      .75,
+      1.25,
+      1.5,
+      2
+    ];
+
+    const i=
+      rates.indexOf(
+        v.playbackRate
+      );
+
+    v.playbackRate=
+      rates[
+        (i+1)%rates.length
+      ];
+
+    document.getElementById(
+      "speed"
+    ).textContent=
+      v.playbackRate+"×";
+  };
+
+
+  document.getElementById(
+    "full"
+  ).onclick=async()=>{
+
+    try{
+
+      if(document.fullscreenElement){
+
+        await document.exitFullscreen();
+
+      }else{
+
+        await shell.requestFullscreen?.();
+      }
+
+    }catch(e){}
+  };
+
+
+  document.getElementById(
+    "pip"
+  ).onclick=async()=>{
+
+    try{
+
+      if(document.pictureInPictureElement){
+
+        await document.exitPictureInPicture();
+
+      }else if(
+        document.pictureInPictureEnabled
+      ){
+
+        await v.requestPictureInPicture();
+      }
+
+    }catch(e){}
+  };
+
+
   /*
-    Try to start playback.
-    If browser blocks sound,
-    retry muted.
+    Attempt autoplay.
+
+    If browser blocks autoplay,
+    try muted autoplay.
   */
 
   v.play().catch(
@@ -2472,36 +1920,29 @@ function setupPlayer(){
 
       try{
 
-        v.muted = true;
+        v.muted=true;
 
         await v.play();
 
-        mute.textContent =
-          "🔇";
+        mute.textContent="🔇";
 
-      }catch(error){}
+      }catch(e){}
     }
   );
 }
 
 
-/* =========================================================
+/* =========================
    ACTIONS
-========================================================= */
+========================= */
 
-function bindActions(
-  canReuse
-){
+function bindActions(reuse){
 
-  const followBtn =
-  document.getElementById(
-    "follow"
-  );
+  const follow=
+    document.getElementById("follow");
 
 
-  /* FOLLOW */
-
-  followBtn?.addEventListener(
+  follow?.addEventListener(
     "click",
     async()=>{
 
@@ -2515,181 +1956,122 @@ function bindActions(
       }
 
 
-      const oid =
-      ownerId(video);
+      const oid=ownerId(video);
 
-
-      if(!oid ||
-         oid === me.id)
+      if(!oid||oid===me.id)
         return;
 
 
-      followBtn.disabled =
-        true;
+      follow.disabled=true;
 
 
       try{
 
         if(following){
 
-          const {
-            error
-          } =
-          await supabase
-            .from("followers")
-            .delete()
-            .eq(
-              "follower_id",
-              me.id
-            )
-            .eq(
-              "following_id",
-              oid
+          const r=
+            await supabase
+              .from("followers")
+              .delete()
+              .eq("follower_id",me.id)
+              .eq("following_id",oid);
+
+          if(r.error)
+            throw r.error;
+
+          following=false;
+
+          followerCount=
+            Math.max(
+              0,
+              followerCount-1
             );
-
-
-          if(error){
-
-            console.error(
-              error
-            );
-
-            toast(
-              "Could not unfollow creator"
-            );
-
-          }else{
-
-            following =
-              false;
-
-            followerCount =
-              Math.max(
-                0,
-                followerCount - 1
-              );
-          }
 
         }else{
 
-          const {
-            error
-          } =
-          await supabase
-            .from("followers")
-            .insert({
-              follower_id:me.id,
-              following_id:oid
-            });
+          const r=
+            await supabase
+              .from("followers")
+              .insert({
+                follower_id:me.id,
+                following_id:oid
+              });
 
+          if(r.error)
+            throw r.error;
 
-          if(error){
+          following=true;
 
-            console.error(
-              error
-            );
-
-            toast(
-              "Could not follow creator"
-            );
-
-          }else{
-
-            following =
-              true;
-
-            followerCount++;
-          }
+          followerCount++;
         }
 
 
-        updateCreatorInfo();
+        updateUI();
+
+      }catch(e){
+
+        console.error(
+          "Follow:",
+          e
+        );
+
+        toast(
+          "Could not update follow status"
+        );
 
       }finally{
 
-        followBtn.disabled =
-          false;
+        follow.disabled=false;
       }
     }
   );
 
 
-  /* LIKE */
+  document.getElementById(
+    "like"
+  ).onclick=async()=>{
 
-  document
-    .getElementById("like")
-    .onclick =
-    async()=>{
+    if(!me){
 
-      if(!me){
-
-        toast(
-          "Sign in to like this video"
-        );
-
-        return;
-      }
-
-
-      const button =
-      document.getElementById(
-        "like"
+      toast(
+        "Sign in to like this video"
       );
 
+      return;
+    }
 
-      button.disabled =
-        true;
+
+    const b=
+      document.getElementById("like");
+
+    b.disabled=true;
 
 
-      try{
+    try{
 
-        if(liked){
+      if(liked){
 
-          const {
-            error
-          } =
+        const r=
           await supabase
             .from("likes")
             .delete()
-            .eq(
-              "video_id",
-              video.id
-            )
-            .eq(
-              "user_id",
-              me.id
-            );
+            .eq("video_id",video.id)
+            .eq("user_id",me.id);
 
+        if(r.error)
+          throw r.error;
 
-          if(error){
+        liked=false;
 
-            console.error(
-              "Unlike:",
-              error
-            );
+        likeCount=
+          Math.max(
+            0,
+            likeCount-1
+          );
 
-            toast(
-              "Could not remove like"
-            );
+      }else{
 
-            return;
-          }
-
-
-          liked =
-            false;
-
-          likeCount =
-            Math.max(
-              0,
-              likeCount - 1
-            );
-
-        }else{
-
-          const {
-            error
-          } =
+        const r=
           await supabase
             .from("likes")
             .insert({
@@ -2697,258 +2079,186 @@ function bindActions(
               user_id:me.id
             });
 
+        if(r.error)
+          throw r.error;
 
-          if(error){
+        liked=true;
 
-            console.error(
-              "Like:",
-              error
-            );
-
-            toast(
-              "Could not like this video"
-            );
-
-            return;
-          }
-
-
-          liked =
-            true;
-
-          likeCount++;
-        }
-
-
-        updateActionCounts();
-
-      }finally{
-
-        button.disabled =
-          false;
+        likeCount++;
       }
-    };
 
 
-  /* REUSE SOUND */
+      updateUI();
 
-  document
-    .getElementById("reuse")
-    .onclick =
-    ()=>{
+    }catch(e){
 
-      if(!canReuse)
-        return;
-
-
-      location.href =
-        "upload.html?sound_video=" +
-        encodeURIComponent(
-          video.id
-        );
-    };
-
-
-  /* SHARE */
-
-  document
-    .getElementById("share")
-    .onclick =
-    async()=>{
-
-      const link =
-      shareLink();
-
-
-      if(
-        navigator.share
-      ){
-
-        try{
-
-          await navigator.share({
-            title:
-              video.title ||
-              "BIGULA video",
-
-            url:link
-          });
-
-        }catch(error){}
-
-      }else{
-
-        await copy(link);
-
-        toast(
-          "BIGULA video link copied"
-        );
-      }
-    };
-
-
-  /* COPY */
-
-  document
-    .getElementById("copyLink")
-    .onclick =
-    async()=>{
-
-      await copy(
-        shareLink()
+      console.error(
+        "Like:",
+        e
       );
+
+      toast(
+        "Could not update like"
+      );
+
+    }finally{
+
+      b.disabled=false;
+    }
+  };
+
+
+  document.getElementById(
+    "commentBtn"
+  ).onclick=()=>{
+
+    document
+      .getElementById("commentInput")
+      ?.focus();
+  };
+
+
+  document.getElementById(
+    "commentForm"
+  ).onsubmit=postComment;
+
+
+  document.getElementById(
+    "share"
+  ).onclick=async()=>{
+
+    const link=shareLink();
+
+    if(navigator.share){
+
+      try{
+
+        await navigator.share({
+          title:
+            video.title||
+            "BIGULA video",
+          url:link
+        });
+
+      }catch(e){}
+
+    }else{
+
+      await copy(link);
 
       toast(
         "BIGULA video link copied"
       );
-    };
+    }
+  };
 
 
-  /* COMMENT BUTTON */
+  document.getElementById(
+    "copyLink"
+  ).onclick=async()=>{
 
-  document
-    .getElementById("commentBtn")
-    .onclick =
-    ()=>{
+    await copy(
+      shareLink()
+    );
 
-      document
-        .getElementById(
-          "commentInput"
-        )
-        ?.focus();
-    };
-
-
-  /* COMMENT FORM */
-
-  document
-    .getElementById("commentForm")
-    .onsubmit =
-    postComment;
+    toast(
+      "BIGULA video link copied"
+    );
+  };
 
 
-  /* SOUND INFO */
+  document.getElementById(
+    "reuse"
+  ).onclick=()=>{
 
-  document
-    .getElementById("soundInfo")
-    .onclick =
-    ()=>{
+    if(reuse){
 
-      toast(
-        canReuse
-        ?
-        "Other creators can reuse this sound."
-        :
-        "The creator has disabled sound reuse."
-      );
-    };
+      location.href=
+        "upload.html?sound_video="+
+        encodeURIComponent(
+          video.id
+        );
+    }
+  };
 
 
-  /* NOT INTERESTED */
+  document.getElementById(
+    "notInterested"
+  ).onclick=()=>{
 
-  document
-    .getElementById("notInterested")
-    .onclick =
-    ()=>{
-
-      toast(
-        "We'll show you fewer videos like this"
-      );
-    };
+    toast(
+      "We'll show you fewer videos like this"
+    );
+  };
 
 
-  /* REPORT */
-
-  document
-    .getElementById("report")
-    .onclick =
-    reportVideo;
+  document.getElementById(
+    "report"
+  ).onclick=reportVideo;
 
 
-  /* TOP MORE */
+  document.getElementById(
+    "moreTop"
+  ).onclick=()=>{
 
-  document
-    .getElementById("moreTop")
-    .onclick =
-    ()=>{
-
-      toast(
-        "More options are available below"
-      );
-    };
+    toast(
+      "More options are available below"
+    );
+  };
 }
 
 
-/* =========================================================
-   SHARE LINK
-========================================================= */
+/* =========================
+   SHARING
+========================= */
 
 function shareLink(){
 
-  if(video.short_code){
+  return video.short_code
 
-    return (
-      location.origin +
-      location.pathname +
-      "?v=" +
+    ? location.origin+
+      location.pathname+
+      "?v="+
       encodeURIComponent(
         video.short_code
       )
-    );
-  }
 
-
-  return (
-    location.origin +
-    location.pathname +
-    "?id=" +
-    encodeURIComponent(
-      video.id
-    )
-  );
+    : location.origin+
+      location.pathname+
+      "?id="+
+      encodeURIComponent(
+        video.id
+      );
 }
 
 
-/* =========================================================
-   COPY
-========================================================= */
-
-async function copy(text){
+async function copy(t){
 
   try{
 
-    await navigator.clipboard.writeText(
-      text
-    );
+    await navigator.clipboard.writeText(t);
 
-  }catch(error){
+  }catch(e){
 
-    const input =
-    document.createElement(
-      "input"
-    );
+    const i=
+      document.createElement("input");
 
-    input.value =
-      text;
+    i.value=t;
 
-    document.body.appendChild(
-      input
-    );
+    document.body.appendChild(i);
 
-    input.select();
+    i.select();
 
-    document.execCommand(
-      "copy"
-    );
+    document.execCommand("copy");
 
-    input.remove();
+    i.remove();
   }
 }
 
 
-/* =========================================================
+/* =========================
    COMMENTS
-========================================================= */
+========================= */
 
 async function postComment(e){
 
@@ -2965,35 +2275,45 @@ async function postComment(e){
   }
 
 
-  const input =
-  document.getElementById(
-    "commentInput"
-  );
+  const input=
+    document.getElementById(
+      "commentInput"
+    );
 
-
-  const text =
-  input.value.trim();
+  const text=
+    input.value.trim();
 
 
   if(!text)
     return;
 
 
-  const result =
-  await supabase
-    .from("comments")
-    .insert({
-      video_id:video.id,
-      user_id:me.id,
-      comment:text
-    });
+  /*
+    IMPORTANT:
+
+    The comments table uses:
+      video_id
+      user_id
+      comment
+
+    It does NOT use full_name.
+  */
+
+  const r=
+    await supabase
+      .from("comments")
+      .insert({
+        video_id:video.id,
+        user_id:me.id,
+        comment:text
+      });
 
 
-  if(result.error){
+  if(r.error){
 
     console.error(
       "Comment:",
-      result.error
+      r.error
     );
 
     toast(
@@ -3004,72 +2324,69 @@ async function postComment(e){
   }
 
 
-  input.value =
-    "";
+  input.value="";
+
+  commentCount++;
+
+  updateUI();
 
   toast(
     "Comment posted"
   );
 
-
-  commentCount++;
-
-  updateActionCounts();
-
   loadComments();
 }
 
 
-/* =========================================================
+/* =========================
    LOAD COMMENTS
-========================================================= */
+========================= */
 
 async function loadComments(){
 
-  const box =
-  document.getElementById(
-    "commentList"
-  );
+  const box=
+    document.getElementById(
+      "commentList"
+    );
 
-
-  if(!box ||
-     !video)
+  if(!box||!video)
     return;
 
 
-  const {
-    data,
-    error
-  } =
-  await supabase
-    .from("comments")
-    .select("*")
-    .eq(
-      "video_id",
-      video.id
-    )
-    .order(
-      "created_at",
-      {
-        ascending:false
-      }
-    )
-    .limit(50);
+  const r=
+    await withTimeout(
 
+      supabase
+        .from("comments")
+        .select("*")
+        .eq(
+          "video_id",
+          video.id
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        )
+        .limit(50),
 
-  if(error){
+      9000
 
-    console.warn(
-      "Comments:",
-      error
+    ).catch(
+      e=>({
+        error:e,
+        data:null
+      })
     );
 
-    box.innerHTML = `
+
+  if(r.error){
+
+    box.innerHTML=`
       <div
-        style="
-          color:#888;
-          padding:12px 0;
-        ">
+        style="color:#888;padding:12px 0"
+      >
         Comments could not be loaded.
       </div>
     `;
@@ -3078,14 +2395,12 @@ async function loadComments(){
   }
 
 
-  if(!data?.length){
+  if(!r.data?.length){
 
-    box.innerHTML = `
+    box.innerHTML=`
       <div
-        style="
-          color:#888;
-          padding:12px 0;
-        ">
+        style="color:#888;padding:12px 0"
+      >
         No comments yet.
         Be the first to comment.
       </div>
@@ -3095,135 +2410,114 @@ async function loadComments(){
   }
 
 
-  /*
-    Load comment creators.
-  */
-
-  const ids =
-  [
+  const ids=[
     ...new Set(
-      data
-        .map(
-          x => x.user_id
-        )
+      r.data
+        .map(x=>x.user_id)
         .filter(Boolean)
     )
   ];
 
 
-  let users = [];
+  let users=[];
 
 
   if(ids.length){
 
-    const result =
-    await supabase
-      .from("users")
-      .select("*")
-      .in(
-        "id",
-        ids
-      );
+    const u=
+      await supabase
+        .from("users")
+        .select(
+          "id,username,name,avatar_url"
+        )
+        .in(
+          "id",
+          ids
+        );
 
-    users =
-      result.data || [];
+    users=u.data||[];
   }
 
 
-  box.innerHTML =
-  data.map(
-    c => {
+  box.innerHTML=
+    r.data
+      .map(c=>{
 
-      const u =
-      users.find(
-        x =>
-          x.id === c.user_id
-      ) || {};
-
-
-      const av =
-      avatar(u);
+        const u=
+          users.find(
+            x=>x.id===c.user_id
+          )||{};
 
 
-      const commentAvatar =
-      av
-      ?
-      `
-      <img
-        class="avatar"
-        src="${esc(av)}"
-        alt=""
-        onerror="
-          this.style.display='none'
-        ">
-      `
-      :
-      `
-      <div
-        class="avatar"
-        style="
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:16px;
-        ">
-        👤
-      </div>
-      `;
+        const name=
+          u.name||
+          u.username||
+          "BIGULA user";
 
 
-      return `
+        const av=
+          avatar(u);
 
-        <div class="comment">
 
-          ${commentAvatar}
+        return `
 
-          <div class="commentBody">
+          <div class="comment">
 
-            <div class="commentTop">
+            ${
+              av
 
-              <b>
+              ? `<img
+                  class="avatar"
+                  src="${esc(av)}"
+                  alt=""
+                >`
+
+              : `<div
+                  class="avatar"
+                  style="display:flex;align-items:center;justify-content:center"
+                >
+                  👤
+                </div>`
+            }
+
+
+            <div class="commentBody">
+
+              <div class="commentTop">
+
+                <b>
+                  ${esc(name)}
+                </b>
+
+                <span>
+                  ${esc(
+                    dateFmt(
+                      c.created_at
+                    )
+                  )}
+                </span>
+
+              </div>
+
+
+              <div class="commentText">
                 ${esc(
-                  u.display_name ||
-                  u.full_name ||
-                  u.username ||
-                  u.name ||
-                  "BIGULA user"
+                  c.comment||""
                 )}
-              </b>
-
-              <span>
-                ${dateFmt(
-                  c.created_at
-                )}
-              </span>
-
-            </div>
-
-
-            <div class="commentText">
-
-              ${esc(
-                c.comment ||
-                c.content ||
-                c.text ||
-                ""
-              )}
+              </div>
 
             </div>
 
           </div>
-
-        </div>
-      `;
-    }
-  ).join("");
+        `;
+      })
+      .join("");
 }
 
 
-/* =========================================================
+/* =========================
    RECORD VIEW
-========================================================= */
+========================= */
 
 async function recordView(){
 
@@ -3231,93 +2525,61 @@ async function recordView(){
     return;
 
 
+  const key=
+    "bigula_viewed_"+
+    video.id;
+
+
+  if(
+    sessionStorage.getItem(key)
+  )
+    return;
+
+
+  const payload={
+    video_id:video.id
+  };
+
+
+  if(me?.id)
+    payload.user_id=me.id;
+
+
   try{
 
-    const payload =
-    {
-      video_id:video.id
-    };
+    const r=
+      await supabase
+        .from("views")
+        .insert(payload);
 
 
-    if(me?.id){
+    if(!r.error){
 
-      payload.user_id =
-        me.id;
-    }
-
-
-    const {
-      error
-    } =
-    await supabase
-      .from("views")
-      .insert(
-        payload
+      sessionStorage.setItem(
+        key,
+        "1"
       );
 
+      viewCount++;
 
-    if(error){
-
-      console.warn(
-        "View:",
-        error
-      );
-
-      return;
+      updateUI();
     }
 
-
-    /*
-      Update displayed count
-      immediately.
-    */
-
-    viewCount++;
-
-    const dateLine =
-    document.getElementById(
-      "dateLine"
-    );
-
-
-    if(dateLine){
-
-      dateLine.textContent =
-        `Published ${
-          dateFmt(
-            video.published_at ||
-            video.created_at ||
-            video.updated_at
-          )
-        } · ${fmt(viewCount)} views`;
-    }
-
-  }catch(error){
+  }catch(e){
 
     console.warn(
-      "View exception:",
-      error
+      "View:",
+      e
     );
   }
 }
 
 
-/* =========================================================
+/* =========================
    REPORT
-========================================================= */
+========================= */
 
 async function reportVideo(){
-
-  const reason =
-  prompt(
-    "Why are you reporting this video?\n\n" +
-    "Examples: harmful content, copyright, spam, harassment, other"
-  );
-
-
-  if(!reason)
-    return;
-
 
   if(!me){
 
@@ -3329,81 +2591,271 @@ async function reportVideo(){
   }
 
 
-  const {
-    error
-  } =
-  await supabase
-    .from("reports")
-    .insert({
-      video_id:video.id,
-      user_id:me.id,
-      reason:reason.trim(),
-      status:"open"
-    });
+  const reason=
+    prompt(
+      "Why are you reporting this video?"
+    );
 
 
-  if(error){
+  if(!reason?.trim())
+    return;
+
+
+  const r=
+    await supabase
+      .from("reports")
+      .insert({
+        video_id:video.id,
+        user_id:me.id,
+        reason:reason.trim(),
+        status:"open"
+      });
+
+
+  toast(
+    r.error
+      ? "Report could not be submitted"
+      : "Report submitted. Thank you."
+  );
+}
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+document.getElementById(
+  "backBtn"
+).onclick=()=>{
+
+  if(history.length>1)
+    history.back();
+  else
+    location.href="home.html";
+};
+
+
+/* =========================
+   MAIN LOAD
+========================= */
+
+async function loadVideo(){
+
+  try{
+
+    if(!token&&!legacyId){
+
+      showError(
+        "No video was selected."
+      );
+
+      return;
+    }
+
+
+    /*
+      Complete Supabase PKCE if
+      the URL contains ?code=...
+    */
+
+    const code=
+      params.get("code");
+
+
+    if(code){
+
+      try{
+
+        await withTimeout(
+          supabase.auth.exchangeCodeForSession(
+            code
+          ),
+          8000
+        );
+
+      }catch(e){
+
+        console.warn(
+          "PKCE:",
+          e
+        );
+      }
+
+
+      const clean=
+        token
+
+          ? location.pathname+
+            "?v="+
+            encodeURIComponent(
+              token
+            )
+
+          : location.pathname+
+            "?id="+
+            encodeURIComponent(
+              legacyId
+            );
+
+
+      history.replaceState(
+        {},
+        document.title,
+        clean
+      );
+    }
+
+
+    /*
+      Authentication is optional
+      for watching public videos.
+    */
+
+    await loadMe();
+
+
+    /*
+      The videos table is the ONLY
+      request used to determine
+      whether the video exists.
+    */
+
+    video=
+      await findVideo();
+
+
+    if(!video){
+
+      showError(
+        "Video not found or unavailable."
+      );
+
+      return;
+    }
+
+
+    /*
+      Check publication status.
+    */
+
+    const status=
+      String(
+        video.publication_status||""
+      ).toLowerCase();
+
+
+    if(
+      status &&
+      ![
+        "published",
+        "public",
+        "approved"
+      ].includes(status) &&
+      ownerId(video)!==me?.id
+    ){
+
+      showError(
+        "This video is not publicly available."
+      );
+
+      return;
+    }
+
+
+    /*
+      Render immediately.
+
+      Analytics, comments, likes,
+      creator profile and followers
+      must NOT prevent the video
+      player from appearing.
+    */
+
+    render();
+
+
+    /*
+      Secondary information loads
+      independently.
+    */
+
+    const results=
+      await Promise.allSettled([
+
+        loadOwner(),
+
+        loadInteractions(),
+
+        loadCounts()
+
+      ]);
+
+
+    if(
+      results[0].status===
+      "fulfilled"
+    ){
+
+      owner=
+        results[0].value;
+    }
+
+
+    updateUI();
+
+
+    /*
+      Comments and views are
+      intentionally non-blocking.
+    */
+
+    loadComments()
+      .catch(
+        e=>console.warn(
+          "Comments:",
+          e
+        )
+      );
+
+
+    recordView()
+      .catch(
+        e=>console.warn(
+          "View:",
+          e
+        )
+      );
+
+
+  }catch(e){
 
     console.error(
-      "Report:",
-      error
+      "BIGULA video_view load:",
+      e
     );
 
-    toast(
-      "Report could not be submitted"
-    );
 
-  }else{
+    showError(
 
-    toast(
-      "Report submitted. Thank you."
+      e?.message===
+      "Request timed out"
+
+        ? "The video request timed out. Please try again."
+
+        : "Could not load this video. Please try again."
     );
   }
 }
 
 
-/* =========================================================
-   BACK BUTTON
-========================================================= */
-
-document
-  .getElementById("backBtn")
-  .onclick =
-  ()=>{
-
-    /*
-      If there is browser history,
-      return to the previous page.
-    */
-
-    if(
-      history.length > 1
-    ){
-
-      history.back();
-
-    }else{
-
-      /*
-        Otherwise return to Home.
-      */
-
-      location.href =
-        "home.html";
-    }
-  };
-
-
-/* =========================================================
+/* =========================
    START
-========================================================= */
+========================= */
 
-loadVideo().catch(error=>{
-  console.error("BIGULA video_view startup error:",error);
-  showError("Could not load this video. Please try again.");
-});
+loadVideo();
 
 </script>
 
 </body>
 </html>
+```
