@@ -1757,6 +1757,8 @@ import {
 } from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+import { FirebaseMessaging } from "https://esm.sh/@capacitor-firebase/messaging@8.5.2?bundle";
+
 
 
 /* =========================================================
@@ -1837,7 +1839,64 @@ document.getElementById("accountLabel");
    STATE 
 ========================================================= */ 
 
-let currentUser = null; 
+let currentUser = null;
+
+/* BIGULA_NATIVE_PUSH_SETUP
+   Register the Android FCM token against the signed-in Supabase user.
+*/
+let bigulaPushListenerReady = false;
+let bigulaPushSetupInProgress = false;
+
+async function saveBigulaPushToken(token) {
+  if (!token || !currentUser?.id) return;
+  if (!window.Capacitor?.isNativePlatform?.() || window.Capacitor?.getPlatform?.() !== "android") return;
+
+  const now = new Date().toISOString();
+  const { error } = await supabase
+    .from("user_push_tokens")
+    .upsert({
+      user_id: currentUser.id,
+      token,
+      platform: "android",
+      updated_at: now,
+      last_seen_at: now
+    }, { onConflict: "token" });
+
+  if (error) {
+    console.warn("BIGULA push token registration failed:", error.message);
+  }
+}
+
+async function setupBigulaPushNotifications() {
+  if (bigulaPushSetupInProgress || !currentUser?.id) return;
+  if (!window.Capacitor?.isNativePlatform?.() || window.Capacitor?.getPlatform?.() !== "android") return;
+
+  bigulaPushSetupInProgress = true;
+  try {
+    if (!bigulaPushListenerReady) {
+      await FirebaseMessaging.addListener("tokenReceived", async event => {
+        await saveBigulaPushToken(event?.token);
+      });
+      bigulaPushListenerReady = true;
+    }
+
+    let permission = await FirebaseMessaging.checkPermissions();
+    if (permission.receive !== "granted") {
+      permission = await FirebaseMessaging.requestPermissions();
+    }
+    if (permission.receive !== "granted") {
+      console.info("BIGULA push notifications are not permitted on this device.");
+      return;
+    }
+
+    const result = await FirebaseMessaging.getToken();
+    await saveBigulaPushToken(result?.token);
+  } catch (error) {
+    console.warn("BIGULA push setup failed:", error?.message || error);
+  } finally {
+    bigulaPushSetupInProgress = false;
+  }
+} 
 
 let currentTab = "foryou"; 
 
@@ -5566,7 +5625,8 @@ supabase.auth.onAuthStateChange(
 
     if(currentUser){ 
 
-      await loadNotificationBadge(); 
+      await loadNotificationBadge();
+      void setupBigulaPushNotifications();
 
     } 
 
@@ -5588,7 +5648,8 @@ async function init(){
 
   if(currentUser){ 
 
-    await loadNotificationBadge(); 
+    await loadNotificationBadge();
+    void setupBigulaPushNotifications();
 
   } 
 
