@@ -33,7 +33,6 @@ async function getGoogleAccessToken(serviceAccount: { client_email: string; priv
   })
     .setProtectedHeader({ alg: "RS256", typ: "JWT" })
     .setIssuer(serviceAccount.client_email)
-    .setSubject(serviceAccount.client_email)
     .setAudience(serviceAccount.token_uri || "https://oauth2.googleapis.com/token")
     .setIssuedAt(now)
     .setExpirationTime(now + 3600)
