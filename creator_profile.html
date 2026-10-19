@@ -222,8 +222,9 @@ body{
 .video-grid{
   padding:25px;
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-  gap:20px;
+  grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+  gap:10px;
+  padding:12px;
 }
 
 .video-card{
@@ -240,7 +241,7 @@ body{
 
 .video-thumb{
   width:100%;
-  height:180px;
+  height:135px;
   display:block;
   object-fit:cover;
   background:#080808;
@@ -248,7 +249,7 @@ body{
 
 .video-thumb-placeholder{
   width:100%;
-  height:180px;
+  height:135px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -258,11 +259,11 @@ body{
 }
 
 .video-info{
-  padding:14px;
+  padding:8px;
 }
 
 .video-title{
-  font-size:15px;
+  font-size:12px;
   font-weight:700;
   margin-bottom:10px;
 }
@@ -431,7 +432,7 @@ body{
 
     <div class="stat-box">
       <h2 id="videosCount">0</h2>
-      <p>Videosi</p>
+      <p>Videos</p>
     </div>
 
     <div class="stat-box">
@@ -721,18 +722,6 @@ async function loadProfile(){
 
   // Creator videos are shown only to the owner or existing followers when private.
   await loadVideos()
-  setupAutoplay()
-}
-
-function setupAutoplay(){
-  const videos=document.querySelectorAll('#videoGrid video')
-  const observer=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting) entry.target.play().catch(()=>{})
-      else entry.target.pause()
-    })
-  },{threshold:.7})
-  videos.forEach(v=>observer.observe(v))
 }
 
 document.getElementById('followBtn').onclick=async()=>{
