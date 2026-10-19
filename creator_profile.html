@@ -238,11 +238,23 @@ body{
   transform:translateY(-4px);
 }
 
-.video-card video{
+.video-thumb{
   width:100%;
-  height:320px;
+  height:180px;
+  display:block;
   object-fit:cover;
-  background:#000;
+  background:#080808;
+}
+
+.video-thumb-placeholder{
+  width:100%;
+  height:180px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#171717,#050505);
+  color:#aaa;
+  font-size:38px;
 }
 
 .video-info{
@@ -305,8 +317,9 @@ body{
     padding:12px;
   }
 
-  .video-card video{
-    height:260px;
+  .video-thumb,
+  .video-thumb-placeholder{
+    height:150px;
   }
 }
 
@@ -615,10 +628,14 @@ async function loadVideos(){
     card.className='video-card'
 
     const shortCode=video.short_code
-    const videoUrl=video.video_url || video.url || video.file_url || ''
+    const thumbnailUrl=video.thumbnail_url || ''
+    const thumbnail=thumbnailUrl
+      ? `<img class="video-thumb" src="${esc(thumbnailUrl)}" alt="${esc(video.title || 'Video thumbnail')}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+      : ''
 
     card.innerHTML=`
-      <video src="${esc(videoUrl)}" muted loop playsinline preload="metadata"></video>
+      ${thumbnail}
+      <div class="video-thumb-placeholder" style="display:${thumbnailUrl ? 'none' : 'flex'}" aria-label="Open video">▶</div>
       <div class="video-info">
         <div class="video-title">${esc(video.title || 'Untitled video')}</div>
         <div class="video-stats">
