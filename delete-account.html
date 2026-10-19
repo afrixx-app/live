@@ -44,10 +44,27 @@ btn.addEventListener("click", async()=>{
   ["bigula_user","bigula_current_user"].forEach(key=>localStorage.removeItem(key));
   status.textContent="Your BIGULA sign-in account was deleted. Returning to Home…";
   setTimeout(()=>location.replace("home.html"),1200);
- } catch(e) {
-  console.error("Account deletion failed",e);
-  status.textContent="Deletion was not confirmed. Your account may still exist. Details: "+(e?.message||"Unknown error")+". Please try again later or contact BIGULA support.";
-  btn.disabled=false;
- }
+ 
+  } catch (e) {
+    console.error("Account deletion failed:", e);
+
+    let details = e?.message || "Unknown error";
+
+    if (e?.context) {
+      try {
+        const response = await e.context.clone().json();
+        details += "\nServer response: " + JSON.stringify(response);
+      } catch {
+        try {
+          details += "\nServer response: " + await e.context.clone().text();
+        } catch {}
+      }
+    }
+
+    status.textContent =
+      "Deletion failed. Details: " + details;
+
+    btn.disabled = false;
+  }
 });
 </script></body></html>
