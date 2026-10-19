@@ -537,6 +537,8 @@ main{
 
     </div>
 
+    <div class="interest-status" id="privacyStatus" role="status" aria-live="polite"></div>
+
   </section>
 
 
@@ -1206,6 +1208,7 @@ async function loadAccount(){
 
 
   loadSavedSettings();
+  await loadPrivacySettings();
   loadInterests();
 
 }
@@ -1251,15 +1254,6 @@ function loadSavedSettings(){
   }
 
 
-  document.getElementById("privateAccount").checked =
-    !!settings.privateAccount;
-
-  document.getElementById("activityStatus").checked =
-    settings.activityStatus !== false;
-
-  document.getElementById("allowMessages").checked =
-    settings.allowMessages !== false;
-
   document.getElementById("pushNotifications").checked =
     settings.pushNotifications !== false;
 
@@ -1282,6 +1276,82 @@ function loadSavedSettings(){
 
 
 /* -----------------------------
+   SUPABASE PRIVACY SETTINGS
+----------------------------- */
+
+const privacyStatus = document.getElementById("privacyStatus");
+const privacyInputIds = ["privateAccount", "activityStatus", "allowMessages"];
+let privacyLoadedFromDatabase = false;
+let privacySaveInProgress = false;
+
+function showPrivacyStatus(message, isError = false) {
+  privacyStatus.textContent = message;
+  privacyStatus.style.color = isError ? "#c62828" : "#555";
+}
+
+async function loadPrivacySettings() {
+  if (!currentUser) return;
+
+  showPrivacyStatus("Loading privacy settings…");
+  const { data, error } = await supabase
+    .from("users")
+    .select("is_private,show_activity_status,allow_messages")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("Could not load BIGULA privacy settings:", error);
+    showPrivacyStatus("Could not load privacy settings from your account. Please refresh or try again.", true);
+    return;
+  }
+
+  document.getElementById("privateAccount").checked = data.is_private === true;
+  document.getElementById("activityStatus").checked = data.show_activity_status !== false;
+  document.getElementById("allowMessages").checked = data.allow_messages !== false;
+  privacyLoadedFromDatabase = true;
+  showPrivacyStatus("Privacy settings loaded from your BIGULA account.");
+}
+
+async function savePrivacySettings(changedInput) {
+  if (!currentUser || !privacyLoadedFromDatabase || privacySaveInProgress) return;
+
+  const previousValue = !changedInput.checked;
+  const values = {
+    is_private: document.getElementById("privateAccount").checked,
+    show_activity_status: document.getElementById("activityStatus").checked,
+    allow_messages: document.getElementById("allowMessages").checked
+  };
+
+  privacySaveInProgress = true;
+  privacyInputIds.forEach(id => { document.getElementById(id).disabled = true; });
+  showPrivacyStatus("Saving privacy settings…");
+
+  const { data: updatedRows, error } = await supabase
+    .from("users")
+    .update(values)
+    .eq("id", currentUser.id)
+    .select("id");
+
+  privacySaveInProgress = false;
+  privacyInputIds.forEach(id => { document.getElementById(id).disabled = false; });
+
+  if (error || !updatedRows || updatedRows.length === 0) {
+    changedInput.checked = previousValue;
+    console.error("Could not save BIGULA privacy settings:", error || "No user row was updated");
+    showPrivacyStatus("Could not save. Your change was reverted. Please try again.", true);
+    return;
+  }
+
+  let settings = {};
+  try { settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); } catch (_) {}
+  settings.privateAccount = values.is_private;
+  settings.activityStatus = values.show_activity_status;
+  settings.allowMessages = values.allow_messages;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  showPrivacyStatus("✓ Privacy settings saved to your BIGULA account.");
+}
+
+/* -----------------------------
    SAVE LOCAL SETTINGS
 ----------------------------- */
 
@@ -1296,6 +1366,8 @@ document.querySelectorAll(
 settingInputs.forEach(input => {
 
   input.addEventListener("change",() => {
+
+    if (privacyInputIds.includes(input.id)) return;
 
     let settings = {};
 
@@ -1316,15 +1388,6 @@ settingInputs.forEach(input => {
     /*
       Use stable setting names.
     */
-
-    settings.privateAccount =
-      document.getElementById("privateAccount").checked;
-
-    settings.activityStatus =
-      document.getElementById("activityStatus").checked;
-
-    settings.allowMessages =
-      document.getElementById("allowMessages").checked;
 
     settings.pushNotifications =
       document.getElementById("pushNotifications").checked;
@@ -1352,6 +1415,13 @@ settingInputs.forEach(input => {
 
   });
 
+});
+
+
+privacyInputIds.forEach(id => {
+  document.getElementById(id).addEventListener("change", event => {
+    savePrivacySettings(event.currentTarget);
+  });
 });
 
 
@@ -1544,7 +1614,7 @@ document.getElementById("deleteAccount")
     alert(
       "Account deletion has not been connected yet. " +
       "We will connect this button to the secure BIGULA " +
-      "account-deletion process."
+      "account-deletion process soon."
     );
 
   };
