@@ -151,6 +151,29 @@ body{
   color:#aaa;
   border:1px solid #444;
 }
+.follow-btn:disabled{
+  opacity:.8;
+  cursor:not-allowed;
+  transform:none;
+}
+.private-notice{
+  grid-column:1/-1;
+  margin:10px auto;
+  max-width:600px;
+  padding:22px;
+  text-align:center;
+  background:#161616;
+  border:1px solid #333;
+  border-radius:16px;
+  color:#ccc;
+  line-height:1.6;
+}
+.private-notice strong{
+  display:block;
+  color:#fff;
+  font-size:18px;
+  margin-bottom:6px;
+}
 
 .message-btn{
   background:#1e1e1e;
@@ -493,15 +516,20 @@ function setFollowButton(){
   const btn=document.getElementById('followBtn')
   if(!btn)return
 
+  btn.disabled=false;
+  btn.classList.remove('following');
+
   if(isFollowedBack){
     btn.textContent='Besties'
     btn.classList.add('following')
   }else if(isFollowing){
     btn.textContent='Following'
     btn.classList.add('following')
+  }else if(creator?.is_private === true){
+    btn.textContent='Private account'
+    btn.disabled=true
   }else{
     btn.textContent='Follow'
-    btn.classList.remove('following')
   }
 }
 
@@ -533,6 +561,15 @@ async function loadFollowState(){
 
 async function loadVideos(){
   const grid=document.getElementById('videoGrid')
+
+  // A private creator's videos are visible only to the owner and existing followers.
+  if(creator?.is_private === true && me?.id !== creator.id && !isFollowing){
+    grid.innerHTML='<div class="private-notice"><strong>🔒 Private account</strong>Only existing followers can view this creator\'s videos. Existing followers are preserved, but this account is not accepting new followers.</div>';
+    document.getElementById('videosCount').textContent='—';
+    document.getElementById('likesCount').textContent='—';
+    document.getElementById('viewsCount').textContent='—';
+    return {videos:[],likes:0,views:0};
+  }
 
   let query=supabase
     .from('videos')
@@ -662,11 +699,11 @@ async function loadProfile(){
   document.getElementById('followersCount').textContent=fmt(followers)
   document.getElementById('followingCount').textContent=fmt(following)
 
-  const totals=await loadVideos()
-
-  // Creator status is derived from the live users row.
-
+  // Load follow status first so private-profile access uses the real relationship.
   await loadFollowState()
+
+  // Creator videos are shown only to the owner or existing followers when private.
+  await loadVideos()
   setupAutoplay()
 }
 
@@ -688,6 +725,13 @@ document.getElementById('followBtn').onclick=async()=>{
   }
 
   if(me.id===creator.id)return
+
+  // Private accounts cannot gain new followers; existing followers may unfollow.
+  if(creator?.is_private === true && !isFollowing){
+    alert('This account is private and is not accepting new followers.')
+    setFollowButton()
+    return
+  }
 
   const btn=document.getElementById('followBtn')
   btn.disabled=true
