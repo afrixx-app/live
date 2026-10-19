@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA — Delete Account</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}body{margin:0;background:#f6f6f6;color:#171717;min-height:100vh}
+header{height:60px;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:center;padding:0 18px;gap:12px}
+header a{color:#111;text-decoration:none;font-size:25px}main{max-width:620px;margin:30px auto;padding:0 16px}.card{background:#fff;border:1px solid #e1e1e1;border-radius:16px;padding:24px}
+h1{font-size:25px;margin:0 0 12px}.warning{background:#fff4f2;border:1px solid #ffd3cc;border-radius:10px;padding:14px;line-height:1.5;margin:18px 0}
+p,li{line-height:1.6;color:#444}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}button,a.btn{border:0;border-radius:9px;padding:12px 16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.cancel{background:#eee;color:#111}.delete{background:#c62828;color:white}.delete:disabled{opacity:.55;cursor:wait}#status{margin-top:16px;white-space:pre-wrap;font-size:14px}
+label{display:block;margin-top:18px;font-weight:700}input{margin-top:8px;width:100%;padding:12px;border:1px solid #bbb;border-radius:8px;font-size:16px}
+.small{font-size:13px;color:#666;margin-top:14px}
+</style></head>
+<body><header><a href="settings.html" aria-label="Back to Settings">‹</a><strong>BIGULA · Account deletion</strong></header>
+<main><div class="card"><h1>Delete your BIGULA account</h1>
+<p>This permanently deletes your BIGULA sign-in account. Before continuing, understand that videos, comments, profile information and other records may be affected according to BIGULA's data-retention and deletion rules.</p>
+<div class="warning"><strong>This action cannot be undone.</strong><br>We will ask the secure BIGULA server to process the deletion. Do not continue unless you are sure.</div>
+<label for="confirmText">Type DELETE to confirm</label><input id="confirmText" autocomplete="off" placeholder="Type DELETE" maxlength="6">
+<div class="actions"><a class="btn cancel" href="settings.html">Cancel</a><button class="delete" id="deleteBtn">Permanently delete account</button></div>
+<div id="status" role="status" aria-live="polite"></div>
+<p class="small">If deletion fails, your account has not been confirmed deleted. Contact BIGULA support rather than repeatedly pressing the button.</p>
+</div></main>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}});
+const btn=document.getElementById("deleteBtn"), status=document.getElementById("status");
+btn.addEventListener("click", async()=>{
+ if(document.getElementById("confirmText").value.trim()!=="DELETE"){status.textContent="Type DELETE exactly to confirm.";return;}
+ if(!confirm("FINAL WARNING: Permanently delete this BIGULA account?")) return;
+ btn.disabled=true; status.textContent="Checking your signed-in account…";
+ try {
+  const {data:{session},error:sessionError}=await supabase.auth.getSession();
+  if(sessionError) throw sessionError;
+  if(!session){status.textContent="You are signed out. Sign in again before requesting account deletion.";btn.disabled=false;return;}
+  status.textContent="Requesting secure account deletion…";
+  const {data,error}=await supabase.functions.invoke("delete-account",{headers:{Authorization:`Bearer ${session.access_token}`}});
+  if(error) throw error;
+  if(!data || data.success!==true) throw new Error(data?.error || "The server did not confirm deletion.");
+  await supabase.auth.signOut({scope:"local"});
+  ["bigula_user","bigula_current_user"].forEach(key=>localStorage.removeItem(key));
+  status.textContent="Your BIGULA sign-in account was deleted. Returning to Home…";
+  setTimeout(()=>location.replace("home.html"),1200);
+ } catch(e) {
+  console.error("Account deletion failed",e);
+  status.textContent="Deletion was not confirmed. Your account may still exist. Details: "+(e?.message||"Unknown error")+". Please try again later or contact BIGULA support.";
+  btn.disabled=false;
+ }
+});
+</script></body></html>
