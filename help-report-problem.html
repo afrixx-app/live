@@ -1,7 +1,796 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BIGULA Help — Report a problem</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#111;font-family:"Segoe UI",Arial,sans-serif}header{height:62px;display:flex;align-items:center;gap:12px;padding:0 18px;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:0}.back{font-size:28px;text-decoration:none;color:#111;line-height:1}header strong{font-size:20px}main{max-width:760px;margin:24px auto;padding:0 16px 40px}.hero,.item{background:#fff;border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 1px 4px #0000000a}.eyebrow{font-size:12px;color:#666;text-transform:uppercase;letter-spacing:.08em;font-weight:700}h1{font-size:25px;margin:8px 0 10px}.intro{color:#555;line-height:1.55;margin:0}.item h2{font-size:16px;margin:0 0 8px}.item p{font-size:14px;color:#555;line-height:1.6;margin:0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{display:inline-block;padding:11px 15px;border-radius:10px;background:#111;color:#fff;text-decoration:none;font-weight:600;font-size:14px}.btn.secondary{background:#eee;color:#111}footer{text-align:center;color:#777;font-size:12px;padding:8px 0 20px}</style></head>
-<body><header><a class="back" href="settings.html" aria-label="Back to Settings">‹</a><strong>BIGULA Help Center</strong></header><main><section class="hero"><div class="eyebrow">Help Center</div><h1>Report a problem</h1><p class="intro">Use this page to prepare a clear report about a technical issue or content concern.</p><div class="actions"><a class="btn" href="settings.html">Back to Settings</a><a class="btn secondary" href="help-report-problem.html">Report a problem</a></div></section><article class="item"><h2>What to include</h2><p>Describe what you were trying to do, what happened, and the page where the problem occurred.</p></article>
-<article class="item"><h2>Helpful details</h2><p>Include the device type, approximate time, and any exact error message. Do not include passwords or secret authentication codes.</p></article>
-<article class="item"><h2>Content concerns</h2><p>For a video or comment concern, include the relevant creator or content details if available.</p></article>
-<article class="item"><h2>Submission status</h2><p>This Help page is a guide only; it does not send a report to BIGULA. A verified support submission channel must be connected before reports can be sent.</p></article><footer>BIGULA Help Center</footer></main></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIGULA Help — Report a Problem</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f6f6f6;
+  color:#111;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
+
+header{
+  height:62px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 18px;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+.back{
+  font-size:28px;
+  text-decoration:none;
+  color:#111;
+}
+
+header strong{font-size:20px}
+
+main{
+  max-width:760px;
+  margin:24px auto;
+  padding:0 16px 40px;
+}
+
+.hero,.item{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:14px;
+  box-shadow:0 1px 4px #0000000a;
+}
+
+.eyebrow{
+  font-size:12px;
+  color:#666;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-weight:700;
+}
+
+h1{
+  font-size:25px;
+  margin:8px 0 10px;
+}
+
+.intro{
+  color:#555;
+  line-height:1.55;
+  margin:0;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  margin:17px 0 7px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  background:#fff;
+  color:#111;
+  font:inherit;
+}
+
+input[readonly]{
+  background:#f4f4f4;
+  color:#444;
+}
+
+textarea{
+  min-height:150px;
+  resize:vertical;
+}
+
+small{
+  display:block;
+  color:#666;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:6px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.btn{
+  display:inline-block;
+  padding:12px 16px;
+  border:0;
+  border-radius:10px;
+  background:#111;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.secondary{
+  background:#eee;
+  color:#111;
+}
+
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.notice{
+  padding:12px;
+  border-radius:10px;
+  background:#f2f7ff;
+  color:#23456a;
+  font-size:13px;
+  line-height:1.5;
+  margin-top:14px;
+}
+
+#status{
+  min-height:22px;
+  margin-top:14px;
+  font-size:14px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+.error{
+  background:#fff0f0;
+  color:#9b0000;
+}
+
+.success{
+  background:#effaf0;
+  color:#176b27;
+}
+
+footer{
+  text-align:center;
+  color:#777;
+  font-size:12px;
+  padding:8px 0 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a class="back"
+     href="settings.html"
+     aria-label="Back to Settings">‹</a>
+  <strong>BIGULA Help Center</strong>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="eyebrow">Help Center</div>
+  <h1>Report a problem</h1>
+
+  <p class="intro">
+    Tell us what happened. Your report will be saved
+    so the BIGULA team can review it.
+  </p>
+
+  <div class="actions">
+    <a class="btn secondary" href="settings.html">
+      Back to Settings
+    </a>
+  </div>
+</section>
+
+<section class="item">
+
+<form id="helpForm">
+
+  <label for="reporterName">Your name *</label>
+
+  <input
+    id="reporterName"
+    type="text"
+    maxlength="120"
+    autocomplete="name"
+    required
+    readonly
+    placeholder="Loading your account name…">
+
+  <small>
+    Your name is filled from your BIGULA account.
+  </small>
+
+
+  <label for="topic">
+    What do you need help with? *
+  </label>
+
+  <select id="topic" required>
+    <option value="">Choose a topic</option>
+    <option>Account and profile</option>
+    <option>Sign up or login</option>
+    <option>Privacy and security</option>
+    <option>Account deletion</option>
+    <option>Videos and playback</option>
+    <option>Upload or create a video</option>
+    <option>Likes and comments</option>
+    <option>Followers and following</option>
+    <option>Notifications</option>
+    <option>Content or safety report</option>
+    <option>Monetization and creator earnings</option>
+    <option>Payments</option>
+    <option>Settings or preferences</option>
+    <option>Bug or technical problem</option>
+    <option>Other</option>
+  </select>
+
+
+  <label for="description">
+    Describe the problem *
+  </label>
+
+  <textarea
+    id="description"
+    minlength="10"
+    maxlength="5000"
+    required
+    placeholder="What were you trying to do? What happened? Include any exact error message."></textarea>
+
+
+  <label for="screenshot">
+    Screenshot (optional)
+  </label>
+
+  <input
+    id="screenshot"
+    type="file"
+    accept="image/png,image/jpeg,image/webp">
+
+  <small>
+    PNG, JPG, or WebP, up to 5 MB.
+    Do not include passwords or authentication codes.
+  </small>
+
+
+  <div class="notice">
+    Your report and optional screenshot will be saved
+    to BIGULA's help requests database.
+    Admin notifications are not enabled yet.
+  </div>
+
+
+  <div class="actions">
+    <button class="btn" id="submitBtn" type="submit">
+      Submit report
+    </button>
+
+    <button class="btn secondary" id="resetBtn" type="reset">
+      Clear form
+    </button>
+  </div>
+
+  <div id="status" role="status" aria-live="polite"></div>
+
+</form>
+
+</section>
+
+<footer>BIGULA Help Center</footer>
+
+</main>
+
+<script type="module">
+
+import {
+  createClient
+} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+
+/* =========================================
+   SUPABASE CONFIGURATION
+========================================= */
+
+const SUPABASE_URL =
+  "https://vfteiggdhthvrrlndtbs.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+const BUCKET = "help-attachments";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "pkce"
+    }
+  }
+);
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const $ = id => document.getElementById(id);
+
+const form = $("helpForm");
+const nameEl = $("reporterName");
+const topicEl = $("topic");
+const descEl = $("description");
+const fileEl = $("screenshot");
+const submitBtn = $("submitBtn");
+const resetBtn = $("resetBtn");
+const statusEl = $("status");
+
+let user = null;
+let fallbackName = "";
+
+
+/* =========================================
+   STATUS MESSAGE
+========================================= */
+
+function message(text, kind = "") {
+  statusEl.textContent = text;
+  statusEl.className = kind;
+}
+
+
+/* =========================================
+   GOOGLE PROFILE NAME
+========================================= */
+
+function metaName(user) {
+  const metadata = user?.user_metadata || {};
+
+  return (
+    metadata.full_name ||
+    metadata.name ||
+    metadata.user_name ||
+    metadata.preferred_username ||
+    metadata.username ||
+    ""
+  );
+}
+
+
+/* =========================================
+   LOAD SIGNED-IN USER AND PROFILE
+========================================= */
+
+async function loadUser() {
+
+  const {
+    data,
+    error
+  } = await supabase.auth.getSession();
+
+  if (error) {
+    console.warn("Session lookup:", error.message);
+  }
+
+  user = data?.session?.user || null;
+
+  if (!user) {
+
+    nameEl.value = "";
+    nameEl.placeholder = "Sign in to submit a report";
+
+    submitBtn.disabled = true;
+
+    message(
+      "Please sign in to BIGULA before submitting a help request.",
+      "error"
+    );
+
+    return;
+  }
+
+  fallbackName =
+    metaName(user) ||
+    user.email ||
+    "BIGULA user";
+
+  let displayName = fallbackName;
+
+  /*
+    Prefer the name stored in BIGULA's users table.
+  */
+
+  const {
+    data: profile,
+    error: profileError
+  } = await supabase
+    .from("users")
+    .select("name,username")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    console.warn(
+      "Profile name lookup:",
+      profileError.message
+    );
+  }
+
+  if (profile?.name?.trim()) {
+
+    displayName = profile.name.trim();
+
+  } else if (profile?.username?.trim()) {
+
+    displayName = profile.username.trim();
+
+  }
+
+  nameEl.value = displayName;
+
+  submitBtn.disabled = false;
+
+  if (statusEl.textContent.includes("Please sign in")) {
+    message("");
+  }
+}
+
+
+/* =========================================
+   VALIDATE SCREENSHOT
+========================================= */
+
+fileEl.addEventListener("change", () => {
+
+  const file = fileEl.files?.[0];
+
+  if (!file) return;
+
+  const allowedTypes = [
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+  ];
+
+  if (
+    !allowedTypes.includes(file.type) ||
+    file.size > MAX_FILE_SIZE
+  ) {
+
+    fileEl.value = "";
+
+    message(
+      "Choose a PNG, JPG, or WebP screenshot no larger than 5 MB.",
+      "error"
+    );
+
+  } else {
+
+    message("");
+
+  }
+});
+
+
+/* =========================================
+   RESET FORM
+========================================= */
+
+resetBtn.addEventListener("click", () => {
+
+  setTimeout(() => {
+
+    nameEl.value = user
+      ? fallbackName
+      : "";
+
+    message("");
+
+  }, 0);
+
+});
+
+
+/* =========================================
+   SUBMIT HELP REQUEST
+========================================= */
+
+form.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  if (submitBtn.disabled) return;
+
+
+  /*
+    Verify that the user is still signed in.
+  */
+
+  const {
+    data: sessionData,
+    error: sessionError
+  } = await supabase.auth.getSession();
+
+  if (
+    sessionError ||
+    !sessionData?.session?.user
+  ) {
+
+    message(
+      "Your session expired. Sign in again, then submit your report.",
+      "error"
+    );
+
+    submitBtn.disabled = true;
+
+    return;
+  }
+
+  user = sessionData.session.user;
+
+
+  const topic = topicEl.value;
+
+  const description =
+    descEl.value.trim();
+
+  const file =
+    fileEl.files?.[0] || null;
+
+
+  if (
+    !topic ||
+    description.length < 10
+  ) {
+
+    message(
+      "Choose a topic and describe the problem in at least 10 characters.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  if (
+    file &&
+    (
+      ![
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ].includes(file.type) ||
+      file.size > MAX_FILE_SIZE
+    )
+  ) {
+
+    message(
+      "Screenshot must be PNG, JPG, or WebP and no larger than 5 MB.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  submitBtn.disabled = true;
+  resetBtn.disabled = true;
+
+  message("Submitting your report…");
+
+  let screenshotPath = null;
+
+
+  try {
+
+    /*
+      Upload screenshot first, if attached.
+    */
+
+    if (file) {
+
+      const filename =
+        file.name
+          .replace(/[^a-zA-Z0-9._-]/g, "_")
+          .slice(-100) || "screenshot";
+
+      screenshotPath =
+        user.id +
+        "/" +
+        Date.now() +
+        "-" +
+        filename;
+
+
+      const {
+        error: uploadError
+      } = await supabase
+        .storage
+        .from(BUCKET)
+        .upload(
+          screenshotPath,
+          file,
+          {
+            contentType: file.type,
+            upsert: false
+          }
+        );
+
+
+      if (uploadError) {
+
+        throw new Error(
+          "Screenshot upload failed. Check the help-attachments bucket and its policies. " +
+          uploadError.message
+        );
+
+      }
+
+    }
+
+
+    /*
+      Insert help request into database.
+    */
+
+    const {
+      data: row,
+      error
+    } = await supabase
+      .from("help_requests")
+      .insert({
+
+        user_id: user.id,
+
+        reporter_name:
+          nameEl.value.trim(),
+
+        reporter_email:
+          user.email || null,
+
+        topic: topic,
+
+        description: description,
+
+        screenshot_path:
+          screenshotPath,
+
+        status: "new"
+
+      })
+      .select("id")
+      .single();
+
+
+    if (error) {
+
+      /*
+        If database insert fails, attempt to remove
+        the uploaded screenshot to avoid an orphan.
+      */
+
+      if (screenshotPath) {
+
+        const {
+          error: cleanupError
+        } = await supabase
+          .storage
+          .from(BUCKET)
+          .remove([screenshotPath]);
+
+        if (cleanupError) {
+          console.warn(
+            "Screenshot cleanup failed:",
+            cleanupError.message
+          );
+        }
+
+      }
+
+      throw new Error(
+        "Could not save the report. Check the help_requests table and INSERT policy. " +
+        error.message
+      );
+
+    }
+
+
+    /*
+      Successful submission.
+    */
+
+    form.reset();
+
+    nameEl.value = fallbackName;
+
+    message(
+      "Report submitted successfully. Reference: " +
+      row.id +
+      ". The BIGULA team can review it in help_requests.",
+      "success"
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Help report submission failed:",
+      error
+    );
+
+    message(
+      error.message ||
+      "Unable to submit your report. Please try again.",
+      "error"
+    );
+
+  } finally {
+
+    submitBtn.disabled = false;
+    resetBtn.disabled = false;
+
+  }
+
+});
+
+
+/* =========================================
+   AUTH STATE
+========================================= */
+
+await loadUser();
+
+supabase.auth.onAuthStateChange(
+  (event, session) => {
+
+    if (event === "SIGNED_OUT") {
+
+      user = null;
+
+      nameEl.value = "";
+
+      submitBtn.disabled = true;
+
+      message(
+        "You have been signed out. Sign in to submit a report.",
+        "error"
+      );
+
+    } else if (
+      event === "SIGNED_IN" &&
+      session?.user
+    ) {
+
+      loadUser();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
