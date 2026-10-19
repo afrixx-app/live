@@ -553,6 +553,7 @@ main{
     <div class="section-description">
       Choose which BIGULA notifications you want to receive.
     </div>
+    <div class="interest-status" id="notificationStatus" role="status" aria-live="polite"></div>
 
     <div class="setting-group">
 
@@ -1207,7 +1208,7 @@ async function loadAccount(){
   }
 
 
-  loadSavedSettings();
+  await loadSavedSettings();
   await loadPrivacySettings();
   loadInterests();
 
@@ -1240,38 +1241,108 @@ const SETTINGS_KEY =
 "bigula_account_settings";
 
 
-function loadSavedSettings(){
+async function loadSavedSettings(){
 
   let settings = {};
 
   try{
-    settings =
-    JSON.parse(
-      localStorage.getItem(SETTINGS_KEY) || "{}"
-    );
+    settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
   }catch(e){
     settings = {};
   }
 
+  // Apply local values first as a fallback while loading cloud preferences.
+  applyNotificationPreferences({
+    push_notifications: settings.pushNotifications !== false,
+    like_notifications: settings.likeNotifications !== false,
+    comment_notifications: settings.commentNotifications !== false,
+    follower_notifications: settings.followerNotifications !== false,
+    message_notifications: settings.messageNotifications !== false
+  });
 
-  document.getElementById("pushNotifications").checked =
-    settings.pushNotifications !== false;
+  document.getElementById("doNotUseContent").checked = !!settings.doNotUseContent;
 
-  document.getElementById("likeNotifications").checked =
-    settings.likeNotifications !== false;
+  if(!currentUser?.id) return;
 
-  document.getElementById("commentNotifications").checked =
-    settings.commentNotifications !== false;
+  const status = document.getElementById("notificationStatus");
+  const { data, error } = await supabase
+    .from("notification_preferences")
+    .select("push_notifications,like_notifications,comment_notifications,follower_notifications,message_notifications")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
 
-  document.getElementById("followerNotifications").checked =
-    settings.followerNotifications !== false;
+  if(error){
+    console.error("Could not load notification preferences:", error);
+    status.textContent = "Could not load saved notification preferences. Check your connection and try again.";
+    return;
+  }
 
-  document.getElementById("messageNotifications").checked =
-    settings.messageNotifications !== false;
+  if(data){
+    applyNotificationPreferences(data);
+    saveNotificationPreferencesLocally(data);
+  }else{
+    // Preserve existing device preferences for accounts using this page for the first time.
+    const initial = readNotificationPreferences();
+    const { error: insertError } = await supabase
+      .from("notification_preferences")
+      .upsert({ user_id: currentUser.id, ...initial, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+    if(insertError){
+      console.error("Could not initialize notification preferences:", insertError);
+      status.textContent = "Your settings are on this device, but could not be saved to your account.";
+      return;
+    }
+  }
 
-  document.getElementById("doNotUseContent").checked =
-    !!settings.doNotUseContent;
+  status.textContent = "Notification preferences synced with your BIGULA account.";
+}
 
+function applyNotificationPreferences(p){
+  document.getElementById("pushNotifications").checked = p.push_notifications !== false;
+  document.getElementById("likeNotifications").checked = p.like_notifications !== false;
+  document.getElementById("commentNotifications").checked = p.comment_notifications !== false;
+  document.getElementById("followerNotifications").checked = p.follower_notifications !== false;
+  document.getElementById("messageNotifications").checked = p.message_notifications !== false;
+}
+
+function readNotificationPreferences(){
+  return {
+    push_notifications: document.getElementById("pushNotifications").checked,
+    like_notifications: document.getElementById("likeNotifications").checked,
+    comment_notifications: document.getElementById("commentNotifications").checked,
+    follower_notifications: document.getElementById("followerNotifications").checked,
+    message_notifications: document.getElementById("messageNotifications").checked
+  };
+}
+
+function saveNotificationPreferencesLocally(p){
+  let settings = {};
+  try{ settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); }catch(e){}
+  settings.pushNotifications = p.push_notifications;
+  settings.likeNotifications = p.like_notifications;
+  settings.commentNotifications = p.comment_notifications;
+  settings.followerNotifications = p.follower_notifications;
+  settings.messageNotifications = p.message_notifications;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+async function saveNotificationPreferences(){
+  const status = document.getElementById("notificationStatus");
+  const p = readNotificationPreferences();
+  saveNotificationPreferencesLocally(p);
+  if(!currentUser?.id){
+    status.textContent = "Sign in to sync notification preferences across devices.";
+    return;
+  }
+  status.textContent = "Saving notification preferences…";
+  const { error } = await supabase
+    .from("notification_preferences")
+    .upsert({ user_id: currentUser.id, ...p, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+  if(error){
+    console.error("Could not save notification preferences:", error);
+    status.textContent = "Could not save to your account. Your choices remain saved on this device.";
+    return;
+  }
+  status.textContent = "Notification preferences saved to your BIGULA account.";
 }
 
 
@@ -1416,6 +1487,13 @@ settingInputs.forEach(input => {
     settings[input.id] =
     input.checked;
 
+    const notificationIds = [
+      "pushNotifications", "likeNotifications", "commentNotifications",
+      "followerNotifications", "messageNotifications"
+    ];
+    if(notificationIds.includes(input.id)){
+      saveNotificationPreferences();
+    }
 
     /*
       Use stable setting names.
