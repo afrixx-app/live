@@ -1669,47 +1669,15 @@ document.getElementById("logoutRow")
   };
 
 
+
 /* -----------------------------
    DELETE ACCOUNT
 ----------------------------- */
 
-document.getElementById("deleteAccount")
-  .onclick = async () => {
-
-    const first =
-    confirm(
-      "Delete your BIGULA account?\n\n" +
-      "This action is permanent."
-    );
-
-    if(!first)return;
-
-
-    const second =
-    confirm(
-      "Are you absolutely sure?\n\n" +
-      "Your account and associated content " +
-      "may be permanently removed."
-    );
-
-    if(!second)return;
-
-
-    /*
-      We do NOT attempt to delete auth.users
-      directly from browser JavaScript.
-      
-      Supabase Auth user deletion requires a
-      secure server-side/admin process.
-    */
-
-    alert(
-      "Account deletion has not been connected yet. " +
-      "We will connect this button to the secure BIGULA " +
-      "account-deletion process."
-    );
-
-  };
+document.getElementById("deleteAccount").onclick = () => {
+  // Open the working account deletion page.
+  location.href = "delete-account.html";
+};
 
 
 /* -----------------------------
