@@ -1290,30 +1290,51 @@ function showPrivacyStatus(message, isError = false) {
 }
 
 async function loadPrivacySettings() {
-  if (!currentUser) return;
-
-  showPrivacyStatus("Loading privacy settings…");
-  const { data, error } = await supabase
-    .from("users")
-    .select("is_private,show_activity_status,allow_messages")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (error || !data) {
-    console.error("Could not load BIGULA privacy settings:", error);
-    showPrivacyStatus("Could not load privacy settings from your account. Please refresh or try again.", true);
+  if (!currentUser) {
+    showPrivacyStatus("Please sign in to manage privacy settings.", true);
     return;
   }
 
-  document.getElementById("privateAccount").checked = data.is_private === true;
-  document.getElementById("activityStatus").checked = data.show_activity_status !== false;
-  document.getElementById("allowMessages").checked = data.allow_messages !== false;
-  privacyLoadedFromDatabase = true;
-  showPrivacyStatus("Privacy settings loaded from your BIGULA account.");
+  showPrivacyStatus("Loading privacy settings…");
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("is_private,show_activity_status,allow_messages")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Could not load BIGULA privacy settings:", error);
+      showPrivacyStatus("Load failed: " + (error.message || error.code || "Supabase error"), true);
+      return;
+    }
+    if (!data) {
+      showPrivacyStatus("No users profile row matches your signed-in account ID. Settings cannot be saved until that profile row exists.", true);
+      console.error("No public.users row found for authenticated user ID:", currentUser.id);
+      return;
+    }
+
+    document.getElementById("privateAccount").checked = data.is_private === true;
+    document.getElementById("activityStatus").checked = data.show_activity_status !== false;
+    document.getElementById("allowMessages").checked = data.allow_messages !== false;
+    privacyLoadedFromDatabase = true;
+    showPrivacyStatus("Privacy settings loaded from your BIGULA account.");
+  } catch (e) {
+    console.error("Unexpected error loading BIGULA privacy settings:", e);
+    showPrivacyStatus("Could not load settings: " + (e?.message || "network or browser error"), true);
+  }
 }
 
 async function savePrivacySettings(changedInput) {
-  if (!currentUser || !privacyLoadedFromDatabase || privacySaveInProgress) return;
+  if (!currentUser) {
+    showPrivacyStatus("Please sign in again to save privacy settings.", true);
+    return;
+  }
+  if (!privacyLoadedFromDatabase) {
+    showPrivacyStatus("Settings have not loaded from Supabase yet. Refresh the page and check the message here.", true);
+    return;
+  }
+  if (privacySaveInProgress) return;
 
   const previousValue = !changedInput.checked;
   const values = {
@@ -1326,29 +1347,40 @@ async function savePrivacySettings(changedInput) {
   privacyInputIds.forEach(id => { document.getElementById(id).disabled = true; });
   showPrivacyStatus("Saving privacy settings…");
 
-  const { data: updatedRows, error } = await supabase
-    .from("users")
-    .update(values)
-    .eq("id", currentUser.id)
-    .select("id");
+  try {
+    const { data: updatedRows, error } = await supabase
+      .from("users")
+      .update(values)
+      .eq("id", currentUser.id)
+      .select("id");
 
-  privacySaveInProgress = false;
-  privacyInputIds.forEach(id => { document.getElementById(id).disabled = false; });
+    if (error) {
+      console.error("Could not save BIGULA privacy settings:", error);
+      changedInput.checked = previousValue;
+      showPrivacyStatus("Save failed: " + (error.message || error.code || "Supabase error"), true);
+      return;
+    }
+    if (!updatedRows || updatedRows.length === 0) {
+      changedInput.checked = previousValue;
+      showPrivacyStatus("Nothing was updated. Check that your users profile ID matches your signed-in account ID and that the UPDATE policy allows your own row.", true);
+      return;
+    }
 
-  if (error || !updatedRows || updatedRows.length === 0) {
+    let settings = {};
+    try { settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); } catch (_) {}
+    settings.privateAccount = values.is_private;
+    settings.activityStatus = values.show_activity_status;
+    settings.allowMessages = values.allow_messages;
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    showPrivacyStatus("✓ Privacy settings saved to your BIGULA account.");
+  } catch (e) {
+    console.error("Unexpected error saving BIGULA privacy settings:", e);
     changedInput.checked = previousValue;
-    console.error("Could not save BIGULA privacy settings:", error || "No user row was updated");
-    showPrivacyStatus("Could not save. Your change was reverted. Please try again.", true);
-    return;
+    showPrivacyStatus("Save failed: " + (e?.message || "network or browser error"), true);
+  } finally {
+    privacySaveInProgress = false;
+    privacyInputIds.forEach(id => { document.getElementById(id).disabled = false; });
   }
-
-  let settings = {};
-  try { settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); } catch (_) {}
-  settings.privateAccount = values.is_private;
-  settings.activityStatus = values.show_activity_status;
-  settings.allowMessages = values.allow_messages;
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  showPrivacyStatus("✓ Privacy settings saved to your BIGULA account.");
 }
 
 /* -----------------------------
@@ -1614,7 +1646,7 @@ document.getElementById("deleteAccount")
     alert(
       "Account deletion has not been connected yet. " +
       "We will connect this button to the secure BIGULA " +
-      "account-deletion process soon."
+      "account-deletion process."
     );
 
   };
