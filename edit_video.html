@@ -4,958 +4,286 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>BIGULA — Edit Video</title>
-
 <style>
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  padding:0;
-  background:#f7f7f7;
-  color:#111;
-  font-family:Arial,sans-serif;
-}
-
-body{
-  min-height:100vh;
-}
-
-main{
-  width:100%;
-  max-width:700px;
-  margin:0 auto;
-  min-height:100vh;
-  background:#fff;
-  padding:18px;
-}
-
-.back{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  border:0;
-  background:none;
-  color:#111;
-  text-decoration:none;
-  font-size:25px;
-  padding:3px 0;
-  margin:0 0 8px;
-  cursor:pointer;
-}
-
-h1{
-  margin:8px 0 20px;
-  font-size:26px;
-}
-
-.preview{
-  width:100%;
-  min-height:180px;
-  background:#000;
-  border-radius:14px;
-  overflow:hidden;
-  margin-bottom:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.preview video{
-  display:block;
-  width:100%;
-  max-height:520px;
-  object-fit:contain;
-  background:#000;
-}
-
-.preview-note{
-  text-align:center;
-  color:#777;
-  font-size:12px;
-  margin:7px 0 22px;
-}
-
-label{
-  display:block;
-  font-weight:bold;
-  margin:18px 0 7px;
-}
-
-input,
-textarea,
-select{
-  width:100%;
-  padding:12px;
-  border:1px solid #ccc;
-  border-radius:9px;
-  background:#fff;
-  color:#111;
-  font:inherit;
-  outline:none;
-}
-
-input:focus,
-textarea:focus,
-select:focus{
-  border-color:#111;
-}
-
-textarea{
-  min-height:130px;
-  resize:vertical;
-}
-
-#save{
-  width:100%;
-  margin-top:22px;
-  padding:14px;
-  border:0;
-  border-radius:10px;
-  background:#111;
-  color:#fff;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-#save:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-#loading{
-  padding:40px 15px;
-  text-align:center;
-  color:#777;
-}
-
-#errorBox{
-  display:none;
-  padding:13px;
-  margin:15px 0;
-  border-radius:10px;
-  background:#ffe8e8;
-  color:#a00000;
-  font-size:14px;
-  line-height:1.45;
-  word-break:break-word;
-}
-
-#status{
-  min-height:20px;
-  margin-top:12px;
-  text-align:center;
-  font-size:14px;
-}
-
-.hidden{
-  display:none!important;
-}
+html,body{margin:0;padding:0;background:#f7f7f7;color:#111;font-family:Arial,sans-serif}
+body{min-height:100vh}
+main{width:100%;max-width:700px;margin:0 auto;min-height:100vh;background:#fff;padding:18px}
+.back{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:#111;text-decoration:none;font-size:25px;padding:3px 0;margin:0 0 8px;cursor:pointer}
+h1{margin:8px 0 20px;font-size:26px}
+.preview{width:100%;min-height:180px;background:#000;border-radius:14px;overflow:hidden;margin-bottom:8px;display:flex;align-items:center;justify-content:center}
+.preview video{display:block;width:100%;max-height:520px;object-fit:contain;background:#000}
+.preview-note{text-align:center;color:#777;font-size:12px;margin:7px 0 22px}
+label{display:block;font-weight:bold;margin:18px 0 7px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:9px;background:#fff;color:#111;font:inherit;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#111}
+textarea{min-height:130px;resize:vertical}
+#save,#deleteVideo{width:100%;margin-top:22px;padding:14px;border:0;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer}
+#save{background:#111;color:#fff}
+#save:disabled,#deleteVideo:disabled{opacity:.55;cursor:not-allowed}
+#deleteVideo{margin-top:12px;border:1px solid #c40000;background:#fff;color:#c40000}
+.delete-warning{margin-top:14px;padding:14px;border:1px solid #f0b6b6;border-radius:10px;background:#fff4f4;color:#820000;font-size:14px;line-height:1.5}
+.delete-warning strong{display:block;margin-bottom:5px}
+#confirmDelete{width:100%;margin-top:10px;padding:13px;border:0;border-radius:10px;background:#b00000;color:#fff;font-weight:bold;cursor:pointer}
+#cancelDelete{width:100%;margin-top:8px;padding:12px;border:1px solid #ccc;border-radius:10px;background:#fff;color:#111;font-weight:bold;cursor:pointer}
+#loading{padding:40px 15px;text-align:center;color:#777}
+#errorBox{display:none;padding:13px;margin:15px 0;border-radius:10px;background:#ffe8e8;color:#a00000;font-size:14px;line-height:1.45;word-break:break-word;white-space:pre-wrap}
+#status{min-height:20px;margin-top:12px;text-align:center;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.hidden{display:none!important}
 </style>
 </head>
-
 <body>
-
 <main>
-
 <button id="backBtn" class="back" type="button">‹ Account</button>
-
 <h1>Edit video</h1>
-
-<div id="loading">
-  Loading your video…
-</div>
-
-<div id="errorBox"></div>
-
+<div id="loading">Loading your video…</div>
+<div id="errorBox" role="alert"></div>
 <section id="editor" class="hidden">
-
-  <div class="preview">
-    <video
-      id="preview"
-      controls
-      playsinline
-      preload="metadata">
-    </video>
-  </div>
-
-  <div class="preview-note">
-    Preview — tap play to watch
-  </div>
-
+  <div class="preview"><video id="preview" controls playsinline preload="metadata"></video></div>
+  <div class="preview-note">Preview — tap play to watch</div>
   <label for="title">Title</label>
-
-  <input
-    id="title"
-    maxlength="150"
-    placeholder="Change your video title">
-
-
+  <input id="title" maxlength="150" placeholder="Change your video title">
   <label for="category">Category</label>
-
   <select id="category">
-
     <option value="">Select a category</option>
-
-    <option value="Entertainment">Entertainment</option>
-    <option value="Comedy">Comedy</option>
-    <option value="Music">Music</option>
-    <option value="Dance">Dance</option>
-    <option value="Sports">Sports</option>
-    <option value="Gaming">Gaming</option>
-    <option value="Education">Education</option>
-    <option value="Technology">Technology</option>
-    <option value="News">News</option>
-    <option value="Lifestyle">Lifestyle</option>
-    <option value="Travel">Travel</option>
-    <option value="Food">Food</option>
-    <option value="Fashion">Fashion</option>
-    <option value="Beauty">Beauty</option>
-    <option value="Health & Fitness">Health & Fitness</option>
-    <option value="Business">Business</option>
-    <option value="Art">Art</option>
-    <option value="Animals & Nature">Animals & Nature</option>
-    <option value="People & Blogs">People & Blogs</option>
-    <option value="Cars & Vehicles">Cars & Vehicles</option>
-    <option value="Other">Other</option>
-
+    <option value="Entertainment">Entertainment</option><option value="Comedy">Comedy</option><option value="Music">Music</option><option value="Dance">Dance</option><option value="Sports">Sports</option><option value="Gaming">Gaming</option><option value="Education">Education</option><option value="Technology">Technology</option><option value="News">News</option><option value="Lifestyle">Lifestyle</option><option value="Travel">Travel</option><option value="Food">Food</option><option value="Fashion">Fashion</option><option value="Beauty">Beauty</option><option value="Health & Fitness">Health & Fitness</option><option value="Business">Business</option><option value="Art">Art</option><option value="Animals & Nature">Animals & Nature</option><option value="People & Blogs">People & Blogs</option><option value="Cars & Vehicles">Cars & Vehicles</option><option value="Other">Other</option>
   </select>
-
-
   <label for="description">Description</label>
-
-  <textarea
-    id="description"
-    maxlength="5000"
-    placeholder="Change your video description"></textarea>
-
-
-  <button id="save" type="button">
-    Save changes
-  </button>
-
-  <div id="status"></div>
-
+  <textarea id="description" maxlength="5000" placeholder="Change your video description"></textarea>
+  <button id="save" type="button">Save changes</button>
+  <button id="deleteVideo" type="button">Delete video</button>
+  <div id="deleteConfirmation" class="delete-warning hidden" role="alert">
+    <strong>Warning: permanently delete this video?</strong>
+    If you continue, BIGULA will attempt to remove this video from your account and the <code>videos</code> database table, delete its likes and comments, and remove its file from the Supabase Storage bucket named <code>videos</code>. This cannot be undone. If database permissions or related-table constraints block any step, the page will report the error; it will not claim the whole deletion succeeded.
+    <button id="confirmDelete" type="button">Yes, permanently delete</button>
+    <button id="cancelDelete" type="button">Cancel</button>
+  </div>
+  <div id="status" aria-live="polite"></div>
 </section>
-
 </main>
-
-
 <script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-import {
-  createClient
-} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const STORAGE_BUCKET = "videos";
 
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: "pkce" }
+});
 
-/* =========================================================
-   SUPABASE
-========================================================= */
+const $ = id => document.getElementById(id);
+const loading = $("loading"), editor = $("editor"), errorBox = $("errorBox");
+const preview = $("preview"), titleInput = $("title"), categoryInput = $("category");
+const descriptionInput = $("description"), saveButton = $("save"), deleteButton = $("deleteVideo");
+const statusEl = $("status"), backBtn = $("backBtn");
+const deleteConfirmation = $("deleteConfirmation"), confirmDeleteButton = $("confirmDelete");
+const cancelDeleteButton = $("cancelDelete");
+const params = new URLSearchParams(location.search);
+const videoId = params.get("id") || params.get("video_id");
+let currentUser = null, currentVideo = null, deleting = false;
 
-const SUPABASE_URL =
-  "https://vfteiggdhthvrrlndtbs.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-
-
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth:{
-        persistSession:true,
-        autoRefreshToken:true,
-        detectSessionInUrl:true,
-        flowType:"pkce"
-      }
-    }
-  );
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const loading =
-  document.getElementById("loading");
-
-const editor =
-  document.getElementById("editor");
-
-const errorBox =
-  document.getElementById("errorBox");
-
-const preview =
-  document.getElementById("preview");
-
-const titleInput =
-  document.getElementById("title");
-
-const categoryInput =
-  document.getElementById("category");
-
-const descriptionInput =
-  document.getElementById("description");
-
-const saveButton =
-  document.getElementById("save");
-
-const statusEl =
-  document.getElementById("status");
-
-const backBtn =
-  document.getElementById("backBtn");
-
-
-/* =========================================================
-   VIDEO ID
-========================================================= */
-
-const params =
-  new URLSearchParams(location.search);
-
-const videoId =
-  params.get("id") ||
-  params.get("video_id");
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentUser =
-  null;
-
-let currentVideo =
-  null;
-
-
-/* =========================================================
-   BACK
-========================================================= */
-
-backBtn.addEventListener(
-  "click",
-  () => {
-
-    if(history.length > 1){
-
-      history.back();
-
-    }else{
-
-      location.href =
-        "account.html";
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-function setStatus(message){
-
-  statusEl.textContent =
-    message;
-
+backBtn.addEventListener("click", () => {
+  if (history.length > 1) history.back();
+  else location.href = "account.html";
+});
+function setStatus(message) { statusEl.textContent = message; }
+function showError(message) {
+  loading.style.display = "none";
+  editor.classList.add("hidden");
+  errorBox.textContent = message;
+  errorBox.style.display = "block";
 }
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showError(message){
-
-  loading.style.display =
-    "none";
-
-  editor.classList.add(
-    "hidden"
-  );
-
-  errorBox.textContent =
-    message;
-
-  errorBox.style.display =
-    "block";
-
+function getVideoUrl(video) {
+  const direct = video.video_url || video.url || video.file_url || video.public_url || video.playback_url || "";
+  if (direct) return direct;
+  const path = video.storage_path || video.file_path || video.path || "";
+  if (!path) return "";
+  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${String(path).replace(/^\/+/, "")}`;
 }
-
-
-/* =========================================================
-   VIDEO URL
-========================================================= */
-
-function getVideoUrl(video){
-
-  /*
-    First use a direct URL if your videos table
-    contains one.
-  */
-
-  const directUrl =
-    video.video_url ||
-    video.url ||
-    video.file_url ||
-    video.public_url ||
-    video.playback_url ||
-    "";
-
-
-  if(directUrl){
-
-    return directUrl;
-
+function setCategory(value) {
+  if (!value) { categoryInput.value = ""; return; }
+  if (![...categoryInput.options].some(option => option.value === value)) {
+    const option = document.createElement("option");
+    option.value = value; option.textContent = value; categoryInput.appendChild(option);
   }
-
-
-  /*
-    Otherwise build the Supabase Storage URL
-    from storage_path.
-  */
-
-  const storagePath =
-    video.storage_path ||
-    video.file_path ||
-    video.path ||
-    "";
-
-
-  if(storagePath){
-
-    const cleanPath =
-      String(storagePath)
-        .replace(/^\/+/,"");
-
-
-    return (
-      SUPABASE_URL +
-      "/storage/v1/object/public/bigula/" +
-      cleanPath
-    );
-
-  }
-
-
-  return "";
-
+  categoryInput.value = value;
 }
-
-
-/* =========================================================
-   CATEGORY
-========================================================= */
-
-function setCategory(value){
-
-  if(!value){
-
-    categoryInput.value =
-      "";
-
-    return;
-
-  }
-
-
-  const exists =
-    [...categoryInput.options]
-      .some(
-        option =>
-          option.value === value
-      );
-
-
-  if(!exists){
-
-    const option =
-      document.createElement(
-        "option"
-      );
-
-    option.value =
-      value;
-
-    option.textContent =
-      value;
-
-    categoryInput.appendChild(
-      option
-    );
-
-  }
-
-
-  categoryInput.value =
-    value;
-
-}
-
-
-/* =========================================================
-   GET SESSION
-========================================================= */
-
-async function getLoggedInUser(){
-
-  const {
-    data,
-    error
-  } =
-    await supabase.auth.getSession();
-
-
-  if(error){
-
-    console.error(
-      "Session error:",
-      error
-    );
-
-  }
-
-
-  if(data?.session?.user){
-
-    return data.session.user;
-
-  }
-
-
-  /*
-    Try refreshing the persisted Google session.
-  */
-
-  const refreshed =
-    await supabase.auth.refreshSession();
-
-
-  if(
-    !refreshed.error &&
-    refreshed.data?.session?.user
-  ){
-
-    return refreshed.data.session.user;
-
-  }
-
-
+async function getLoggedInUser() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) console.error("Session error:", error);
+  if (data?.session?.user) return data.session.user;
+  const refreshed = await supabase.auth.refreshSession();
+  if (!refreshed.error && refreshed.data?.session?.user) return refreshed.data.session.user;
   return null;
-
+}
+function storageObjectPath(video) {
+  // Prefer explicit storage path fields when present.
+  for (const field of ["storage_path", "file_path", "path"]) {
+    if (typeof video[field] === "string" && video[field].trim()) {
+      let path = video[field].trim().replace(/^\/+/, "");
+      const prefix = `${STORAGE_BUCKET}/`;
+      if (path.startsWith(prefix)) path = path.slice(prefix.length);
+      return path;
+    }
+  }
+  // Derive the object key only from a URL that points at this Supabase project/bucket.
+  const url = video.video_url || video.url || video.file_url || video.public_url || video.playback_url || "";
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const marker = `/storage/v1/object/`;
+    const markerIndex = parsed.pathname.indexOf(marker);
+    if (parsed.origin !== new URL(SUPABASE_URL).origin || markerIndex < 0) return null;
+    const remainder = parsed.pathname.slice(markerIndex + marker.length);
+    const publicPrefix = `public/${STORAGE_BUCKET}/`;
+    const objectPrefix = `${STORAGE_BUCKET}/`;
+    let encodedPath = null;
+    if (remainder.startsWith(publicPrefix)) encodedPath = remainder.slice(publicPrefix.length);
+    else if (remainder.startsWith(objectPrefix)) encodedPath = remainder.slice(objectPrefix.length);
+    if (!encodedPath) return null;
+    return encodedPath.split("/").map(part => decodeURIComponent(part)).join("/");
+  } catch { return null; }
+}
+async function loadVideo() {
+  try {
+    if (!videoId) { showError("No video ID was supplied."); return; }
+    currentUser = await getLoggedInUser();
+    if (!currentUser) {
+      location.replace("signup.html?next=" + encodeURIComponent("edit_video.html?id=" + videoId));
+      return;
+    }
+    const { data: video, error } = await supabase.from("videos").select("*").eq("id", videoId).maybeSingle();
+    if (error) { console.error("Load video error:", error); showError("Could not load this video:\n\n" + error.message); return; }
+    if (!video) { showError("Video not found."); return; }
+    if (String(video.user_id) !== String(currentUser.id)) {
+      showError("This is not your video. You can only edit videos you own."); return;
+    }
+    currentVideo = video;
+    titleInput.value = video.title || "";
+    descriptionInput.value = video.description || "";
+    setCategory(video.category || "");
+    const videoUrl = getVideoUrl(video);
+    if (videoUrl) { preview.src = videoUrl; preview.load(); }
+    else setStatus("Video file URL is unavailable.");
+    preview.onerror = () => setStatus("The video file could not be previewed.");
+    loading.style.display = "none";
+    errorBox.style.display = "none";
+    editor.classList.remove("hidden");
+  } catch (error) {
+    console.error("Edit video initialization error:", error);
+    showError("Something went wrong:\n\n" + (error.message || error));
+  }
 }
 
-
-/* =========================================================
-   LOAD VIDEO
-========================================================= */
-
-async function loadVideo(){
-
-  try{
-
-    if(!videoId){
-
-      showError(
-        "No video ID was supplied."
-      );
-
-      return;
-
-    }
-
-
-    /*
-      Get actual authenticated Google user.
-    */
-
-    currentUser =
-      await getLoggedInUser();
-
-
-    if(!currentUser){
-
-      location.replace(
-        "signup.html?next=" +
-        encodeURIComponent(
-          "edit_video.html?id=" +
-          videoId
-        )
-      );
-
-      return;
-
-    }
-
-
-    /*
-      IMPORTANT:
-      Your videos table uses user_id.
-
-      We therefore DO NOT reference creator_id.
-    */
-
-    const {
-      data:video,
-      error
-    } =
-      await supabase
-        .from("videos")
-        .select("*")
-        .eq("id",videoId)
-        .maybeSingle();
-
-
-    if(error){
-
-      console.error(
-        "Load video error:",
-        error
-      );
-
-      showError(
-        "Could not load this video:\n\n" +
-        error.message
-      );
-
-      return;
-
-    }
-
-
-    if(!video){
-
-      showError(
-        "Video not found."
-      );
-
-      return;
-
-    }
-
-
-    /*
-      YOUR ACTUAL OWNERSHIP COLUMN:
-      
-      videos.user_id
-    */
-
-    if(
-      String(video.user_id) !==
-      String(currentUser.id)
-    ){
-
-      showError(
-        "This is not your video. You can only edit videos you own."
-      );
-
-      return;
-
-    }
-
-
-    currentVideo =
-      video;
-
-
-    /*
-      Fill fields.
-    */
-
-    titleInput.value =
-      video.title || "";
-
-    descriptionInput.value =
-      video.description || "";
-
-    setCategory(
-      video.category || ""
-    );
-
-
-    /*
-      Load video preview.
-    */
-
-    const videoUrl =
-      getVideoUrl(video);
-
-
-    if(videoUrl){
-
-      preview.src =
-        videoUrl;
-
-      preview.load();
-
-    }else{
-
-      setStatus(
-        "Video file URL is unavailable."
-      );
-
-    }
-
-
-    preview.onerror =
-      () => {
-
-        console.warn(
-          "Video preview failed:",
-          videoUrl
-        );
-
-        setStatus(
-          "The video file could not be previewed."
-        );
-
-      };
-
-
-    loading.style.display =
-      "none";
-
-    errorBox.style.display =
-      "none";
-
-    editor.classList.remove(
-      "hidden"
-    );
-
-
-  }catch(error){
-
-    console.error(
-      "Edit video initialization error:",
-      error
-    );
-
-    showError(
-      "Something went wrong:\n\n" +
-      (error.message || error)
-    );
-
+saveButton.addEventListener("click", async () => {
+  if (!currentVideo || !currentUser) { setStatus("Video is not ready."); return; }
+  const title = titleInput.value.trim(), category = categoryInput.value, description = descriptionInput.value.trim();
+  if (!title) { setStatus("Please enter a video title."); titleInput.focus(); return; }
+  saveButton.disabled = true; deleteButton.disabled = true; setStatus("Saving changes…");
+  try {
+    const { data, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !data?.session?.user) throw new Error("Your BIGULA session has expired. Please sign in again.");
+    const user = data.session.user;
+    if (String(currentVideo.user_id) !== String(user.id)) throw new Error("You do not own this video.");
+    const { data: updatedVideo, error } = await supabase.from("videos")
+      .update({ title, category: category || null, description: description || null })
+      .eq("id", currentVideo.id).eq("user_id", user.id).select("*").single();
+    if (error) throw error;
+    currentVideo = updatedVideo;
+    setStatus("Video updated successfully.");
+    setTimeout(() => { location.href = "account.html"; }, 700);
+  } catch (error) {
+    console.error("BIGULA Save Video error:", error);
+    setStatus("Update failed: " + (error.message || error));
+    saveButton.disabled = false; deleteButton.disabled = false;
   }
+});
 
-}
+deleteButton.addEventListener("click", () => {
+  if (!currentVideo || !currentUser || deleting) { setStatus("Video is not ready."); return; }
+  deleteConfirmation.classList.remove("hidden");
+  setStatus("");
+  deleteConfirmation.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+cancelDeleteButton.addEventListener("click", () => {
+  if (deleting) return;
+  deleteConfirmation.classList.add("hidden");
+  setStatus("Deletion cancelled. Your video has not been changed.");
+});
 
+confirmDeleteButton.addEventListener("click", async () => {
+  if (!currentVideo || !currentUser || deleting) return;
+  const finalCheck = confirm(
+    "FINAL CONFIRMATION\n\nPermanently delete this video, its likes, its comments, and its stored video file?\n\nThis action cannot be undone."
+  );
+  if (!finalCheck) return;
 
-/* =========================================================
-   SAVE
-========================================================= */
+  deleting = true;
+  saveButton.disabled = true;
+  deleteButton.disabled = true;
+  confirmDeleteButton.disabled = true;
+  cancelDeleteButton.disabled = true;
+  setStatus("Checking your session and deleting video data…");
 
-saveButton.addEventListener(
-  "click",
-  async () => {
+  try {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData?.session?.user) throw new Error("Your session has expired. Please sign in again.");
+    const user = sessionData.session.user;
+    if (String(currentVideo.user_id) !== String(user.id)) throw new Error("You can only delete videos you own.");
 
-    if(
-      !currentVideo ||
-      !currentUser
-    ){
+    // Delete dependent rows first so foreign keys do not block deletion.
+    // These operations require suitable authenticated-user RLS DELETE policies.
+    const { error: likesError } = await supabase.from("likes").delete().eq("video_id", currentVideo.id);
+    if (likesError) throw new Error("Could not delete video likes: " + likesError.message);
 
-      setStatus(
-        "Video is not ready."
-      );
+    const { error: commentsError } = await supabase.from("comments").delete().eq("video_id", currentVideo.id);
+    if (commentsError) throw new Error("Could not delete video comments: " + commentsError.message);
 
+    // Remove the database row before removing the file, so a blocked row deletion
+    // does not leave a database record pointing at a missing object.
+    const { data: deletedRows, error: rowError } = await supabase.from("videos")
+      .delete().eq("id", currentVideo.id).eq("user_id", user.id).select("id");
+    if (rowError) throw new Error("Likes/comments were processed, but the video row could not be deleted: " + rowError.message);
+    if (!deletedRows || deletedRows.length === 0) throw new Error("The video row was not deleted. Check the videos DELETE policy.");
+
+    // Storage removal is possible only when this page can identify the actual object key.
+    const objectPath = storageObjectPath(currentVideo);
+    if (objectPath) {
+      const { error: storageError } = await supabase.storage.from(STORAGE_BUCKET).remove([objectPath]);
+      if (storageError) {
+        setStatus("The video record and its likes/comments were deleted, but its Storage file could not be removed: " + storageError.message + ". The file may need to be removed from the Supabase Storage dashboard.");
+        preview.pause(); preview.removeAttribute("src"); preview.load();
+        setTimeout(() => { location.href = "account.html"; }, 3500);
+        return;
+      }
+    } else {
+      setStatus("The video record and its likes/comments were deleted, but the file path could not be identified from this row. Check the Supabase Storage bucket 'videos' for an orphaned file.");
+      preview.pause(); preview.removeAttribute("src"); preview.load();
+      setTimeout(() => { location.href = "account.html"; }, 4500);
       return;
-
     }
 
-
-    const title =
-      titleInput.value.trim();
-
-    const category =
-      categoryInput.value;
-
-    const description =
-      descriptionInput.value.trim();
-
-
-    if(!title){
-
-      setStatus(
-        "Please enter a video title."
-      );
-
-      titleInput.focus();
-
-      return;
-
-    }
-
-
-    saveButton.disabled =
-      true;
-
-    setStatus(
-      "Saving changes…"
-    );
-
-
-    try{
-
-      /*
-        Get the latest authenticated user.
-      */
-
-      const {
-        data,
-        error:sessionError
-      } =
-      await supabase.auth.getSession();
-
-
-      if(
-        sessionError ||
-        !data?.session?.user
-      ){
-
-        throw new Error(
-          "Your BIGULA session has expired. Please sign in again."
-        );
-
-      }
-
-
-      const user =
-        data.session.user;
-
-
-      /*
-        Make absolutely sure the logged-in user
-        owns this video.
-
-        YOUR COLUMN IS videos.user_id.
-      */
-
-      if(
-        String(currentVideo.user_id) !==
-        String(user.id)
-      ){
-
-        throw new Error(
-          "You do not own this video."
-        );
-
-      }
-
-
-      /*
-        Update using user_id.
-
-        This is the important correction.
-      */
-
-      const {
-        data:updatedVideo,
-        error
-      } =
-        await supabase
-          .from("videos")
-          .update({
-            title:title,
-            category:category || null,
-            description:description || null
-          })
-          .eq(
-            "id",
-            currentVideo.id
-          )
-          .eq(
-            "user_id",
-            user.id
-          )
-          .select("*")
-          .single();
-
-
-      if(error){
-
-        throw error;
-
-      }
-
-
-      currentVideo =
-        updatedVideo;
-
-
-      setStatus(
-        "✓ Video updated successfully."
-      );
-
-
-      /*
-        Return to account.
-      */
-
-      setTimeout(
-        () => {
-
-          location.href =
-            "account.html";
-
-        },
-        700
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "BIGULA Save Video error:",
-        error
-      );
-
-      setStatus(
-        "Update failed: " +
-        (error.message || error)
-      );
-
-      saveButton.disabled =
-        false;
-
-    }
-
+    preview.pause();
+    preview.removeAttribute("src");
+    preview.load();
+    setStatus("Video, likes, comments, and Storage file deleted successfully. Returning to your account…");
+    setTimeout(() => { location.href = "account.html"; }, 1200);
+  } catch (error) {
+    console.error("BIGULA Delete Video error:", error);
+    setStatus("Deletion did not fully complete: " + (error.message || String(error)) + " If earlier steps succeeded, some related data may already have been deleted.");
+    saveButton.disabled = false;
+    deleteButton.disabled = false;
+    confirmDeleteButton.disabled = false;
+    cancelDeleteButton.disabled = false;
+    deleting = false;
   }
-);
+});
 
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabase.auth.onAuthStateChange(
-  (event,session) => {
-
-    if(
-      event === "SIGNED_OUT"
-    ){
-
-      location.replace(
-        "signup.html"
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   START
-========================================================= */
-
+supabase.auth.onAuthStateChange((event) => {
+  if (event === "SIGNED_OUT") location.replace("signup.html");
+});
 loadVideo();
-
 </script>
-
 </body>
 </html>
