@@ -796,16 +796,17 @@ main{
           </div>
 
           <div class="setting-description">
-            Don't use my videos or other eligible content for improving BIGULA systems or related development purposes.
+            Record your preference not to use your videos or other eligible content for improving BIGULA systems or related development purposes.
           </div>
         </div>
 
         <label class="switch">
-          <input type="checkbox" id="doNotUseContent">
+          <input type="checkbox" id="doNotUseContent" aria-label="Don't use my content">
           <span class="slider"></span>
         </label>
 
       </div>
+      <div class="interest-status" id="contentStatus" role="status" aria-live="polite"></div>
 
     </div>
 
@@ -1536,100 +1537,78 @@ privacyInputIds.forEach(id => {
 
 
 /* -----------------------------
-   INTERESTS
+   INTERESTS — save immediately on this device
 ----------------------------- */
 
-const INTERESTS_KEY =
-"bigula_interests";
+const INTERESTS_KEY = "bigula_interests";
+const INTERESTS_SAVED_KEY = "bigula_interests_saved";
 
-
-function loadInterests(){
-
-  let saved = [];
-
-  try{
-
-    saved =
-    JSON.parse(
-      localStorage.getItem(INTERESTS_KEY) || "[]"
-    );
-
-  }catch(e){
-
-    saved = [];
-
-  }
-
-
-  document.querySelectorAll(".interest")
-    .forEach(button => {
-
-      const value =
-      button.dataset.interest;
-
-      if(saved.includes(value)){
-        button.classList.add("selected");
-      }
-
-    });
-
+function getSelectedInterests(){
+  return [...document.querySelectorAll(".interest.selected")]
+    .map(button => button.dataset.interest);
 }
 
-
-document.querySelectorAll(".interest")
-  .forEach(button => {
-
-    button.addEventListener("click",() => {
-
-      button.classList.toggle("selected");
-
-    });
-
+function updateInterestButtons(){
+  document.querySelectorAll(".interest").forEach(button => {
+    const selected = button.classList.contains("selected");
+    button.setAttribute("aria-pressed", String(selected));
   });
+}
 
+function persistInterests(showMessage = true){
+  const selected = getSelectedInterests();
+  const status = document.getElementById("interestStatus");
+  try {
+    localStorage.setItem(INTERESTS_KEY, JSON.stringify(selected));
+    localStorage.setItem(INTERESTS_SAVED_KEY, "true");
+    if (showMessage) {
+      status.textContent = selected.length
+        ? `✓ ${selected.length} interest${selected.length === 1 ? "" : "s"} saved on this device.`
+        : "✓ Interests cleared on this device.";
+    }
+  } catch (error) {
+    console.error("Could not save BIGULA interests locally:", error);
+    status.textContent = "Could not save interests on this device. Check your browser storage settings.";
+  }
+}
 
-document.getElementById("saveInterests")
-  .onclick = () => {
+function loadInterests(){
+  let saved = [];
+  try {
+    const parsed = JSON.parse(localStorage.getItem(INTERESTS_KEY) || "[]");
+    saved = Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    saved = [];
+  }
 
-    const selected =
-    [...document.querySelectorAll(".interest.selected")]
-      .map(button => button.dataset.interest);
+  document.querySelectorAll(".interest").forEach(button => {
+    button.classList.toggle("selected", saved.includes(button.dataset.interest));
+  });
+  updateInterestButtons();
+}
 
+document.querySelectorAll(".interest").forEach(button => {
+  button.setAttribute("aria-pressed", "false");
+  button.addEventListener("click", () => {
+    button.classList.toggle("selected");
+    updateInterestButtons();
+    // Save every tap, so choices are remembered even if Save is not pressed.
+    persistInterests(true);
+  });
+});
 
-    localStorage.setItem(
-      INTERESTS_KEY,
-      JSON.stringify(selected)
-    );
+document.getElementById("saveInterests").onclick = () => {
+  persistInterests(true);
+};
 
-
-    /*
-      Also keep a second key so the For You
-      feed can easily recognize that interests
-      have already been configured.
-    */
-
-    localStorage.setItem(
-      "bigula_interests_saved",
-      "true"
-    );
-
-
-    const status =
-    document.getElementById("interestStatus");
-
-
-    status.textContent =
-    selected.length
-      ? `✓ ${selected.length} interest${selected.length === 1 ? "" : "s"} saved.`
-      : "✓ Interests cleared.";
-
-
-    setTimeout(() => {
-      status.textContent = "";
-    },2500);
-
-  };
-
+// Keep the content-use preference on this device and confirm the local save.
+const contentPreference = document.getElementById("doNotUseContent");
+contentPreference?.addEventListener("change", () => {
+  const status = document.getElementById("contentStatus");
+  status.textContent = contentPreference.checked
+    ? "Preference saved on this device. Server-side enforcement is not yet connected."
+    : "Preference turned off and saved on this device.";
+});
 
 /* -----------------------------
    HELP SEARCH
