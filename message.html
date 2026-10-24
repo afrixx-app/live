@@ -80,6 +80,36 @@ header strong{
 }
 
 
+.block-user-btn {
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 1px solid #ff4d5a;
+  border-radius: 20px;
+  background: rgba(255, 77, 90, 0.09);
+  color: #e53945;
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.block-user-btn:hover {
+  background: rgba(255, 77, 90, 0.17);
+  transform: translateY(-1px);
+}
+
+.block-user-btn:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 360px) {
+  .block-user-btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+}
+
 /* =========================================================
    MESSAGES AREA
 ========================================================= */
@@ -247,6 +277,13 @@ form{
       </div>
 
     </div>
+
+<button
+  id="blockUserBtn"
+  class="block-user-btn"
+  type="button">
+  Block User
+</button>
 
   </div>
 
@@ -907,6 +944,40 @@ backBtn.addEventListener(
 
     }
 
+  }
+);
+
+/* =========================================================
+   BLOCK USER BUTTON
+========================================================= */
+
+document.getElementById("blockUserBtn").addEventListener(
+  "click",
+  () => {
+    if (!recipientId) {
+      alert("No recipient selected.");
+      return;
+    }
+
+    if (
+      currentUser &&
+      String(currentUser.id) === String(recipientId)
+    ) {
+      alert("You cannot block yourself.");
+      return;
+    }
+
+    const confirmed = confirm(
+      "Open the block-user page for " +
+      (recipientNameEl.textContent || "this user") +
+      "?"
+    );
+
+    if (!confirmed) return;
+
+    location.href =
+      "blocked-users.html?uid=" +
+      encodeURIComponent(recipientId);
   }
 );
 
