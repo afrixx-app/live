@@ -5074,35 +5074,26 @@ document.getElementById("shareCopy").addEventListener("click",async()=>{
 \\========================================================= */ 
 
 async function loadStatuses(token = feedRenderToken){
-  await loadFeedPreferences();
   if (token !== feedRenderToken || currentTab !== "status") return;
+
   if (!currentUser?.id) {
     feed.innerHTML = `
       <div class="center-message"><strong>Sign in to view Status</strong>
-      <span>Sign in to see recent posts from creators you follow.</span>
+      <span>Sign in to see recent status updates from creators you follow.</span>
       <button onclick="location.href='signup.html'">Sign in</button></div>`;
     return;
   }
 
-  if (!followedCreatorIds || followedCreatorIds.size === 0) {
-    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
-      <span>Follow creators to see their active status posts, videos and images here.</span></div>`;
-    return;
-  }
+  // Read the actual public.status schema. RLS controls which users' rows
+  // the signed-in user is allowed to see (owner and followed creators).
+  const result = await supabase
+    .from("status")
+    .select("id,user_id,content,media_url,media_type,created_at,expires_at")
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
 
-  // Support the plural table used by the current page and older projects named "status".
-  let tableName = "statuses";
-  let result = await supabase.from(tableName).select("*").eq("is_active", true)
-    .gt("expires_at", new Date().toISOString()).order("created_at", {ascending:false});
-  if (result.error) {
-    result = await supabase.from(tableName).select("*").eq("is_active", true).order("created_at", {ascending:false});
-  }
-  if (result.error && /statuses/i.test(result.error.message || "")) {
-    tableName = "status";
-    result = await supabase.from(tableName).select("*").eq("is_active", true)
-      .order("created_at", {ascending:false});
-  }
   if (token !== feedRenderToken || currentTab !== "status") return;
+
   if (result.error) {
     console.warn("Status feed:", result.error.message);
     feed.innerHTML = `<div class="center-message"><strong>Statuses couldn't load</strong>
@@ -5110,76 +5101,74 @@ async function loadStatuses(token = feedRenderToken){
     return;
   }
 
-  const creatorOfStatus = row => row.user_id || row.creator_id || row.owner_id || row.created_by || row.author_id || row.profile_id;
-  const followedStatuses = (result.data || []).filter(row => {
-    const creatorId = creatorOfStatus(row);
-    const notExpired = !row.expires_at || new Date(row.expires_at).getTime() > Date.now();
-    return creatorId && followedCreatorIds.has(creatorId) && row.is_active !== false && notExpired;
-  });
+  const activeStatuses = (result.data || []).filter(status =>
+    status.expires_at && new Date(status.expires_at).getTime() > Date.now()
+  );
 
-  if (!followedStatuses.length) {
-    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
-      <span>When creators you follow post a status, it will appear here.</span></div>`;
+  if (!activeStatuses.length) {
+    feed.innerHTML = `<div class="center-message"><strong>No active statuses yet</strong>
+      <span>Text updates, photos and videos from you and creators you follow will appear here.</span></div>`;
     return;
   }
 
   if (observer) observer.disconnect();
   feed.innerHTML = "";
-  const videoIds = [...new Set(followedStatuses.map(row => row.video_id).filter(Boolean))];
-  let statusVideos = [];
-  if (videoIds.length) {
-    const vr = await supabase.from("videos").select("*").in("id", videoIds);
-    if (token !== feedRenderToken || currentTab !== "status") return;
-    statusVideos = vr.data || [];
-  }
+  visibleVideos = [];
 
-  // Render status-linked videos using the existing BIGULA video cards.
-  const videoById = new Map(statusVideos.map(v => [String(v.id), v]));
-  const renderedVideoIds = new Set();
-  for (const status of followedStatuses) {
+  for (const status of activeStatuses) {
     if (token !== feedRenderToken || currentTab !== "status") return;
-    const video = status.video_id ? videoById.get(String(status.video_id)) : null;
-    if (video && !renderedVideoIds.has(String(video.id))) {
-      renderedVideoIds.add(String(video.id));
-      await addVideoCard(video, token);
-      if (token !== feedRenderToken || currentTab !== "status") return;
-      continue;
-    }
-    if (video) continue;
 
-    const mediaUrl = status.image_url || status.media_url || status.photo_url || status.image || status.url || status.file_url || "";
-    const mediaType = String(status.media_type || status.type || "").toLowerCase();
-    if (!mediaUrl) continue;
-    const creatorId = creatorOfStatus(status);
+    const creatorId = status.user_id;
     const profile = await getUserProfile(creatorId);
     if (token !== feedRenderToken || currentTab !== "status") return;
-    const creatorName = profile?.display_name || profile?.full_name || profile?.name || profile?.username || "BIGULA Creator";
-    const avatar = profile?.avatar_url || profile?.photo_url || profile?.profile_photo || profile?.avatar || "";
+
+    const creatorName = profile?.display_name || profile?.full_name ||
+      profile?.name || profile?.username ||
+      (creatorId === currentUser.id ? "You" : "BIGULA Creator");
+    const avatar = profile?.avatar_url || profile?.photo_url ||
+      profile?.profile_photo || profile?.avatar || "";
+    const mediaUrl = status.media_url || "";
+    const mediaType = String(status.media_type || "text").toLowerCase();
+    const caption = status.content || "";
     const card = document.createElement("article");
     card.className = "status-card";
-    const caption = status.text || status.caption || status.description || status.title || "";
-    const safeUrl = esc(mediaUrl);
-    const isVideo = mediaType.includes("video") || /.(mp4|webm|mov)(\\?|$)/i.test(mediaUrl);
-    card.innerHTML = `${isVideo
-      ? `<video playsinline controls preload="metadata" src="${safeUrl}"></video>`
-      : `<img src="${safeUrl}" alt="Creator status">`}
-      <div class="video-shade"></div>
-      <div class="status-overlay">
-        <div class="status-caption">${esc(caption)}</div>
-        <div class="status-byline">${avatar ? `<img src="${esc(avatar)}" style="width:25px;height:25px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">` : ""}
-          ${esc(creatorName)} · ${esc(status.created_at ? new Date(status.created_at).toLocaleString() : "Status")}</div>
-      </div>`;
+
+    if (mediaUrl && mediaType === "video") {
+      card.innerHTML = `
+        <video playsinline controls preload="metadata" src="${esc(mediaUrl)}"></video>
+        <div class="video-shade"></div>
+        <div class="status-overlay">
+          ${caption ? `<div class="status-caption">${esc(caption)}</div>` : ""}
+          <div class="status-byline">
+            ${avatar ? `<img src="${esc(avatar)}" alt="" style="width:25px;height:25px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">` : ""}
+            ${esc(creatorName)} · ${esc(status.created_at ? new Date(status.created_at).toLocaleString() : "Status")}
+          </div>
+        </div>`;
+    } else if (mediaUrl && mediaType === "image") {
+      card.innerHTML = `
+        <img src="${esc(mediaUrl)}" alt="Status update">
+        <div class="video-shade"></div>
+        <div class="status-overlay">
+          ${caption ? `<div class="status-caption">${esc(caption)}</div>` : ""}
+          <div class="status-byline">
+            ${avatar ? `<img src="${esc(avatar)}" alt="" style="width:25px;height:25px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">` : ""}
+            ${esc(creatorName)} · ${esc(status.created_at ? new Date(status.created_at).toLocaleString() : "Status")}
+          </div>
+        </div>`;
+    } else {
+      // Text-only status: use inline styles so no other page styling is changed.
+      card.style.cssText = "min-height:100dvh;height:100%;padding:100px 24px 110px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;background:radial-gradient(ellipse at top right,#34302a 0%,#141414 45%,#050505 100%);color:#fff;overflow-wrap:anywhere;";
+      card.innerHTML = `
+        <div style="font-size:12px;color:#d4af37;font-weight:800;letter-spacing:1.5px;margin-bottom:18px">BIGULA STATUS</div>
+        <div style="font-size:clamp(22px,5vw,34px);line-height:1.4;font-weight:750;white-space:pre-wrap;margin-bottom:26px">${esc(caption || "Shared a status update")}</div>
+        <div style="font-size:12px;color:#ccc;display:flex;align-items:center;gap:7px">
+          ${avatar ? `<img src="${esc(avatar)}" alt="" style="width:30px;height:30px;border-radius:50%;object-fit:cover">` : ""}
+          <span>${esc(creatorName)} · ${esc(status.created_at ? new Date(status.created_at).toLocaleString() : "Status")}</span>
+        </div>`;
+    }
+
     feed.appendChild(card);
   }
-
-  if (!feed.children.length) {
-    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
-      <span>No active status images or videos were found from creators you follow.</span></div>`;
-    return;
-  }
-  if (token !== feedRenderToken || currentTab !== "status") return;
-  visibleVideos = statusVideos;
-  setupObserver();
 }
 
 /* ========================================================= 
