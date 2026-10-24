@@ -1,0 +1,1043 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<title>BIGULA Creator Live Studio</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg: #101012;
+  --panel: #19191d;
+  --panel2: #222227;
+  --line: #303036;
+  --text: #f7f7f8;
+  --muted: #a1a1aa;
+  --red: #ff3b30;
+  --green: #22c55e;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+}
+body { min-height: 100vh; }
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+a { color: inherit; text-decoration: none; }
+.hidden { display: none !important; }
+
+.topbar {
+  height: 66px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  background: #141416;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand {
+  font-weight: 950;
+  font-size: 25px;
+  letter-spacing: -1.3px;
+}
+.brand span { color: var(--red); }
+.top-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 20px;
+  padding: 7px 11px;
+  background: #29292e;
+  color: #ddd;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: #777;
+  border-radius: 50%;
+}
+.status-pill.live {
+  background: #451b1b;
+  color: #ffb4af;
+}
+.status-pill.live .status-dot {
+  background: var(--red);
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 50% { opacity: .3; } }
+.top-right { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #35353c;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.small-btn, .primary-btn, .danger-btn {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 750;
+  color: white;
+  background: var(--panel2);
+}
+.primary-btn {
+  background: var(--red);
+  border-color: var(--red);
+}
+.danger-btn {
+  background: #3b1919;
+  border-color: #6d2828;
+  color: #ffb4af;
+}
+
+.layout {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 22px;
+}
+.main-column { min-width: 0; }
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.page-heading h1 {
+  margin: 0 0 7px;
+  font-size: 25px;
+  letter-spacing: -.7px;
+}
+.page-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.connection-label {
+  color: #c4c4cc;
+  font-size: 12px;
+  text-align: right;
+  line-height: 1.5;
+}
+.connection-label strong { color: var(--green); }
+
+.preview-shell {
+  background: #050505;
+  border: 1px solid #2c2c32;
+  border-radius: 17px;
+  overflow: hidden;
+  position: relative;
+}
+.preview-stage {
+  min-height: 340px;
+  height: min(58vw, 570px);
+  max-height: 570px;
+  position: relative;
+  background:
+    radial-gradient(ellipse at center, #27272d 0%, #111114 62%, #080809 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+#cameraPreview {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+  background: #050505;
+}
+.preview-placeholder {
+  z-index: 1;
+  text-align: center;
+  padding: 25px;
+  max-width: 340px;
+}
+.camera-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 18px;
+  font-size: 31px;
+  background: #27272d;
+  border: 1px solid #3a3a42;
+}
+.preview-placeholder h2 { font-size: 19px; margin: 0 0 9px; }
+.preview-placeholder p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+.preview-top-left, .preview-top-right {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.preview-top-left { left: 15px; }
+.preview-top-right { right: 15px; }
+.overlay-tag {
+  background: #080809b8;
+  border: 1px solid #ffffff24;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+.preview-bottom {
+  position: absolute;
+  z-index: 2;
+  bottom: 15px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.preview-bottom small { color: #ddd; font-size: 11px; }
+.local-badge {
+  color: #ffd1ce;
+  background: #351b1bdf;
+  border: 1px solid #7d3131;
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .4px;
+}
+.control-bar {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #18181b;
+}
+.device-controls { display: flex; gap: 9px; flex-wrap: wrap; }
+.device-btn {
+  background: #29292f;
+  color: #f3f3f4;
+  border: 1px solid #414149;
+  border-radius: 10px;
+  min-width: 48px;
+  min-height: 45px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 750;
+}
+.device-btn.active { background: #30303a; }
+.device-btn.off {
+  background: #4a2020;
+  border-color: #763333;
+}
+.device-btn span { display: block; font-size: 17px; margin-bottom: 3px; }
+.broadcast-controls { display: flex; gap: 9px; }
+#startBroadcastBtn { min-width: 130px; }
+#endBroadcastBtn { min-width: 115px; }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.stat-card, .card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 17px;
+  min-width: 0;
+}
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+.stat-value { font-size: 19px; font-weight: 850; }
+.stat-sub { color: var(--muted); font-size: 11px; margin-top: 6px; }
+.good { color: var(--green); }
+.section-title {
+  font-size: 15px;
+  margin: 0 0 15px;
+  font-weight: 850;
+}
+.details-card { margin-top: 16px; }
+.field { margin-bottom: 15px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block;
+  font-size: 12px;
+  color: #d4d4d8;
+  font-weight: 750;
+  margin-bottom: 8px;
+}
+.field input, .field textarea, .field select, .chat-input {
+  width: 100%;
+  color: white;
+  background: #111114;
+  border: 1px solid #3a3a42;
+  border-radius: 9px;
+  padding: 12px;
+  outline: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: #f45b52;
+}
+.field textarea { resize: vertical; min-height: 75px; }
+.field select option { background: #111114; }
+.field-hint { font-size: 11px; color: var(--muted); margin-top: 7px; }
+.details-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #ddd;
+  font-size: 12px;
+  margin-top: 13px;
+}
+.check-row input { accent-color: var(--red); }
+
+.sidebar { min-width: 0; }
+.chat-card {
+  height: min(630px, calc(100vh - 115px));
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+.chat-header {
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.chat-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.chat-header h2 { font-size: 16px; margin: 0; }
+.viewer-chip {
+  border-radius: 7px;
+  background: #29292e;
+  padding: 7px 9px;
+  color: #ddd;
+  font-size: 11px;
+}
+.chat-subtitle { color: var(--muted); font-size: 11px; margin-top: 9px; }
+.chat-messages {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  overflow-y: auto;
+}
+.chat-empty {
+  margin: auto 0;
+  padding: 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.chat-empty .chat-empty-icon { font-size: 27px; margin-bottom: 10px; }
+.chat-message { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.chat-message strong { color: #fca5a5; margin-right: 5px; }
+.chat-system {
+  color: var(--muted);
+  background: #222227;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.chat-compose {
+  padding: 13px;
+  border-top: 1px solid var(--line);
+}
+.chat-compose-row { display: flex; gap: 8px; }
+.chat-input { min-width: 0; font-size: 12px; }
+.send-btn {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 9px;
+  background: #34343b;
+  color: white;
+  padding: 0 14px;
+  font-weight: 800;
+}
+.chat-warning { color: var(--muted); font-size: 10px; line-height: 1.5; margin-top: 9px; }
+.sidebar-details { margin-top: 15px; }
+.sidebar-details p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 0;
+}
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: calc(100vw - 30px);
+  width: max-content;
+  background: #29292f;
+  border: 1px solid #4a4a53;
+  padding: 13px 17px;
+  border-radius: 11px;
+  box-shadow: 0 12px 35px #0008;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.toast.error { border-color: #8a3737; }
+.toast.success { border-color: #267a49; }
+
+@media (max-width: 1050px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 300px; padding: 17px; gap: 15px; }
+  .topbar { padding: 0 17px; }
+  .preview-stage { height: 48vw; min-height: 320px; }
+}
+@media (max-width: 760px) {
+  .topbar { height: 58px; padding: 0 13px; }
+  .brand { font-size: 22px; }
+  .top-center { gap: 7px; font-size: 11px; }
+  .top-right .avatar { display: none; }
+  .layout { display: flex; flex-direction: column; padding: 15px 12px 30px; }
+  .page-heading { margin-bottom: 13px; }
+  .page-heading h1 { font-size: 22px; }
+  .connection-label { display: none; }
+  .preview-stage { height: 64vw; min-height: 270px; max-height: 450px; }
+  .control-bar { padding: 11px; }
+  .device-controls { gap: 6px; }
+  .device-btn { min-width: 43px; padding: 8px; }
+  .broadcast-controls { width: 100%; }
+  .broadcast-controls button { flex: 1; }
+  .stats-grid { gap: 7px; }
+  .stat-card { padding: 12px 10px; }
+  .stat-value { font-size: 16px; }
+  .stat-label { font-size: 10px; }
+  .stat-sub { font-size: 10px; }
+  .details-row { grid-template-columns: 1fr; gap: 0; }
+  .chat-card { height: 460px; min-height: 400px; }
+  .sidebar-details { margin-bottom: 10px; }
+}
+@media (max-width: 390px) {
+  .top-center { display: none; }
+  .preview-stage { min-height: 245px; }
+  .device-btn { font-size: 10px; }
+  .local-badge { font-size: 9px; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <a href="home.html" class="brand">BIGU<span>LA</span></a>
+
+  <div class="top-center">
+    <div class="status-pill" id="statusPill">
+      <span class="status-dot"></span>
+      <span id="statusText">STUDIO READY</span>
+    </div>
+    <span id="durationText">00:00:00</span>
+  </div>
+
+  <div class="top-right">
+    <button class="small-btn" id="backBtn" type="button">← Exit Studio</button>
+    <div class="avatar" id="profileAvatar">B</div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="main-column">
+
+    <div class="page-heading">
+      <div>
+        <h1>Creator Live Studio</h1>
+        <p>Prepare your camera, set up your broadcast, and connect with your audience.</p>
+      </div>
+      <div class="connection-label">
+        Studio status<br>
+        <strong id="connectionText">Waiting for camera</strong>
+      </div>
+    </div>
+
+    <section class="preview-shell">
+      <div class="preview-stage" id="previewStage">
+
+        <video id="cameraPreview" autoplay muted playsinline class="hidden"></video>
+
+        <div class="preview-placeholder" id="previewPlaceholder">
+          <div class="camera-icon">▣</div>
+          <h2>Your camera preview</h2>
+          <p>Allow camera and microphone access to see and hear your local preview before broadcasting.</p>
+          <button class="primary-btn" id="enableCameraBtn" type="button">Enable Camera</button>
+        </div>
+
+        <div class="preview-top-left">
+          <div class="overlay-tag">CREATOR PREVIEW</div>
+        </div>
+
+        <div class="preview-top-right">
+          <div class="overlay-tag" id="previewTimer">00:00:00</div>
+        </div>
+
+        <div class="preview-bottom">
+          <small id="previewMessage">Your preview is private.</small>
+          <div class="local-badge" id="broadcastBadge">NOT BROADCASTING</div>
+        </div>
+      </div>
+
+      <div class="control-bar">
+        <div class="device-controls">
+          <button class="device-btn" id="micBtn" type="button" disabled>
+            <span>🎙</span>Mic On
+          </button>
+          <button class="device-btn" id="cameraBtn" type="button" disabled>
+            <span>▣</span>Camera On
+          </button>
+          <button class="device-btn" id="flipBtn" type="button" disabled>
+            <span>↔</span>Flip
+          </button>
+          <button class="device-btn" id="settingsBtn" type="button">
+            <span>⚙</span>Settings
+          </button>
+        </div>
+
+        <div class="broadcast-controls">
+          <button class="primary-btn" id="startBroadcastBtn" type="button">Start Preview</button>
+          <button class="danger-btn hidden" id="endBroadcastBtn" type="button">End Session</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Broadcast status</div>
+        <div class="stat-value" id="statStatus">Offline</div>
+        <div class="stat-sub" id="statStatusSub">Not connected to a streaming service</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Live viewers</div>
+        <div class="stat-value" id="statViewers">—</div>
+        <div class="stat-sub">Available after streaming is connected</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Duration</div>
+        <div class="stat-value" id="statDuration">00:00:00</div>
+        <div class="stat-sub">Local preview session</div>
+      </div>
+    </section>
+
+    <section class="card details-card">
+      <h2 class="section-title">Broadcast details</h2>
+
+      <form id="broadcastForm">
+        <div class="field">
+          <label for="streamTitle">Stream title</label>
+          <input id="streamTitle" name="streamTitle" maxlength="100"
+                 placeholder="What are you going live about?"
+                 value="" required>
+          <div class="field-hint">Use a clear title so your audience knows what to expect.</div>
+        </div>
+
+        <div class="details-row">
+          <div class="field">
+            <label for="streamCategory">Category</label>
+            <select id="streamCategory" name="streamCategory">
+              <option value="Lifestyle">Lifestyle</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Music">Music</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Education">Education</option>
+              <option value="News">News & Discussion</option>
+              <option value="Sports">Sports</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="streamAudience">Audience</label>
+            <select id="streamAudience" name="streamAudience">
+              <option value="public">Public</option>
+              <option value="followers">Followers only</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="streamDescription">Description (optional)</label>
+          <textarea id="streamDescription" name="streamDescription"
+                    maxlength="500" placeholder="Tell viewers what this live session is about."></textarea>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="allowChat" checked>
+          Allow viewers to chat
+        </label>
+      </form>
+    </section>
+
+  </section>
+
+  <aside class="sidebar">
+    <section class="card chat-card">
+      <header class="chat-header">
+        <div class="chat-header-top">
+          <h2>Live chat</h2>
+          <div class="viewer-chip" id="chatViewerCount">Viewers: —</div>
+        </div>
+        <div class="chat-subtitle">Audience messages will appear here when broadcasting is connected.</div>
+      </header>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-empty" id="chatEmpty">
+          <div class="chat-empty-icon">▤</div>
+          <strong>No live messages yet</strong>
+          <p>Once your stream and chat service are connected, messages from your viewers will appear here.</p>
+        </div>
+      </div>
+
+      <form class="chat-compose" id="chatForm">
+        <div class="chat-compose-row">
+          <input class="chat-input" id="chatInput" maxlength="500"
+                 placeholder="Chat will be available when live…" disabled>
+          <button class="send-btn" id="sendChatBtn" type="submit" disabled>Send</button>
+        </div>
+        <div class="chat-warning">Chat is not connected yet. Messages cannot be sent to viewers in this setup.</div>
+      </form>
+    </section>
+
+    <section class="card sidebar-details">
+      <h2 class="section-title">Stream health</h2>
+      <p id="healthText">Waiting for camera access. Streaming health will be measured after a provider is connected.</p>
+    </section>
+
+    <section class="card sidebar-details">
+      <h2 class="section-title">Before you go live</h2>
+      <p>Check your lighting, microphone, connection, and stream details. Only start a public broadcast when the streaming service is connected and ready.</p>
+    </section>
+  </aside>
+</main>
+
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /*
+   * BIGULA Creator Live Studio
+   * This version implements local camera/microphone preview only.
+   * It deliberately does not claim to publish a live broadcast.
+   */
+
+  const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+
+  let supabaseClient = null;
+  let currentUser = null;
+  let mediaStream = null;
+  let cameraEnabled = true;
+  let micEnabled = true;
+  let usingFrontCamera = true;
+  let sessionStartedAt = null;
+  let durationInterval = null;
+  let toastTimeout = null;
+  let sessionActive = false;
+
+  const $ = id => document.getElementById(id);
+
+  const video = $("cameraPreview");
+  const placeholder = $("previewPlaceholder");
+  const startBtn = $("startBroadcastBtn");
+  const endBtn = $("endBroadcastBtn");
+  const micBtn = $("micBtn");
+  const cameraBtn = $("cameraBtn");
+  const flipBtn = $("flipBtn");
+
+  function toast(message, type = "") {
+    const element = $("toast");
+    element.textContent = message;
+    element.className = "toast" + (type ? " " + type : "");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => element.classList.add("hidden"), 4200);
+  }
+
+  function formatDuration(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return [hours, minutes, seconds]
+      .map(value => String(value).padStart(2, "0"))
+      .join(":");
+  }
+
+  function updateDuration() {
+    if (!sessionStartedAt) return;
+
+    const seconds = Math.floor((Date.now() - sessionStartedAt) / 1000);
+    const duration = formatDuration(seconds);
+
+    $("durationText").textContent = duration;
+    $("previewTimer").textContent = duration;
+    $("statDuration").textContent = duration;
+  }
+
+  function updateStudioStatus(status, message) {
+    $("statusText").textContent = status;
+    $("connectionText").textContent = message;
+  }
+
+  function updateDeviceButtons() {
+    micBtn.disabled = !mediaStream;
+    cameraBtn.disabled = !mediaStream;
+    flipBtn.disabled = !mediaStream;
+
+    micBtn.classList.toggle("off", !micEnabled);
+    micBtn.classList.toggle("active", micEnabled);
+    micBtn.innerHTML = `<span>${micEnabled ? "🎙" : "🔇"}</span>${micEnabled ? "Mic On" : "Mic Off"}`;
+
+    cameraBtn.classList.toggle("off", !cameraEnabled);
+    cameraBtn.classList.toggle("active", cameraEnabled);
+    cameraBtn.innerHTML = `<span>${cameraEnabled ? "▣" : "◌"}</span>${cameraEnabled ? "Camera On" : "Camera Off"}`;
+
+    flipBtn.classList.add("active");
+  }
+
+  async function requestCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      toast("Camera access requires HTTPS or localhost and a supported browser.", "error");
+      $("healthText").textContent =
+        "This browser cannot access the camera. Open BIGULA over HTTPS in a supported browser.";
+      return false;
+    }
+
+    try {
+      stopMedia();
+
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: {
+          facingMode: usingFrontCamera ? "user" : "environment",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          frameRate: { ideal: 30, max: 30 }
+        }
+      });
+
+      video.srcObject = mediaStream;
+      video.classList.remove("hidden");
+      placeholder.classList.add("hidden");
+
+      await video.play().catch(() => {});
+
+      const audioTracks = mediaStream.getAudioTracks();
+      const videoTracks = mediaStream.getVideoTracks();
+
+      micEnabled = audioTracks.length ? audioTracks[0].enabled : false;
+      cameraEnabled = videoTracks.length ? videoTracks[0].enabled : false;
+
+      updateDeviceButtons();
+      updateStudioStatus("PREVIEW READY", "Camera connected");
+      $("healthText").textContent =
+        "Your local camera preview is active. A streaming provider is not connected, so no viewers can see this preview.";
+      $("previewMessage").textContent = "Private local preview — not visible to viewers.";
+
+      toast("Camera and microphone preview is ready.", "success");
+      return true;
+    } catch (error) {
+      console.error("BIGULA camera access error:", error);
+
+      let message = "Could not access your camera or microphone.";
+
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        message = "Camera or microphone permission was denied. Allow access in your browser settings.";
+      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+        message = "No compatible camera or microphone was found.";
+      } else if (error.name === "NotReadableError") {
+        message = "Your camera may already be in use by another application.";
+      }
+
+      updateStudioStatus("CAMERA UNAVAILABLE", "Check device permissions");
+      $("healthText").textContent = message;
+      toast(message, "error");
+      return false;
+    }
+  }
+
+  function stopMedia() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => {
+        try { track.stop(); } catch (_) {}
+      });
+      mediaStream = null;
+    }
+
+    video.pause();
+    video.srcObject = null;
+    video.classList.add("hidden");
+    placeholder.classList.remove("hidden");
+    updateDeviceButtons();
+  }
+
+  function setTrackEnabled(kind, enabled) {
+    if (!mediaStream) return;
+
+    const tracks = kind === "audio"
+      ? mediaStream.getAudioTracks()
+      : mediaStream.getVideoTracks();
+
+    tracks.forEach(track => { track.enabled = enabled; });
+  }
+
+  function startLocalPreviewSession() {
+    if (!mediaStream) {
+      toast("Enable your camera before starting a preview.", "error");
+      return;
+    }
+
+    const title = $("streamTitle").value.trim();
+
+    if (!title) {
+      $("streamTitle").focus();
+      toast("Enter a title for your broadcast first.", "error");
+      return;
+    }
+
+    sessionActive = true;
+    sessionStartedAt = Date.now();
+
+    durationInterval = setInterval(updateDuration, 1000);
+    updateDuration();
+
+    $("statusPill").classList.remove("live");
+    $("statusText").textContent = "PREVIEW SESSION";
+    $("statStatus").textContent = "Preview";
+    $("statStatusSub").textContent = "Local only — not broadcasting";
+    $("broadcastBadge").textContent = "PREVIEW ONLY";
+    $("previewMessage").textContent = "This preview is private. Viewers cannot see it yet.";
+    $("healthText").textContent =
+      "Camera preview is running locally. No video is being sent to a streaming server.";
+    startBtn.classList.add("hidden");
+    endBtn.classList.remove("hidden");
+
+    toast("Preview session started. This is not a public live broadcast.", "success");
+  }
+
+  function endLocalPreviewSession() {
+    sessionActive = false;
+    sessionStartedAt = null;
+
+    if (durationInterval) {
+      clearInterval(durationInterval);
+      durationInterval = null;
+    }
+
+    $("durationText").textContent = "00:00:00";
+    $("previewTimer").textContent = "00:00:00";
+    $("statDuration").textContent = "00:00:00";
+    $("statusText").textContent = mediaStream ? "PREVIEW READY" : "STUDIO READY";
+    $("statStatus").textContent = "Offline";
+    $("statStatusSub").textContent = "Not connected to a streaming service";
+    $("broadcastBadge").textContent = "NOT BROADCASTING";
+    $("previewMessage").textContent = mediaStream
+      ? "Private local preview — not visible to viewers."
+      : "Your preview is private.";
+
+    startBtn.classList.remove("hidden");
+    endBtn.classList.add("hidden");
+
+    toast("Preview session ended.");
+  }
+
+  async function loadUser() {
+    try {
+      if (!window.supabase) return;
+
+      supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true,
+            flowType: "pkce"
+          }
+        }
+      );
+
+      const { data, error } = await supabaseClient.auth.getSession();
+      if (error) throw error;
+
+      currentUser = data.session ? data.session.user : null;
+
+      if (currentUser) {
+        const metadata = currentUser.user_metadata || {};
+        const displayName =
+          metadata.full_name ||
+          metadata.name ||
+          metadata.username ||
+          currentUser.email ||
+          "BIGULA Creator";
+
+        $("profileAvatar").textContent =
+          displayName.trim().charAt(0).toUpperCase() || "B";
+
+        const avatarURL = metadata.avatar_url || metadata.picture;
+
+        if (avatarURL) {
+          const img = document.createElement("img");
+          img.src = avatarURL;
+          img.alt = "Creator profile";
+          img.referrerPolicy = "no-referrer";
+          img.onerror = () => img.remove();
+
+          $("profileAvatar").textContent = "";
+          $("profileAvatar").appendChild(img);
+        }
+      }
+    } catch (error) {
+      console.warn("Could not load BIGULA session:", error);
+    }
+  }
+
+  $("enableCameraBtn").addEventListener("click", requestCamera);
+
+  startBtn.addEventListener("click", async () => {
+    if (!mediaStream) {
+      const ready = await requestCamera();
+      if (!ready) return;
+    }
+    startLocalPreviewSession();
+  });
+
+  endBtn.addEventListener("click", endLocalPreviewSession);
+
+  micBtn.addEventListener("click", () => {
+    if (!mediaStream) return;
+
+    micEnabled = !micEnabled;
+    setTrackEnabled("audio", micEnabled);
+    updateDeviceButtons();
+
+    toast(micEnabled ? "Microphone enabled." : "Microphone muted.");
+  });
+
+  cameraBtn.addEventListener("click", () => {
+    if (!mediaStream) return;
+
+    cameraEnabled = !cameraEnabled;
+    setTrackEnabled("video", cameraEnabled);
+    updateDeviceButtons();
+
+    if (!cameraEnabled) {
+      $("previewMessage").textContent = "Your camera is off.";
+    } else {
+      $("previewMessage").textContent = "Private local preview — not visible to viewers.";
+    }
+  });
+
+  flipBtn.addEventListener("click", async () => {
+    usingFrontCamera = !usingFrontCamera;
+    const wasInSession = sessionActive;
+
+    if (wasInSession) endLocalPreviewSession();
+
+    const ready = await requestCamera();
+
+    if (ready && wasInSession) {
+      startLocalPreviewSession();
+    }
+  });
+
+  $("settingsBtn").addEventListener("click", () => {
+    $("broadcastForm").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("streamTitle").focus({ preventScroll: true });
+  });
+
+  $("broadcastForm").addEventListener("submit", event => {
+    event.preventDefault();
+  });
+
+  $("chatForm").addEventListener("submit", event => {
+    event.preventDefault();
+    toast("Live chat is not connected yet. It will be enabled with the streaming integration.");
+  });
+
+  $("backBtn").addEventListener("click", () => {
+    if (sessionActive) {
+      const confirmExit = confirm("Your local preview session is active. End it and leave the studio?");
+      if (!confirmExit) return;
+      endLocalPreviewSession();
+    }
+
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "account.html";
+    }
+  });
+
+  window.addEventListener("beforeunload", () => {
+    if (durationInterval) clearInterval(durationInterval);
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => track.stop());
+    }
+  });
+
+  loadUser();
+})();
+</script>
+</body>
+</html>
