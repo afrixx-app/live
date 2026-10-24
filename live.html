@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b12">
+  <title>BIGULA Live</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #090b12;
+      --panel: #131722;
+      --text: #f7f8fc;
+      --muted: #a5adbd;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --border: rgba(255,255,255,.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(ellipse at 50% 20%, rgba(139,92,246,.14), transparent 42%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: white;
+      text-decoration: none;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 5px 25px rgba(139,92,246,.25);
+    }
+
+    .brand-icon svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f5b942;
+    }
+
+    main {
+      width: 100%;
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 35px 20px 70px;
+    }
+
+    .notice-card {
+      width: min(100%, 540px);
+      padding: 38px 30px;
+      text-align: center;
+      background: rgba(19,23,34,.92);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .illustration {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 104px;
+      height: 104px;
+      margin: 0 auto 26px;
+      border: 1px solid rgba(167,139,250,.22);
+      border-radius: 32px;
+      background: linear-gradient(
+        145deg,
+        rgba(139,92,246,.20),
+        rgba(236,72,153,.10)
+      );
+      color: #d8c8ff;
+    }
+
+    .illustration svg {
+      width: 48px;
+      height: 48px;
+    }
+
+    .coming-soon {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 7px 12px;
+      border: 1px solid rgba(167,139,250,.24);
+      border-radius: 999px;
+      background: rgba(139,92,246,.10);
+      color: #d8c8ff;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 1.3px;
+    }
+
+    h1 {
+      margin: 0 0 15px;
+      font-size: clamp(26px, 5vw, 35px);
+      line-height: 1.2;
+      letter-spacing: -.8px;
+    }
+
+    .description {
+      max-width: 400px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      margin: 28px 0;
+      background: var(--border);
+    }
+
+    .info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: rgba(255,255,255,.025);
+      text-align: left;
+    }
+
+    .info-icon {
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: rgba(139,92,246,.14);
+      color: #c4b5fd;
+    }
+
+    .info-icon svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .info strong {
+      display: block;
+      margin: 1px 0 5px;
+      font-size: 13px;
+    }
+
+    .info p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .home-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      min-height: 52px;
+      margin-top: 24px;
+      padding: 14px 20px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(110deg, var(--purple), var(--pink));
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 850;
+      transition: filter .2s, transform .2s;
+    }
+
+    .home-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .home-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    footer {
+      padding: 20px;
+      color: #727c90;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 16px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .status {
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+
+      main {
+        padding: 25px 15px 45px;
+      }
+
+      .notice-card {
+        padding: 30px 20px;
+        border-radius: 22px;
+      }
+
+      .illustration {
+        width: 88px;
+        height: 88px;
+        border-radius: 27px;
+      }
+
+      .illustration svg {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a class="brand" href="https://bigula.stream/" aria-label="BIGULA home">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="5" width="16" height="14" rx="4"
+            stroke="white" stroke-width="1.8"/>
+          <path d="m10 8.5 5 3.5-5 3.5z" fill="white"/>
+        </svg>
+      </span>
+      BIGULA
+    </a>
+
+    <div class="status">
+      <span class="status-dot"></span>
+      LIVE STATUS
+    </div>
+  </header>
+
+  <main>
+    <section class="notice-card" aria-labelledby="page-title">
+      <div class="illustration" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="6" width="13" height="12" rx="3"
+            stroke="currentColor" stroke-width="1.6"/>
+          <path d="m16 10 5-3v10l-5-3z"
+            stroke="currentColor" stroke-width="1.6"
+            stroke-linejoin="round"/>
+          <path d="M7 3.5h5" stroke="currentColor"
+            stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="coming-soon">COMING SOON</div>
+
+      <h1 id="page-title">BIGULA Live</h1>
+
+      <p class="description">
+        Live is currently unavailable. We're working on bringing live
+        streaming to BIGULA. Check back later!
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="info">
+        <div class="info-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9"
+              stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 11v5m0-8h.01"
+              stroke="currentColor" stroke-width="2"
+              stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <div>
+          <strong>We're preparing something exciting</strong>
+          <p>
+            You can continue enjoying BIGULA while we work on making
+            live streaming available.
+          </p>
+        </div>
+      </div>
+
+      <a class="home-button" href="https://bigula.stream/home.html">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to BIGULA
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    BIGULA · Discover videos. Share moments. Connect with creators.
+  </footer>
+</body>
+</html>
