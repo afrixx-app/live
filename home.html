@@ -1505,9 +1505,8 @@ button{
 
   <img
     class="logo"
-    src="https://bit.ly/4rgV7E7"
+    src="https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/bigula-assets/bigula-logo.png"
     alt="BIGULA"
-    onerror="this.onerror=null;this.src='https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/bigula-assets/bigula-logo.png';"
   >
 
   <div class="search-wrap">
@@ -1531,7 +1530,7 @@ button{
 <nav class="tabs">
 
   <button class="tab active" data-tab="foryou">
-    For You
+    My Picks
   </button>
 
   <button class="tab" data-tab="latest">
@@ -1898,7 +1897,12 @@ async function setupBigulaPushNotifications() {
   }
 } 
 
-let currentTab = "foryou"; 
+let currentTab = "foryou";
+
+// Personal ranking context: interests are saved by BIGULA Settings on this device.
+let followedCreatorIds = new Set();
+let followedIdsLoadedFor = null;
+let savedInterestCategories = [];
 
 let videos = []; 
 
@@ -2349,121 +2353,109 @@ async function loadVideos(){
    PREPARE FEED 
 ========================================================= */ 
 
-async function prepareFeed(){ 
+async function loadFeedPreferences(){
+  try {
+    const parsed = JSON.parse(localStorage.getItem("bigula_interests") || "[]");
+    savedInterestCategories = Array.isArray(parsed)
+      ? parsed.map(value => String(value).trim().toLowerCase()).filter(Boolean)
+      : [];
+  } catch (_) {
+    savedInterestCategories = [];
+  }
 
-  let list = 
-  [...videos]; 
+  if (!currentUser?.id) {
+    followedCreatorIds = new Set();
+    followedIdsLoadedFor = null;
+    return;
+  }
 
-  const q = 
-  search.value 
-    .trim() 
-    .toLowerCase(); 
+  if (followedIdsLoadedFor === currentUser.id) return;
 
-  if(q){ 
+  try {
+    const { data, error } = await supabase
+      .from("followers")
+      .select("following_id")
+      .eq("follower_id", currentUser.id);
 
-    list = 
-    list.filter( 
-      video => { 
+    if (error) throw error;
 
-        const text = 
-        [ 
-          video.title, 
-          video.description, 
-          video.category 
-        ] 
-        .filter(Boolean) 
-        .join(" ") 
-        .toLowerCase(); 
+    followedCreatorIds = new Set(
+      (data || []).map(row => row.following_id).filter(Boolean)
+    );
+    followedIdsLoadedFor = currentUser.id;
+  } catch (error) {
+    console.warn("Could not load followed creators for feed ranking:", error?.message || error);
+    followedCreatorIds = new Set();
+    // Don't mark as loaded on error, so a later tab change can retry.
+  }
+}
 
-        return text.includes(q); 
+function getVideoRankingScore(video){
+  const creatorId = getVideoUserId(video);
+  const category = String(video?.category || "").trim().toLowerCase();
+  const matchesInterest = category && savedInterestCategories.includes(category);
+  const followsCreator = creatorId && followedCreatorIds.has(creatorId);
 
-      } 
-    ); 
+  // First: followed creators in chosen interests; next other videos in chosen
+  // interests; then followed creators outside those interests; finally everything else.
+  if (matchesInterest && followsCreator) return 0;
+  if (matchesInterest) return 1;
+  if (followsCreator) return 2;
+  return 3;
+}
 
-  } 
+function sortFeedVideos(list){
+  const tabComparator = (a, b) => {
+    if (currentTab === "viral") {
+      return Number(b.views_count || b.views || 0) -
+             Number(a.views_count || a.views || 0);
+    }
+    return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+  };
 
-  if(currentTab === "latest"){ 
+  return list.sort((a, b) => {
+    const priorityDifference = getVideoRankingScore(a) - getVideoRankingScore(b);
+    return priorityDifference || tabComparator(a, b);
+  });
+}
 
-    list.sort( 
-      (a,b) => 
-        new Date( 
-          b.created_at || 0 
-        ) - 
-        new Date( 
-          a.created_at || 0 
-        ) 
-    ); 
+/* =========================================================
+   PREPARE FEED
+========================================================= */
 
-  } 
+async function prepareFeed(){
+  await loadFeedPreferences();
 
-  if(currentTab === "viral"){ 
+  let list = [...videos];
 
-    list.sort( 
-      (a,b) => 
-        Number( 
-          b.views_count || 
-          b.views || 
-          0 
-        ) - 
-        Number( 
-          a.views_count || 
-          a.views || 
-          0 
-        ) 
-    ); 
+  const q = search.value.trim().toLowerCase();
+  if (q) {
+    list = list.filter(video => {
+      const text = [video.title, video.description, video.category]
+        .filter(Boolean).join(" ").toLowerCase();
+      return text.includes(q);
+    });
+  }
 
-  } 
+  if (currentTab === "live") {
+    list = list.filter(video =>
+      video.is_live === true ||
+      video.live === true ||
+      String(video.status || "").toLowerCase() === "live"
+    );
+  }
 
-  if(currentTab === "foryou"){ 
+  if (currentTab === "status") {
+    await loadStatuses();
+    return;
+  }
 
-    list.sort( 
-      (a,b) => 
-        new Date( 
-          b.created_at || 0 
-        ) - 
-        new Date( 
-          a.created_at || 0 
-        ) 
-    ); 
+  list = sortFeedVideos(list);
+  visibleVideos = list;
+  await renderFeed(list);
+}
 
-  } 
-
-  if( 
-    currentTab === "live" 
-  ){ 
-
-    list = 
-    list.filter( 
-      video => 
-        video.is_live === true || 
-        video.live === true || 
-        video.status === "live" 
-    ); 
-
-  } 
-
-  if( 
-    currentTab === "status" 
-  ){ 
-
-    await loadStatuses(); 
-
-    return; 
-
-  } 
-
-  visibleVideos = 
-  list; 
-
-  await renderFeed( 
-    list 
-  ); 
-
-} 
-
-
-
-/* ========================================================= 
+/* =========================================================
    RENDER FEED 
 ========================================================= */ 
 
@@ -2471,24 +2463,17 @@ async function renderFeed(
   list 
 ){ 
 
-  if(!list.length){ 
-
-    feed.innerHTML = ` 
-      <div class="center-message"> 
-
-        <strong> 
-          No videos found 
-        </strong> 
-
-        <span> 
-          Try another tab or search. 
-        </span> 
-
-      </div> 
-    `; 
-
-    return; 
-
+  if(!list.length){
+    const isLiveTab = currentTab === "live";
+    feed.innerHTML = `
+      <div class="center-message">
+        <strong>${isLiveTab ? "No creators are live right now" : "No videos found"}</strong>
+        <span>${isLiveTab
+          ? "When a creator starts a live broadcast, it will appear here. Check back soon."
+          : "Try another tab or search."}</span>
+      </div>
+    `;
+    return;
   } 
 
   feed.innerHTML = ""; 
@@ -3623,8 +3608,9 @@ async function toggleFollow(
         "following" 
       ); 
 
-      button.textContent = 
-      "Follow"; 
+      button.textContent =
+      "Follow";
+      followedIdsLoadedFor = null; 
 
     } 
 
@@ -3658,8 +3644,9 @@ async function toggleFollow(
         "following" 
       ); 
 
-      button.textContent = 
-      "Following"; 
+      button.textContent =
+      "Following";
+      followedIdsLoadedFor = null; 
 
     } 
 
@@ -5102,12 +5089,11 @@ async function loadStatuses(){
     feed.innerHTML = ` 
       <div class="center-message"> 
 
-        <strong> 
-          Status is coming to BIGULA 
-        </strong> 
-
-        <span> 
-          Status posts will appear here when enabled. 
+        <strong>
+          Statuses couldn't load
+        </strong>
+        <span>
+          Please check your connection and try again.
         </span> 
 
       </div> 
@@ -5191,12 +5177,9 @@ async function loadStatuses(){
 
   } 
 
-  visibleVideos = 
-  statusVideos; 
-
-  await renderFeed( 
-    statusVideos 
-  ); 
+  const rankedStatusVideos = sortFeedVideos(statusVideos);
+  visibleVideos = rankedStatusVideos;
+  await renderFeed(rankedStatusVideos); 
 
 } 
 
