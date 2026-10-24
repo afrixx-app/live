@@ -1,42 +1,154 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Upload — BIGULA</title>
+<meta name="theme-color" content="#080808">
+<title>Create — BIGULA</title>
+
 <style>
-:root{--bg:#050505;--panel:#101010;--panel2:#171717;--line:#292929;--muted:#8d8d8d;--text:#fff;--accent:#fff;--danger:#ff6464;--ok:#75e58b}
+:root{
+  --bg:#080808;--panel:#111;--panel2:#191919;--line:#292929;
+  --muted:#898989;--text:#fff;--accent:#fff;
+  --danger:#ff6464;--ok:#75e58b
+}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif}
-body{display:flex;justify-content:center;padding:20px 14px 50px}
+body{display:flex;justify-content:center;padding:22px 14px 50px}
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-.app{width:100%;max-width:620px}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.brand{font-size:25px;font-weight:950;letter-spacing:1.2px}.brand small{display:block;color:#777;font-size:10px;letter-spacing:2px;margin-top:2px}
-.header-label{color:#999;font-size:13px;font-weight:700}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:18px}.step{height:5px;border-radius:20px;background:#252525}.step.active{background:#fff}
-.section{display:none}.section.active{display:block}
-.card{background:linear-gradient(180deg,#111,#0d0d0d);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.25)}
-.eyebrow{color:#777;font-size:11px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:7px}.heading{font-size:25px;font-weight:900;line-height:1.1}.subheading{color:#8f8f8f;font-size:13px;line-height:1.5;margin-top:8px;margin-bottom:22px}
-.source-list{display:grid;gap:11px}.source-btn{width:100%;min-height:76px;border:1px solid #303030;background:#171717;color:#fff;border-radius:16px;display:flex;align-items:center;gap:14px;padding:13px 15px;text-align:left;transition:.16s}.source-btn:hover{background:#202020;border-color:#444}.source-btn:active{transform:scale(.99)}.source-btn.live{opacity:.38;cursor:not-allowed}.source-icon{width:45px;height:45px;border-radius:13px;background:#242424;display:grid;place-items:center;font-size:22px;flex:none}.source-copy{min-width:0}.source-copy strong{display:block;font-size:15px;margin-bottom:4px}.source-copy span{display:block;color:#858585;font-size:12px}.selected-file{margin-top:15px;border:1px solid #2c2c2c;background:#161616;border-radius:14px;padding:12px;display:none}.selected-file.show{display:block}.file-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-info{font-size:11px;color:#777;margin-top:4px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.app{width:100%;max-width:900px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand{font-size:25px;font-weight:950;letter-spacing:1.5px}
+.brand small{display:block;color:#777;font-size:10px;letter-spacing:3px;margin-top:3px}
+.header-label{color:#999;font-size:12px;font-weight:800}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:20px}
+.step{height:4px;border-radius:20px;background:#292929}
+.step.active{background:#fff}
+.section{display:none}
+.section.active{display:block}
+.card{background:linear-gradient(160deg,#131313,#0d0d0d);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 18px 50px #0005}
+.eyebrow{color:#777;font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.heading{font-size:27px;font-weight:900;line-height:1.15}
+.subheading{color:#8f8f8f;font-size:13px;line-height:1.6;margin-top:8px;margin-bottom:24px}
+.source-list{display:grid;gap:10px}
+.source-btn{width:100%;min-height:76px;border:1px solid #303030;background:#171717;color:#fff;border-radius:16px;display:flex;align-items:center;gap:14px;padding:13px 15px;text-align:left;transition:.16s}
+.source-btn:hover{background:#202020;border-color:#555}
+.source-btn:active{transform:scale(.99)}
+.source-btn.live{cursor:not-allowed}
+.source-icon{width:44px;height:44px;border-radius:13px;background:#252525;display:grid;place-items:center;font-size:22px;flex:none}
+.source-copy{min-width:0}
+.source-copy strong{display:block;font-size:14px;margin-bottom:5px}
+.source-copy span{display:block;color:#888;font-size:12px;line-height:1.45}
+.selected-file{margin-top:15px;border:1px solid #2c2c2c;background:#161616;border-radius:14px;padding:12px;display:none}
+.selected-file.show{display:block}
+.file-name{font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file-info{font-size:11px;color:#777;margin-top:5px}
 .hidden-input{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
-.message{display:none;margin-top:14px;padding:11px 12px;border-radius:12px;background:#181818;border:1px solid #292929;color:#bbb;font-size:12px;line-height:1.45}.message.show{display:block}.message.error{color:#ff9d9d;border-color:#512929}.message.success{color:#9af2aa;border-color:#285331}
-.recording{display:none;color:#ff6c6c;font-size:12px;font-weight:800;margin-top:13px;text-align:center}.recording.show{display:block}.recording i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3030;margin-right:6px}
-.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.btn{min-height:49px;border:0;border-radius:13px;padding:12px 16px;font-weight:900;font-size:14px}.btn.primary{background:#fff;color:#000}.btn.secondary{background:#242424;color:#fff;border:1px solid #303030}.btn:disabled{opacity:.4;cursor:not-allowed}.back-link{width:100%;border:0;background:transparent;color:#777;margin-top:10px;padding:10px;font-size:12px}
+.message{display:none;margin-top:14px;padding:12px;border-radius:12px;background:#181818;border:1px solid #292929;color:#bbb;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.message.show{display:block}
+.message.error{color:#ff9d9d;border-color:#512929}
+.message.success{color:#9af2aa;border-color:#285331}
+.recording{display:none;color:#ff7777;font-size:12px;font-weight:800;margin-top:13px;text-align:center}
+.recording.show{display:block}
+.recording i{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff3030;margin-right:6px}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.btn{min-height:48px;border:0;border-radius:13px;padding:12px 16px;font-weight:900;font-size:13px;transition:background .15s}
+.btn.primary{background:#fff;color:#000}
+.btn.primary:hover{background:#e8e8e8}
+.btn.secondary{background:#242424;color:#fff;border:1px solid #333}
+.back-link{width:100%;border:0;background:transparent;color:#777;margin-top:10px;padding:10px;font-size:12px}
 
-/* EDITOR */
-.editor-top{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:15px}.editor-title{font-size:23px;font-weight:900}.editor-sub{color:#777;font-size:12px;margin-top:5px;line-height:1.4}.badge{border:1px solid #343434;border-radius:30px;padding:7px 10px;color:#888;font-size:9px;font-weight:900;letter-spacing:1.4px;white-space:nowrap}
-.editor-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}.preview-card{background:#090909;border:1px solid #292929;border-radius:19px;padding:10px;position:sticky;top:15px}.preview-head{display:flex;justify-content:space-between;align-items:center;color:#777;font-size:10px;padding:2px 3px 8px}.preview-head b{color:#aaa}.phone{width:100%;aspect-ratio:9/16;background:#000;border-radius:14px;overflow:hidden;position:relative;border:1px solid #242424}.phone video{width:100%;height:100%;display:block;object-fit:cover;background:#000;transition:filter .15s,transform .15s}.overlay-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.overlay{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}.overlay:active{cursor:grabbing}.text-overlay{max-width:88%;padding:5px 9px;color:#fff;font-size:28px;font-weight:900;line-height:1.1;text-align:center;white-space:pre-wrap;text-shadow:0 2px 7px #000;display:none}.text-overlay.boxed{background:rgba(0,0,0,.68);border-radius:8px;text-shadow:none}.emoji-overlay{font-size:58px;line-height:1;display:none}
-.editor-main{min-width:0}.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#0e0e0e;border:1px solid #292929;border-radius:16px;padding:7px;margin-bottom:9px}.tool-main{min-height:54px;border:1px solid transparent;border-radius:11px;background:#181818;color:#aaa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:800}.tool-main .ico{font-size:17px;color:#ddd}.tool-main.active{background:#fff;color:#000}.tool-main.active .ico{color:#000}
-.panel{background:#101010;border:1px solid #292929;border-radius:16px;padding:15px;min-height:170px}.panel.empty{display:flex;align-items:center;justify-content:center;text-align:center;color:#777}.panel.empty div{max-width:260px}.panel.empty b{display:block;color:#aaa;font-size:13px;margin-bottom:4px}.panel.empty span{font-size:11px;line-height:1.4}.editor-panel{display:none}.editor-panel.active{display:block}.panel-title{font-size:15px;font-weight:900}.panel-note{font-size:11px;color:#777;margin-top:4px;margin-bottom:12px;line-height:1.4}.option-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px}.option-row::-webkit-scrollbar{height:3px}.option-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.option{min-width:76px;min-height:39px;border:1px solid #303030;background:#191919;color:#bbb;border-radius:10px;padding:8px 10px;font-size:11px;font-weight:700}.option.active{background:#fff;color:#000;border-color:#fff}.emoji-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.emoji{min-height:40px;border:1px solid #303030;background:#191919;border-radius:10px;font-size:20px}.field{margin-top:10px}.field label{display:block;color:#777;font-size:10px;font-weight:800;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid #303030;background:#181818;color:#fff;border-radius:10px;padding:10px 11px;outline:none}.field textarea{min-height:75px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:#666}.two{display:grid;grid-template-columns:1fr 90px;gap:8px}.hint{margin-top:10px;padding:9px 10px;background:#181818;border:1px solid #292929;border-radius:10px;color:#777;font-size:10px;line-height:1.4}.range-row{display:grid;grid-template-columns:1fr 42px;gap:8px;align-items:center;margin-top:10px}.range-val{text-align:right;color:#888;font-size:10px}.effect-status{margin-top:11px;color:#777;font-size:10px}.editor-status{display:flex;align-items:center;justify-content:space-between;color:#777;font-size:10px;padding:10px 2px}.reset{border:0;background:transparent;color:#aaa;font-size:10px}.reset:hover{color:#fff}
-.details{display:grid;gap:14px}.details .field{margin-top:0}.details label{display:block;color:#aaa;font-size:12px;font-weight:800;margin-bottom:7px}.details input,.details textarea,.details select{width:100%;border:1px solid #303030;background:#181818;color:#fff;border-radius:12px;padding:13px;outline:none}.details textarea{min-height:130px;resize:vertical}.counter{display:flex;justify-content:flex-end;color:#666;font-size:10px;margin-top:5px}
-.progress{display:none;margin-top:16px}.progress.show{display:block}.progress-line{display:flex;justify-content:space-between;color:#888;font-size:10px;margin-bottom:7px}.track{height:8px;background:#292929;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:#fff;transition:width .2s}
-@media(max-width:700px){.editor-layout{grid-template-columns:1fr}.preview-card{position:relative;top:auto;max-width:290px;margin:0 auto;width:100%}.toolbar{grid-template-columns:repeat(4,1fr)}.panel{min-height:0}.card{padding:17px}}
-@media(max-width:380px){.toolbar{grid-template-columns:repeat(3,1fr)}.emoji-grid{grid-template-columns:repeat(5,1fr)}.btn-row{grid-template-columns:1fr}}
+/* PROFESSIONAL EDITOR */
+.editor-top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.editor-title{font-size:23px;font-weight:900;letter-spacing:-.5px}
+.editor-sub{color:#858585;font-size:12px;margin-top:6px;line-height:1.5}
+.badge{border:1px solid #343434;border-radius:30px;padding:7px 10px;color:#aaa;font-size:9px;font-weight:900;letter-spacing:1.4px;white-space:nowrap}
+.editor-layout{display:grid;grid-template-columns:minmax(180px,230px) minmax(0,1fr);gap:20px;align-items:start}
+.preview-card{background:#090909;border:1px solid #292929;border-radius:18px;padding:10px;position:sticky;top:15px;min-width:0}
+.preview-head{display:flex;justify-content:space-between;align-items:center;color:#777;font-size:9px;font-weight:800;padding:3px 3px 10px;letter-spacing:1px}
+.preview-head b{color:#ddd}
+.phone{width:100%;max-width:210px;margin:auto;aspect-ratio:9/16;background:#000;border-radius:13px;overflow:hidden;position:relative;border:1px solid #292929}
+.phone video{width:100%;height:100%;display:block;object-fit:cover;background:#000;pointer-events:none;transition:filter .15s,transform .15s}
+.overlay-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.overlay{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.overlay:active{cursor:grabbing}
+.text-overlay{max-width:88%;padding:5px 9px;color:#fff;font-size:25px;font-weight:900;line-height:1.1;text-align:center;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:0 2px 7px #000;display:none}
+.text-overlay.boxed{background:rgba(0,0,0,.72);border-radius:8px;text-shadow:none}
+.emoji-overlay{font-size:48px;line-height:1;display:none}
+.preview-foot{font-size:10px;color:#666;text-align:center;margin-top:10px;line-height:1.5}
+.editor-main{min-width:0}
+.tools-toggle{width:100%;min-height:47px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px;background:#fff;color:#000;border:0;border-radius:13px;font-size:13px;font-weight:900;margin-bottom:10px}
+.tools-toggle span:last-child{font-size:17px;transition:transform .2s}
+.tools-toggle.open span:last-child{transform:rotate(180deg)}
+.tools-drawer{display:none}
+.tools-drawer.open{display:block;animation:reveal .18s ease-out}
+@keyframes reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;background:#0e0e0e;border:1px solid #292929;border-radius:15px;padding:7px;margin-bottom:10px}
+.tool-main{min-height:51px;border:1px solid transparent;border-radius:10px;background:#181818;color:#aaa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;font-weight:800}
+.tool-main .ico{font-size:17px;color:#ddd}
+.tool-main.active{background:#fff;color:#000}
+.tool-main.active .ico{color:#000}
+.panel{background:#101010;border:1px solid #292929;border-radius:15px;padding:15px;min-height:150px}
+.panel.empty{display:flex;align-items:center;justify-content:center;text-align:center;color:#777}
+.panel.empty div{max-width:260px}
+.panel.empty b{display:block;color:#aaa;font-size:13px;margin-bottom:5px}
+.panel.empty span{font-size:11px;line-height:1.5}
+.editor-panel{display:none}
+.editor-panel.active{display:block}
+.panel-title{font-size:14px;font-weight:900}
+.panel-note{font-size:11px;color:#777;margin-top:5px;margin-bottom:13px;line-height:1.5}
+.option-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:3px}
+.option-row::-webkit-scrollbar{height:3px}
+.option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.option{min-width:0;min-height:38px;border:1px solid #303030;background:#191919;color:#bbb;border-radius:9px;padding:8px;font-size:10px;font-weight:800}
+.option.active{background:#fff;color:#000;border-color:#fff}
+.emoji-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.emoji{min-height:38px;border:1px solid #303030;background:#191919;border-radius:9px;font-size:19px}
+.field{margin-top:11px}
+.field label{display:block;color:#777;font-size:10px;font-weight:800;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;border:1px solid #303030;background:#181818;color:#fff;border-radius:10px;padding:10px;outline:none}
+.field textarea{min-height:75px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#777}
+.two{display:grid;grid-template-columns:1fr 90px;gap:8px}
+.hint{margin-top:10px;padding:9px 10px;background:#181818;border:1px solid #292929;border-radius:10px;color:#777;font-size:10px;line-height:1.5}
+.range-row{display:grid;grid-template-columns:1fr 42px;gap:8px;align-items:center;margin-top:10px}
+.range-val{text-align:right;color:#888;font-size:10px}
+.effect-status{margin-top:11px;color:#777;font-size:10px}
+.editor-status{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#777;font-size:10px;padding:12px 2px}
+.reset{border:0;background:transparent;color:#aaa;font-size:10px}
+.reset:hover{color:#fff}
+.details{display:grid;gap:15px}
+.details .field{margin-top:0}
+.details label{display:block;color:#aaa;font-size:11px;font-weight:800;margin-bottom:7px}
+.details input,.details textarea,.details select{width:100%;border:1px solid #303030;background:#181818;color:#fff;border-radius:12px;padding:13px;outline:none}
+.details textarea{min-height:120px;resize:vertical}
+.counter{display:flex;justify-content:flex-end;color:#666;font-size:10px;margin-top:5px}
+.progress{display:none;margin-top:16px}
+.progress.show{display:block}
+.progress-line{display:flex;justify-content:space-between;color:#888;font-size:10px;margin-bottom:7px}
+.track{height:7px;background:#292929;border-radius:20px;overflow:hidden}
+.fill{height:100%;width:0;background:#fff;transition:width .2s}
+@media(max-width:640px){
+  body{padding:14px 10px 35px}
+  .card{padding:17px;border-radius:19px}
+  .editor-layout{grid-template-columns:1fr;gap:16px}
+  .preview-card{position:relative;top:auto;width:100%;max-width:250px;margin:0 auto}
+  .phone{max-width:205px}
+  .editor-title{font-size:21px}
+  .toolbar{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .panel{min-height:0}
+}
+@media(max-width:380px){
+  .toolbar{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .emoji-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .btn-row{grid-template-columns:1fr}
+  .two{grid-template-columns:1fr 80px}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
   <header class="header">
@@ -50,11 +162,12 @@ button{cursor:pointer}
     <div class="step" id="dot3"></div>
   </div>
 
+  <!-- STEP 1 -->
   <section id="step1" class="section active">
     <div class="card">
-      <div class="eyebrow">Start here</div>
+      <div class="eyebrow">Start creating</div>
       <h1 class="heading">Create a video</h1>
-      <p class="subheading">Choose how you want to bring your video into BIGULA.</p>
+      <p class="subheading">Choose a video from your device, record a new one, or start a live broadcast.</p>
 
       <input id="videoFileInput" class="hidden-input" type="file" accept="video/*">
       <input id="cameraFileInput" class="hidden-input" type="file" accept="video/*" capture="environment">
@@ -63,16 +176,16 @@ button{cursor:pointer}
         <button class="source-btn" id="chooseVideoBtn" type="button">
           <div class="source-icon">▣</div>
           <div class="source-copy">
-            <strong>Choose Video</strong>
-            <span>Select a video from your device</span>
+            <strong>Choose video</strong>
+            <span>Select a video saved on your device</span>
           </div>
         </button>
 
         <button class="source-btn" id="recordVideoBtn" type="button">
           <div class="source-icon">●</div>
           <div class="source-copy">
-            <strong>Record Video</strong>
-            <span>Record a new video with your camera</span>
+            <strong>Record video</strong>
+            <span>Record a new clip with your camera</span>
           </div>
         </button>
 
@@ -80,7 +193,7 @@ button{cursor:pointer}
           <div class="source-icon">◉</div>
           <div class="source-copy">
             <strong>Go Live</strong>
-            <span id="liveRequirement">Available at 100 followers · 0/100</span>
+            <span id="liveRequirement">Checking follower eligibility…</span>
           </div>
         </button>
       </div>
@@ -90,25 +203,23 @@ button{cursor:pointer}
         <div class="file-info" id="selectedFileInfo"></div>
       </div>
 
-      <div class="recording" id="recordingBox">
-        <i></i>Recording · maximum 15 seconds
-      </div>
-
+      <div class="recording" id="recordingBox"><i></i>Recording · maximum 15 seconds</div>
       <div class="message" id="step1Message"></div>
 
-      <button class="btn primary" id="nextToEditBtn" type="button" disabled style="width:100%;margin-top:16px">
-        Continue to Editor
+      <button class="btn primary" id="nextToEditBtn" type="button" disabled style="width:100%;margin-top:17px">
+        Continue to Editor →
       </button>
     </div>
   </section>
 
+  <!-- STEP 2 -->
   <section id="step2" class="section">
     <div class="card">
       <div class="editor-top">
         <div>
-          <div class="eyebrow">Step 2</div>
-          <div class="editor-title">Edit your video</div>
-          <div class="editor-sub">Make changes from the toolbar. Your preview updates immediately.</div>
+          <div class="eyebrow">Step 2 · Video editor</div>
+          <div class="editor-title">Make it yours</div>
+          <div class="editor-sub">Preview your video, open Tools to customize it, then continue when ready.</div>
         </div>
         <div class="badge">EDITOR</div>
       </div>
@@ -116,196 +227,180 @@ button{cursor:pointer}
       <div class="editor-layout">
         <div class="preview-card">
           <div class="preview-head">
-            <b>PREVIEW</b>
+            <b>VIDEO PREVIEW</b>
             <span id="previewStatus">Ready</span>
           </div>
-
           <div class="phone" id="previewPhone">
-            <video id="previewVideo" playsinline controls></video>
+            <!-- Native controls removed for a clean preview -->
+            <video id="previewVideo" playsinline preload="metadata"></video>
             <div class="overlay-layer" id="overlayLayer">
               <div id="textOverlay" class="overlay text-overlay"></div>
               <div id="emojiOverlay" class="overlay emoji-overlay"></div>
             </div>
           </div>
+          <div class="preview-foot">Preview only · Your original file stays unchanged</div>
         </div>
 
         <div class="editor-main">
-          <div class="toolbar">
-            <button class="tool-main" data-tab="filters" type="button"><span class="ico">◐</span>Filters</button>
-            <button class="tool-main" data-tab="effects" type="button"><span class="ico">✦</span>Effects</button>
-            <button class="tool-main" data-tab="crop" type="button"><span class="ico">⌗</span>Crop</button>
-            <button class="tool-main" data-tab="speed" type="button"><span class="ico">1×</span>Speed</button>
-            <button class="tool-main" data-tab="text" type="button"><span class="ico">T</span>Text</button>
-            <button class="tool-main" data-tab="emoji" type="button"><span class="ico">☺</span>Emoji</button>
-            <button class="tool-main" data-tab="sound" type="button"><span class="ico">♫</span>Sound</button>
-            <button class="tool-main" data-tab="none" type="button"><span class="ico">×</span>Close</button>
-          </div>
+          <button class="tools-toggle" id="toolsToggle" type="button" aria-expanded="false" aria-controls="toolsDrawer">
+            <span>✦ &nbsp; Tools</span>
+            <span id="toolsArrow">⌄</span>
+          </button>
 
-          <div class="panel empty" id="editorEmpty">
-            <div>
-              <b>Select an editing tool</b>
-              <span>Choose a tool above. Options stay hidden until you open them.</span>
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="filters">
-            <div class="panel-title">Filters</div>
-            <div class="panel-note">Choose a visual look.</div>
-            <div class="option-row">
-              <button class="option active" data-filter="none">Original</button>
-              <button class="option" data-filter="cinematic">Cinematic</button>
-              <button class="option" data-filter="vivid">Vivid</button>
-              <button class="option" data-filter="warm">Warm</button>
-              <button class="option" data-filter="cool">Cool</button>
-              <button class="option" data-filter="film">Film</button>
-              <button class="option" data-filter="retro">Retro</button>
-              <button class="option" data-filter="dream">Dream</button>
-              <button class="option" data-filter="noir">Noir</button>
-              <button class="option" data-filter="sepia">Sepia</button>
-              <button class="option" data-filter="bw">B&W</button>
-              <button class="option" data-filter="bright">Bright</button>
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="effects">
-            <div class="panel-title">Effects</div>
-            <div class="panel-note">Add a visual effect to the preview.</div>
-            <div class="option-grid">
-              <button class="option active" data-effect="none">None</button>
-              <button class="option" data-effect="glow">Glow</button>
-              <button class="option" data-effect="dramatic">Dramatic</button>
-              <button class="option" data-effect="vintage">Vintage</button>
-              <button class="option" data-effect="vhs">VHS</button>
-              <button class="option" data-effect="negative">Negative</button>
-              <button class="option" data-effect="flash">Flash</button>
-              <button class="option" data-effect="mirror">Mirror</button>
-              <button class="option" data-effect="blur">Blur</button>
-            </div>
-            <div class="effect-status" id="effectStatus">No effect selected.</div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="crop">
-            <div class="panel-title">Crop & frame</div>
-            <div class="panel-note">Choose how the source fills the BIGULA preview.</div>
-            <div class="option-grid">
-              <button class="option active" data-crop="fill">Fill</button>
-              <button class="option" data-crop="fit">Fit</button>
-              <button class="option" data-crop="top">Top</button>
-              <button class="option" data-crop="center">Center</button>
-              <button class="option" data-crop="bottom">Bottom</button>
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="speed">
-            <div class="panel-title">Speed</div>
-            <div class="panel-note">Change playback speed. The editor preview follows your selection.</div>
-            <div class="option-grid">
-              <button class="option" data-speed="0.25">0.25×</button>
-              <button class="option" data-speed="0.5">0.5×</button>
-              <button class="option active" data-speed="1">1×</button>
-              <button class="option" data-speed="1.5">1.5×</button>
-              <button class="option" data-speed="2">2×</button>
-              <button class="option" data-speed="3">3×</button>
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="text">
-            <div class="panel-title">Text</div>
-            <div class="panel-note">Type your text, then drag it directly on the video.</div>
-
-            <div class="field">
-              <label>TEXT</label>
-              <textarea id="textInput" maxlength="200" placeholder="Write something..."></textarea>
+          <div class="tools-drawer" id="toolsDrawer">
+            <div class="toolbar">
+              <button class="tool-main" data-tab="filters" type="button"><span class="ico">◐</span>Filters</button>
+              <button class="tool-main" data-tab="effects" type="button"><span class="ico">✦</span>Effects</button>
+              <button class="tool-main" data-tab="crop" type="button"><span class="ico">⌗</span>Frame</button>
+              <button class="tool-main" data-tab="speed" type="button"><span class="ico">1×</span>Speed</button>
+              <button class="tool-main" data-tab="text" type="button"><span class="ico">T</span>Text</button>
+              <button class="tool-main" data-tab="emoji" type="button"><span class="ico">☺</span>Emoji</button>
+              <button class="tool-main" data-tab="sound" type="button"><span class="ico">♫</span>Sound</button>
+              <button class="tool-main" data-tab="none" type="button"><span class="ico">×</span>Close</button>
             </div>
 
-            <div class="two">
-              <div class="field">
-                <label>SIZE</label>
-                <select id="textSize">
-                  <option value="20">Small</option>
-                  <option value="28" selected>Medium</option>
-                  <option value="40">Large</option>
-                  <option value="54">Extra large</option>
-                </select>
-              </div>
+            <div class="panel empty" id="editorEmpty">
+              <div><b>Choose an editing tool</b><span>Tap one of the tools above to reveal its options.</span></div>
+            </div>
 
-              <div class="field">
-                <label>COLOR</label>
-                <input id="textColor" type="color" value="#ffffff">
+            <div class="panel editor-panel" data-panel="filters">
+              <div class="panel-title">Filters</div>
+              <div class="panel-note">Choose a visual style for your video preview.</div>
+              <div class="option-row">
+                <button class="option active" data-filter="none" type="button">Original</button>
+                <button class="option" data-filter="cinematic" type="button">Cinematic</button>
+                <button class="option" data-filter="vivid" type="button">Vivid</button>
+                <button class="option" data-filter="warm" type="button">Warm</button>
+                <button class="option" data-filter="cool" type="button">Cool</button>
+                <button class="option" data-filter="film" type="button">Film</button>
+                <button class="option" data-filter="retro" type="button">Retro</button>
+                <button class="option" data-filter="dream" type="button">Dream</button>
+                <button class="option" data-filter="noir" type="button">Noir</button>
+                <button class="option" data-filter="sepia" type="button">Sepia</button>
+                <button class="option" data-filter="bw" type="button">B&W</button>
+                <button class="option" data-filter="bright" type="button">Bright</button>
               </div>
             </div>
 
-            <button class="option" id="textBackgroundBtn" type="button" style="margin-top:10px">
-              Add background
-            </button>
-
-            <div class="hint">
-              Drag the text on the preview to place it. The position is saved for the rendered upload.
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="emoji">
-            <div class="panel-title">Emoji</div>
-            <div class="panel-note">Choose an emoji, then drag it directly on the video.</div>
-
-            <div class="emoji-grid" id="emojiList">
-              <button class="emoji" data-emoji="😂">😂</button>
-              <button class="emoji" data-emoji="🤣">🤣</button>
-              <button class="emoji" data-emoji="😍">😍</button>
-              <button class="emoji" data-emoji="❤️">❤️</button>
-              <button class="emoji" data-emoji="🔥">🔥</button>
-              <button class="emoji" data-emoji="👏">👏</button>
-              <button class="emoji" data-emoji="😎">😎</button>
-              <button class="emoji" data-emoji="😱">😱</button>
-              <button class="emoji" data-emoji="😭">😭</button>
-              <button class="emoji" data-emoji="💯">💯</button>
-              <button class="emoji" data-emoji="🎉">🎉</button>
-              <button class="emoji" data-emoji="👍">👍</button>
-              <button class="emoji" data-emoji="👀">👀</button>
-              <button class="emoji" data-emoji="💔">💔</button>
-              <button class="emoji" data-emoji="🥳">🥳</button>
-              <button class="emoji" data-emoji="🤯">🤯</button>
-              <button class="emoji" data-emoji="🙏">🙏</button>
-              <button class="emoji" data-emoji="😈">😈</button>
+            <div class="panel editor-panel" data-panel="effects">
+              <div class="panel-title">Effects</div>
+              <div class="panel-note">Choose an effect for the rendered video.</div>
+              <div class="option-grid">
+                <button class="option active" data-effect="none" type="button">None</button>
+                <button class="option" data-effect="glow" type="button">Glow</button>
+                <button class="option" data-effect="dramatic" type="button">Dramatic</button>
+                <button class="option" data-effect="vintage" type="button">Vintage</button>
+                <button class="option" data-effect="vhs" type="button">VHS</button>
+                <button class="option" data-effect="negative" type="button">Negative</button>
+                <button class="option" data-effect="flash" type="button">Flash</button>
+                <button class="option" data-effect="mirror" type="button">Mirror</button>
+                <button class="option" data-effect="blur" type="button">Blur</button>
+              </div>
+              <div class="effect-status" id="effectStatus">No effect selected.</div>
             </div>
 
-            <div class="range-row">
-              <input id="emojiSize" type="range" min="30" max="130" value="58">
-              <span class="range-val" id="emojiSizeValue">58px</span>
+            <div class="panel editor-panel" data-panel="crop">
+              <div class="panel-title">Frame & crop</div>
+              <div class="panel-note">Adjust how the video fills the preview.</div>
+              <div class="option-grid">
+                <button class="option active" data-crop="fill" type="button">Fill</button>
+                <button class="option" data-crop="fit" type="button">Fit</button>
+                <button class="option" data-crop="top" type="button">Top</button>
+                <button class="option" data-crop="center" type="button">Center</button>
+                <button class="option" data-crop="bottom" type="button">Bottom</button>
+              </div>
             </div>
 
-            <div class="hint">
-              Drag the emoji on the preview to place it. The position is saved for the rendered upload.
-            </div>
-          </div>
-
-          <div class="panel editor-panel" data-panel="sound">
-            <div class="panel-title">Sound effects</div>
-            <div class="panel-note">
-              Select a sound marker. Audio insertion is prepared for the editor render where supported.
-            </div>
-
-            <div class="option-row">
-              <button class="option active" data-sfx="none">None</button>
-              <button class="option" data-sfx="pop">Pop</button>
-              <button class="option" data-sfx="beep">Beep</button>
-              <button class="option" data-sfx="click">Click</button>
-              <button class="option" data-sfx="whoosh">Whoosh</button>
-              <button class="option" data-sfx="ding">Ding</button>
-              <button class="option" data-sfx="laugh">Laugh</button>
+            <div class="panel editor-panel" data-panel="speed">
+              <div class="panel-title">Playback speed</div>
+              <div class="panel-note">Set the speed used when rendering your edited video.</div>
+              <div class="option-grid">
+                <button class="option" data-speed="0.25" type="button">0.25×</button>
+                <button class="option" data-speed="0.5" type="button">0.5×</button>
+                <button class="option active" data-speed="1" type="button">1×</button>
+                <button class="option" data-speed="1.5" type="button">1.5×</button>
+                <button class="option" data-speed="2" type="button">2×</button>
+                <button class="option" data-speed="3" type="button">3×</button>
+              </div>
             </div>
 
-            <div class="range-row">
-              <input id="sfxPosition" type="range" min="0" max="100" value="50">
-              <span class="range-val" id="sfxPositionValue">50%</span>
+            <div class="panel editor-panel" data-panel="text">
+              <div class="panel-title">Text overlay</div>
+              <div class="panel-note">Add text and drag it directly on the preview.</div>
+              <div class="field">
+                <label for="textInput">TEXT</label>
+                <textarea id="textInput" maxlength="200" placeholder="Write something..."></textarea>
+              </div>
+              <div class="two">
+                <div class="field">
+                  <label for="textSize">SIZE</label>
+                  <select id="textSize">
+                    <option value="20">Small</option>
+                    <option value="28" selected>Medium</option>
+                    <option value="40">Large</option>
+                    <option value="54">Extra large</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="textColor">COLOR</label>
+                  <input id="textColor" type="color" value="#ffffff">
+                </div>
+              </div>
+              <button class="option" id="textBackgroundBtn" type="button" style="margin-top:10px">Add background</button>
+              <div class="hint">Drag text on the preview to position it.</div>
             </div>
 
-            <div class="range-row">
-              <input id="sfxVolume" type="range" min="0" max="100" value="70">
-              <span class="range-val" id="sfxVolumeValue">70%</span>
+            <div class="panel editor-panel" data-panel="emoji">
+              <div class="panel-title">Emoji overlay</div>
+              <div class="panel-note">Select an emoji and drag it to the position you want.</div>
+              <div class="emoji-grid" id="emojiList">
+                <button class="emoji" data-emoji="😂" type="button">😂</button>
+                <button class="emoji" data-emoji="🤣" type="button">🤣</button>
+                <button class="emoji" data-emoji="😍" type="button">😍</button>
+                <button class="emoji" data-emoji="❤️" type="button">❤️</button>
+                <button class="emoji" data-emoji="🔥" type="button">🔥</button>
+                <button class="emoji" data-emoji="👏" type="button">👏</button>
+                <button class="emoji" data-emoji="😎" type="button">😎</button>
+                <button class="emoji" data-emoji="😱" type="button">😱</button>
+                <button class="emoji" data-emoji="😭" type="button">😭</button>
+                <button class="emoji" data-emoji="💯" type="button">💯</button>
+                <button class="emoji" data-emoji="🎉" type="button">🎉</button>
+                <button class="emoji" data-emoji="👍" type="button">👍</button>
+                <button class="emoji" data-emoji="👀" type="button">👀</button>
+                <button class="emoji" data-emoji="💔" type="button">💔</button>
+                <button class="emoji" data-emoji="🥳" type="button">🥳</button>
+                <button class="emoji" data-emoji="🤯" type="button">🤯</button>
+                <button class="emoji" data-emoji="🙏" type="button">🙏</button>
+                <button class="emoji" data-emoji="😈" type="button">😈</button>
+              </div>
+              <div class="range-row">
+                <input id="emojiSize" type="range" min="30" max="130" value="58">
+                <span class="range-val" id="emojiSizeValue">58px</span>
+              </div>
             </div>
 
-            <div class="effect-status" id="sfxStatus">No sound effect selected.</div>
+            <div class="panel editor-panel" data-panel="sound">
+              <div class="panel-title">Sound markers</div>
+              <div class="panel-note">Choose a sound marker and set its position and volume. Sound insertion requires a supported audio-rendering workflow.</div>
+              <div class="option-row">
+                <button class="option active" data-sfx="none" type="button">None</button>
+                <button class="option" data-sfx="pop" type="button">Pop</button>
+                <button class="option" data-sfx="beep" type="button">Beep</button>
+                <button class="option" data-sfx="click" type="button">Click</button>
+                <button class="option" data-sfx="whoosh" type="button">Whoosh</button>
+                <button class="option" data-sfx="ding" type="button">Ding</button>
+                <button class="option" data-sfx="laugh" type="button">Laugh</button>
+              </div>
+              <div class="range-row">
+                <input id="sfxPosition" type="range" min="0" max="100" value="50">
+                <span class="range-val" id="sfxPositionValue">50%</span>
+              </div>
+              <div class="range-row">
+                <input id="sfxVolume" type="range" min="0" max="100" value="70">
+                <span class="range-val" id="sfxVolumeValue">70%</span>
+              </div>
+              <div class="effect-status" id="sfxStatus">No sound effect selected.</div>
+            </div>
           </div>
 
           <div class="editor-status">
@@ -322,9 +417,10 @@ button{cursor:pointer}
     </div>
   </section>
 
+  <!-- STEP 3 -->
   <section id="step3" class="section">
     <div class="card">
-      <div class="eyebrow">Step 3</div>
+      <div class="eyebrow">Step 3 of 3</div>
       <h1 class="heading">Video details</h1>
       <p class="subheading">Add the information viewers will see with your video.</p>
 
@@ -334,7 +430,6 @@ button{cursor:pointer}
           <input id="title" maxlength="150" placeholder="Give your video a title">
           <div class="counter" id="titleCounter">0/150</div>
         </div>
-
         <div class="field">
           <label for="category">CATEGORY</label>
           <select id="category">
@@ -354,7 +449,6 @@ button{cursor:pointer}
             <option value="science and technology">Science & Technology</option>
           </select>
         </div>
-
         <div class="field">
           <label for="description">DESCRIPTION</label>
           <textarea id="description" maxlength="2000" placeholder="Describe your video"></textarea>
@@ -362,22 +456,14 @@ button{cursor:pointer}
         </div>
       </div>
 
-      <button class="btn primary" id="uploadBtn" type="button" style="width:100%;margin-top:18px">
-        Upload to BIGULA
-      </button>
+      <button class="btn primary" id="uploadBtn" type="button" style="width:100%;margin-top:20px">Upload to BIGULA</button>
 
       <div class="progress" id="progressBox">
-        <div class="progress-line">
-          <span id="progressText">Preparing…</span>
-          <span id="progressPercent">0%</span>
-        </div>
-        <div class="track">
-          <div class="fill" id="progressFill"></div>
-        </div>
+        <div class="progress-line"><span id="progressText">Preparing…</span><span id="progressPercent">0%</span></div>
+        <div class="track"><div class="fill" id="progressFill"></div></div>
       </div>
 
       <div class="message" id="step3Message"></div>
-
       <div class="btn-row">
         <button class="btn secondary" id="backToStep2Btn" type="button">← Back to Editor</button>
         <button class="btn secondary" id="cancelUploadBtn" type="button">Cancel</button>
@@ -393,9 +479,11 @@ const SUPABASE_URL="https://vfteiggdhthvrrlndtbs.supabase.co";
 const SUPABASE_KEY="sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let selectedFile=null,currentUser=null,currentProfile=null,cameraStream=null,mediaRecorder=null,recordedChunks=[];
-let selectedFilter="none",selectedEffect="none",selectedSpeed=1,selectedCrop="fill",textX=50,textY=78,emojiX=50,emojiY=32,textBackground=false,selectedEmoji="",selectedSfx="none";
-let objectUrl=null;
+let selectedFile=null,currentUser=null,currentProfile=null;
+let cameraStream=null,mediaRecorder=null,recordedChunks=[];
+let selectedFilter="none",selectedEffect="none",selectedSpeed=1,selectedCrop="fill";
+let textX=50,textY=78,emojiX=50,emojiY=32,textBackground=false,selectedEmoji="",selectedSfx="none";
+let objectUrl=null,liveFollowerCount=0,recordingTimer=null;
 
 const $=id=>document.getElementById(id);
 const step1=$("step1"),step2=$("step2"),step3=$("step3"),dots=[$("dot1"),$("dot2"),$("dot3")];
@@ -403,7 +491,7 @@ const previewVideo=$("previewVideo"),textOverlay=$("textOverlay"),emojiOverlay=$
 
 function msg(el,text,type=""){
   el.textContent=text;
-  el.className="message show "+type
+  el.className="message show "+type;
 }
 
 function showStep(n){
@@ -412,64 +500,83 @@ function showStep(n){
   [step1,step2,step3][n-1].classList.add("active");
   for(let i=0;i<n;i++)dots[i].classList.add("active");
   $("headerLabel").textContent=`Step ${n} of 3`;
-  window.scrollTo({top:0,behavior:"smooth"})
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
 async function getCurrentUser(){
   try{
-    let {data}=await supabase.auth.getSession();
-    if(data?.session?.user)return data.session.user;
+    const {data:{session}}=await supabase.auth.getSession();
+    if(session?.user)return session.user;
 
     const code=new URLSearchParams(location.search).get("code");
-
     if(code){
       const r=await supabase.auth.exchangeCodeForSession(code);
       if(r.data?.session?.user){
         history.replaceState({},document.title,location.pathname);
-        return r.data.session.user
+        return r.data.session.user;
       }
     }
-  }catch(e){
-    console.warn(e)
-  }
-
-  return null
+  }catch(e){console.warn("Session lookup:",e);}
+  return null;
 }
 
 async function loadProfile(){
   if(!currentUser)return;
-
   try{
-    const {data}=await supabase
-      .from("users")
-      .select("*")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-
+    const {data,error}=await supabase.from("users").select("*").eq("id",currentUser.id).maybeSingle();
+    if(error)throw error;
     if(data){
       currentProfile=data;
-      localStorage.setItem("bigula_profile",JSON.stringify(data))
+      try{localStorage.setItem("bigula_profile",JSON.stringify(data));}catch(_){}
+    }
+  }catch(e){console.warn("Profile lookup:",e);}
+}
+
+/* Real follower count: followers.following_id points to the creator. */
+function followerCount(){
+  return liveFollowerCount;
+}
+
+async function updateLive(){
+  const btn=$("goLiveBtn"),label=$("liveRequirement");
+  btn.disabled=true;
+  btn.classList.add("live");
+
+  if(!currentUser){
+    label.textContent="Sign in to check Go Live eligibility";
+    return;
+  }
+
+  label.textContent="Checking follower eligibility…";
+
+  try{
+    const {count,error}=await supabase
+      .from("followers")
+      .select("*",{count:"exact",head:true})
+      .eq("following_id",currentUser.id);
+
+    if(error)throw error;
+
+    liveFollowerCount=Number(count||0);
+
+    if(liveFollowerCount>=30){
+      btn.disabled=false;
+      btn.classList.remove("live");
+      label.textContent=`Start a live broadcast · ${liveFollowerCount} followers`;
+    }else{
+      label.textContent=`Available at 30 followers · ${liveFollowerCount}/30 · ${30-liveFollowerCount} more needed`;
     }
   }catch(e){
-    console.warn(e)
+    liveFollowerCount=0;
+    console.error("Follower eligibility check failed:",e);
+    label.textContent="Could not verify followers. Please try again.";
   }
-}
-
-function followerCount(){
-  return Number(currentProfile?.followers??currentProfile?.followers_count??0)||0
-}
-
-function updateLive(){
-  const n=followerCount();
-  $("goLiveBtn").disabled=n<100;
-  $("goLiveBtn").classList.toggle("live",n<100);
-  $("liveRequirement").textContent=n>=100?"Start a live broadcast":"Available at 100 followers · "+n+"/100"
 }
 
 function acceptVideo(file){
   if(!file||!file.type.startsWith("video/")){
-    msg($("step1Message"),"Please select a video file.","error");
-    return
+    msg($("step1Message"),"Please select a valid video file.","error");
+    return;
   }
 
   selectedFile=file;
@@ -477,14 +584,12 @@ function acceptVideo(file){
   $("selectedFileInfo").textContent=`${(file.size/1048576).toFixed(2)} MB · ${file.type||"video"}`;
   $("selectedFileBox").classList.add("show");
   $("nextToEditBtn").disabled=false;
-
   msg($("step1Message"),"Video selected. Continue to the editor.","success");
 
   if(objectUrl)URL.revokeObjectURL(objectUrl);
-
   objectUrl=URL.createObjectURL(file);
   previewVideo.src=objectUrl;
-  previewVideo.load()
+  previewVideo.load();
 }
 
 $("chooseVideoBtn").onclick=()=>$("videoFileInput").click();
@@ -495,15 +600,11 @@ $("recordVideoBtn").onclick=()=>$("cameraFileInput").click();
 async function startRecorder(){
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
     msg($("step1Message"),"Camera recording is not supported in this build. Please use Choose Video.","error");
-    return
+    return;
   }
 
   try{
-    cameraStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:"user"},
-      audio:true
-    });
-
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:true});
     recordedChunks=[];
 
     const type=[
@@ -512,117 +613,86 @@ async function startRecorder(){
       "video/webm"
     ].find(t=>MediaRecorder.isTypeSupported(t))||"";
 
-    mediaRecorder=new MediaRecorder(
-      cameraStream,
-      type?{mimeType:type}:undefined
-    );
-
-    mediaRecorder.ondataavailable=e=>{
-      if(e.data.size)recordedChunks.push(e.data)
-    };
-
+    mediaRecorder=new MediaRecorder(cameraStream,type?{mimeType:type}:undefined);
+    mediaRecorder.ondataavailable=e=>{if(e.data.size)recordedChunks.push(e.data);};
     mediaRecorder.onstop=()=>{
-      const blob=new Blob(
-        recordedChunks,
-        {type:type||"video/webm"}
-      );
-
+      const blob=new Blob(recordedChunks,{type:type||"video/webm"});
       stopCamera();
-
-      acceptVideo(
-        new File(
-          [blob],
-          `bigula_recording_${Date.now()}.webm`,
-          {type:blob.type}
-        )
-      )
+      acceptVideo(new File([blob],`bigula_recording_${Date.now()}.webm`,{type:blob.type}));
     };
 
     mediaRecorder.start(250);
     $("recordingBox").classList.add("show");
-
     msg($("step1Message"),"Recording… it will stop automatically after 15 seconds.");
-
-    setTimeout(()=>{
-      if(mediaRecorder?.state==="recording")mediaRecorder.stop()
-    },15000)
-
+    recordingTimer=setTimeout(()=>{if(mediaRecorder?.state==="recording")mediaRecorder.stop();},15000);
   }catch(e){
     stopCamera();
-
-    msg(
-      $("step1Message"),
-      e.name==="NotAllowedError"
-        ?"Camera or microphone permission was denied."
-        :"Camera could not be opened. Please use Choose Video.",
-      "error"
-    )
+    msg($("step1Message"),e.name==="NotAllowedError"?"Camera or microphone permission was denied.":"Camera could not be opened. Please use Choose Video.","error");
   }
 }
 
 function stopCamera(){
+  if(recordingTimer)clearTimeout(recordingTimer);
+  recordingTimer=null;
   cameraStream?.getTracks().forEach(t=>t.stop());
   cameraStream=null;
-  $("recordingBox").classList.remove("show")
+  $("recordingBox").classList.remove("show");
 }
 
 $("nextToEditBtn").onclick=()=>{
   if(selectedFile){
     showStep(2);
-    previewVideo.play().catch(()=>{})
+    // Video controls are intentionally hidden; tap preview to play/pause.
+    previewVideo.play().catch(()=>{});
   }
 };
 
+$("previewPhone").addEventListener("click",e=>{
+  if(e.target.closest(".overlay"))return;
+  if(previewVideo.paused)previewVideo.play().catch(()=>{});
+  else previewVideo.pause();
+});
+
+const filterMap={
+  cinematic:"contrast(1.15) saturate(.86) brightness(.95)",
+  vivid:"contrast(1.12) saturate(1.45)",
+  warm:"sepia(.15) saturate(1.2) contrast(1.05)",
+  cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",
+  film:"contrast(1.15) saturate(.8)",
+  retro:"sepia(.35) contrast(1.05) saturate(.85)",
+  dream:"brightness(1.08) saturate(.9) blur(.3px)",
+  noir:"grayscale(1) contrast(1.35)",
+  sepia:"sepia(.8)",
+  bw:"grayscale(1)",
+  bright:"brightness(1.2) contrast(1.03)"
+};
+
+const effectMap={
+  glow:"brightness(1.08) saturate(1.15)",
+  dramatic:"contrast(1.4) saturate(1.1)",
+  vintage:"sepia(.25) contrast(1.15) saturate(.8)",
+  vhs:"contrast(1.15) saturate(.75)",
+  negative:"invert(1)",
+  flash:"brightness(1.28)",
+  blur:"blur(2px)"
+};
+
 function applyVisuals(){
-  let f="";
-
-  const m={
-    cinematic:"contrast(1.15) saturate(.86) brightness(.95)",
-    vivid:"contrast(1.12) saturate(1.45)",
-    warm:"sepia(.15) saturate(1.2) contrast(1.05)",
-    cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",
-    film:"contrast(1.15) saturate(.8)",
-    retro:"sepia(.35) contrast(1.05) saturate(.85)",
-    dream:"brightness(1.08) saturate(.9) blur(.3px)",
-    noir:"grayscale(1) contrast(1.35)",
-    sepia:"sepia(.8)",
-    bw:"grayscale(1)",
-    bright:"brightness(1.2) contrast(1.03)"
-  };
-
-  f+=m[selectedFilter]||"";
-
-  const e={
-    glow:" brightness(1.08) saturate(1.15)",
-    dramatic:" contrast(1.4) saturate(1.1)",
-    vintage:" sepia(.25) contrast(1.15) saturate(.8)",
-    vhs:" contrast(1.15) saturate(.75)",
-    negative:" invert(1)",
-    flash:" brightness(1.28)",
-    blur:" blur(2px)"
-  };
-
-  f+=e[selectedEffect]||"";
-
+  const f=[filterMap[selectedFilter]||"",effectMap[selectedEffect]||""].filter(Boolean).join(" ");
   previewVideo.style.filter=f;
-  previewVideo.style.transform=selectedEffect==="mirror"?"scaleX(-1)":"scaleX(1)"
+  previewVideo.style.transform=selectedEffect==="mirror"?"scaleX(-1)":"scaleX(1)";
 }
 
 function applyCrop(){
   previewVideo.style.objectFit=selectedCrop==="fit"?"contain":"cover";
-  previewVideo.style.objectPosition=
-    selectedCrop==="top"
-      ?"center top"
-      :selectedCrop==="bottom"
-        ?"center bottom"
-        :"center center"
+  previewVideo.style.objectPosition=selectedCrop==="top"?"center top":selectedCrop==="bottom"?"center bottom":"center center";
 }
 
 function updateOverlays(){
   textOverlay.style.left=textX+"%";
   textOverlay.style.top=textY+"%";
   emojiOverlay.style.left=emojiX+"%";
-  emojiOverlay.style.top=emojiY+"%"
+  emojiOverlay.style.top=emojiY+"%";
 }
 
 function editorState(){
@@ -632,214 +702,145 @@ function editorState(){
     selectedCrop!=="fill"||
     textOverlay.style.display!=="none"||
     emojiOverlay.style.display!=="none"||
-    selectedSfx!=="none"
+    selectedSfx!=="none";
 }
 
 function updateStatus(){
-  let a=[];
+  const items=[];
+  if(selectedFilter!=="none")items.push(selectedFilter);
+  if(selectedEffect!=="none")items.push(selectedEffect);
+  if(selectedSpeed!==1)items.push(selectedSpeed+"×");
+  if(selectedCrop!=="fill")items.push("frame");
+  if(textOverlay.style.display!=="none")items.push("text");
+  if(emojiOverlay.style.display!=="none")items.push("emoji");
+  if(selectedSfx!=="none")items.push(selectedSfx);
 
-  if(selectedFilter!=="none")a.push(selectedFilter);
-  if(selectedEffect!=="none")a.push(selectedEffect);
-  if(selectedSpeed!==1)a.push(selectedSpeed+"×");
-  if(selectedCrop!=="fill")a.push("crop");
-  if(textOverlay.style.display!=="none")a.push("text");
-  if(emojiOverlay.style.display!=="none")a.push("emoji");
-  if(selectedSfx!=="none")a.push(selectedSfx);
-
-  $("editorStatus").textContent=a.length?a.join(" · "):"No edits selected";
-  $("previewStatus").textContent=a.length?"Edited":"Ready"
+  $("editorStatus").textContent=items.length?items.join(" · "):"No edits selected";
+  $("previewStatus").textContent=items.length?"Edited":"Ready";
 }
+
+/* Tools are hidden until the user taps the Tools button. */
+$("toolsToggle").onclick=()=>{
+  const drawer=$("toolsDrawer");
+  const open=!drawer.classList.contains("open");
+  drawer.classList.toggle("open",open);
+  $("toolsToggle").classList.toggle("open",open);
+  $("toolsToggle").setAttribute("aria-expanded",String(open));
+};
 
 function openPanel(name){
-  document.querySelectorAll(".tool-main").forEach(b=>
-    b.classList.toggle("active",b.dataset.tab===name)
-  );
-
+  document.querySelectorAll(".tool-main").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
   $("editorEmpty").style.display=name==="none"?"flex":"none";
-
-  document.querySelectorAll(".editor-panel").forEach(p=>
-    p.classList.toggle("active",p.dataset.panel===name)
-  )
+  document.querySelectorAll(".editor-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===name));
 }
 
-document.querySelectorAll("[data-tab]").forEach(b=>
-  b.onclick=()=>openPanel(b.dataset.tab)
-);
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>openPanel(b.dataset.tab));
 
-document.querySelectorAll("[data-filter]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedFilter=b.dataset.filter;
-    applyVisuals();
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-filter]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedFilter=b.dataset.filter;
+  applyVisuals();
+  updateStatus();
+});
 
-document.querySelectorAll("[data-effect]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-effect]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedEffect=b.dataset.effect;
-    $("effectStatus").textContent=
-      selectedEffect==="none"
-        ?"No effect selected."
-        :selectedEffect+" selected.";
-    applyVisuals();
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-effect]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-effect]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedEffect=b.dataset.effect;
+  $("effectStatus").textContent=selectedEffect==="none"?"No effect selected.":selectedEffect+" selected.";
+  applyVisuals();
+  updateStatus();
+});
 
-document.querySelectorAll("[data-crop]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-crop]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedCrop=b.dataset.crop;
-    applyCrop();
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-crop]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-crop]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedCrop=b.dataset.crop;
+  applyCrop();
+  updateStatus();
+});
 
-document.querySelectorAll("[data-speed]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-speed]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedSpeed=Number(b.dataset.speed);
-    previewVideo.playbackRate=selectedSpeed;
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-speed]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-speed]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedSpeed=Number(b.dataset.speed);
+  previewVideo.playbackRate=selectedSpeed;
+  updateStatus();
+});
 
 $("textInput").oninput=e=>{
   textOverlay.textContent=e.target.value.trim();
   textOverlay.style.display=e.target.value.trim()?"block":"none";
-  updateStatus()
+  updateStatus();
 };
-
-$("textSize").onchange=e=>{
-  textOverlay.style.fontSize=e.target.value+"px"
-};
-
-$("textColor").oninput=e=>{
-  textOverlay.style.color=e.target.value
-};
+$("textSize").onchange=e=>textOverlay.style.fontSize=e.target.value+"px";
+$("textColor").oninput=e=>textOverlay.style.color=e.target.value;
 
 $("textBackgroundBtn").onclick=()=>{
   textBackground=!textBackground;
   textOverlay.classList.toggle("boxed",textBackground);
-  $("textBackgroundBtn").textContent=
-    textBackground?"Remove background":"Add background"
+  $("textBackgroundBtn").textContent=textBackground?"Remove background":"Add background";
 };
 
-document.querySelectorAll("[data-emoji]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedEmoji=b.dataset.emoji;
-    emojiOverlay.textContent=selectedEmoji;
-    emojiOverlay.style.display="block";
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-emoji]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedEmoji=b.dataset.emoji;
+  emojiOverlay.textContent=selectedEmoji;
+  emojiOverlay.style.display="block";
+  updateStatus();
+});
 
 $("emojiSize").oninput=e=>{
   $("emojiSizeValue").textContent=e.target.value+"px";
-  emojiOverlay.style.fontSize=e.target.value+"px"
+  emojiOverlay.style.fontSize=e.target.value+"px";
 };
 
-document.querySelectorAll("[data-sfx]").forEach(b=>
-  b.onclick=()=>{
-    document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedSfx=b.dataset.sfx;
-
-    $("sfxStatus").textContent=
-      selectedSfx==="none"
-        ?"No sound effect selected."
-        :selectedSfx+" selected at "+$("sfxPosition").value+"%.";
-
-    updateStatus()
-  }
-);
+document.querySelectorAll("[data-sfx]").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  selectedSfx=b.dataset.sfx;
+  $("sfxStatus").textContent=selectedSfx==="none"?"No sound effect selected.":selectedSfx+" marker selected at "+$("sfxPosition").value+"%.";
+  updateStatus();
+});
 
 $("sfxPosition").oninput=e=>{
   $("sfxPositionValue").textContent=e.target.value+"%";
-
-  if(selectedSfx!=="none"){
-    $("sfxStatus").textContent=
-      selectedSfx+" selected at "+e.target.value+"%.";
-  }
+  if(selectedSfx!=="none")$("sfxStatus").textContent=selectedSfx+" marker selected at "+e.target.value+"%.";
 };
-
-$("sfxVolume").oninput=e=>{
-  $("sfxVolumeValue").textContent=e.target.value+"%"
-};
+$("sfxVolume").oninput=e=>$("sfxVolumeValue").textContent=e.target.value+"%";
 
 function makeDraggable(el,type){
   let drag=false;
-
   const move=e=>{
     if(!drag)return;
-
     const r=$("previewPhone").getBoundingClientRect();
     const p=e.touches?e.touches[0]:e;
-
-    let x=Math.max(
-      3,
-      Math.min(
-        97,
-        ((p.clientX-r.left)/r.width)*100
-      )
-    );
-
-    let y=Math.max(
-      3,
-      Math.min(
-        97,
-        ((p.clientY-r.top)/r.height)*100
-      )
-    );
-
-    if(type==="text"){
-      textX=x;
-      textY=y
-    }else{
-      emojiX=x;
-      emojiY=y
-    }
-
-    updateOverlays()
+    const x=Math.max(3,Math.min(97,((p.clientX-r.left)/r.width)*100));
+    const y=Math.max(3,Math.min(97,((p.clientY-r.top)/r.height)*100));
+    if(type==="text"){textX=x;textY=y;}else{emojiX=x;emojiY=y;}
+    updateOverlays();
   };
-
   const end=()=>{
     drag=false;
     document.removeEventListener("pointermove",move);
     document.removeEventListener("pointerup",end);
     document.removeEventListener("touchmove",move);
+    document.removeEventListener("touchend",end);
   };
-
   el.addEventListener("pointerdown",e=>{
     drag=true;
     e.preventDefault();
     document.addEventListener("pointermove",move);
-    document.addEventListener("pointerup",end)
+    document.addEventListener("pointerup",end);
   });
-
   el.addEventListener("touchstart",e=>{
     drag=true;
     e.preventDefault();
-
-    document.addEventListener(
-      "touchmove",
-      move,
-      {passive:false}
-    );
-
-    document.addEventListener(
-      "touchend",
-      end
-    )
-  },{passive:false})
+    document.addEventListener("touchmove",move,{passive:false});
+    document.addEventListener("touchend",end);
+  },{passive:false});
 }
 
 makeDraggable(textOverlay,"text");
@@ -851,51 +852,43 @@ $("resetEditor").onclick=()=>{
   selectedSpeed=1;
   selectedCrop="fill";
   selectedSfx="none";
-
-  textX=50;
-  textY=78;
-  emojiX=50;
-  emojiY=32;
-
-  textBackground=false;
-  selectedEmoji="";
+  textX=50;textY=78;emojiX=50;emojiY=32;
+  textBackground=false;selectedEmoji="";
 
   $("textInput").value="";
+  $("textSize").value="28";
+  $("textColor").value="#ffffff";
+  $("emojiSize").value="58";
+  $("emojiSizeValue").textContent="58px";
+  $("sfxPosition").value="50";
+  $("sfxPositionValue").textContent="50%";
+  $("sfxVolume").value="70";
+  $("sfxVolumeValue").textContent="70%";
   textOverlay.textContent="";
   textOverlay.style.display="none";
-
+  textOverlay.style.fontSize="28px";
+  textOverlay.style.color="#ffffff";
+  textOverlay.classList.remove("boxed");
   emojiOverlay.textContent="";
   emojiOverlay.style.display="none";
+  emojiOverlay.style.fontSize="58px";
 
-  document.querySelectorAll("[data-filter]").forEach(x=>
-    x.classList.toggle("active",x.dataset.filter==="none")
-  );
-
-  document.querySelectorAll("[data-effect]").forEach(x=>
-    x.classList.toggle("active",x.dataset.effect==="none")
-  );
-
-  document.querySelectorAll("[data-crop]").forEach(x=>
-    x.classList.toggle("active",x.dataset.crop==="fill")
-  );
-
-  document.querySelectorAll("[data-speed]").forEach(x=>
-    x.classList.toggle("active",x.dataset.speed==="1")
-  );
-
-  document.querySelectorAll("[data-sfx]").forEach(x=>
-    x.classList.toggle("active",x.dataset.sfx==="none")
-  );
+  document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter==="none"));
+  document.querySelectorAll("[data-effect]").forEach(x=>x.classList.toggle("active",x.dataset.effect==="none"));
+  document.querySelectorAll("[data-crop]").forEach(x=>x.classList.toggle("active",x.dataset.crop==="fill"));
+  document.querySelectorAll("[data-speed]").forEach(x=>x.classList.toggle("active",x.dataset.speed==="1"));
+  document.querySelectorAll("[data-sfx]").forEach(x=>x.classList.toggle("active",x.dataset.sfx==="none"));
+  document.querySelectorAll("[data-emoji]").forEach(x=>x.classList.remove("active"));
 
   $("textBackgroundBtn").textContent="Add background";
-
+  $("effectStatus").textContent="No effect selected.";
+  $("sfxStatus").textContent="No sound effect selected.";
   previewVideo.playbackRate=1;
-
   applyVisuals();
   applyCrop();
   updateOverlays();
   updateStatus();
-  openPanel("none")
+  openPanel("none");
 };
 
 $("goStep3").onclick=()=>showStep(3);
@@ -903,131 +896,79 @@ $("backToStep1").onclick=()=>showStep(1);
 $("backToStep2Btn").onclick=()=>showStep(2);
 
 $("cancelUploadBtn").onclick=()=>{
-  if(!$("uploadBtn").disabled)showStep(1)
+  if(!$("uploadBtn").disabled)showStep(1);
 };
 
-$("goLiveBtn").onclick=()=>{
-  if(followerCount()>=100)location.href="live.html"
+$("goLiveBtn").onclick=async()=>{
+  await updateLive();
+
+  if(!currentUser){
+    msg($("step1Message"),"Please sign in to use Go Live.","error");
+    return;
+  }
+
+  if(followerCount()<30){
+    msg($("step1Message"),`You need 30 followers to go live. Your verified count is ${followerCount()}.`,"error");
+    return;
+  }
+
+  location.href="live.html";
 };
 
-$("title").oninput=e=>
-  $("titleCounter").textContent=e.target.value.length+"/150";
-
-$("description").oninput=e=>
-  $("descriptionCounter").textContent=e.target.value.length+"/2000";
-
+$("title").oninput=e=>$("titleCounter").textContent=e.target.value.length+"/150";
+$("description").oninput=e=>$("descriptionCounter").textContent=e.target.value.length+"/2000";
 
 /*
-=========================================================
-FIXED VIDEO RENDERER
-=========================================================
-
-IMPORTANT CHANGE:
-
-Previously:
-- source.muted=true
-- canvas.captureStream() contained VIDEO ONLY
-- MediaRecorder therefore created a muted edited file
-
-Now:
-- source is NOT muted
-- source.captureStream() is used to obtain the original AUDIO
-- canvas.captureStream() supplies the edited VIDEO
-- original audio tracks are added to the final recording stream
-- MediaRecorder records BOTH video + audio
-=========================================================
-*/
-
+ * Render supported visual edits to a new video file.
+ * The original file is retained if canvas rendering or
+ * audio capture is unsupported. Sound markers are not
+ * mixed into the output by this browser-only renderer.
+ */
 async function renderEditedVideo(){
+  if(!selectedFile||!editorState())return selectedFile;
 
-  if(!selectedFile||!editorState()){
-    return selectedFile
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
+    return selectedFile;
   }
 
-  if(
-    !window.MediaRecorder||
-    !previewVideo.captureStream||
-    !HTMLCanvasElement.prototype.captureStream
-  ){
-    return selectedFile
-  }
-
-  let source=null;
-  let sourceStream=null;
-  let finalStream=null;
+  let source=null,sourceStream=null,videoStream=null,finalStream=null;
 
   try{
-
     source=document.createElement("video");
-
-    /*
-     * DO NOT MUTE THE SOURCE.
-     * We need its audio track for the final MediaRecorder stream.
-     */
     source.src=objectUrl;
     source.playsInline=true;
     source.preload="auto";
+    source.muted=false;
 
-    await new Promise((res,rej)=>{
-      source.onloadedmetadata=res;
-      source.onerror=rej
+    await new Promise((resolve,reject)=>{
+      source.onloadedmetadata=resolve;
+      source.onerror=reject;
     });
 
     const w=source.videoWidth||720;
     const h=source.videoHeight||1280;
-
     const canvas=document.createElement("canvas");
-    canvas.width=w;
-    canvas.height=h;
-
+    canvas.width=w;canvas.height=h;
     const ctx=canvas.getContext("2d");
+    videoStream=canvas.captureStream(30);
 
-    /*
-     * Canvas provides the edited video track.
-     */
-    const videoStream=canvas.captureStream(30);
+    sourceStream=typeof source.captureStream==="function"
+      ?source.captureStream()
+      :typeof source.mozCaptureStream==="function"
+        ?source.mozCaptureStream():null;
 
-    /*
-     * Capture the ORIGINAL video's media stream.
-     * This gives us the original audio track.
-     */
-    sourceStream=
-      typeof source.captureStream==="function"
-        ?source.captureStream()
-        :typeof source.mozCaptureStream==="function"
-          ?source.mozCaptureStream()
-          :null;
-
-    /*
-     * Build one final stream containing:
-     *
-     * 1. Edited canvas video
-     * 2. Original source audio
-     */
     finalStream=new MediaStream();
-
-    videoStream.getVideoTracks().forEach(track=>{
-      finalStream.addTrack(track)
-    });
+    videoStream.getVideoTracks().forEach(t=>finalStream.addTrack(t));
 
     if(sourceStream){
-      sourceStream.getAudioTracks().forEach(track=>{
-        finalStream.addTrack(track)
-      });
+      sourceStream.getAudioTracks().forEach(t=>finalStream.addTrack(t));
     }
 
-    /*
-     * If the browser cannot expose the source audio stream,
-     * fall back to the normal selected file rather than
-     * creating a deliberately muted upload.
-     */
-    const hasAudio=finalStream.getAudioTracks().length>0;
-
-    if(!hasAudio){
-      console.warn(
-        "Could not capture original audio track. Returning original file."
-      );
-      return selectedFile
+    // Avoid creating a silent edited video if audio cannot be captured.
+    if(!finalStream.getAudioTracks().length){
+      sourceStream?.getTracks().forEach(t=>t.stop());
+      videoStream.getTracks().forEach(t=>t.stop());
+      return selectedFile;
     }
 
     const type=[
@@ -1036,288 +977,104 @@ async function renderEditedVideo(){
       "video/webm"
     ].find(t=>MediaRecorder.isTypeSupported(t))||"video/webm";
 
-    /*
-     * MediaRecorder now receives BOTH tracks.
-     */
-    const rec=new MediaRecorder(
-      finalStream,
-      {mimeType:type}
-    );
-
+    const rec=new MediaRecorder(finalStream,{mimeType:type});
     const chunks=[];
-
     source.currentTime=0;
     source.playbackRate=selectedSpeed;
 
-    rec.ondataavailable=e=>{
-      if(e.data.size)chunks.push(e.data)
-    };
-
-    const stopped=new Promise(resolve=>{
-      rec.onstop=resolve
-    });
-
+    rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    const stopped=new Promise(resolve=>rec.onstop=resolve);
     rec.start(250);
-
-    /*
-     * IMPORTANT:
-     * The source is NOT muted.
-     * Its audio is being captured by source.captureStream().
-     */
     await source.play();
 
-    const start=performance.now();
-
     await new Promise(resolve=>{
-
       const draw=()=>{
-
-        if(source.ended||source.paused){
-          resolve();
-          return
-        }
+        if(source.ended||source.paused){resolve();return;}
 
         ctx.save();
+        const filters=[filterMap[selectedFilter]||"",effectMap[selectedEffect]||""].filter(Boolean).join(" ");
+        ctx.filter=filters||"none";
 
-        let filter="";
-
-        const fm={
-          cinematic:"contrast(1.15) saturate(.86) brightness(.95)",
-          vivid:"contrast(1.12) saturate(1.45)",
-          warm:"sepia(.15) saturate(1.2) contrast(1.05)",
-          cool:"hue-rotate(12deg) saturate(.95) contrast(1.05)",
-          film:"contrast(1.15) saturate(.8)",
-          retro:"sepia(.35) contrast(1.05) saturate(.85)",
-          dream:"brightness(1.08) saturate(.9) blur(.3px)",
-          noir:"grayscale(1) contrast(1.35)",
-          sepia:"sepia(.8)",
-          bw:"grayscale(1)",
-          bright:"brightness(1.2) contrast(1.03)"
-        };
-
-        filter+=fm[selectedFilter]||"";
-
-        const em={
-          glow:" brightness(1.08)",
-          dramatic:" contrast(1.4) saturate(1.1)",
-          vintage:" sepia(.25) contrast(1.15)",
-          vhs:" contrast(1.15) saturate(.75)",
-          negative:" invert(1)",
-          flash:" brightness(1.28)",
-          blur:" blur(2px)"
-        };
-
-        filter+=em[selectedEffect]||"";
-
-        ctx.filter=filter||"none";
-
-        if(selectedEffect==="mirror"){
-          ctx.translate(w,0);
-          ctx.scale(-1,1)
-        }
-
-        ctx.drawImage(
-          source,
-          0,
-          0,
-          w,
-          h
-        );
-
+        if(selectedEffect==="mirror"){ctx.translate(w,0);ctx.scale(-1,1);}
+        ctx.drawImage(source,0,0,w,h);
         ctx.restore();
         ctx.filter="none";
 
-
-        /*
-         * TEXT
-         */
-        if(
-          textOverlay.style.display!=="none"&&
-          $("textInput").value.trim()
-        ){
-
+        if(textOverlay.style.display!=="none"&&$("textInput").value.trim()){
           ctx.save();
-
-          ctx.font=
-            `900 ${Number($("textSize").value)}px Arial`;
-
+          const size=Number($("textSize").value);
+          ctx.font=`900 ${size}px Arial`;
           ctx.textAlign="center";
           ctx.textBaseline="middle";
-
-          ctx.fillStyle=$("textColor").value;
-
-          ctx.shadowColor="rgba(0,0,0,.9)";
-          ctx.shadowBlur=8;
-
-          const x=w*textX/100;
-          const y=h*textY/100;
-
-          const lines=$("textInput")
-            .value
-            .trim()
-            .split("\n");
-
-          lines.forEach((line,i)=>{
-            ctx.fillText(
-              line,
-              x,
-              y+
-              (i-(lines.length-1)/2)*
-              Number($("textSize").value)*
-              1.15
-            )
-          });
+          const x=w*textX/100,y=h*textY/100;
+          const lines=$("textInput").value.trim().split("\n");
+          const lineHeight=size*1.15;
 
           if(textBackground){
-
-            ctx.shadowBlur=0;
-            ctx.fillStyle="rgba(0,0,0,.68)";
-
-            ctx.fillRect(
-              x-w*.25,
-              y-Number($("textSize").value)*.75,
-              w*.5,
-              Number($("textSize").value)*1.5
-            )
+            const maxWidth=Math.min(w*.88,Math.max(...lines.map(line=>ctx.measureText(line).width))+24);
+            const blockHeight=lines.length*lineHeight+12;
+            ctx.fillStyle="rgba(0,0,0,.72)";
+            ctx.fillRect(x-maxWidth/2,y-blockHeight/2,maxWidth,blockHeight);
           }
 
-          ctx.restore()
+          ctx.fillStyle=$("textColor").value;
+          ctx.shadowColor="rgba(0,0,0,.9)";
+          ctx.shadowBlur=8;
+          lines.forEach((line,i)=>{
+            ctx.fillText(line,x,y+(i-(lines.length-1)/2)*lineHeight,w*.88);
+          });
+          ctx.restore();
         }
 
-
-        /*
-         * EMOJI
-         */
-        if(
-          emojiOverlay.style.display!=="none"&&
-          selectedEmoji
-        ){
-
+        if(emojiOverlay.style.display!=="none"&&selectedEmoji){
           ctx.save();
-
-          ctx.font=
-            `${Number($("emojiSize").value)}px Arial`;
-
+          ctx.font=`${Number($("emojiSize").value)}px Arial`;
           ctx.textAlign="center";
           ctx.textBaseline="middle";
-
-          ctx.fillText(
-            selectedEmoji,
-            w*emojiX/100,
-            h*emojiY/100
-          );
-
-          ctx.restore()
+          ctx.fillText(selectedEmoji,w*emojiX/100,h*emojiY/100);
+          ctx.restore();
         }
 
-
-        /*
-         * Stop when source finishes.
-         *
-         * Keep the existing speed behavior.
-         */
-        if(
-          performance.now()-start>
-          Math.max(
-            1000,
-            source.duration*1000/
-            Math.max(.25,selectedSpeed)+500
-          )
-        ){
-
-          source.pause();
-          resolve();
-          return
-        }
-
-        requestAnimationFrame(draw)
+        requestAnimationFrame(draw);
       };
-
-      draw()
+      draw();
     });
 
-    /*
-     * Stop recording after the final video frame.
-     */
     rec.stop();
-
     await stopped;
-
     source.pause();
 
-    /*
-     * Release captured tracks.
-     */
-    sourceStream?.getTracks().forEach(track=>track.stop());
-    videoStream.getTracks().forEach(track=>track.stop());
+    sourceStream?.getTracks().forEach(t=>t.stop());
+    videoStream.getTracks().forEach(t=>t.stop());
 
-    return new File(
-      [
-        new Blob(
-          chunks,
-          {type}
-        )
-      ],
-      `bigula_edited_${Date.now()}.webm`,
-      {type}
-    )
-
+    return new File([new Blob(chunks,{type})],`bigula_edited_${Date.now()}.webm`,{type});
   }catch(e){
-
-    console.warn(
-      "Editor render fallback:",
-      e
-    );
-
-    /*
-     * If anything prevents the browser from rendering
-     * audio correctly, preserve the original file instead
-     * of uploading a muted version.
-     */
+    console.warn("Editor render fallback:",e);
     try{
       source?.pause();
-      sourceStream?.getTracks().forEach(track=>track.stop());
-      finalStream?.getTracks().forEach(track=>track.stop());
+      sourceStream?.getTracks().forEach(t=>t.stop());
+      finalStream?.getTracks().forEach(t=>t.stop());
+      videoStream?.getTracks().forEach(t=>t.stop());
     }catch(_){}
-
-    return selectedFile
+    return selectedFile;
   }
 }
 
-
 async function uploadVideo(){
-
-  const btn=$("uploadBtn");
-  const box=$("progressBox");
-  const fill=$("progressFill");
-  const pt=$("progressText");
-  const pp=$("progressPercent");
-
+  const btn=$("uploadBtn"),box=$("progressBox"),fill=$("progressFill");
+  const pt=$("progressText"),pp=$("progressPercent");
   const title=$("title").value.trim();
   const category=$("category").value;
   const description=$("description").value.trim();
 
-  if(!selectedFile){
-    msg($("step3Message"),"No video selected.","error");
-    return
-  }
+  if(!selectedFile){msg($("step3Message"),"No video selected.","error");return;}
+  if(!title){msg($("step3Message"),"Please enter a title.","error");return;}
+  if(!category){msg($("step3Message"),"Please select a category.","error");return;}
 
-  if(!title){
-    msg($("step3Message"),"Please enter a title.","error");
-    return
-  }
-
-  if(!category){
-    msg($("step3Message"),"Please select a category.","error");
-    return
-  }
-
-  if(!currentUser)
-    currentUser=await getCurrentUser();
-
+  if(!currentUser)currentUser=await getCurrentUser();
   if(!currentUser){
     msg($("step3Message"),"You are not signed in. Please sign in first.","error");
-    return
+    return;
   }
 
   btn.disabled=true;
@@ -1326,147 +1083,98 @@ async function uploadVideo(){
   const progress=(n,t)=>{
     fill.style.width=n+"%";
     pp.textContent=Math.round(n)+"%";
-    pt.textContent=t
+    pt.textContent=t;
   };
 
+  let uploadedPath=null;
+
   try{
-
     progress(3,"Preparing video…");
-
-    /*
-     * This now preserves original audio when an edited
-     * video is rendered.
-     */
     const file=await renderEditedVideo();
-
     progress(12,"Uploading video…");
 
-    const safe=file.name.replace(
-      /[^a-zA-Z0-9._-]/g,
-      "_"
-    );
+    const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path=`${currentUser.id}/${crypto.randomUUID()}_${safe}`;
 
-    const path=
-      `${currentUser.id}/${crypto.randomUUID()}_${safe}`;
-
-    const {data,error}=
-      await supabase
-        .storage
-        .from("videos")
-        .upload(
-          path,
-          file,
-          {
-            cacheControl:"3600",
-            upsert:false,
-            contentType:file.type||"video/webm"
-          }
-        );
-
+    const {data,error}=await supabase.storage.from("videos").upload(path,file,{
+      cacheControl:"3600",upsert:false,contentType:file.type||"video/webm"
+    });
     if(error)throw error;
+    uploadedPath=data.path;
 
     progress(78,"Creating video record…");
-
-    const {data:pub}=
-      supabase
-        .storage
-        .from("videos")
-        .getPublicUrl(data.path);
-
+    const {data:pub}=supabase.storage.from("videos").getPublicUrl(data.path);
     const url=pub.publicUrl;
 
-    let row,error2;
+    let row;
+    const primary=await supabase.from("videos").insert({
+      user_id:currentUser.id,
+      title,
+      category,
+      description,
+      video_url:url,
+      visibility:"private",
+      status:"pending"
+    }).select().single();
 
-    ({
-      data:row,
-      error:error2
-    }=
-      await supabase
-        .from("videos")
-        .insert({
-          user_id:currentUser.id,
-          title,
-          category,
-          description,
-          video_url:url,
-          visibility:"private",
-          status:"pending"
-        })
-        .select()
-        .single()
-    );
-
-    if(error2){
-
-      const fallback=
-        await supabase
-          .from("videos")
-          .insert({
-            user_id:currentUser.id,
-            title,
-            category,
-            description,
-            video_url:url
-          })
-          .select()
-          .single();
+    if(primary.error){
+      const fallback=await supabase.from("videos").insert({
+        user_id:currentUser.id,
+        title,
+        category,
+        description,
+        video_url:url
+      }).select().single();
 
       if(fallback.error){
-        throw new Error(
-          "Video uploaded but database record failed: "+
-          fallback.error.message
-        )
+        throw new Error("Video uploaded but database record failed: "+fallback.error.message);
       }
-
-      row=fallback.data
+      row=fallback.data;
+    }else{
+      row=primary.data;
     }
 
     progress(100,"Upload complete.");
-
-    setTimeout(
-      ()=>location.href=
-        "uploaded.html?id="+
-        encodeURIComponent(row.id),
-      450
-    )
-
+    setTimeout(()=>location.href="uploaded.html?id="+encodeURIComponent(row.id),450);
   }catch(e){
-
     console.error(e);
 
-    msg(
-      $("step3Message"),
-      "Upload failed: "+(e.message||e),
-      "error"
-    );
+    // If the file uploaded but the database insert failed, try removing
+    // the orphaned storage file.
+    if(uploadedPath){
+      try{await supabase.storage.from("videos").remove([uploadedPath]);}catch(cleanupError){console.warn("Storage cleanup failed:",cleanupError);}
+    }
 
-    btn.disabled=false
+    msg($("step3Message"),"Upload failed: "+(e.message||e),"error");
+    btn.disabled=false;
   }
 }
 
 $("uploadBtn").onclick=uploadVideo;
 
-supabase.auth.onAuthStateChange(
-  (event,session)=>{
-    if(session?.user)
-      currentUser=session.user
+supabase.auth.onAuthStateChange((event,session)=>{
+  if(session?.user){
+    currentUser=session.user;
+    setTimeout(()=>updateLive(),0);
+  }else{
+    currentUser=null;
+    liveFollowerCount=0;
+    setTimeout(()=>updateLive(),0);
   }
-);
+});
 
 (async()=>{
   currentUser=await getCurrentUser();
 
   if(currentUser){
     await loadProfile();
-    updateLive()
+    await updateLive();
   }else{
-    msg(
-      $("step1Message"),
-      "Sign in to BIGULA before uploading a video."
-    )
+    $("goLiveBtn").disabled=true;
+    $("liveRequirement").textContent="Sign in to check Go Live eligibility";
+    msg($("step1Message"),"Sign in to BIGULA before uploading a video.");
   }
 })();
 </script>
 </body>
 </html>
-```
