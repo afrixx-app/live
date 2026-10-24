@@ -287,6 +287,56 @@ body{
   margin-top:2px
 }
 
+/* BIGULA WEBSITE FOOTER */
+.site-footer {
+  background: #101010;
+  border-top: 1px solid #292929;
+  padding: 28px 16px;
+  margin-top: 35px;
+  text-align: center;
+}
+
+.footer-logo {
+  color: #ff1744;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  max-width: 750px;
+  margin: 0 auto 16px;
+}
+
+.footer-links a {
+  color: #bbb;
+  font-size: 13px;
+  text-decoration: none;
+  transition: color .2s;
+}
+
+.footer-links a:hover {
+  color: #ff1744;
+}
+
+.footer-copy {
+  color: #777;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .footer-links {
+    gap: 14px 18px;
+  }
+}
+
 /* VIDEO GRIDS */
 
 .grid{
@@ -654,6 +704,42 @@ body{
 
 </section>
 
+
+<footer class="site-footer">
+  <div class="footer-logo">BIGULA</div>
+
+  <nav class="footer-links" aria-label="Footer navigation">
+    <a href="https://bigula.stream/privacy_policy.html">
+      Privacy Policy
+    </a>
+
+    <a href="https://bigula.stream/privacy-center.html">
+      Privacy Center
+    </a>
+
+    <a href="https://bigula.stream/help-report-problem.html">
+      Help
+    </a>
+
+    <a href="https://bigula.stream/terms-of-service.html">
+      Terms of Service
+    </a>
+
+    <a href="https://bigula.stream/community-guidelines.html">
+      Community Guidelines
+    </a>
+  </nav>
+
+  <p class="footer-copy">
+    © <span id="footerYear"></span> BIGULA.
+    All rights reserved.
+  </p>
+</footer>
+
+<script>
+  document.getElementById('footerYear').textContent =
+    new Date().getFullYear();
+</script>
 
 <script type="module">
 
