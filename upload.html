@@ -59,6 +59,10 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .btn.primary:hover{background:#e8e8e8}
 .btn.secondary{background:#242424;color:#fff;border:1px solid #333}
 .back-link{width:100%;border:0;background:transparent;color:#777;margin-top:10px;padding:10px;font-size:12px}
+.status-share-option{display:flex;align-items:flex-start;gap:11px;margin-top:18px;padding:14px;border:1px solid #343434;border-radius:13px;background:#151515;cursor:pointer}
+.status-share-option input{width:18px;height:18px;accent-color:#fff;flex:none;margin-top:2px}
+.status-share-option strong{display:block;font-size:12px;line-height:1.4}
+.status-share-option small{display:block;color:#888;font-size:11px;line-height:1.5;margin-top:4px}
 
 /* PROFESSIONAL EDITOR */
 .editor-top{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
@@ -186,6 +190,14 @@ button:disabled{opacity:.4;cursor:not-allowed}
           <div class="source-copy">
             <strong>Record video</strong>
             <span>Record a new clip with your camera</span>
+          </div>
+        </button>
+
+        <button class="source-btn" id="postStatusBtn" type="button">
+          <div class="source-icon">＋</div>
+          <div class="source-copy">
+            <strong>Post to status</strong>
+            <span>Share a photo, video, or text update to your status</span>
           </div>
         </button>
 
@@ -456,6 +468,11 @@ button:disabled{opacity:.4;cursor:not-allowed}
         </div>
       </div>
 
+      <label class="status-share-option" for="shareToStatus">
+        <input id="shareToStatus" type="checkbox">
+        <span><strong>Also post this video to my status</strong><small>The uploaded video link will be visible in your status for up to 24 hours.</small></span>
+      </label>
+
       <button class="btn primary" id="uploadBtn" type="button" style="width:100%;margin-top:20px">Upload to BIGULA</button>
 
       <div class="progress" id="progressBox">
@@ -596,6 +613,7 @@ $("chooseVideoBtn").onclick=()=>$("videoFileInput").click();
 $("videoFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);
 $("cameraFileInput").onchange=e=>acceptVideo(e.target.files?.[0]);
 $("recordVideoBtn").onclick=()=>$("cameraFileInput").click();
+$("postStatusBtn").onclick=()=>{location.href="my_status.html";};
 
 async function startRecorder(){
   if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
@@ -1134,8 +1152,32 @@ async function uploadVideo(){
       row=primary.data;
     }
 
-    progress(100,"Upload complete.");
-    setTimeout(()=>location.href="uploaded.html?id="+encodeURIComponent(row.id),450);
+    let statusShareError=null;
+    if($("shareToStatus").checked){
+      progress(92,"Adding video to your status…");
+      const {error:statusError}=await supabase.from("status").insert({
+        user_id:currentUser.id,
+        content:title,
+        media_url:url,
+        media_type:"video",
+        expires_at:new Date(Date.now()+24*60*60*1000).toISOString()
+      });
+      if(statusError){
+        statusShareError=statusError;
+        console.warn("Video uploaded, but status sharing failed:",statusError);
+      }
+    }
+
+    progress(100,statusShareError?"Video uploaded; status sharing failed.":"Upload complete.");
+    if(statusShareError){
+      msg($("step3Message"),"Your video was uploaded successfully, but it could not be added to status. You can still post it from my_status.html.","error");
+      setTimeout(()=>location.href="uploaded.html?id="+encodeURIComponent(row.id),1800);
+    }else{
+      if($("shareToStatus").checked){
+        msg($("step3Message"),"Video uploaded and added to your status for 24 hours.","success");
+      }
+      setTimeout(()=>location.href="uploaded.html?id="+encodeURIComponent(row.id),statusShareError?1800:700);
+    }
   }catch(e){
     console.error(e);
 
