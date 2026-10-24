@@ -33,10 +33,16 @@ body{
 }
 
 .logo{
-  font-size:24px;
-  font-weight:900;
-  color:#ff1744;
-  letter-spacing:2px
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:62px
+}
+.logo img{
+  display:block;
+  width:46px;
+  height:46px;
+  object-fit:contain
 }
 
 .back{
@@ -162,6 +168,16 @@ body{
 .share{
   background:#1683ff;
   color:#fff
+}
+
+.analytics{
+  background:linear-gradient(135deg,#8b5cf6,#5b7cfa);
+  color:#fff;
+  box-shadow:0 5px 18px rgba(105,95,245,.22)
+}
+.analytics:hover{
+  filter:brightness(1.1);
+  transform:translateY(-1px)
 }
 
 .edit{
@@ -361,7 +377,11 @@ body{
   </button>
 
   <div class="logo">
-    BIGULA
+    <img
+      src="https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/bigula-assets/bigula-logo.png"
+      alt="BIGULA logo"
+      width="46"
+      height="46">
   </div>
 
   <div style="width:62px"></div>
@@ -443,6 +463,16 @@ body{
     type="button">
 
     💰 Monetize
+
+  </button>
+
+
+  <button
+    id="analyticsBtn"
+    class="action analytics"
+    type="button">
+
+    ▥ Creator Analytics
 
   </button>
 
@@ -777,6 +807,15 @@ async function init(){
 
       location.href =
         'settings.html';
+
+    };
+
+    document.getElementById(
+      'analyticsBtn'
+    ).onclick = () => {
+
+      location.href =
+        'analytics.html';
 
     };
 
