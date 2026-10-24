@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090a12">
+<title>BIGULA · Blocked users</title>
+<style>
+:root{color-scheme:dark;--bg:#090a12;--panel:#131522;--panel2:#191c2c;--text:#f7f7fb;--muted:#9da2b8;--line:rgba(255,255,255,.09);--pink:#ff3e91;--cyan:#35d8f2;--danger:#ff6578}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 8% 0%,rgba(255,62,145,.15),transparent 34%),radial-gradient(ellipse at 100% 10%,rgba(53,216,242,.12),transparent 30%),var(--bg);color:var(--text)}
+body{min-height:100dvh}
+button,input{font:inherit}
+button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:16px max(16px,calc((100vw - 760px)/2));background:rgba(9,10,18,.82);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.back{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:#fff;font-size:24px;line-height:1}
+.brand{font-size:12px;letter-spacing:.22em;font-weight:900;color:var(--cyan)}
+.topbar h1{margin:3px 0 0;font-size:19px}
+.wrap{width:min(100% - 28px,720px);margin:24px auto 56px}
+.hero{position:relative;overflow:hidden;padding:24px;border:1px solid rgba(255,255,255,.1);border-radius:26px;background:linear-gradient(135deg,rgba(255,62,145,.14),rgba(53,216,242,.08) 75%),var(--panel);box-shadow:0 18px 55px rgba(0,0,0,.22)}
+.hero:after{content:"";position:absolute;width:180px;height:180px;right:-65px;top:-80px;border-radius:50%;border:1px solid rgba(53,216,242,.18);box-shadow:0 0 0 22px rgba(53,216,242,.025),0 0 0 44px rgba(255,62,145,.025);pointer-events:none}
+.eyebrow{color:var(--cyan);font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase}
+.hero h2{font-size:clamp(24px,5vw,34px);letter-spacing:-.04em;line-height:1.08;margin:10px 0}
+.hero p{max-width:540px;margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:25px 2px 12px}
+.section-title h3{font-size:16px;margin:0}
+.count{color:var(--muted);font-size:12px}
+.notice{display:none;margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.notice.show{display:block}.notice.error{border-color:rgba(255,101,120,.35);color:#ffb7c0}.notice.success{border-color:rgba(53,216,242,.3);color:#a9f3fc}
+.list{display:grid;gap:10px}
+.user-card{display:flex;align-items:center;gap:13px;padding:14px;border:1px solid var(--line);border-radius:19px;background:linear-gradient(120deg,rgba(255,255,255,.035),transparent),var(--panel)}
+.avatar{flex:0 0 46px;width:46px;height:46px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg,var(--pink),#7b5cff 58%,var(--cyan));font-weight:900;font-size:17px;color:white;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-sub{margin-top:4px;color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+.unblock{border:1px solid rgba(255,101,120,.35);background:rgba(255,101,120,.09);color:#ff9eaa;border-radius:12px;padding:10px 12px;font-weight:800;font-size:12px;white-space:nowrap}
+.unblock:hover{background:rgba(255,101,120,.18)}
+.empty{padding:28px 18px;text-align:center;border:1px dashed rgba(255,255,255,.16);border-radius:20px;background:rgba(255,255,255,.02)}
+.empty-icon{width:54px;height:54px;margin:0 auto 12px;display:grid;place-items:center;border-radius:18px;background:var(--panel2);font-size:24px}
+.empty h4{margin:0 0 7px;font-size:15px}.empty p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.loading{color:var(--muted);padding:24px;text-align:center}
+.footer-note{margin:18px 3px;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:420px){.topbar{padding:12px 14px}.wrap{width:calc(100% - 20px);margin-top:15px}.hero{padding:20px;border-radius:22px}.user-card{padding:11px;gap:10px}.avatar{width:42px;height:42px;flex-basis:42px;border-radius:14px}.unblock{padding:9px 10px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button class="back" id="backBtn" aria-label="Go back" type="button">‹</button>
+  <div><div class="brand">BIGULA</div><h1>Blocked users</h1></div>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Your privacy controls</div>
+    <h2>Choose who can<br>reach your space.</h2>
+    <p>Manage the people you’ve blocked. Blocked users should not be able to follow you or interact with your profile, videos, comments, likes, or status.</p>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+  </section>
+  <div class="section-title"><h3>People you’ve blocked</h3><span id="count" class="count">Loading…</span></div>
+  <section id="blockedList" class="list" aria-live="polite"><div class="loading">Loading your blocked users…</div></section>
+  <p class="footer-note">Unblocking removes the block record. To fully enforce blocking across BIGULA, the follow, like, comment, status, profile-sharing, and video-sharing flows must also check this block list in their database policies or server-side logic.</p>
+</main>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, flowType:"pkce" }
+});
+
+const params = new URLSearchParams(location.search);
+const targetId = params.get("uid") || params.get("user_id") || params.get("to");
+const listEl = document.getElementById("blockedList");
+const countEl = document.getElementById("count");
+const noticeEl = document.getElementById("notice");
+let currentUser = null;
+let targetProfile = null;
+let blockedRows = [];
+
+function esc(value){return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function showNotice(text, type="success"){noticeEl.textContent=text;noticeEl.className="notice show "+type;}
+function hideNotice(){noticeEl.className="notice";}
+function displayName(user){return user?.name || user?.full_name || user?.username || user?.display_name || user?.email || "BIGULA user";}
+function avatarHtml(user){const url=user?.avatar_url || user?.profile_photo || user?.profile_picture || user?.photo_url || user?.avatar;return url?`<div class="avatar"><img src="${esc(url)}" alt=""></div>`:`<div class="avatar">${esc(displayName(user).trim().slice(0,1).toUpperCase() || "B")}</div>`;}
+
+async function getCurrentUser(){
+  const {data,error}=await supabase.auth.getSession();
+  if(error) console.warn("Session lookup:",error.message);
+  if(data?.session?.user) return data.session.user;
+  const refreshed=await supabase.auth.refreshSession();
+  return !refreshed.error ? refreshed.data?.session?.user || null : null;
+}
+
+async function getProfile(id){
+  const {data,error}=await supabase.from("users").select("*").eq("id",id).maybeSingle();
+  if(error) console.warn("Profile lookup:",error.message);
+  return data || null;
+}
+
+async function blockTarget(){
+  if(!targetId) return;
+  if(String(targetId)===String(currentUser.id)){showNotice("You cannot block your own account.","error");return;}
+  const existing=blockedRows.some(row=>String(row.blocked_id)===String(targetId));
+  if(existing){showNotice("This user is already blocked.");return;}
+  const name=displayName(targetProfile);
+  if(!confirm(`Block ${name}? They should no longer be able to interact with your account where BIGULA blocking rules are enforced.`)) return;
+  const {error}=await supabase.from("blocked_users").insert({blocker_id:currentUser.id,blocked_id:targetId});
+  if(error){
+    console.error("Block user failed:",error);
+    showNotice("Could not block this user. Check that the blocked_users table and its RLS policies have been created. "+error.message,"error");
+    return;
+  }
+  showNotice(`${name} has been added to your blocked users.`);
+  await loadBlockedUsers();
+}
+
+async function unblockUser(id,name){
+  if(!confirm(`Unblock ${name}?`)) return;
+  const {error}=await supabase.from("blocked_users").delete().eq("blocker_id",currentUser.id).eq("blocked_id",id);
+  if(error){console.error("Unblock failed:",error);showNotice("Could not unblock this user: "+error.message,"error");return;}
+  showNotice(`${name} has been unblocked.`);
+  await loadBlockedUsers();
+}
+
+async function loadBlockedUsers(){
+  listEl.innerHTML='<div class="loading">Loading your blocked users…</div>';
+  const {data,error}=await supabase.from("blocked_users").select("blocked_id,created_at").eq("blocker_id",currentUser.id).order("created_at",{ascending:false});
+  if(error){
+    console.error("Blocked users query:",error);
+    countEl.textContent="Unavailable";
+    listEl.innerHTML='<div class="empty"><div class="empty-icon">⚠️</div><h4>Could not load blocked users</h4><p>Make sure the blocked_users table and its read policy are set up in Supabase.</p></div>';
+    showNotice(error.message,"error");
+    return;
+  }
+  blockedRows=data || [];
+  const profiles=await Promise.all(blockedRows.map(row=>getProfile(row.blocked_id)));
+  countEl.textContent=`${blockedRows.length} ${blockedRows.length===1?"person":"people"}`;
+  if(!blockedRows.length){
+    listEl.innerHTML='<div class="empty"><div class="empty-icon">🛡️</div><h4>Your list is clear</h4><p>Users you block will appear here, where you can unblock them at any time.</p></div>';
+    return;
+  }
+  listEl.innerHTML=blockedRows.map((row,index)=>{
+    const profile=profiles[index];
+    const name=displayName(profile);
+    const when=row.created_at ? new Date(row.created_at).toLocaleDateString() : "";
+    return `<article class="user-card">${avatarHtml(profile)}<div class="user-info"><div class="user-name">${esc(name)}</div><div class="user-sub">Blocked${when?" · "+esc(when):""}</div></div><button class="unblock" type="button" data-unblock="${esc(row.blocked_id)}" data-name="${esc(name)}">Unblock</button></article>`;
+  }).join("");
+  listEl.querySelectorAll("[data-unblock]").forEach(button=>button.addEventListener("click",()=>unblockUser(button.dataset.unblock,button.dataset.name)));
+}
+
+document.getElementById("backBtn").addEventListener("click",()=>{if(history.length>1) history.back(); else location.href="account.html";});
+
+supabase.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT" || !session?.user) location.replace("signup.html");
+});
+
+async function init(){
+  currentUser=await getCurrentUser();
+  if(!currentUser){
+    location.replace("signup.html?next="+encodeURIComponent("blocked-users.html"+location.search));
+    return;
+  }
+  if(targetId){
+    if(String(targetId)===String(currentUser.id)){
+      showNotice("You cannot block your own account.","error");
+    } else {
+      targetProfile=await getProfile(targetId);
+      await loadBlockedUsers();
+      await blockTarget();
+      return;
+    }
+  }
+  await loadBlockedUsers();
+}
+init().catch(error=>{console.error(error);showNotice("Page could not start: "+(error.message||error),"error");});
+</script>
+</body>
+</html>
