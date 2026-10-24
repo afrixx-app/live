@@ -3,823 +3,471 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f5f6f8">
 <title>BIGULA — Monetization</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --red: #ff3b30;
-  --ink: #101114;
-  --muted: #70747d;
-  --line: #e7e8ec;
-  --bg: #f5f6f8;
-  --green: #168a55;
-  --gold: #c98900;
-  --disabled: #e3e4e7;
-  --disabledText: #9699a1;
+  --red:#ff3b30;
+  --ink:#101114;
+  --muted:#70747d;
+  --line:#e7e8ec;
+  --bg:#f5f6f8;
+  --green:#168a55;
+  --green-bg:#e9f8f0;
+  --gold:#c98900;
+  --disabled:#e3e4e7;
+  --disabledText:#9699a1;
 }
-
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
 }
-
-body {
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: var(--bg);
-  color: var(--ink);
+header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
 }
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: rgba(255,255,255,.94);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
+.nav{
+  max-width:1080px;
+  margin:auto;
+  padding:15px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
 }
-
-.nav {
-  max-width: 1080px;
-  margin: auto;
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+.logo{display:flex;align-items:center;flex-shrink:0}
+.logo img{
+  display:block;
+  width:120px;
+  height:auto;
+  max-height:48px;
+  object-fit:contain;
 }
-
-.logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+.nav-actions{display:flex;gap:9px}
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 16px;
+  font-weight:750;
+  cursor:pointer;
+  transition:background .2s,transform .2s,opacity .2s;
 }
-
-.logo img {
-  display: block;
-  width: 120px;
-  height: auto;
-  max-height: 48px;
-  object-fit: contain;
+.btn-light{background:#f0f1f4;color:var(--ink)}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{
+  background:#dedfe3!important;
+  color:#92959d!important;
+  opacity:1;
+  cursor:not-allowed;
+  transform:none;
 }
-
-.nav-actions {
-  display: flex;
-  gap: 9px;
+main{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:22px;
 }
-
-.btn {
-  border: 0;
-  border-radius: 12px;
-  padding: 11px 16px;
-  font-weight: 750;
-  cursor: pointer;
-  transition: .2s;
+.eyebrow{
+  color:var(--red);
+  font-weight:800;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
 }
-
-.btn-light {
-  background: #f0f1f4;
+.hero h1{font-size:34px;margin:6px 0}
+.hero p{color:var(--muted);margin:0;max-width:680px;line-height:1.55}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 8px 28px rgba(16,17,20,.05);
+  margin-bottom:16px;
+  min-width:0;
 }
-
-.btn-dark {
-  background: var(--ink);
-  color: #fff;
+.card h2{margin:0 0 6px;font-size:19px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px;line-height:1.5}
+.progress-wrap{
+  background:#eef0f3;
+  border-radius:999px;
+  height:12px;
+  overflow:hidden;
+  margin:12px 0 8px;
 }
-
-.btn-red {
-  background: var(--red);
-  color: #fff;
+.progress{
+  height:100%;
+  width:0;
+  background:var(--green);
+  border-radius:999px;
+  transition:width .35s ease;
 }
-
-.btn:hover:not(:disabled) {
-  transform: translateY(-1px);
+.progress-meta{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:13px;
+  color:var(--muted);
 }
-
-.btn:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-  transform: none;
+.requirements{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
 }
-
-main {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 28px 20px 60px;
+.req{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  min-width:0;
 }
-
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 20px;
-  margin-bottom: 22px;
+.req strong{display:block;font-size:15px}
+.req small{color:var(--muted);display:block;line-height:1.5}
+.status{margin-top:8px;font-weight:800;font-size:14px}
+.ok{color:var(--green)}
+.bad{color:var(--red)}
+.pending{color:var(--gold)}
+.req .progress-wrap{height:8px;margin:13px 0 9px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.field{margin-bottom:14px}
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:750;
+  margin-bottom:6px;
 }
-
-.eyebrow {
-  color: var(--red);
-  font-weight: 800;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
+.field input,.field select{
+  width:100%;
+  border:1px solid #d9dbe0;
+  border-radius:11px;
+  padding:12px;
+  background:#fff;
+  color:var(--ink);
+  font:inherit;
 }
-
-.hero h1 {
-  font-size: 34px;
-  margin: 6px 0;
+.field input:focus,.field select:focus{
+  outline:2px solid rgba(255,59,48,.18);
+  border-color:var(--red);
 }
-
-.hero p {
-  color: var(--muted);
-  margin: 0;
-  max-width: 680px;
+.field input:disabled,.field select:disabled{
+  background:#f1f2f4;
+  color:#777a82;
 }
-
-.card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 22px;
-  box-shadow: 0 8px 28px rgba(16,17,20,.05);
-  margin-bottom: 16px;
+.notice{
+  padding:12px 14px;
+  border-radius:12px;
+  background:#fff7e0;
+  color:#765400;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:14px;
 }
-
-.card h2 {
-  margin: 0 0 6px;
-  font-size: 19px;
+.success{background:#e9f8f0;color:#146b44}
+.error{background:#fff0ef;color:#a3261f}
+.hidden{display:none!important}
+.userline{font-size:13px;color:var(--muted);margin-top:7px}
+.badge{
+  display:inline-flex;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#f0f1f4;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
 }
-
-.sub {
-  color: var(--muted);
-  font-size: 14px;
-  margin: 0 0 18px;
+.footer-note{font-size:12px;color:var(--muted);line-height:1.6;margin:16px 0 0}
+.start-panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
 }
-
-.progress-wrap {
-  background: #eef0f3;
-  border-radius: 999px;
-  height: 12px;
-  overflow: hidden;
-  margin: 12px 0 8px;
+.start-copy strong{display:block;font-size:15px;margin-bottom:5px}
+.start-copy p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+#startBtn{min-width:150px}
+.verification-card.locked{
+  background:#e9eaed;
+  border-color:#d6d7db;
+  box-shadow:none;
 }
-
-.progress {
-  height: 100%;
-  width: 0;
-  background: var(--red);
-  transition: width .35s;
-}
-
-.progress-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.requirements {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.req {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
-}
-
-.req strong {
-  display: block;
-  font-size: 15px;
-}
-
-.status {
-  margin-top: 8px;
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.ok {
-  color: var(--green);
-}
-
-.bad {
-  color: var(--red);
-}
-
-.pending {
-  color: var(--gold);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.field {
-  margin-bottom: 14px;
-}
-
-.field label {
-  display: block;
-  font-size: 13px;
-  font-weight: 750;
-  margin-bottom: 6px;
-}
-
-.field input,
-.field select {
-  width: 100%;
-  border: 1px solid #d9dbe0;
-  border-radius: 11px;
-  padding: 12px;
-  background: #fff;
-  font: inherit;
-}
-
-.field input:focus,
-.field select:focus {
-  outline: 2px solid rgba(255,59,48,.18);
-  border-color: var(--red);
-}
-
-.notice {
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: #fff7e0;
-  color: #765400;
-  font-size: 13px;
-  margin-bottom: 14px;
-}
-
-.success {
-  background: #e9f8f0;
-  color: #146b44;
-}
-
-.error {
-  background: #fff0ef;
-  color: #a3261f;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.userline {
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-.badge {
-  display: inline-flex;
-  padding: 6px 9px;
-  border-radius: 999px;
-  background: #f0f1f4;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.footer-note {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* Verification locked */
-
-.verification-card.locked {
-  background: #e9eaed;
-  border-color: #d6d7db;
-  box-shadow: none;
-}
-
 .verification-card.locked h2,
 .verification-card.locked .sub,
 .verification-card.locked label,
-.verification-card.locked .footer-note {
-  color: var(--disabledText);
-}
-
+.verification-card.locked .footer-note{color:var(--disabledText)}
 .verification-card.locked input,
-.verification-card.locked select {
-  background: var(--disabled);
-  color: var(--disabledText);
-  border-color: #d3d4d8;
-  cursor: not-allowed;
+.verification-card.locked select{
+  background:var(--disabled);
+  color:var(--disabledText);
+  border-color:#d3d4d8;
+  cursor:not-allowed;
 }
-
-.verification-card.locked input[type="file"] {
-  opacity: .55;
+.verification-card.locked input[type=file]{opacity:.55}
+.verification-card.active{
+  border:1px solid var(--green);
+  box-shadow:0 8px 30px rgba(22,138,85,.08);
 }
-
-.verification-card.locked button {
-  background: #bfc1c6;
-  color: #777a82;
-  cursor: not-allowed;
+.verification-waiting{
+  text-align:center;
+  padding:28px 20px;
+  border-radius:16px;
+  background:#fff7e0;
+  border:1px solid #f0d88d;
+  color:#765400;
 }
-
-.lock-message {
-  display: none;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: #dfe1e5;
-  color: #6f727a;
-  font-size: 13px;
-  font-weight: 650;
-  margin-bottom: 16px;
+.wait-icon{font-size:38px;margin-bottom:10px}
+.verification-waiting h3{margin:0 0 8px;font-size:20px}
+.verification-waiting p{margin:0;font-size:14px;line-height:1.6}
+.rejected-box{
+  background:#fff0ef;
+  border:1px solid #f2c5c2;
+  color:#a3261f;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:16px;
+  font-size:13px;
+  line-height:1.5;
 }
-
-.verification-card.locked .lock-message {
-  display: block;
+#verifyBtn,#savePayoutBtn{width:100%}
+#verifyBtn:disabled{background:#bfc1c6;color:#777a82}
+.payout-saved{overflow-wrap:anywhere}
+@media(max-width:760px){
+  .hero{display:block}
+  .requirements,.grid{grid-template-columns:1fr}
+  .nav{padding:13px 15px}
+  .logo img{width:100px;max-height:42px}
+  .nav-actions{gap:7px}
+  .btn{padding:10px 11px;font-size:12px}
+  main{padding:22px 15px 45px}
+  .hero h1{font-size:28px}
+  .card{padding:18px}
+  .hero>.badge{margin-top:14px}
+  .start-panel{align-items:stretch;flex-direction:column}
+  #startBtn{width:100%}
 }
-
-/* Active verification */
-
-.verification-card.active {
-  border: 1px solid var(--green);
-  box-shadow: 0 8px 30px rgba(22,138,85,.08);
-}
-
-/* Verification waiting */
-
-.verification-waiting {
-  text-align: center;
-  padding: 28px 20px;
-  border-radius: 16px;
-  background: #fff7e0;
-  border: 1px solid #f0d88d;
-  color: #765400;
-}
-
-.verification-waiting .wait-icon {
-  font-size: 38px;
-  margin-bottom: 10px;
-}
-
-.verification-waiting h3 {
-  margin: 0 0 8px;
-  font-size: 20px;
-}
-
-.verification-waiting p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* Rejected verification */
-
-.rejected-box {
-  background: #fff0ef;
-  border: 1px solid #f2c5c2;
-  color: #a3261f;
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 16px;
-  font-size: 13px;
-}
-
-/* Verify button */
-
-#verifyBtn {
-  width: 100%;
-}
-
-#verifyBtn:disabled {
-  background: #bfc1c6;
-  color: #777a82;
-  opacity: 1;
-}
-
-@media(max-width:760px) {
-  .hero {
-    display: block;
-  }
-
-  .hero .nav-actions {
-    margin-top: 16px;
-  }
-
-  .requirements,
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .nav {
-    padding: 13px 15px;
-  }
-
-  .logo img {
-    width: 100px;
-    max-height: 42px;
-  }
-
-  .nav-actions {
-    gap: 7px;
-  }
-
-  .btn {
-    padding: 10px 11px;
-    font-size: 12px;
-  }
-
-  main {
-    padding: 22px 15px 45px;
-  }
-
-  .hero h1 {
-    font-size: 28px;
-  }
-
-  .card {
-    padding: 18px;
-  }
-}
-
-@media(max-width:380px) {
-  .logo img {
-    width: 78px;
-  }
-
-  .nav {
-    gap: 8px;
-  }
-
-  .btn {
-    padding: 9px 8px;
-  }
+@media(max-width:380px){
+  .logo img{width:78px}
+  .nav{gap:8px}
+  .nav-actions{gap:5px}
+  .btn{padding:9px 8px}
 }
 </style>
 </head>
 
 <body>
-
 <header>
   <div class="nav">
-
     <div class="logo">
       <img
         src="https://vfteiggdhthvrrlndtbs.supabase.co/storage/v1/object/public/bigula-assets/bigula-logo.png"
-        alt="BIGULA"
-      >
+        alt="BIGULA">
     </div>
-
     <div class="nav-actions">
-      <button class="btn btn-light" id="backBtn">
-        Back
-      </button>
-
-      <button class="btn btn-dark" id="earningsBtn">
-        Creator earnings
-      </button>
+      <button class="btn btn-light" id="backBtn" type="button">Back</button>
+      <button class="btn btn-dark" id="earningsBtn" type="button">Creator earnings</button>
     </div>
-
   </div>
 </header>
 
 <main>
-
-<section class="hero">
-
-  <div>
-    <div class="eyebrow">
-      Creator Studio
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Creator Studio</div>
+      <h1>Monetization</h1>
+      <p>Track your eligibility, verify your identity, and set up payouts when your account qualifies.</p>
+      <div class="userline" id="userLine">Loading account…</div>
     </div>
-
-    <h1>
-      Monetization
-    </h1>
-
-    <p>
-      Complete your creator requirements, verify your identity,
-      and add a payout method when your account becomes eligible.
-    </p>
-
-    <div class="userline" id="userLine">
-      Loading account…
-    </div>
-  </div>
-
-  <span class="badge" id="accountBadge">
-    Checking
-  </span>
-
-</section>
-
-<div id="message" class="notice hidden"></div>
-
-<!-- Eligibility -->
-
-<section class="card" id="eligibilityCard">
-
-  <h2>
-    Eligibility
-  </h2>
-
-  <p class="sub">
-    Complete all three requirements to unlock identity verification.
-  </p>
-
-  <div class="progress-wrap">
-    <div class="progress" id="progress"></div>
-  </div>
-
-  <div class="progress-meta">
-    <span id="progressText">
-      Checking…
-    </span>
-
-    <span>
-      3 requirements
-    </span>
-  </div>
-
-  <div class="requirements" style="margin-top:16px">
-
-    <div class="req">
-      <strong>Followers</strong>
-
-      <div class="status bad" id="followersStatus">
-        Checking…
-      </div>
-
-      <small>
-        Target: 100 followers
-      </small>
-    </div>
-
-    <div class="req">
-      <strong>Published videos</strong>
-
-      <div class="status bad" id="videosStatus">
-        Checking…
-      </div>
-
-      <small>
-        Target: 5 videos
-      </small>
-    </div>
-
-    <div class="req">
-      <strong>Copyright</strong>
-
-      <div class="status pending" id="copyrightStatus">
-        Checking…
-      </div>
-
-      <small>
-        No active copyright claims
-      </small>
-    </div>
-
-  </div>
-
-</section>
-
-<div class="grid">
-
-  <!-- Identity verification -->
-
-  <section class="card verification-card locked" id="verificationCard">
-
-    <h2>
-      Identity verification
-    </h2>
-
-    <p class="sub">
-      Use your legal details for payout verification.
-      BIGULA will use your contact email to communicate the result of your review.
-    </p>
-
-    <div class="lock-message" id="verificationLockMessage">
-      Complete all 3 monetization requirements before identity verification becomes available.
-    </div>
-
-    <!-- Waiting screen -->
-
-    <div id="verificationWaiting" class="verification-waiting hidden">
-
-      <div class="wait-icon">
-        ⏳
-      </div>
-
-      <h3>
-        Files verification in progress
-      </h3>
-
-      <p>
-        Wait for confirmation.
-        BIGULA is reviewing your submitted information and files.
-        We will contact you using the email address you provided.
-      </p>
-
-    </div>
-
-    <!-- Rejected message -->
-
-    <div id="verificationRejected" class="rejected-box hidden">
-      Your previous verification submission was not approved.
-      Please review your information and submit the required files again.
-    </div>
-
-    <!-- Verification form -->
-
-    <form id="verificationForm">
-
-      <div class="field">
-        <label for="legalName">
-          Legal full name
-        </label>
-
-        <input
-          id="legalName"
-          required
-          autocomplete="name"
-          disabled
-        >
-      </div>
-
-      <div class="field">
-        <label for="contactEmail">
-          Email address for BIGULA contact
-        </label>
-
-        <input
-          id="contactEmail"
-          type="email"
-          required
-          autocomplete="email"
-          placeholder="you@example.com"
-          disabled
-        >
-      </div>
-
-      <div class="field">
-        <label for="dob">
-          Date of birth
-        </label>
-
-        <input
-          id="dob"
-          type="date"
-          required
-          disabled
-        >
-      </div>
-
-      <div class="field">
-        <label for="country">
-          Country
-        </label>
-
-        <select id="country" required disabled>
-          <option value="">Select country</option>
-          <option value="Uganda">Uganda</option>
-          <option value="Kenya">Kenya</option>
-          <option value="Nigeria">Nigeria</option>
-          <option value="South Africa">South Africa</option>
-          <option value="United States">United States</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="India">India</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="idFile">
-          Government ID
-        </label>
-
-        <input
-          id="idFile"
-          type="file"
-          accept="image/*,application/pdf"
-          required
-          disabled
-        >
-      </div>
-
-      <button
-        class="btn btn-dark"
-        type="submit"
-        id="verifyBtn"
-        disabled
-      >
-        Submit verification
-      </button>
-
-    </form>
-
-    <p class="footer-note">
-      Verification can remain pending while BIGULA reviews the submission.
-      Do not upload passwords, payment-card details, or unrelated documents.
-    </p>
-
+    <span class="badge" id="accountBadge">Checking</span>
   </section>
 
-  <!-- Payout method -->
+  <div id="message" class="notice hidden" role="status" aria-live="polite"></div>
 
-  <section class="card" id="payoutCard">
+  <section class="card" id="eligibilityCard">
+    <h2>Eligibility</h2>
+    <p class="sub">Your progress updates from your BIGULA account records. Complete all three requirements to start identity verification.</p>
 
-    <h2>
-      Payout method
-    </h2>
-
-    <p class="sub">
-      A payout method becomes available after the account reaches
-      the $10 threshold and eligibility is complete.
-    </p>
-
-    <div id="payoutLocked" class="notice">
-      Reach the payout threshold to unlock this section.
+    <div class="progress-wrap" aria-label="Overall eligibility progress">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="progress-meta">
+      <span id="progressText">Loading eligibility…</span>
+      <span>3 requirements</span>
     </div>
 
-    <form id="payoutForm" class="hidden">
-
-      <div class="field">
-        <label for="paymentMethod">
-          Payment method
-        </label>
-
-        <select id="paymentMethod" required>
-          <option value="">Select method</option>
-          <option value="bank_transfer">Bank transfer</option>
-          <option value="paypal">PayPal</option>
-          <option value="payoneer">Payoneer</option>
-          <option value="wise">Wise</option>
-          <option value="mobile_money">Mobile Money</option>
-        </select>
+    <div class="requirements" style="margin-top:16px">
+      <div class="req">
+        <strong>Followers</strong>
+        <div class="status pending" id="followersStatus">Loading…</div>
+        <div class="progress-wrap"><div class="progress" id="followersProgress"></div></div>
+        <div class="progress-meta">
+          <span id="followersMeta">0 / 100</span>
+          <span id="followersPercent">0%</span>
+        </div>
+        <small>Target: 100 followers</small>
       </div>
 
-      <div class="field">
-        <label for="accountName">
-          Account holder name
-        </label>
-
-        <input
-          id="accountName"
-          required
-          autocomplete="name"
-        >
+      <div class="req">
+        <strong>Published videos</strong>
+        <div class="status pending" id="videosStatus">Loading…</div>
+        <div class="progress-wrap"><div class="progress" id="videosProgress"></div></div>
+        <div class="progress-meta">
+          <span id="videosMeta">0 / 5</span>
+          <span id="videosPercent">0%</span>
+        </div>
+        <small>Target: 5 published videos</small>
       </div>
 
-      <div class="field">
-        <label for="accountNumber">
-          Account / phone / email
-        </label>
-
-        <input
-          id="accountNumber"
-          required
-          autocomplete="off"
-        >
+      <div class="req">
+        <strong>Copyright claims</strong>
+        <div class="status pending" id="copyrightStatus">Loading…</div>
+        <div class="progress-wrap"><div class="progress" id="copyrightProgress"></div></div>
+        <div class="progress-meta">
+          <span id="copyrightMeta">Checking claims</span>
+          <span id="copyrightPercent">—</span>
+        </div>
+        <small>Requirement: no unresolved claims against your account</small>
       </div>
-
-      <button
-        class="btn btn-red"
-        type="submit"
-        id="savePayoutBtn"
-      >
-        Save payout method
-      </button>
-
-    </form>
-
-    <div id="savedPayout" class="hidden"></div>
-
+    </div>
   </section>
 
-</div>
+  <section class="start-panel" id="startPanel">
+    <div class="start-copy">
+      <strong id="startTitle">Identity verification is locked</strong>
+      <p id="startDescription">Complete all three requirements above. The Start button will unlock when your eligibility has been confirmed.</p>
+    </div>
+    <button class="btn btn-dark" id="startBtn" type="button" disabled>START</button>
+  </section>
 
+  <div class="grid hidden" id="creatorSections">
+    <section class="card verification-card active" id="verificationCard">
+      <h2>Identity verification</h2>
+      <p class="sub">Enter your legal details and attach a government-issued ID. BIGULA will contact you using the email address you provide.</p>
+
+      <div id="verificationWaiting" class="verification-waiting hidden">
+        <div class="wait-icon">⏳</div>
+        <h3>Verification in progress</h3>
+        <p>Your information and documents are awaiting review. Please wait for confirmation. BIGULA will contact you by email.</p>
+      </div>
+
+      <div id="verificationRejected" class="rejected-box hidden">
+        Your previous verification submission was not approved. Review your information and submit the required files again.
+      </div>
+
+      <form id="verificationForm">
+        <div class="field">
+          <label for="legalName">Legal full name</label>
+          <input id="legalName" required autocomplete="name" disabled>
+        </div>
+
+        <div class="field">
+          <label for="contactEmail">Email address for BIGULA contact</label>
+          <input id="contactEmail" type="email" required autocomplete="email" placeholder="you@example.com" disabled>
+        </div>
+
+        <div class="field">
+          <label for="dob">Date of birth</label>
+          <input id="dob" type="date" required disabled>
+        </div>
+
+        <div class="field">
+          <label for="country">Country</label>
+          <select id="country" required disabled>
+            <option value="">Select country</option>
+            <option value="Uganda">Uganda</option>
+            <option value="Kenya">Kenya</option>
+            <option value="Nigeria">Nigeria</option>
+            <option value="South Africa">South Africa</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="India">India</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="idFile">Government ID (image or PDF, max 10 MB)</label>
+          <input id="idFile" type="file" accept="image/*,application/pdf" required disabled>
+        </div>
+
+        <button class="btn btn-dark" type="submit" id="verifyBtn" disabled>Submit verification</button>
+      </form>
+
+      <p class="footer-note">Verification may remain pending while BIGULA reviews your submission. Never upload passwords, payment-card details, or unrelated documents.</p>
+    </section>
+
+    <section class="card" id="payoutCard">
+      <h2>Payout method</h2>
+      <p class="sub">Payout setup becomes available when your available balance reaches $10 and your monetization requirements are complete.</p>
+
+      <div id="payoutLocked" class="notice">Your payout setup is locked until you meet the requirements and reach the $10 balance threshold.</div>
+
+      <form id="payoutForm" class="hidden">
+        <div class="field">
+          <label for="paymentMethod">Payment method</label>
+          <select id="paymentMethod" required>
+            <option value="">Select method</option>
+            <option value="bank_transfer">Bank transfer</option>
+            <option value="paypal">PayPal</option>
+            <option value="payoneer">Payoneer</option>
+            <option value="wise">Wise</option>
+            <option value="mobile_money">Mobile Money</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="accountName">Account holder name</label>
+          <input id="accountName" required autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="accountNumber">Account / phone / email</label>
+          <input id="accountNumber" required autocomplete="off">
+        </div>
+
+        <button class="btn btn-red" type="submit" id="savePayoutBtn">Save payout method</button>
+      </form>
+
+      <div id="savedPayout" class="hidden payout-saved"></div>
+    </section>
+  </div>
 </main>
 
 <script>
-const SUPABASE_URL =
-  "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
+const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
 
-const SUPABASE_KEY =
-  "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
-
-const sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: "pkce"
-    }
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: "pkce"
   }
-);
+});
 
 let currentUser = null;
 let earnings = 0;
 let eligibility = false;
+let eligibilityLoaded = false;
+let eligibilityError = false;
 let verificationStatus = null;
+let monetizationData = null;
 
 const $ = id => document.getElementById(id);
 
@@ -838,234 +486,334 @@ function go(path) {
   location.href = path;
 }
 
+function setProgress(id, percent) {
+  $(id).style.width = Math.max(0, Math.min(100, percent)) + "%";
+}
+
+function setStatus(id, text, type) {
+  $(id).textContent = text;
+  $(id).className = "status " + type;
+}
+
+function updateStartButton() {
+  const ready = eligibilityLoaded && !eligibilityError && eligibility;
+  $("startBtn").disabled = !ready;
+
+  if (ready) {
+    $("startTitle").textContent = "You meet the eligibility requirements";
+    $("startDescription").textContent = "You can now open identity verification and submit your details for review.";
+    $("startBtn").textContent = "START";
+    $("startBtn").classList.remove("btn-dark");
+    $("startBtn").classList.add("btn-green");
+  } else if (eligibilityError) {
+    $("startTitle").textContent = "Eligibility could not be confirmed";
+    $("startDescription").textContent = "Some account records could not be checked. Please try again before starting verification.";
+    $("startBtn").textContent = "UNAVAILABLE";
+    $("startBtn").classList.add("btn-dark");
+    $("startBtn").classList.remove("btn-green");
+  } else {
+    $("startTitle").textContent = "Identity verification is locked";
+    $("startDescription").textContent = "Complete all three requirements above. The Start button will unlock when your eligibility has been confirmed.";
+    $("startBtn").textContent = "START";
+    $("startBtn").classList.add("btn-dark");
+    $("startBtn").classList.remove("btn-green");
+  }
+}
+
 /* INITIALIZE */
 
 async function init() {
-  const {
-    data: { session },
-    error: sessionError
-  } = await sb.auth.getSession();
+  try {
+    const {
+      data: { session },
+      error: sessionError
+    } = await sb.auth.getSession();
 
-  if (sessionError) {
-    console.error(sessionError);
-    msg("Could not check your sign-in session. Please reload the page.", "error");
-    return;
+    if (sessionError) throw sessionError;
+
+    if (!session?.user) {
+      go("signup.html");
+      return;
+    }
+
+    currentUser = session.user;
+
+    const { data: user, error: userError } = await sb
+      .from("users")
+      .select("username,full_name")
+      .eq("id", currentUser.id)
+      .maybeSingle();
+
+    if (userError) console.warn("Could not load profile:", userError);
+
+    $("userLine").textContent =
+      user?.username ||
+      user?.full_name ||
+      currentUser.user_metadata?.full_name ||
+      currentUser.email ||
+      "Creator";
+
+    const { data: monetization, error: monetizationError } = await sb
+      .from("creator_monetization")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (monetizationError) {
+      console.warn("Could not load monetization record:", monetizationError);
+    }
+
+    monetizationData = monetization || null;
+    verificationStatus = monetizationData?.verification_status || null;
+
+    if (verificationStatus === "verified") {
+      location.replace("creator-earnings.html");
+      return;
+    }
+
+    // Run independent reads in parallel. Eligibility renders its own errors.
+    await Promise.all([
+      loadEligibility(),
+      loadMonetization(monetizationData),
+      loadPayout()
+    ]);
+  } catch (err) {
+    console.error("Monetization initialization failed:", err);
+    msg("Could not initialize monetization. Check your connection and reload the page.", "error");
+    eligibilityError = true;
+    eligibilityLoaded = true;
+    updateStartButton();
+    $("progressText").textContent = "Eligibility could not be loaded";
+    setStatus("followersStatus", "Could not load", "bad");
+    setStatus("videosStatus", "Could not load", "bad");
+    setStatus("copyrightStatus", "Could not load", "bad");
   }
-
-  if (!session?.user) {
-    go("signup.html");
-    return;
-  }
-
-  currentUser = session.user;
-
-  const {
-    data: user,
-    error: userError
-  } = await sb
-    .from("users")
-    .select("*")
-    .eq("id", currentUser.id)
-    .maybeSingle();
-
-  if (userError) {
-    console.warn(userError);
-  }
-
-  $("userLine").textContent =
-    user?.username ||
-    user?.full_name ||
-    currentUser.user_metadata?.full_name ||
-    currentUser.email ||
-    "Creator";
-
-  const {
-    data: monetization,
-    error: monetizationError
-  } = await sb
-    .from("creator_monetization")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .maybeSingle();
-
-  if (monetizationError) {
-    console.warn(monetizationError);
-  }
-
-  verificationStatus =
-    monetization?.verification_status || null;
-
-  if (verificationStatus === "verified") {
-    location.replace("creator-earnings.html");
-    return;
-  }
-
-  await Promise.all([
-    loadEligibility(),
-    loadMonetization(monetization),
-    loadPayout()
-  ]);
 }
 
 /* ELIGIBILITY */
 
 async function loadEligibility() {
-  const [
-    { count: followers, error: followersError },
-    { count: videos, error: videosError },
-    { data: claims, error: claimsError }
-  ] = await Promise.all([
-    sb
-      .from("followers")
-      .select("*", { count: "exact", head: true })
-      .eq("following_id", currentUser.id),
+  eligibilityLoaded = false;
+  eligibilityError = false;
+  eligibility = false;
+  updateStartButton();
 
-    sb
-      .from("videos")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", currentUser.id)
-      .eq("status", "published"),
+  setStatus("followersStatus", "Checking…", "pending");
+  setStatus("videosStatus", "Checking…", "pending");
+  setStatus("copyrightStatus", "Checking…", "pending");
+  $("progressText").textContent = "Checking eligibility…";
 
-    sb
-      .from("videos")
-      .select("id")
-      .eq("user_id", currentUser.id)
-      .or("copyright_status.eq.claimed,copyright_status.eq.flagged")
-  ]);
+  try {
+    const [
+      followersResult,
+      videosResult,
+      claimsResult
+    ] = await Promise.all([
+      sb
+        .from("followers")
+        .select("follower_id", { count: "exact", head: true })
+        .eq("following_id", currentUser.id),
 
-  if (followersError || videosError || claimsError) {
-    console.error(
-      "Eligibility query errors:",
-      followersError,
-      videosError,
-      claimsError
+      sb
+        .from("videos")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", currentUser.id)
+        .eq("status", "published"),
+
+      // Count unresolved claims reported against this creator.
+      sb
+        .from("copyright_claims")
+        .select("id", { count: "exact", head: true })
+        .eq("reported_creator_id", currentUser.id)
+        .not("status", "in", '("rejected","withdrawn","closed")')
+    ]);
+
+    const errors = [
+      followersResult.error,
+      videosResult.error,
+      claimsResult.error
+    ].filter(Boolean);
+
+    if (errors.length) {
+      console.error("Eligibility query errors:", errors);
+      throw new Error(
+        "One or more eligibility checks failed. Check table permissions and RLS policies for followers, videos, and copyright_claims."
+      );
+    }
+
+    const followers = Number(followersResult.count || 0);
+    const videos = Number(videosResult.count || 0);
+    const claims = Number(claimsResult.count || 0);
+
+    const followerTarget = 100;
+    const videoTarget = 5;
+
+    const followersComplete = followers >= followerTarget;
+    const videosComplete = videos >= videoTarget;
+    const copyrightComplete = claims === 0;
+
+    const followerPercent = Math.min(100, Math.round(followers / followerTarget * 100));
+    const videoPercent = Math.min(100, Math.round(videos / videoTarget * 100));
+    const copyrightPercent = copyrightComplete ? 100 : 0;
+
+    // Followers progress
+    setStatus(
+      "followersStatus",
+      followersComplete ? "✓ Requirement met" : `${followers} / ${followerTarget} followers`,
+      followersComplete ? "ok" : "bad"
     );
+    setProgress("followersProgress", followerPercent);
+    $("followersMeta").textContent = `${followers} / ${followerTarget}`;
+    $("followersPercent").textContent = `${followerPercent}%`;
 
-    msg(
-      "Some eligibility information could not be loaded. Check your database permissions and try again.",
-      "error"
+    // Published-video progress
+    setStatus(
+      "videosStatus",
+      videosComplete ? "✓ Requirement met" : `${videos} / ${videoTarget} videos`,
+      videosComplete ? "ok" : "bad"
     );
+    setProgress("videosProgress", videoPercent);
+    $("videosMeta").textContent = `${videos} / ${videoTarget}`;
+    $("videosPercent").textContent = `${videoPercent}%`;
 
-    return;
-  }
+    // Copyright progress: full green bar only when there are no unresolved claims.
+    setStatus(
+      "copyrightStatus",
+      copyrightComplete ? "✓ No unresolved claims" : `${claims} unresolved claim${claims === 1 ? "" : "s"}`,
+      copyrightComplete ? "ok" : "bad"
+    );
+    setProgress("copyrightProgress", copyrightPercent);
+    $("copyrightMeta").textContent = copyrightComplete ? "0 active claims" : `${claims} active/unresolved`;
+    $("copyrightPercent").textContent = `${copyrightPercent}%`;
 
-  const f = followers || 0;
-  const v = videos || 0;
-  const c = claims?.length || 0;
+    const done =
+      (followersComplete ? 1 : 0) +
+      (videosComplete ? 1 : 0) +
+      (copyrightComplete ? 1 : 0);
 
-  // Current BIGULA monetization requirement: 100 followers.
-  const followersComplete = f >= 100;
-  const videosComplete = v >= 5;
-  const copyrightComplete = c === 0;
+    eligibility = done === 3;
+    eligibilityError = false;
+    eligibilityLoaded = true;
 
-  $("followersStatus").textContent =
-    followersComplete
-      ? "✓ 100+"
-      : `${f} / 100`;
+    setProgress("progress", Math.round(done / 3 * 100));
+    $("progressText").textContent = `${done} of 3 requirements complete`;
 
-  $("followersStatus").className =
-    "status " + (followersComplete ? "ok" : "bad");
+    updateStartButton();
 
-  $("videosStatus").textContent =
-    videosComplete
-      ? "✓ 5+ videos"
-      : `${v} / 5`;
+    if (eligibility) {
+      $("accountBadge").textContent =
+        verificationStatus === "pending" ? "Verification pending" : "Eligible to apply";
+    } else {
+      $("accountBadge").textContent = "Not yet eligible";
+    }
+  } catch (err) {
+    console.error("Eligibility could not be loaded:", err);
 
-  $("videosStatus").className =
-    "status " + (videosComplete ? "ok" : "bad");
+    eligibility = false;
+    eligibilityError = true;
+    eligibilityLoaded = true;
 
-  $("copyrightStatus").textContent =
-    copyrightComplete
-      ? "✓ No active claims"
-      : `${c} claim(s)`;
+    $("progress").style.width = "0%";
+    $("progressText").textContent = "Eligibility check failed";
+    setStatus("followersStatus", "Check failed", "bad");
+    setStatus("videosStatus", "Check failed", "bad");
+    setStatus("copyrightStatus", "Check failed", "bad");
 
-  $("copyrightStatus").className =
-    "status " + (copyrightComplete ? "ok" : "bad");
+    $("followersMeta").textContent = "Unavailable";
+    $("followersPercent").textContent = "—";
+    $("videosMeta").textContent = "Unavailable";
+    $("videosPercent").textContent = "—";
+    $("copyrightMeta").textContent = "Unavailable";
+    $("copyrightPercent").textContent = "—";
 
-  const done =
-    (followersComplete ? 1 : 0) +
-    (videosComplete ? 1 : 0) +
-    (copyrightComplete ? 1 : 0);
-
-  eligibility = done === 3;
-
-  $("progress").style.width =
-    (done / 3 * 100) + "%";
-
-  $("progressText").textContent =
-    `${done} of 3 requirements complete`;
-
-  if (eligibility) {
-    $("eligibilityCard").classList.add("hidden");
-    unlockVerification();
-  } else {
-    $("eligibilityCard").classList.remove("hidden");
-    lockVerification();
+    updateStartButton();
+    msg(err.message || "Could not load eligibility. Please try again.", "error");
   }
 }
 
-/* LOCK VERIFICATION */
+/* START BUTTON: REVEAL VERIFICATION AND PAYOUT */
+
+$("startBtn").addEventListener("click", () => {
+  if (!eligibilityLoaded || eligibilityError || !eligibility) return;
+
+  $("creatorSections").classList.remove("hidden");
+  $("startTitle").textContent = "Verification and payout";
+  $("startDescription").textContent = "Your creator sections are now available below.";
+
+  if (verificationStatus === "pending") {
+    showVerificationWaiting();
+  } else if (verificationStatus === "rejected") {
+    showRejectedState();
+  } else {
+    unlockVerification();
+  }
+
+  $("creatorSections").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+});
+
+/* LOCK / UNLOCK VERIFICATION */
 
 function lockVerification() {
   const card = $("verificationCard");
-
   card.classList.add("locked");
   card.classList.remove("active");
 
-  $("legalName").disabled = true;
-  $("contactEmail").disabled = true;
-  $("dob").disabled = true;
-  $("country").disabled = true;
-  $("idFile").disabled = true;
-  $("verifyBtn").disabled = true;
+  ["legalName", "contactEmail", "dob", "country", "idFile"].forEach(id => {
+    $(id).disabled = true;
+  });
 
-  $("verificationLockMessage").textContent =
-    "Complete all 3 monetization requirements before identity verification becomes available.";
+  $("verifyBtn").disabled = true;
 }
 
-/* UNLOCK VERIFICATION */
-
 function unlockVerification() {
+  if (!eligibility || eligibilityError || !eligibilityLoaded) {
+    lockVerification();
+    return;
+  }
+
   if (verificationStatus === "pending") {
     showVerificationWaiting();
     return;
   }
 
   const card = $("verificationCard");
-
   card.classList.remove("locked");
   card.classList.add("active");
 
-  $("legalName").disabled = false;
-  $("contactEmail").disabled = false;
-  $("dob").disabled = false;
-  $("country").disabled = false;
-  $("idFile").disabled = false;
+  $("verificationWaiting").classList.add("hidden");
+  $("verificationRejected").classList.toggle("hidden", verificationStatus !== "rejected");
+  $("verificationForm").classList.remove("hidden");
+
+  ["legalName", "contactEmail", "dob", "country", "idFile"].forEach(id => {
+    $(id).disabled = false;
+  });
 
   updateVerificationButton();
 }
 
-/* SHOW WAITING SCREEN */
-
 function showVerificationWaiting() {
   const card = $("verificationCard");
-
   card.classList.remove("locked");
   card.classList.add("active");
 
   $("verificationForm").classList.add("hidden");
   $("verificationRejected").classList.add("hidden");
   $("verificationWaiting").classList.remove("hidden");
-  $("verificationLockMessage").style.display = "none";
-
   $("accountBadge").textContent = "Verification pending";
+
+  ["legalName", "contactEmail", "dob", "country", "idFile"].forEach(id => {
+    $(id).disabled = true;
+  });
+  $("verifyBtn").disabled = true;
 }
 
-/* SHOW REJECTED STATE */
-
 function showRejectedState() {
-  const card = $("verificationCard");
+  if (!eligibility) return;
 
+  const card = $("verificationCard");
   card.classList.remove("locked");
   card.classList.add("active");
 
@@ -1073,197 +821,20 @@ function showRejectedState() {
   $("verificationRejected").classList.remove("hidden");
   $("verificationForm").classList.remove("hidden");
 
-  $("legalName").disabled = false;
-  $("contactEmail").disabled = false;
-  $("dob").disabled = false;
-  $("country").disabled = false;
-  $("idFile").disabled = false;
-
-  updateVerificationButton();
+  ["legalName", "contactEmail", "dob", "country", "idFile"].forEach(id => {
+    $(id).disabled = false;
+  });
 
   $("accountBadge").textContent = "Verification rejected";
+  updateVerificationButton();
 }
 
-/* VERIFICATION BUTTON */
+/* VERIFICATION BUTTON STATE */
 
 function updateVerificationButton() {
-  const name = $("legalName").value.trim();
-  const email = $("contactEmail").value.trim();
-  const dob = $("dob").value.trim();
-  const country = $("country").value.trim();
-  const file = $("idFile").files[0];
-
-  const validEmail =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const allFieldsComplete =
-    name.length > 0 &&
-    validEmail &&
-    dob.length > 0 &&
-    country.length > 0 &&
-    !!file;
-
-  $("verifyBtn").disabled =
-    !eligibility || !allFieldsComplete;
-}
-
-/* FIELD LISTENERS */
-
-$("legalName").addEventListener(
-  "input",
-  updateVerificationButton
-);
-
-$("contactEmail").addEventListener(
-  "input",
-  updateVerificationButton
-);
-
-$("dob").addEventListener(
-  "change",
-  updateVerificationButton
-);
-
-$("country").addEventListener(
-  "change",
-  updateVerificationButton
-);
-
-$("idFile").addEventListener("change", function() {
-  const file = this.files[0];
-
-  if (file && file.size > 10 * 1024 * 1024) {
-    msg(
-      "Government ID must be 10 MB or smaller.",
-      "error"
-    );
-
-    this.value = "";
-  }
-
-  updateVerificationButton();
-});
-
-/* MONETIZATION */
-
-async function loadMonetization(existingData = null) {
-  let data = existingData;
-
-  if (!data) {
-    const {
-      data: result,
-      error
-    } = await sb
-      .from("creator_monetization")
-      .select("*")
-      .eq("user_id", currentUser.id)
-      .maybeSingle();
-
-    if (error) {
-      console.warn(error);
-    }
-
-    data = result;
-  }
-
-  earnings = Number(data?.available_balance || 0);
-
-  verificationStatus =
-    data?.verification_status || null;
-
-  $("accountBadge").textContent =
-    data?.status === "active"
-      ? "Monetized"
-      : (data?.status || "Not monetized");
-
-  if (data?.legal_name) {
-    $("legalName").value = data.legal_name;
-  }
-
-  if (data?.contact_email) {
-    $("contactEmail").value = data.contact_email;
-  }
-
-  if (data?.date_of_birth) {
-    $("dob").value = data.date_of_birth;
-  }
-
-  if (data?.country) {
-    $("country").value = data.country;
-  }
-
-  if (verificationStatus === "verified") {
-    location.replace("creator-earnings.html");
-    return;
-  }
-
-  if (verificationStatus === "pending") {
-    showVerificationWaiting();
-  }
-
-  if (verificationStatus === "rejected") {
-    showRejectedState();
-  }
-
-  const payoutUnlocked = earnings >= 10;
-
-  $("payoutLocked").classList.toggle(
-    "hidden",
-    payoutUnlocked
-  );
-
-  $("payoutForm").classList.toggle(
-    "hidden",
-    !payoutUnlocked
-  );
-
-  if (!payoutUnlocked) {
-    $("payoutLocked").textContent =
-      `Current eligible balance: $${money(earnings)}. Reach $10 to unlock payout setup.`;
-  }
-}
-
-/* LOAD PAYOUT */
-
-async function loadPayout() {
-  const {
-    data,
-    error
-  } = await sb
-    .from("payout_methods")
-    .select("method,account_name,account_reference,status")
-    .eq("user_id", currentUser.id)
-    .maybeSingle();
-
-  if (error) {
-    console.warn(error);
-  }
-
-  if (!data) {
-    return;
-  }
-
-  $("savedPayout").className = "notice success";
-  $("savedPayout").classList.remove("hidden");
-
-  $("savedPayout").textContent =
-    `Saved: ${data.method.replaceAll("_", " ")} • ${data.account_name} • ${data.status}`;
-
-  $("paymentMethod").value = data.method;
-  $("accountName").value = data.account_name;
-  $("accountNumber").value = data.account_reference;
-}
-
-/* SUBMIT VERIFICATION */
-
-$("verificationForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  if (!eligibility) {
-    msg(
-      "You must complete all monetization requirements first.",
-      "error"
-    );
+  if (!eligibility || eligibilityError || !eligibilityLoaded ||
+      verificationStatus === "pending" || verificationStatus === "verified") {
+    $("verifyBtn").disabled = true;
     return;
   }
 
@@ -1273,50 +844,178 @@ $("verificationForm").addEventListener("submit", async e => {
   const country = $("country").value;
   const file = $("idFile").files[0];
 
-  const validEmail =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validDate = !!dob && dob <= new Date().toISOString().slice(0, 10);
+  const validFile = !!file && file.size > 0 && file.size <= 10 * 1024 * 1024;
 
-  if (!name || !email || !validEmail || !dob || !country || !file) {
-    msg(
-      "Complete your name, email, date of birth, country, and Government ID before submitting.",
-      "error"
-    );
+  $("verifyBtn").disabled = !(
+    name.length > 0 &&
+    validEmail &&
+    validDate &&
+    country.length > 0 &&
+    validFile
+  );
+}
 
+["legalName", "contactEmail"].forEach(id => {
+  $(id).addEventListener("input", updateVerificationButton);
+});
+["dob", "country", "idFile"].forEach(id => {
+  $(id).addEventListener("change", updateVerificationButton);
+});
+
+$("idFile").addEventListener("change", function() {
+  const file = this.files[0];
+
+  if (file && file.size > 10 * 1024 * 1024) {
+    msg("Government ID must be 10 MB or smaller.", "error");
+    this.value = "";
+  } else if (file && !(
+    file.type.startsWith("image/") ||
+    file.type === "application/pdf"
+  )) {
+    msg("Please select an image or PDF for your government ID.", "error");
+    this.value = "";
+  }
+
+  updateVerificationButton();
+});
+
+/* LOAD MONETIZATION RECORD */
+
+async function loadMonetization(existingData = null) {
+  let data = existingData;
+
+  if (!data) {
+    const { data: result, error } = await sb
+      .from("creator_monetization")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn("Could not load creator monetization:", error);
+    }
+    data = result;
+  }
+
+  monetizationData = data || null;
+  earnings = Number(data?.available_balance || 0);
+  verificationStatus = data?.verification_status || null;
+
+  if (data?.legal_name) $("legalName").value = data.legal_name;
+  if (data?.contact_email) $("contactEmail").value = data.contact_email;
+  if (data?.date_of_birth) $("dob").value = data.date_of_birth;
+  if (data?.country) $("country").value = data.country;
+
+  if (verificationStatus === "verified") {
+    location.replace("creator-earnings.html");
+    return;
+  }
+
+  if (verificationStatus === "pending") {
+    $("accountBadge").textContent = "Verification pending";
+    if (!$("creatorSections").classList.contains("hidden")) {
+      showVerificationWaiting();
+    }
+  } else if (verificationStatus === "rejected") {
+    $("accountBadge").textContent = "Verification rejected";
+    if (!$("creatorSections").classList.contains("hidden") && eligibility) {
+      showRejectedState();
+    }
+  } else if (data?.status === "active") {
+    $("accountBadge").textContent = "Monetized";
+  }
+
+  const payoutUnlocked = eligibility && earnings >= 10;
+
+  $("payoutLocked").classList.toggle("hidden", payoutUnlocked);
+  $("payoutForm").classList.toggle("hidden", !payoutUnlocked);
+
+  if (!payoutUnlocked) {
+    $("payoutLocked").textContent =
+      `Available balance: $${money(earnings)}. Payout setup requires completed eligibility and a $10 balance.`;
+  }
+
+  updateVerificationButton();
+}
+
+/* LOAD SAVED PAYOUT METHOD */
+
+async function loadPayout() {
+  const { data, error } = await sb
+    .from("payout_methods")
+    .select("method,account_name,account_reference,status")
+    .eq("user_id", currentUser.id)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("Could not load payout method:", error);
+    return;
+  }
+
+  if (!data) return;
+
+  $("savedPayout").className = "notice success payout-saved";
+  $("savedPayout").classList.remove("hidden");
+  $("savedPayout").textContent =
+    `Saved: ${(data.method || "").replaceAll("_", " ")} • ${data.account_name || ""} • ${data.status || "saved"}`;
+
+  $("paymentMethod").value = data.method || "";
+  $("accountName").value = data.account_name || "";
+  $("accountNumber").value = data.account_reference || "";
+}
+
+/* SUBMIT IDENTITY VERIFICATION */
+
+$("verificationForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!eligibility || eligibilityError || !eligibilityLoaded) {
+    msg("You must complete all monetization requirements first.", "error");
+    return;
+  }
+
+  const name = $("legalName").value.trim();
+  const email = $("contactEmail").value.trim();
+  const dob = $("dob").value;
+  const country = $("country").value;
+  const file = $("idFile").files[0];
+
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validDate = !!dob && dob <= new Date().toISOString().slice(0, 10);
+
+  if (!name || !validEmail || !validDate || !country || !file) {
+    msg("Complete all fields and attach your government ID before submitting.", "error");
     updateVerificationButton();
     return;
   }
 
   if (file.size > 10 * 1024 * 1024) {
-    msg(
-      "Government ID must be 10 MB or smaller.",
-      "error"
-    );
+    msg("Government ID must be 10 MB or smaller.", "error");
+    return;
+  }
+
+  if (!(file.type.startsWith("image/") || file.type === "application/pdf")) {
+    msg("Please select an image or PDF for your government ID.", "error");
     return;
   }
 
   $("verifyBtn").disabled = true;
+  $("verifyBtn").textContent = "Submitting…";
 
   let uploadedPath = null;
 
   try {
-    const ext =
-      (file.name.split(".").pop() || "bin").toLowerCase();
+    const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const path = `${currentUser.id}/${crypto.randomUUID()}.${ext || "bin"}`;
 
-    const path =
-      `${currentUser.id}/${crypto.randomUUID()}.${ext}`;
-
-    const {
-      error: uploadError
-    } = await sb
+    const { error: uploadError } = await sb
       .storage
       .from("creator-verification")
-      .upload(path, file, {
-        upsert: false
-      });
+      .upload(path, file, { upsert: false });
 
-    if (uploadError) {
-      throw uploadError;
-    }
+    if (uploadError) throw uploadError;
 
     uploadedPath = path;
 
@@ -1325,41 +1024,25 @@ $("verificationForm").addEventListener("submit", async e => {
       legal_name: name,
       contact_email: email,
       date_of_birth: dob,
-      country: country,
+      country,
       verification_status: "pending",
       id_document_path: path
     };
 
-    const {
-      error
-    } = await sb
+    const { error } = await sb
       .from("creator_monetization")
-      .upsert(payload, {
-        onConflict: "user_id"
-      });
+      .upsert(payload, { onConflict: "user_id" });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     verificationStatus = "pending";
-
     $("accountBadge").textContent = "Verification pending";
+    showVerificationWaiting();
 
-    $("verificationForm").classList.add("hidden");
-    $("verificationRejected").classList.add("hidden");
-    $("verificationWaiting").classList.remove("hidden");
-    $("verificationLockMessage").style.display = "none";
-
-    msg(
-      "Files verification in progress. Wait for confirmation. BIGULA will contact you by email after reviewing your files.",
-      "success"
-    );
-
+    msg("Your verification files were submitted successfully. Wait for BIGULA to review them.", "success");
   } catch (err) {
-    console.error(err);
+    console.error("Verification submission failed:", err);
 
-    // Remove an uploaded document if saving its record failed.
     if (uploadedPath) {
       const { error: cleanupError } = await sb
         .storage
@@ -1371,33 +1054,26 @@ $("verificationForm").addEventListener("submit", async e => {
       }
     }
 
-    msg(
-      err.message || "Could not submit verification.",
-      "error"
-    );
-
+    msg(err.message || "Could not submit verification. Please try again.", "error");
+  } finally {
+    $("verifyBtn").textContent = "Submit verification";
     updateVerificationButton();
   }
 });
 
-/* PAYOUT METHOD */
+/* SAVE PAYOUT METHOD */
 
 $("payoutForm").addEventListener("submit", async e => {
   e.preventDefault();
-
   $("savePayoutBtn").disabled = true;
 
   try {
-    if (!eligibility) {
-      throw new Error(
-        "Your monetization requirements are not complete yet."
-      );
+    if (!eligibility || eligibilityError || !eligibilityLoaded) {
+      throw new Error("Your monetization requirements are not complete yet.");
     }
 
     if (earnings < 10) {
-      throw new Error(
-        "Your balance must reach $10 before adding a payout method."
-      );
+      throw new Error("Your available balance must reach $10 before adding a payout method.");
     }
 
     const method = $("paymentMethod").value;
@@ -1405,71 +1081,41 @@ $("payoutForm").addEventListener("submit", async e => {
     const accountReference = $("accountNumber").value.trim();
 
     if (!method || !accountName || !accountReference) {
-      throw new Error(
-        "Complete all payout details before saving."
-      );
+      throw new Error("Complete all payout details before saving.");
     }
 
     const payload = {
       user_id: currentUser.id,
-      method: method,
+      method,
       account_name: accountName,
       account_reference: accountReference,
       status: "active"
     };
 
-    const {
-      error
-    } = await sb
+    const { error } = await sb
       .from("payout_methods")
-      .upsert(payload, {
-        onConflict: "user_id"
-      });
+      .upsert(payload, { onConflict: "user_id" });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    const {
-      error: monetizationError
-    } = await sb
+    const { error: monetizationError } = await sb
       .from("creator_monetization")
-      .update({
-        payout_eligible: true
-      })
+      .update({ payout_eligible: true })
       .eq("user_id", currentUser.id);
 
     if (monetizationError) {
-      console.warn(
-        "Payout method saved, but monetization status could not be updated:",
-        monetizationError
-      );
-
-      msg(
-        "Payout method saved, but the monetization record could not be updated. Please contact BIGULA support.",
-        "error"
-      );
-
+      console.warn("Payout saved, but monetization record update failed:", monetizationError);
+      msg("Payout method saved, but the monetization record could not be updated. Please contact BIGULA support.", "error");
       await loadPayout();
       return;
     }
 
-    msg(
-      "Payout method saved successfully.",
-      "success"
-    );
-
+    msg("Payout method saved successfully.", "success");
     await loadPayout();
     await loadMonetization();
-
   } catch (err) {
-    console.error(err);
-
-    msg(
-      err.message || "Could not save payout method.",
-      "error"
-    );
-
+    console.error("Could not save payout method:", err);
+    msg(err.message || "Could not save payout method.", "error");
   } finally {
     $("savePayoutBtn").disabled = false;
   }
@@ -1477,16 +1123,12 @@ $("payoutForm").addEventListener("submit", async e => {
 
 /* NAVIGATION */
 
-$("backBtn").onclick =
-  () => go("account.html");
-
-$("earningsBtn").onclick =
-  () => go("creator-earnings.html");
+$("backBtn").addEventListener("click", () => go("account.html"));
+$("earningsBtn").addEventListener("click", () => go("creator-earnings.html"));
 
 /* START */
 
 init();
 </script>
-
 </body>
 </html>
