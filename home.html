@@ -34,7 +34,7 @@ button{
 
 /* =========================================================
    APP
-========================================================= */
+\\========================================================= */
 
 #app{
   width:100%;
@@ -45,7 +45,7 @@ button{
 
 /* =========================================================
    TOP BAR
-========================================================= */
+\\========================================================= */
 
 .topbar{
   position:fixed;
@@ -122,7 +122,7 @@ button{
 
 /* =========================================================
    TABS
-========================================================= */
+\\========================================================= */
 
 .tabs{
   position:fixed;
@@ -189,7 +189,7 @@ button{
 
 /* =========================================================
    FEED
-========================================================= */
+\\========================================================= */
 
 #feed{
   position:absolute;
@@ -248,7 +248,7 @@ button{
 
 /* =========================================================
    VIDEO OVERLAYS
-========================================================= */
+\\========================================================= */
 
 .video-shade{
   position:absolute;
@@ -313,7 +313,7 @@ button{
 
 /* =========================================================
    VIDEO INFO
-========================================================= */
+\\========================================================= */
 
 .video-info{
   position:absolute;
@@ -432,7 +432,7 @@ button{
 
 /* =========================================================
    SIDE ACTIONS
-========================================================= */
+\\========================================================= */
 
 .actions{
   position:absolute;
@@ -613,7 +613,7 @@ button{
 
 /* =========================================================
    DOUBLE TAP HEART
-========================================================= */
+\\========================================================= */
 
 .double-heart{
   position:absolute;
@@ -662,7 +662,7 @@ button{
 
 /* =========================================================
    FOOTER
-========================================================= */
+\\========================================================= */
 
 .footer{
   position:fixed;
@@ -844,7 +844,7 @@ button{
 
 /* =========================================================
    STATES
-========================================================= */
+\\========================================================= */
 
 .center-message{
   width:100%;
@@ -885,7 +885,7 @@ button{
 
 /* =========================================================
    COMMENTS OVERLAY
-========================================================= */
+\\========================================================= */
 
 #commentsOverlay{
   position:fixed;
@@ -951,7 +951,7 @@ button{
 
 /* =========================================================
    COMMENT HEADER
-========================================================= */
+\\========================================================= */
 
 .comments-header{
   flex-shrink:0;
@@ -1001,7 +1001,7 @@ button{
 
 /* =========================================================
    REACTION STRIP
-========================================================= */
+\\========================================================= */
 
 .reactions{
   display:flex;
@@ -1035,7 +1035,7 @@ button{
 
 /* =========================================================
    COMMENT SORT
-========================================================= */
+\\========================================================= */
 
 .comment-sort{
   display:flex;
@@ -1068,7 +1068,7 @@ button{
 
 /* =========================================================
    COMMENTS LIST
-========================================================= */
+\\========================================================= */
 
 #commentsList{
   flex:1;
@@ -1290,7 +1290,7 @@ button{
 
 /* =========================================================
    COMMENT COMPOSER
-========================================================= */
+\\========================================================= */
 
 .comment-composer{
   flex-shrink:0;
@@ -1381,7 +1381,7 @@ button{
 
 /* =========================================================
    REPLY BAR
-========================================================= */
+\\========================================================= */
 
 #replyBar{
   display:none;
@@ -1415,7 +1415,7 @@ button{
 
 /* =========================================================
    SEARCH RESULTS
-========================================================= */
+\\========================================================= */
 
 .search-result{
   height:100%;
@@ -1437,7 +1437,7 @@ button{
 
 /* =========================================================
    MOBILE
-========================================================= */
+\\========================================================= */
 
 @media(max-width:500px){
 
@@ -1494,6 +1494,30 @@ button{
   }
 
 }
+
+/* BIGULA share chooser */
+#sharePortal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-end;justify-content:center;background:#000b;backdrop-filter:blur(6px)}
+#sharePortal.open{display:flex}
+.share-sheet{width:100%;max-width:520px;background:#15161b;border:1px solid #333640;border-radius:24px 24px 0 0;padding:20px 16px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -15px 50px #0008}
+.share-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.share-sheet-head strong{font-size:18px}
+.share-close{border:0;border-radius:50%;width:36px;height:36px;background:#2a2c34;color:#fff;font-size:21px}
+.share-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.share-option{border:1px solid #333640;border-radius:15px;background:#20222a;color:#fff;padding:13px 5px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;font-weight:700}
+.share-option .share-emoji{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#2d3039;font-size:24px}
+.share-option.whatsapp .share-emoji{background:#123c2b}
+.share-option.status .share-emoji{background:#3c2d16}
+.share-note{font-size:12px;color:#aeb2be;margin-top:15px;line-height:1.4}
+.live-soon{max-width:440px;margin:auto;padding:30px 24px;text-align:center}
+.live-soon .live-symbol{width:76px;height:76px;margin:0 auto 18px;border-radius:24px;background:#1b1d25;display:grid;place-items:center;font-size:32px}
+.live-soon strong{display:block;font-size:21px;color:#fff;margin-bottom:9px}
+.live-soon p{font-size:14px;color:#aaa;line-height:1.55}
+.status-card{height:100%;min-height:100dvh;position:relative;background:#08090d;display:flex;align-items:center;justify-content:center;overflow:hidden;scroll-snap-align:start}
+.status-card img,.status-card video{width:100%;height:100%;position:absolute;inset:0;object-fit:contain;background:#000}
+.status-card .status-overlay{position:absolute;left:16px;right:16px;bottom:90px;z-index:2;background:linear-gradient(transparent,#000b);padding:60px 0 14px}
+.status-card .status-caption{font-size:16px;font-weight:700;margin-bottom:7px}
+.status-card .status-byline{font-size:12px;color:#ddd}
+
 </style>
 </head>
 
@@ -1613,7 +1637,7 @@ button{
 
 <!-- =======================================================
      BIGULA CONVERSATIONS
-======================================================= -->
+\\======================================================= -->
 
 <div id="commentsOverlay">
 
@@ -1749,6 +1773,20 @@ button{
 
 </div>
 
+
+<div id="sharePortal" aria-hidden="true">
+  <section class="share-sheet" role="dialog" aria-modal="true" aria-label="Share video">
+    <div class="share-sheet-head"><strong>Share this video</strong><button class="share-close" id="shareClose" aria-label="Close">×</button></div>
+    <div class="share-options">
+      <button class="share-option whatsapp" id="shareWhatsApp"><span class="share-emoji">☏</span>WhatsApp</button>
+      <button class="share-option status" id="shareStatus"><span class="share-emoji">◉</span>My Status</button>
+      <button class="share-option" id="shareSystem"><span class="share-emoji">↗</span>More apps</button>
+      <button class="share-option" id="shareCopy"><span class="share-emoji">⧉</span>Copy link</button>
+    </div>
+    <p class="share-note">Choose where to share. BIGULA will use the short video address when one is available.</p>
+  </section>
+</div>
+
 <script type="module">
 
 import {
@@ -1762,7 +1800,7 @@ import { FirebaseMessaging } from "https://esm.sh/@capacitor-firebase/messaging@
 
 /* =========================================================
    SUPABASE
-========================================================= */
+\\========================================================= */
 
 const SUPABASE_URL =
 "https://vfteiggdhthvrrlndtbs.supabase.co"; 
@@ -1788,7 +1826,7 @@ createClient(
 
 /* ========================================================= 
    ELEMENTS 
-========================================================= */ 
+\\========================================================= */ 
 
 const feed = 
 document.getElementById("feed"); 
@@ -1836,7 +1874,7 @@ document.getElementById("accountLabel");
 
 /* ========================================================= 
    STATE 
-========================================================= */ 
+\\========================================================= */ 
 
 let currentUser = null;
 
@@ -1898,6 +1936,8 @@ async function setupBigulaPushNotifications() {
 } 
 
 let currentTab = "foryou";
+// Incremented on every tab/feed request so stale async work cannot repaint another tab.
+let feedRenderToken = 0;
 
 // Personal ranking context: interests are saved by BIGULA Settings on this device.
 let followedCreatorIds = new Set();
@@ -1937,7 +1977,7 @@ let swipeStartY = 0;
 
 /* ========================================================= 
    AUTH 
-========================================================= */ 
+\\========================================================= */ 
 
 async function getCurrentUser(){ 
 
@@ -1987,7 +2027,7 @@ async function getCurrentUser(){
 
 /* ========================================================= 
    USER PROFILE 
-========================================================= */ 
+\\========================================================= */ 
 
 async function getUserProfile( 
   userId 
@@ -2043,7 +2083,7 @@ async function getUserProfile(
 
 /* ========================================================= 
    NAME 
-========================================================= */ 
+\\========================================================= */ 
 
 function getName( 
   user, 
@@ -2066,7 +2106,7 @@ function getName(
 
 /* ========================================================= 
    AVATAR 
-========================================================= */ 
+\\========================================================= */ 
 
 function getAvatar( 
   user, 
@@ -2089,42 +2129,20 @@ function getAvatar(
 
 /* ========================================================= 
    ESCAPE 
-========================================================= */ 
+\\========================================================= */ 
 
-function esc(value){ 
-
-  return String( 
-    value ?? 
-    "" 
-  ) 
-  .replace( 
-    /&/g, 
-    "&amp;" 
-  ) 
-  .replace( 
-    /</g, 
-    "&lt;" 
-  ) 
-  .replace( 
-    />/g, 
-    "&gt;" 
-  ) 
-  .replace( 
-    /"/g, 
-    "&quot;" 
-  ) 
-  .replace( 
-    /'/g, 
-    "&#039;" 
-  ); 
-
-} 
-
-
+function esc(value){
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 /* ========================================================= 
    FORMAT COUNT 
-========================================================= */ 
+\\========================================================= */ 
 
 function formatCount( 
   value 
@@ -2171,7 +2189,7 @@ function formatCount(
 
 /* ========================================================= 
    TIME AGO 
-========================================================= */ 
+\\========================================================= */ 
 
 function timeAgo( 
   date 
@@ -2239,7 +2257,7 @@ function timeAgo(
 
 /* ========================================================= 
    VIDEO USER ID 
-========================================================= */ 
+\\========================================================= */ 
 
 function getVideoUserId( 
   video={} 
@@ -2259,7 +2277,7 @@ function getVideoUserId(
 
 /* ========================================================= 
    VIDEO URL 
-========================================================= */ 
+\\========================================================= */ 
 
 function getVideoUrl( 
   video={} 
@@ -2281,7 +2299,7 @@ function getVideoUrl(
 
 /* ========================================================= 
    LOAD VIDEOS 
-========================================================= */ 
+\\========================================================= */ 
 
 async function loadVideos(){ 
 
@@ -2351,7 +2369,7 @@ async function loadVideos(){
 
 /* ========================================================= 
    PREPARE FEED 
-========================================================= */ 
+\\========================================================= */ 
 
 async function loadFeedPreferences(){
   try {
@@ -2421,13 +2439,34 @@ function sortFeedVideos(list){
 
 /* =========================================================
    PREPARE FEED
-========================================================= */
+\\========================================================= */
 
 async function prepareFeed(){
+  const token = ++feedRenderToken;
+  const tabAtStart = currentTab;
   await loadFeedPreferences();
+  if (token !== feedRenderToken || tabAtStart !== currentTab) return;
+
+  // Live broadcasting is not available yet. Do not present ordinary videos as live.
+  if (currentTab === "live") {
+    if (observer) observer.disconnect();
+    feed.innerHTML = `
+      <div class="center-message">
+        <div class="live-soon">
+          <div class="live-symbol">◉</div>
+          <strong>BIGULA Live is coming soon</strong>
+          <p>Live broadcasts are not available yet. We’re working on bringing live video to BIGULA.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  if (currentTab === "status") {
+    await loadStatuses(token);
+    return;
+  }
 
   let list = [...videos];
-
   const q = search.value.trim().toLowerCase();
   if (q) {
     list = list.filter(video => {
@@ -2437,31 +2476,25 @@ async function prepareFeed(){
     });
   }
 
-  if (currentTab === "live") {
-    list = list.filter(video =>
-      video.is_live === true ||
-      video.live === true ||
-      String(video.status || "").toLowerCase() === "live"
-    );
+  // Latest must be strictly ordered by the upload timestamp, not recommendation rank.
+  if (currentTab === "latest") {
+    list.sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  } else {
+    list = sortFeedVideos(list);
   }
-
-  if (currentTab === "status") {
-    await loadStatuses();
-    return;
-  }
-
-  list = sortFeedVideos(list);
   visibleVideos = list;
-  await renderFeed(list);
+  await renderFeed(list, token);
 }
 
 /* =========================================================
    RENDER FEED 
-========================================================= */ 
+\\========================================================= */ 
 
 async function renderFeed( 
-  list 
+  list,
+  token = feedRenderToken
 ){ 
+  if (token !== feedRenderToken) return;
 
   if(!list.length){
     const isLiveTab = currentTab === "live";
@@ -2485,14 +2518,12 @@ async function renderFeed(
     const video 
     of list 
   ){ 
-
-    await addVideoCard( 
-      video 
-    ); 
-
+    if (token !== feedRenderToken) return;
+    await addVideoCard(video, token);
+    if (token !== feedRenderToken) return;
   } 
 
-  setupObserver(); 
+  if (token === feedRenderToken) setupObserver(); 
 
 } 
 
@@ -2500,10 +2531,11 @@ async function renderFeed(
 
 /* ========================================================= 
    ADD VIDEO CARD 
-========================================================= */ 
+\\========================================================= */ 
 
 async function addVideoCard( 
-  video 
+  video,
+  token = feedRenderToken
 ){ 
 
   const userId = 
@@ -2515,12 +2547,15 @@ async function addVideoCard(
   await getUserProfile( 
     userId 
   ); 
+  if (token !== feedRenderToken) return;
 
   const creatorName = 
   profile?.full_name || 
   profile?.name || 
   profile?.display_name || 
-  "BIGULA Creator"; 
+  "BIGULA Creator";
+
+  video.share_creator_name = creatorName; 
 
   const avatar = 
   profile?.avatar_url || 
@@ -2956,7 +2991,7 @@ async function addVideoCard(
 
 /* ========================================================= 
    CARD STATS 
-========================================================= */ 
+\\========================================================= */ 
 
 async function loadCardStats( 
   videoId, 
@@ -3100,7 +3135,7 @@ async function loadCardStats(
 
 /* ========================================================= 
    VIDEO TAP 
-========================================================= */ 
+\\========================================================= */ 
 
 function handleVideoTap( 
   card, 
@@ -3184,7 +3219,7 @@ function handleVideoTap(
 
 /* ========================================================= 
    DOUBLE HEART 
-========================================================= */ 
+\\========================================================= */ 
 
 function showDoubleHeart( 
   card 
@@ -3211,7 +3246,7 @@ function showDoubleHeart(
 
 /* ========================================================= 
    VIDEO OBSERVER 
-========================================================= */ 
+\\========================================================= */ 
 
 function setupObserver(){ 
 
@@ -3314,7 +3349,7 @@ function setupObserver(){
 
 /* ========================================================= 
    VIEW TRACKING 
-========================================================= */ 
+\\========================================================= */ 
 
 const viewedVideos = 
 new Set(); 
@@ -3367,7 +3402,7 @@ async function recordViewOnce(
 
 /* ========================================================= 
    LIKE 
-========================================================= */ 
+\\========================================================= */ 
 
 async function toggleLike( 
   videoId, 
@@ -3536,7 +3571,7 @@ async function toggleLike(
 
 /* ========================================================= 
    FOLLOW 
-========================================================= */ 
+\\========================================================= */ 
 
 async function toggleFollow( 
   userId, 
@@ -3661,7 +3696,7 @@ async function toggleFollow(
 
 /* ========================================================= 
    COMMENTS 
-========================================================= */ 
+\\========================================================= */ 
 
 async function openComments( 
   videoId 
@@ -3709,7 +3744,7 @@ async function openComments(
 
 /* ========================================================= 
    LOAD COMMENTS 
-========================================================= */ 
+\\========================================================= */ 
 
 async function loadComments(){ 
 
@@ -3780,7 +3815,7 @@ async function loadComments(){
 
 /* ========================================================= 
    COMMENT BODY 
-========================================================= */ 
+\\========================================================= */ 
 
 function getCommentText( 
   comment 
@@ -3797,7 +3832,7 @@ function getCommentText(
 
 /* ========================================================= 
    COMMENT PARENT 
-========================================================= */ 
+\\========================================================= */ 
 
 function getParentId( 
   comment 
@@ -3814,7 +3849,7 @@ function getParentId(
 
 /* ========================================================= 
    COMMENT USER 
-========================================================= */ 
+\\========================================================= */ 
 
 function getCommentUserId( 
   comment 
@@ -3831,7 +3866,7 @@ function getCommentUserId(
 
 /* ========================================================= 
    RENDER COMMENTS 
-========================================================= */ 
+\\========================================================= */ 
 
 async function renderComments(){ 
 
@@ -3937,7 +3972,7 @@ async function renderComments(){
 
 /* ========================================================= 
    RENDER SINGLE COMMENT 
-========================================================= */ 
+\\========================================================= */ 
 
 function renderComment( 
   comment, 
@@ -4146,7 +4181,7 @@ function renderComment(
 
 /* ========================================================= 
    RENDER REPLY 
-========================================================= */ 
+\\========================================================= */ 
 
 function renderReply( 
   comment 
@@ -4290,7 +4325,7 @@ function renderReply(
 
 /* ========================================================= 
    CURRENT VIDEO OWNER 
-========================================================= */ 
+\\========================================================= */ 
 
 function currentVideoOwnerId(){ 
 
@@ -4311,7 +4346,7 @@ function currentVideoOwnerId(){
 
 /* ========================================================= 
    COMMENT BUTTONS 
-========================================================= */ 
+\\========================================================= */ 
 
 function bindCommentButtons(){ 
 
@@ -4511,7 +4546,7 @@ function bindCommentButtons(){
 
 /* ========================================================= 
    SEND COMMENT 
-========================================================= */ 
+\\========================================================= */ 
 
 async function sendComment(){ 
 
@@ -4623,7 +4658,7 @@ async function sendComment(){
 
 /* ========================================================= 
    DELETE COMMENT 
-========================================================= */ 
+\\========================================================= */ 
 
 async function deleteComment( 
   commentId 
@@ -4674,7 +4709,7 @@ async function deleteComment(
 
 /* ========================================================= 
    REPORT COMMENT 
-========================================================= */ 
+\\========================================================= */ 
 
 async function reportComment( 
   commentId 
@@ -4776,7 +4811,7 @@ async function reportComment(
 
 /* ========================================================= 
    COMMENT REACTION STRIP 
-========================================================= */ 
+\\========================================================= */ 
 
 document 
   .querySelectorAll( 
@@ -4808,7 +4843,7 @@ document
 
 /* ========================================================= 
    COMMENT SORT 
-========================================================= */ 
+\\========================================================= */ 
 
 document 
   .querySelectorAll( 
@@ -4849,7 +4884,7 @@ document
 
 /* ========================================================= 
    COMMENT INPUT 
-========================================================= */ 
+\\========================================================= */ 
 
 commentInput.addEventListener( 
   "input", 
@@ -4899,7 +4934,7 @@ sendComment;
 
 /* ========================================================= 
    CANCEL REPLY 
-========================================================= */ 
+\\========================================================= */ 
 
 document 
   .getElementById( 
@@ -4921,7 +4956,7 @@ document
 
 /* ========================================================= 
    CLOSE COMMENTS 
-========================================================= */ 
+\\========================================================= */ 
 
 function closeComments(){ 
 
@@ -4971,223 +5006,185 @@ commentsOverlay.addEventListener(
 
 /* ========================================================= 
    SHARE 
-========================================================= */ 
+\\========================================================= */ 
 
-async function shareVideo( 
-  video 
-){ 
-
-  const code = 
-  video.short_code || 
-  video.shortCode || 
-  ""; 
-
-  const url = 
-  code 
-  ? 
-  `${location.origin}${location.pathname.replace( 
-    "home.html", 
-    "" 
-  )}video_view.html?short_code=${encodeURIComponent(code)}` 
-  : 
-  `${location.origin}${location.pathname.replace( 
-    "home.html", 
-    "" 
-  )}video_view.html?id=${encodeURIComponent(video.id)}`; 
-
-  if( 
-    navigator.share 
-  ){ 
-
-    try{ 
-
-      await navigator.share({ 
-
-        title: 
-          video.title || 
-          "BIGULA video", 
-
-        text: 
-          "Watch this on BIGULA", 
-
-        url 
-
-      }); 
-
-      return; 
-
-    }catch(error){ 
-
-      if( 
-        error.name === 
-        "AbortError" 
-      ) 
-        return; 
-
-    } 
-
-  } 
-
-  try{ 
-
-    await navigator.clipboard.writeText( 
-      url 
-    ); 
-
-    alert( 
-      "BIGULA video link copied." 
-    ); 
-
-  }catch(error){ 
-
-    prompt( 
-      "Copy this BIGULA link:", 
-      url 
-    ); 
-
-  } 
-
-} 
-
-
+let shareTargetVideo = null;
+function canonicalVideoUrl(video){
+  const code = video.short_code || video.shortCode || "";
+  if (code) return `https://bigula.stream/video_view?short_code=${encodeURIComponent(code)}`;
+  return `https://bigula.stream/video_view?id=${encodeURIComponent(video.id)}`;
+}
+function openSharePortal(video){
+  shareTargetVideo = video;
+  document.getElementById("sharePortal").classList.add("open");
+  document.getElementById("sharePortal").setAttribute("aria-hidden","false");
+}
+function closeSharePortal(){
+  document.getElementById("sharePortal").classList.remove("open");
+  document.getElementById("sharePortal").setAttribute("aria-hidden","true");
+}
+function shareMessage(video){
+  const creator = video.share_creator_name || video.creator_name || video.display_name || "a BIGULA creator";
+  return `Watch "${video.title || "this video"}" by ${creator} on BIGULA`;
+}
+async function shareVideo(video){
+  openSharePortal(video);
+}
+document.getElementById("shareClose").addEventListener("click",closeSharePortal);
+document.getElementById("sharePortal").addEventListener("click",e=>{
+  if(e.target.id==="sharePortal") closeSharePortal();
+});
+document.getElementById("shareWhatsApp").addEventListener("click",()=>{
+  if(!shareTargetVideo)return;
+  const url=canonicalVideoUrl(shareTargetVideo);
+  const text=`${shareMessage(shareTargetVideo)}\n${url}`;
+  closeSharePortal();
+  // WhatsApp opens its share composer; the sender chooses a chat/contact in the app.
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,"_blank","noopener");
+});
+document.getElementById("shareStatus").addEventListener("click",async()=>{
+  if(!shareTargetVideo)return;
+  const url=canonicalVideoUrl(shareTargetVideo);
+  const text=`${shareMessage(shareTargetVideo)}\n${url}`;
+  try{ await navigator.clipboard.writeText(url); }catch(_){}
+  closeSharePortal();
+  // my_status.html should read the prefilled text parameter and place it in its text field.
+  location.href=`my_status.html?text=${encodeURIComponent(text)}&video_url=${encodeURIComponent(url)}`;
+});
+document.getElementById("shareSystem").addEventListener("click",async()=>{
+  if(!shareTargetVideo)return;
+  const video=shareTargetVideo, url=canonicalVideoUrl(video), text=shareMessage(video);
+  closeSharePortal();
+  if(navigator.share){
+    try{await navigator.share({title:video.title||"BIGULA video",text,url});return;}
+    catch(error){if(error.name==="AbortError")return;}
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`,"_blank","noopener");
+});
+document.getElementById("shareCopy").addEventListener("click",async()=>{
+  if(!shareTargetVideo)return;
+  const url=canonicalVideoUrl(shareTargetVideo);
+  try{await navigator.clipboard.writeText(url);alert("BIGULA video link copied.");}
+  catch(_){prompt("Copy this BIGULA link:",url);}
+  closeSharePortal();
+});
 
 /* ========================================================= 
    STATUSES 
-========================================================= */ 
+\\========================================================= */ 
 
-async function loadStatuses(){ 
+async function loadStatuses(token = feedRenderToken){
+  await loadFeedPreferences();
+  if (token !== feedRenderToken || currentTab !== "status") return;
+  if (!currentUser?.id) {
+    feed.innerHTML = `
+      <div class="center-message"><strong>Sign in to view Status</strong>
+      <span>Sign in to see recent posts from creators you follow.</span>
+      <button onclick="location.href='signup.html'">Sign in</button></div>`;
+    return;
+  }
 
-  const { 
-    data, 
-    error 
-  } = 
-  await supabase 
-    .from("statuses") 
-    .select("*") 
-    .eq( 
-      "is_active", 
-      true 
-    ) 
-    .gt( 
-      "expires_at", 
-      new Date().toISOString() 
-    ) 
-    .order( 
-      "created_at", 
-      { 
-        ascending:false 
-      } 
-    ); 
+  if (!followedCreatorIds || followedCreatorIds.size === 0) {
+    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
+      <span>Follow creators to see their active status posts, videos and images here.</span></div>`;
+    return;
+  }
 
-  if(error){ 
+  // Support the plural table used by the current page and older projects named "status".
+  let tableName = "statuses";
+  let result = await supabase.from(tableName).select("*").eq("is_active", true)
+    .gt("expires_at", new Date().toISOString()).order("created_at", {ascending:false});
+  if (result.error) {
+    result = await supabase.from(tableName).select("*").eq("is_active", true).order("created_at", {ascending:false});
+  }
+  if (result.error && /statuses/i.test(result.error.message || "")) {
+    tableName = "status";
+    result = await supabase.from(tableName).select("*").eq("is_active", true)
+      .order("created_at", {ascending:false});
+  }
+  if (token !== feedRenderToken || currentTab !== "status") return;
+  if (result.error) {
+    console.warn("Status feed:", result.error.message);
+    feed.innerHTML = `<div class="center-message"><strong>Statuses couldn't load</strong>
+      <span>${esc(result.error.message)}</span></div>`;
+    return;
+  }
 
-    console.warn( 
-      "Status feed:", 
-      error.message 
-    ); 
+  const creatorOfStatus = row => row.user_id || row.creator_id || row.owner_id || row.created_by || row.author_id || row.profile_id;
+  const followedStatuses = (result.data || []).filter(row => {
+    const creatorId = creatorOfStatus(row);
+    const notExpired = !row.expires_at || new Date(row.expires_at).getTime() > Date.now();
+    return creatorId && followedCreatorIds.has(creatorId) && row.is_active !== false && notExpired;
+  });
 
-    feed.innerHTML = ` 
-      <div class="center-message"> 
+  if (!followedStatuses.length) {
+    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
+      <span>When creators you follow post a status, it will appear here.</span></div>`;
+    return;
+  }
 
-        <strong>
-          Statuses couldn't load
-        </strong>
-        <span>
-          Please check your connection and try again.
-        </span> 
+  if (observer) observer.disconnect();
+  feed.innerHTML = "";
+  const videoIds = [...new Set(followedStatuses.map(row => row.video_id).filter(Boolean))];
+  let statusVideos = [];
+  if (videoIds.length) {
+    const vr = await supabase.from("videos").select("*").in("id", videoIds);
+    if (token !== feedRenderToken || currentTab !== "status") return;
+    statusVideos = vr.data || [];
+  }
 
-      </div> 
-    `; 
+  // Render status-linked videos using the existing BIGULA video cards.
+  const videoById = new Map(statusVideos.map(v => [String(v.id), v]));
+  const renderedVideoIds = new Set();
+  for (const status of followedStatuses) {
+    if (token !== feedRenderToken || currentTab !== "status") return;
+    const video = status.video_id ? videoById.get(String(status.video_id)) : null;
+    if (video && !renderedVideoIds.has(String(video.id))) {
+      renderedVideoIds.add(String(video.id));
+      await addVideoCard(video, token);
+      if (token !== feedRenderToken || currentTab !== "status") return;
+      continue;
+    }
+    if (video) continue;
 
-    return; 
+    const mediaUrl = status.image_url || status.media_url || status.photo_url || status.image || status.url || status.file_url || "";
+    const mediaType = String(status.media_type || status.type || "").toLowerCase();
+    if (!mediaUrl) continue;
+    const creatorId = creatorOfStatus(status);
+    const profile = await getUserProfile(creatorId);
+    if (token !== feedRenderToken || currentTab !== "status") return;
+    const creatorName = profile?.display_name || profile?.full_name || profile?.name || profile?.username || "BIGULA Creator";
+    const avatar = profile?.avatar_url || profile?.photo_url || profile?.profile_photo || profile?.avatar || "";
+    const card = document.createElement("article");
+    card.className = "status-card";
+    const caption = status.text || status.caption || status.description || status.title || "";
+    const safeUrl = esc(mediaUrl);
+    const isVideo = mediaType.includes("video") || /.(mp4|webm|mov)(\\?|$)/i.test(mediaUrl);
+    card.innerHTML = `${isVideo
+      ? `<video playsinline controls preload="metadata" src="${safeUrl}"></video>`
+      : `<img src="${safeUrl}" alt="Creator status">`}
+      <div class="video-shade"></div>
+      <div class="status-overlay">
+        <div class="status-caption">${esc(caption)}</div>
+        <div class="status-byline">${avatar ? `<img src="${esc(avatar)}" style="width:25px;height:25px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px">` : ""}
+          ${esc(creatorName)} · ${esc(status.created_at ? new Date(status.created_at).toLocaleString() : "Status")}</div>
+      </div>`;
+    feed.appendChild(card);
+  }
 
-  } 
-
-  if(!data?.length){ 
-
-    feed.innerHTML = ` 
-      <div class="center-message"> 
-
-        <strong> 
-          No active statuses 
-        </strong> 
-
-        <span> 
-          Follow creators and friends to see 
-          their status posts here. 
-        </span> 
-
-      </div> 
-    `; 
-
-    return; 
-
-  } 
-
-  const videoIds = 
-  data 
-    .map( 
-      item => 
-        item.video_id 
-    ) 
-    .filter(Boolean); 
-
-  if(!videoIds.length){ 
-
-    feed.innerHTML = ` 
-      <div class="center-message"> 
-
-        <strong> 
-          No video statuses yet 
-        </strong> 
-
-      </div> 
-    `; 
-
-    return; 
-
-  } 
-
-  const { 
-    data:statusVideos 
-  } = 
-  await supabase 
-    .from("videos") 
-    .select("*") 
-    .in( 
-      "id", 
-      videoIds 
-    ); 
-
-  if( 
-    !statusVideos?.length 
-  ){ 
-
-    feed.innerHTML = ` 
-      <div class="center-message"> 
-
-        <strong> 
-          No active statuses 
-        </strong> 
-
-      </div> 
-    `; 
-
-    return; 
-
-  } 
-
-  const rankedStatusVideos = sortFeedVideos(statusVideos);
-  visibleVideos = rankedStatusVideos;
-  await renderFeed(rankedStatusVideos); 
-
-} 
-
-
+  if (!feed.children.length) {
+    feed.innerHTML = `<div class="center-message"><strong>None of your creators posted</strong>
+      <span>No active status images or videos were found from creators you follow.</span></div>`;
+    return;
+  }
+  if (token !== feedRenderToken || currentTab !== "status") return;
+  visibleVideos = statusVideos;
+  setupObserver();
+}
 
 /* ========================================================= 
    TABS 
-========================================================= */ 
+\\========================================================= */ 
 
 document 
   .querySelectorAll( 
@@ -5231,7 +5228,7 @@ document
 
 /* ========================================================= 
    SEARCH 
-========================================================= */ 
+\\========================================================= */ 
 
 let searchTimer = 
 null; 
@@ -5282,7 +5279,7 @@ searchClear.onclick =
 
 /* ========================================================= 
    FOOTER NAVIGATION 
-========================================================= */ 
+\\========================================================= */ 
 
 document 
   .getElementById( 
@@ -5363,7 +5360,7 @@ document
 
 /* ========================================================= 
    NOTIFICATION BADGE 
-========================================================= */ 
+\\========================================================= */ 
 
 async function loadNotificationBadge(){ 
 
@@ -5445,7 +5442,7 @@ async function loadNotificationBadge(){
 
 /* ========================================================= 
    PREMIUM UPLOAD ICON 
-========================================================= */
+\\========================================================= */
 
 function setupUploadIcon(){
   const icon =
@@ -5488,7 +5485,7 @@ function setupUploadIcon(){
 
 /* ========================================================= 
    CURRENT USER AVATAR 
-========================================================= */ 
+\\========================================================= */ 
 
 async function setupComposer(){ 
 
@@ -5592,7 +5589,7 @@ async function setupComposer(){
 
 /* ========================================================= 
    AUTH STATE 
-========================================================= */ 
+\\========================================================= */ 
 
 supabase.auth.onAuthStateChange( 
   async ( 
@@ -5620,7 +5617,7 @@ supabase.auth.onAuthStateChange(
 
 /* ========================================================= 
    START 
-========================================================= */ 
+\\========================================================= */ 
 
 async function init(){ 
 
