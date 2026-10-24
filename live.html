@@ -2,1042 +2,1086 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111111">
-<title>BIGULA Creator Live Studio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b12">
+  <title>BIGULA Creator Live Studio</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #090b12;
+      --panel: #131722;
+      --panel2: #1b2030;
+      --text: #f7f8fc;
+      --muted: #a5adbd;
+      --purple: #8b5cf6;
+      --pink: #ec4899;
+      --red: #f04455;
+      --border: rgba(255,255,255,.1);
+    }
 
-<style>
-:root {
-  --bg: #101012;
-  --panel: #19191d;
-  --panel2: #222227;
-  --line: #303036;
-  --text: #f7f7f8;
-  --muted: #a1a1aa;
-  --red: #ff3b30;
-  --green: #22c55e;
-}
-* { box-sizing: border-box; }
-html, body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, Arial, sans-serif;
-}
-body { min-height: 100vh; }
-button, input, textarea, select { font: inherit; }
-button { cursor: pointer; }
-button:disabled { opacity: .45; cursor: not-allowed; }
-a { color: inherit; text-decoration: none; }
-.hidden { display: none !important; }
+    * {
+      box-sizing: border-box;
+    }
 
-.topbar {
-  height: 66px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-bottom: 1px solid var(--line);
-  background: #141416;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-.brand {
-  font-weight: 950;
-  font-size: 25px;
-  letter-spacing: -1.3px;
-}
-.brand span { color: var(--red); }
-.top-center {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  border-radius: 20px;
-  padding: 7px 11px;
-  background: #29292e;
-  color: #ddd;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: .5px;
-}
-.status-dot {
-  width: 7px;
-  height: 7px;
-  background: #777;
-  border-radius: 50%;
-}
-.status-pill.live {
-  background: #451b1b;
-  color: #ffb4af;
-}
-.status-pill.live .status-dot {
-  background: var(--red);
-  animation: pulse 1.2s infinite;
-}
-@keyframes pulse { 50% { opacity: .3; } }
-.top-right { display: flex; align-items: center; gap: 10px; }
-.avatar {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background: #35353c;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  overflow: hidden;
-}
-.avatar img { width: 100%; height: 100%; object-fit: cover; }
-.small-btn, .primary-btn, .danger-btn {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-weight: 750;
-  color: white;
-  background: var(--panel2);
-}
-.primary-btn {
-  background: var(--red);
-  border-color: var(--red);
-}
-.danger-btn {
-  background: #3b1919;
-  border-color: #6d2828;
-  color: #ffb4af;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at top, rgba(139,92,246,.14), transparent 42%),
+        var(--bg);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
 
-.layout {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 24px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 22px;
-}
-.main-column { min-width: 0; }
-.page-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 18px;
-}
-.page-heading h1 {
-  margin: 0 0 7px;
-  font-size: 25px;
-  letter-spacing: -.7px;
-}
-.page-heading p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-}
-.connection-label {
-  color: #c4c4cc;
-  font-size: 12px;
-  text-align: right;
-  line-height: 1.5;
-}
-.connection-label strong { color: var(--green); }
+    button, input, textarea {
+      font: inherit;
+    }
 
-.preview-shell {
-  background: #050505;
-  border: 1px solid #2c2c32;
-  border-radius: 17px;
-  overflow: hidden;
-  position: relative;
-}
-.preview-stage {
-  min-height: 340px;
-  height: min(58vw, 570px);
-  max-height: 570px;
-  position: relative;
-  background:
-    radial-gradient(ellipse at center, #27272d 0%, #111114 62%, #080809 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-#cameraPreview {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  object-fit: contain;
-  background: #050505;
-}
-.preview-placeholder {
-  z-index: 1;
-  text-align: center;
-  padding: 25px;
-  max-width: 340px;
-}
-.camera-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 22px;
-  display: grid;
-  place-items: center;
-  margin: 0 auto 18px;
-  font-size: 31px;
-  background: #27272d;
-  border: 1px solid #3a3a42;
-}
-.preview-placeholder h2 { font-size: 19px; margin: 0 0 9px; }
-.preview-placeholder p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-  margin: 0 0 18px;
-}
-.preview-top-left, .preview-top-right {
-  position: absolute;
-  z-index: 2;
-  top: 15px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.preview-top-left { left: 15px; }
-.preview-top-right { right: 15px; }
-.overlay-tag {
-  background: #080809b8;
-  border: 1px solid #ffffff24;
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-size: 11px;
-  font-weight: 800;
-  backdrop-filter: blur(8px);
-}
-.preview-bottom {
-  position: absolute;
-  z-index: 2;
-  bottom: 15px;
-  left: 15px;
-  right: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.preview-bottom small { color: #ddd; font-size: 11px; }
-.local-badge {
-  color: #ffd1ce;
-  background: #351b1bdf;
-  border: 1px solid #7d3131;
-  border-radius: 7px;
-  padding: 8px 10px;
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: .4px;
-}
-.control-bar {
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: #18181b;
-}
-.device-controls { display: flex; gap: 9px; flex-wrap: wrap; }
-.device-btn {
-  background: #29292f;
-  color: #f3f3f4;
-  border: 1px solid #414149;
-  border-radius: 10px;
-  min-width: 48px;
-  min-height: 45px;
-  padding: 9px 12px;
-  font-size: 12px;
-  font-weight: 750;
-}
-.device-btn.active { background: #30303a; }
-.device-btn.off {
-  background: #4a2020;
-  border-color: #763333;
-}
-.device-btn span { display: block; font-size: 17px; margin-bottom: 3px; }
-.broadcast-controls { display: flex; gap: 9px; }
-#startBroadcastBtn { min-width: 130px; }
-#endBroadcastBtn { min-width: 115px; }
+    button {
+      cursor: pointer;
+    }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-.stat-card, .card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 17px;
-  min-width: 0;
-}
-.stat-label {
-  color: var(--muted);
-  font-size: 12px;
-  margin-bottom: 9px;
-}
-.stat-value { font-size: 19px; font-weight: 850; }
-.stat-sub { color: var(--muted); font-size: 11px; margin-top: 6px; }
-.good { color: var(--green); }
-.section-title {
-  font-size: 15px;
-  margin: 0 0 15px;
-  font-weight: 850;
-}
-.details-card { margin-top: 16px; }
-.field { margin-bottom: 15px; }
-.field:last-child { margin-bottom: 0; }
-.field label {
-  display: block;
-  font-size: 12px;
-  color: #d4d4d8;
-  font-weight: 750;
-  margin-bottom: 8px;
-}
-.field input, .field textarea, .field select, .chat-input {
-  width: 100%;
-  color: white;
-  background: #111114;
-  border: 1px solid #3a3a42;
-  border-radius: 9px;
-  padding: 12px;
-  outline: none;
-}
-.field input:focus, .field textarea:focus, .field select:focus {
-  border-color: #f45b52;
-}
-.field textarea { resize: vertical; min-height: 75px; }
-.field select option { background: #111114; }
-.field-hint { font-size: 11px; color: var(--muted); margin-top: 7px; }
-.details-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.check-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: #ddd;
-  font-size: 12px;
-  margin-top: 13px;
-}
-.check-row input { accent-color: var(--red); }
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--purple);
+      outline-offset: 3px;
+    }
 
-.sidebar { min-width: 0; }
-.chat-card {
-  height: min(630px, calc(100vh - 115px));
-  min-height: 420px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 0;
-}
-.chat-header {
-  padding: 18px;
-  border-bottom: 1px solid var(--line);
-}
-.chat-header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.chat-header h2 { font-size: 16px; margin: 0; }
-.viewer-chip {
-  border-radius: 7px;
-  background: #29292e;
-  padding: 7px 9px;
-  color: #ddd;
-  font-size: 11px;
-}
-.chat-subtitle { color: var(--muted); font-size: 11px; margin-top: 9px; }
-.chat-messages {
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  flex: 1;
-  overflow-y: auto;
-}
-.chat-empty {
-  margin: auto 0;
-  padding: 18px;
-  text-align: center;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
-}
-.chat-empty .chat-empty-icon { font-size: 27px; margin-bottom: 10px; }
-.chat-message { font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
-.chat-message strong { color: #fca5a5; margin-right: 5px; }
-.chat-system {
-  color: var(--muted);
-  background: #222227;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 11px;
-  line-height: 1.5;
-}
-.chat-compose {
-  padding: 13px;
-  border-top: 1px solid var(--line);
-}
-.chat-compose-row { display: flex; gap: 8px; }
-.chat-input { min-width: 0; font-size: 12px; }
-.send-btn {
-  flex-shrink: 0;
-  border: 0;
-  border-radius: 9px;
-  background: #34343b;
-  color: white;
-  padding: 0 14px;
-  font-weight: 800;
-}
-.chat-warning { color: var(--muted); font-size: 10px; line-height: 1.5; margin-top: 9px; }
-.sidebar-details { margin-top: 15px; }
-.sidebar-details p {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
-  margin: 0;
-}
-.toast {
-  position: fixed;
-  bottom: 25px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 50;
-  max-width: calc(100vw - 30px);
-  width: max-content;
-  background: #29292f;
-  border: 1px solid #4a4a53;
-  padding: 13px 17px;
-  border-radius: 11px;
-  box-shadow: 0 12px 35px #0008;
-  font-size: 13px;
-  line-height: 1.5;
-}
-.toast.error { border-color: #8a3737; }
-.toast.success { border-color: #267a49; }
+    .app {
+      width: min(100%, 1050px);
+      margin: auto;
+      padding: 22px;
+    }
 
-@media (max-width: 1050px) {
-  .layout { grid-template-columns: minmax(0, 1fr) 300px; padding: 17px; gap: 15px; }
-  .topbar { padding: 0 17px; }
-  .preview-stage { height: 48vw; min-height: 320px; }
-}
-@media (max-width: 760px) {
-  .topbar { height: 58px; padding: 0 13px; }
-  .brand { font-size: 22px; }
-  .top-center { gap: 7px; font-size: 11px; }
-  .top-right .avatar { display: none; }
-  .layout { display: flex; flex-direction: column; padding: 15px 12px 30px; }
-  .page-heading { margin-bottom: 13px; }
-  .page-heading h1 { font-size: 22px; }
-  .connection-label { display: none; }
-  .preview-stage { height: 64vw; min-height: 270px; max-height: 450px; }
-  .control-bar { padding: 11px; }
-  .device-controls { gap: 6px; }
-  .device-btn { min-width: 43px; padding: 8px; }
-  .broadcast-controls { width: 100%; }
-  .broadcast-controls button { flex: 1; }
-  .stats-grid { gap: 7px; }
-  .stat-card { padding: 12px 10px; }
-  .stat-value { font-size: 16px; }
-  .stat-label { font-size: 10px; }
-  .stat-sub { font-size: 10px; }
-  .details-row { grid-template-columns: 1fr; gap: 0; }
-  .chat-card { height: 460px; min-height: 400px; }
-  .sidebar-details { margin-bottom: 10px; }
-}
-@media (max-width: 390px) {
-  .top-center { display: none; }
-  .preview-stage { min-height: 245px; }
-  .device-btn { font-size: 10px; }
-  .local-badge { font-size: 9px; }
-}
-</style>
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      box-shadow: 0 5px 25px rgba(139,92,246,.3);
+    }
+
+    .brand-mark svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .flip-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 15px;
+      color: white;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    .flip-button:hover {
+      background: #292f43;
+    }
+
+    .heading {
+      margin-bottom: 20px;
+    }
+
+    .heading h1 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 5vw, 36px);
+      letter-spacing: -.8px;
+    }
+
+    .heading p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .studio {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, .75fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .preview-card,
+    .control-card {
+      min-width: 0;
+      padding: 14px;
+      background: rgba(19,23,34,.92);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 15px 45px rgba(0,0,0,.18);
+    }
+
+    .preview {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 9 / 13;
+      max-height: 690px;
+      background:
+        radial-gradient(ellipse at 50% 35%, #25213c 0, transparent 45%),
+        linear-gradient(145deg, #171b29, #080a10);
+      border-radius: 16px;
+    }
+
+    video {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    video.active {
+      display: block;
+    }
+
+    .preview-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .camera-icon {
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 26px;
+      background: rgba(255,255,255,.06);
+      color: #d7c7ff;
+    }
+
+    .camera-icon svg {
+      width: 38px;
+      height: 38px;
+    }
+
+    .preview-placeholder h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+
+    .preview-placeholder p {
+      max-width: 280px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .preview-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9ca3af;
+    }
+
+    .status-dot.ready {
+      background: #36d399;
+      box-shadow: 0 0 10px rgba(54,211,153,.7);
+    }
+
+    .preview-title {
+      padding: 16px 5px 4px;
+    }
+
+    .preview-title strong {
+      display: block;
+      margin-bottom: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .preview-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .control-card h2 {
+      margin: 4px 0 7px;
+      font-size: 20px;
+    }
+
+    .control-card > p {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .main-actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    .action-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 56px;
+      padding: 15px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      color: white;
+      font-weight: 850;
+      letter-spacing: .5px;
+      transition: transform .15s, filter .15s, background .15s;
+    }
+
+    .action-button:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    .action-button:active {
+      transform: scale(.99);
+    }
+
+    .go-live {
+      background: linear-gradient(110deg, #f04455, #d92955);
+      box-shadow: 0 8px 24px rgba(240,68,85,.17);
+    }
+
+    .go-live.is-active {
+      background: #a51f34;
+    }
+
+    .edit-button {
+      background: linear-gradient(110deg, #7c3aed, #9333ea);
+    }
+
+    .share-button {
+      background: var(--panel2);
+      border-color: var(--border);
+    }
+
+    .action-button svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .notice {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 13px;
+      border: 1px solid rgba(139,92,246,.24);
+      border-radius: 13px;
+      background: rgba(139,92,246,.08);
+      color: #d9d0ff;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .notice svg {
+      width: 19px;
+      height: 19px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .footer-note {
+      margin: 20px 0 0;
+      color: #727c90;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(100%, 440px);
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 23px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: #151925;
+      box-shadow: 0 25px 90px rgba(0,0,0,.5);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .close-button {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--panel2);
+      color: white;
+      font-size: 23px;
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 17px;
+    }
+
+    .field span {
+      display: block;
+      margin-bottom: 8px;
+      color: #e4e7ef;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field textarea {
+      display: block;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0b0e16;
+      color: white;
+    }
+
+    .field textarea {
+      min-height: 115px;
+      resize: vertical;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #70798b;
+    }
+
+    .modal-primary {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(110deg, var(--purple), var(--pink));
+      color: white;
+      font-weight: 850;
+    }
+
+    .share-options {
+      display: grid;
+      gap: 11px;
+    }
+
+    .share-option {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--panel2);
+      color: white;
+      text-align: left;
+    }
+
+    .share-option:hover {
+      background: #292f43;
+    }
+
+    .share-option .option-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      flex-shrink: 0;
+      border-radius: 12px;
+      background: rgba(255,255,255,.07);
+      font-size: 22px;
+    }
+
+    .share-option strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .share-option small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 40;
+      max-width: calc(100% - 36px);
+      padding: 14px 17px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #202637;
+      color: white;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: 0 10px 35px rgba(0,0,0,.35);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .2s;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 740px) {
+      .app {
+        padding: 16px;
+      }
+
+      header {
+        margin-bottom: 23px;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .flip-button {
+        padding: 10px 11px;
+        font-size: 12px;
+      }
+
+      .studio {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-card {
+        padding: 10px;
+      }
+
+      .preview {
+        aspect-ratio: 9 / 12;
+        max-height: 560px;
+      }
+
+      .control-card {
+        padding: 19px;
+      }
+
+      .main-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 741px) {
+      .control-card {
+        position: sticky;
+        top: 20px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
-
-<header class="topbar">
-  <a href="home.html" class="brand">BIGU<span>LA</span></a>
-
-  <div class="top-center">
-    <div class="status-pill" id="statusPill">
-      <span class="status-dot"></span>
-      <span id="statusText">STUDIO READY</span>
-    </div>
-    <span id="durationText">00:00:00</span>
-  </div>
-
-  <div class="top-right">
-    <button class="small-btn" id="backBtn" type="button">← Exit Studio</button>
-    <div class="avatar" id="profileAvatar">B</div>
-  </div>
-</header>
-
-<main class="layout">
-  <section class="main-column">
-
-    <div class="page-heading">
-      <div>
-        <h1>Creator Live Studio</h1>
-        <p>Prepare your camera, set up your broadcast, and connect with your audience.</p>
-      </div>
-      <div class="connection-label">
-        Studio status<br>
-        <strong id="connectionText">Waiting for camera</strong>
-      </div>
-    </div>
-
-    <section class="preview-shell">
-      <div class="preview-stage" id="previewStage">
-
-        <video id="cameraPreview" autoplay muted playsinline class="hidden"></video>
-
-        <div class="preview-placeholder" id="previewPlaceholder">
-          <div class="camera-icon">▣</div>
-          <h2>Your camera preview</h2>
-          <p>Allow camera and microphone access to see and hear your local preview before broadcasting.</p>
-          <button class="primary-btn" id="enableCameraBtn" type="button">Enable Camera</button>
+  <main class="app">
+    <header>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 5 16.5z"
+              stroke="white" stroke-width="1.8"/>
+            <path d="m10 8.8 5 3.2-5 3.2z" fill="white"/>
+          </svg>
         </div>
-
-        <div class="preview-top-left">
-          <div class="overlay-tag">CREATOR PREVIEW</div>
-        </div>
-
-        <div class="preview-top-right">
-          <div class="overlay-tag" id="previewTimer">00:00:00</div>
-        </div>
-
-        <div class="preview-bottom">
-          <small id="previewMessage">Your preview is private.</small>
-          <div class="local-badge" id="broadcastBadge">NOT BROADCASTING</div>
-        </div>
+        BIGULA
       </div>
 
-      <div class="control-bar">
-        <div class="device-controls">
-          <button class="device-btn" id="micBtn" type="button" disabled>
-            <span>🎙</span>Mic On
-          </button>
-          <button class="device-btn" id="cameraBtn" type="button" disabled>
-            <span>▣</span>Camera On
-          </button>
-          <button class="device-btn" id="flipBtn" type="button" disabled>
-            <span>↔</span>Flip
-          </button>
-          <button class="device-btn" id="settingsBtn" type="button">
-            <span>⚙</span>Settings
-          </button>
-        </div>
+      <button class="flip-button" id="flipCamera" type="button">
+        <span aria-hidden="true">↔</span>
+        FLIP CAMERA
+      </button>
+    </header>
 
-        <div class="broadcast-controls">
-          <button class="primary-btn" id="startBroadcastBtn" type="button">Start Preview</button>
-          <button class="danger-btn hidden" id="endBroadcastBtn" type="button">End Session</button>
-        </div>
-      </div>
+    <section class="heading">
+      <h1>Creator Live Studio</h1>
+      <p>Prepare your live session and share it with your audience.</p>
     </section>
 
-    <section class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Broadcast status</div>
-        <div class="stat-value" id="statStatus">Offline</div>
-        <div class="stat-sub" id="statStatusSub">Not connected to a streaming service</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Live viewers</div>
-        <div class="stat-value" id="statViewers">—</div>
-        <div class="stat-sub">Available after streaming is connected</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Duration</div>
-        <div class="stat-value" id="statDuration">00:00:00</div>
-        <div class="stat-sub">Local preview session</div>
-      </div>
-    </section>
-
-    <section class="card details-card">
-      <h2 class="section-title">Broadcast details</h2>
-
-      <form id="broadcastForm">
-        <div class="field">
-          <label for="streamTitle">Stream title</label>
-          <input id="streamTitle" name="streamTitle" maxlength="100"
-                 placeholder="What are you going live about?"
-                 value="" required>
-          <div class="field-hint">Use a clear title so your audience knows what to expect.</div>
-        </div>
-
-        <div class="details-row">
-          <div class="field">
-            <label for="streamCategory">Category</label>
-            <select id="streamCategory" name="streamCategory">
-              <option value="Lifestyle">Lifestyle</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Music">Music</option>
-              <option value="Gaming">Gaming</option>
-              <option value="Education">Education</option>
-              <option value="News">News & Discussion</option>
-              <option value="Sports">Sports</option>
-              <option value="Other">Other</option>
-            </select>
+    <section class="studio">
+      <div class="preview-card">
+        <div class="preview" id="preview">
+          <div class="preview-badge">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="previewStatus">CAMERA OFF</span>
           </div>
 
-          <div class="field">
-            <label for="streamAudience">Audience</label>
-            <select id="streamAudience" name="streamAudience">
-              <option value="public">Public</option>
-              <option value="followers">Followers only</option>
-            </select>
+          <video id="cameraPreview" autoplay muted playsinline></video>
+
+          <div class="preview-placeholder" id="placeholder">
+            <div class="camera-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="13" height="12" rx="3"
+                  stroke="currentColor" stroke-width="1.7"/>
+                <path d="m16 10 5-3v10l-5-3z"
+                  stroke="currentColor" stroke-width="1.7"
+                  stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h2>You're in control</h2>
+            <p>Press Go Live to activate your camera and microphone preview.</p>
           </div>
         </div>
 
-        <div class="field">
-          <label for="streamDescription">Description (optional)</label>
-          <textarea id="streamDescription" name="streamDescription"
-                    maxlength="500" placeholder="Tell viewers what this live session is about."></textarea>
+        <div class="preview-title">
+          <strong id="displayTitle">My BIGULA Live</strong>
+          <p id="displayDescription">Welcome to my live session!</p>
+        </div>
+      </div>
+
+      <aside class="control-card">
+        <h2>Your live session</h2>
+        <p>Set up your session, edit its details, and invite people to watch.</p>
+
+        <div class="main-actions">
+          <button class="action-button go-live" id="goLive" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m10 8.5 5 3.5-5 3.5z" fill="currentColor"/>
+            </svg>
+            <span id="goLiveLabel">GO LIVE</span>
+          </button>
+
+          <button class="action-button edit-button" id="editDetails" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m14 5 5 5M4 20l4.2-.8L19 8.4a2.1 2.1 0 0 0-3-3L5.2 16.2z"
+                stroke="currentColor" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            EDIT
+          </button>
+
+          <button class="action-button share-button" id="shareSession" type="button">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+              <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="m8.7 10.6 6.6-4.2m-6.6 7 6.6 4.1"
+                stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+            SHARE
+          </button>
         </div>
 
-        <label class="check-row">
-          <input type="checkbox" id="allowChat" checked>
-          Allow viewers to chat
+        <div class="notice">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 11v5m0-8h.01" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div>
+            <strong>Preview mode</strong><br>
+            Camera preview is available now. Public streaming and viewer playback
+            require a streaming provider to be connected.
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <p class="footer-note">
+      BIGULA Creator Studio · Keep your content respectful and follow the community guidelines.
+    </p>
+  </main>
+
+  <!-- Edit session dialog -->
+  <div class="modal-backdrop" id="editModal" role="dialog"
+       aria-modal="true" aria-labelledby="editHeading">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="editHeading">Edit live details</h2>
+        <button class="close-button" type="button" data-close="editModal"
+                aria-label="Close">×</button>
+      </div>
+
+      <form id="editForm">
+        <label class="field">
+          <span>Live title</span>
+          <input id="liveTitle" maxlength="100" required
+                 placeholder="Give your live a title">
         </label>
+
+        <label class="field">
+          <span>Description</span>
+          <textarea id="liveDescription" maxlength="500"
+                    placeholder="What will you talk about?"></textarea>
+        </label>
+
+        <button class="modal-primary" type="submit">SAVE CHANGES</button>
       </form>
-    </section>
+    </div>
+  </div>
 
-  </section>
-
-  <aside class="sidebar">
-    <section class="card chat-card">
-      <header class="chat-header">
-        <div class="chat-header-top">
-          <h2>Live chat</h2>
-          <div class="viewer-chip" id="chatViewerCount">Viewers: —</div>
-        </div>
-        <div class="chat-subtitle">Audience messages will appear here when broadcasting is connected.</div>
-      </header>
-
-      <div class="chat-messages" id="chatMessages">
-        <div class="chat-empty" id="chatEmpty">
-          <div class="chat-empty-icon">▤</div>
-          <strong>No live messages yet</strong>
-          <p>Once your stream and chat service are connected, messages from your viewers will appear here.</p>
-        </div>
+  <!-- Share portal -->
+  <div class="modal-backdrop" id="shareModal" role="dialog"
+       aria-modal="true" aria-labelledby="shareHeading">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="shareHeading">Share your live</h2>
+        <button class="close-button" type="button" data-close="shareModal"
+                aria-label="Close">×</button>
       </div>
 
-      <form class="chat-compose" id="chatForm">
-        <div class="chat-compose-row">
-          <input class="chat-input" id="chatInput" maxlength="500"
-                 placeholder="Chat will be available when live…" disabled>
-          <button class="send-btn" id="sendChatBtn" type="submit" disabled>Send</button>
-        </div>
-        <div class="chat-warning">Chat is not connected yet. Messages cannot be sent to viewers in this setup.</div>
-      </form>
-    </section>
+      <p style="margin:0 0 18px;color:#a5adbd;font-size:14px;line-height:1.6">
+        Invite your audience to your live session.
+      </p>
 
-    <section class="card sidebar-details">
-      <h2 class="section-title">Stream health</h2>
-      <p id="healthText">Waiting for camera access. Streaming health will be measured after a provider is connected.</p>
-    </section>
+      <div class="share-options">
+        <button class="share-option" id="shareWhatsApp" type="button">
+          <span class="option-icon" aria-hidden="true">💬</span>
+          <span>
+            <strong>WhatsApp</strong>
+            <small>Choose a contact or group in WhatsApp</small>
+          </span>
+        </button>
 
-    <section class="card sidebar-details">
-      <h2 class="section-title">Before you go live</h2>
-      <p>Check your lighting, microphone, connection, and stream details. Only start a public broadcast when the streaming service is connected and ready.</p>
-    </section>
-  </aside>
-</main>
+        <button class="share-option" id="shareOther" type="button">
+          <span class="option-icon" aria-hidden="true">↗</span>
+          <span>
+            <strong>Other apps</strong>
+            <small>Share using your device's share menu</small>
+          </span>
+        </button>
 
-<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+        <button class="share-option" id="copyLink" type="button">
+          <span class="option-icon" aria-hidden="true">🔗</span>
+          <span>
+            <strong>Copy link</strong>
+            <small>Copy your live session URL</small>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-<script>
-(() => {
-  "use strict";
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  /*
-   * BIGULA Creator Live Studio
-   * This version implements local camera/microphone preview only.
-   * It deliberately does not claim to publish a live broadcast.
-   */
+  <script>
+    (() => {
+      "use strict";
 
-  const SUPABASE_URL = "https://vfteiggdhthvrrlndtbs.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_7LUjk7PBJeCy-_ZdrEqDzA_sGUruHRe";
+      const $ = (id) => document.getElementById(id);
 
-  let supabaseClient = null;
-  let currentUser = null;
-  let mediaStream = null;
-  let cameraEnabled = true;
-  let micEnabled = true;
-  let usingFrontCamera = true;
-  let sessionStartedAt = null;
-  let durationInterval = null;
-  let toastTimeout = null;
-  let sessionActive = false;
+      const video = $("cameraPreview");
+      const placeholder = $("placeholder");
+      const statusDot = $("statusDot");
+      const previewStatus = $("previewStatus");
+      const goLiveButton = $("goLive");
+      const goLiveLabel = $("goLiveLabel");
 
-  const $ = id => document.getElementById(id);
+      let mediaStream = null;
+      let cameraFacing = "user";
+      let previewActive = false;
+      let toastTimeout = null;
 
-  const video = $("cameraPreview");
-  const placeholder = $("previewPlaceholder");
-  const startBtn = $("startBroadcastBtn");
-  const endBtn = $("endBroadcastBtn");
-  const micBtn = $("micBtn");
-  const cameraBtn = $("cameraBtn");
-  const flipBtn = $("flipBtn");
+      let session = {
+        title: "My BIGULA Live",
+        description: "Welcome to my live session!"
+      };
 
-  function toast(message, type = "") {
-    const element = $("toast");
-    element.textContent = message;
-    element.className = "toast" + (type ? " " + type : "");
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => element.classList.add("hidden"), 4200);
-  }
+      // A stable URL for this browser session. The audience page must later
+      // be connected to the actual streaming provider to play a live broadcast.
+      const sessionId = getSessionId();
 
-  function formatDuration(totalSeconds) {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+      function getSessionId() {
+        const params = new URLSearchParams(location.search);
+        const existing = params.get("live");
 
-    return [hours, minutes, seconds]
-      .map(value => String(value).padStart(2, "0"))
-      .join(":");
-  }
+        if (existing && /^[a-zA-Z0-9_-]{1,100}$/.test(existing)) {
+          return existing;
+        }
 
-  function updateDuration() {
-    if (!sessionStartedAt) return;
+        if (crypto.randomUUID) {
+          return crypto.randomUUID();
+        }
 
-    const seconds = Math.floor((Date.now() - sessionStartedAt) / 1000);
-    const duration = formatDuration(seconds);
+        return Date.now().toString(36) +
+          Math.random().toString(36).slice(2, 10);
+      }
 
-    $("durationText").textContent = duration;
-    $("previewTimer").textContent = duration;
-    $("statDuration").textContent = duration;
-  }
+      function audienceUrl() {
+        const url = new URL("/live.html", "https://bigula.stream");
+        url.searchParams.set("live", sessionId);
+        url.searchParams.set("title", session.title);
+        return url.toString();
+      }
 
-  function updateStudioStatus(status, message) {
-    $("statusText").textContent = status;
-    $("connectionText").textContent = message;
-  }
+      function showToast(message) {
+        const toast = $("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
 
-  function updateDeviceButtons() {
-    micBtn.disabled = !mediaStream;
-    cameraBtn.disabled = !mediaStream;
-    flipBtn.disabled = !mediaStream;
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3200);
+      }
 
-    micBtn.classList.toggle("off", !micEnabled);
-    micBtn.classList.toggle("active", micEnabled);
-    micBtn.innerHTML = `<span>${micEnabled ? "🎙" : "🔇"}</span>${micEnabled ? "Mic On" : "Mic Off"}`;
+      function openModal(id) {
+        $(id).classList.add("open");
+      }
 
-    cameraBtn.classList.toggle("off", !cameraEnabled);
-    cameraBtn.classList.toggle("active", cameraEnabled);
-    cameraBtn.innerHTML = `<span>${cameraEnabled ? "▣" : "◌"}</span>${cameraEnabled ? "Camera On" : "Camera Off"}`;
+      function closeModal(id) {
+        $(id).classList.remove("open");
+      }
 
-    flipBtn.classList.add("active");
-  }
+      document.querySelectorAll("[data-close]").forEach((button) => {
+        button.addEventListener("click", () => {
+          closeModal(button.dataset.close);
+        });
+      });
 
-  async function requestCamera() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      toast("Camera access requires HTTPS or localhost and a supported browser.", "error");
-      $("healthText").textContent =
-        "This browser cannot access the camera. Open BIGULA over HTTPS in a supported browser.";
-      return false;
-    }
+      document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+        backdrop.addEventListener("click", (event) => {
+          if (event.target === backdrop) {
+            backdrop.classList.remove("open");
+          }
+        });
+      });
 
-    try {
-      stopMedia();
-
-      mediaStream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: {
-          facingMode: usingFrontCamera ? "user" : "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          frameRate: { ideal: 30, max: 30 }
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          document.querySelectorAll(".modal-backdrop.open").forEach((modal) => {
+            modal.classList.remove("open");
+          });
         }
       });
 
-      video.srcObject = mediaStream;
-      video.classList.remove("hidden");
-      placeholder.classList.add("hidden");
-
-      await video.play().catch(() => {});
-
-      const audioTracks = mediaStream.getAudioTracks();
-      const videoTracks = mediaStream.getVideoTracks();
-
-      micEnabled = audioTracks.length ? audioTracks[0].enabled : false;
-      cameraEnabled = videoTracks.length ? videoTracks[0].enabled : false;
-
-      updateDeviceButtons();
-      updateStudioStatus("PREVIEW READY", "Camera connected");
-      $("healthText").textContent =
-        "Your local camera preview is active. A streaming provider is not connected, so no viewers can see this preview.";
-      $("previewMessage").textContent = "Private local preview — not visible to viewers.";
-
-      toast("Camera and microphone preview is ready.", "success");
-      return true;
-    } catch (error) {
-      console.error("BIGULA camera access error:", error);
-
-      let message = "Could not access your camera or microphone.";
-
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        message = "Camera or microphone permission was denied. Allow access in your browser settings.";
-      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
-        message = "No compatible camera or microphone was found.";
-      } else if (error.name === "NotReadableError") {
-        message = "Your camera may already be in use by another application.";
+      function renderDetails() {
+        $("displayTitle").textContent = session.title;
+        $("displayDescription").textContent =
+          session.description || "No description added yet.";
+        $("liveTitle").value = session.title;
+        $("liveDescription").value = session.description;
       }
 
-      updateStudioStatus("CAMERA UNAVAILABLE", "Check device permissions");
-      $("healthText").textContent = message;
-      toast(message, "error");
-      return false;
-    }
-  }
-
-  function stopMedia() {
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(track => {
-        try { track.stop(); } catch (_) {}
+      $("editDetails").addEventListener("click", () => {
+        renderDetails();
+        openModal("editModal");
       });
-      mediaStream = null;
-    }
 
-    video.pause();
-    video.srcObject = null;
-    video.classList.add("hidden");
-    placeholder.classList.remove("hidden");
-    updateDeviceButtons();
-  }
+      $("editForm").addEventListener("submit", (event) => {
+        event.preventDefault();
 
-  function setTrackEnabled(kind, enabled) {
-    if (!mediaStream) return;
+        session.title = $("liveTitle").value.trim() || "My BIGULA Live";
+        session.description = $("liveDescription").value.trim();
 
-    const tracks = kind === "audio"
-      ? mediaStream.getAudioTracks()
-      : mediaStream.getVideoTracks();
+        renderDetails();
+        closeModal("editModal");
+        showToast("Live details updated.");
+      });
 
-    tracks.forEach(track => { track.enabled = enabled; });
-  }
+      async function startPreview() {
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+          showToast("Camera access requires a supported browser and HTTPS.");
+          return;
+        }
 
-  function startLocalPreviewSession() {
-    if (!mediaStream) {
-      toast("Enable your camera before starting a preview.", "error");
-      return;
-    }
+        goLiveButton.disabled = true;
+        goLiveLabel.textContent = "STARTING…";
 
-    const title = $("streamTitle").value.trim();
+        try {
+          const newStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: {
+              facingMode: { ideal: cameraFacing },
+              width: { ideal: 1280 },
+              height: { ideal: 1920 }
+            }
+          });
 
-    if (!title) {
-      $("streamTitle").focus();
-      toast("Enter a title for your broadcast first.", "error");
-      return;
-    }
+          // Stop the previous camera only after the replacement was acquired.
+          if (mediaStream) {
+            mediaStream.getTracks().forEach((track) => track.stop());
+          }
 
-    sessionActive = true;
-    sessionStartedAt = Date.now();
+          mediaStream = newStream;
+          video.srcObject = mediaStream;
+          video.classList.add("active");
+          placeholder.style.display = "none";
 
-    durationInterval = setInterval(updateDuration, 1000);
-    updateDuration();
+          await video.play();
 
-    $("statusPill").classList.remove("live");
-    $("statusText").textContent = "PREVIEW SESSION";
-    $("statStatus").textContent = "Preview";
-    $("statStatusSub").textContent = "Local only — not broadcasting";
-    $("broadcastBadge").textContent = "PREVIEW ONLY";
-    $("previewMessage").textContent = "This preview is private. Viewers cannot see it yet.";
-    $("healthText").textContent =
-      "Camera preview is running locally. No video is being sent to a streaming server.";
-    startBtn.classList.add("hidden");
-    endBtn.classList.remove("hidden");
+          previewActive = true;
+          statusDot.classList.add("ready");
+          previewStatus.textContent = "PREVIEW ACTIVE";
+          goLiveButton.classList.add("is-active");
+          goLiveLabel.textContent = "END PREVIEW";
 
-    toast("Preview session started. This is not a public live broadcast.", "success");
-  }
+          showToast(
+            "Camera preview started. Public broadcasting is not connected yet."
+          );
+        } catch (error) {
+          console.error("Camera preview error:", error);
 
-  function endLocalPreviewSession() {
-    sessionActive = false;
-    sessionStartedAt = null;
+          if (error.name === "NotAllowedError") {
+            showToast("Camera or microphone permission was denied.");
+          } else if (error.name === "NotFoundError") {
+            showToast("No compatible camera or microphone was found.");
+          } else {
+            showToast("Could not start the camera preview. Check permissions.");
+          }
 
-    if (durationInterval) {
-      clearInterval(durationInterval);
-      durationInterval = null;
-    }
+          goLiveLabel.textContent = "GO LIVE";
+        } finally {
+          goLiveButton.disabled = false;
+        }
+      }
 
-    $("durationText").textContent = "00:00:00";
-    $("previewTimer").textContent = "00:00:00";
-    $("statDuration").textContent = "00:00:00";
-    $("statusText").textContent = mediaStream ? "PREVIEW READY" : "STUDIO READY";
-    $("statStatus").textContent = "Offline";
-    $("statStatusSub").textContent = "Not connected to a streaming service";
-    $("broadcastBadge").textContent = "NOT BROADCASTING";
-    $("previewMessage").textContent = mediaStream
-      ? "Private local preview — not visible to viewers."
-      : "Your preview is private.";
+      function stopPreview() {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          mediaStream = null;
+        }
 
-    startBtn.classList.remove("hidden");
-    endBtn.classList.add("hidden");
+        video.pause();
+        video.srcObject = null;
+        video.classList.remove("active");
+        placeholder.style.display = "flex";
 
-    toast("Preview session ended.");
-  }
+        previewActive = false;
+        statusDot.classList.remove("ready");
+        previewStatus.textContent = "CAMERA OFF";
+        goLiveButton.classList.remove("is-active");
+        goLiveLabel.textContent = "GO LIVE";
 
-  async function loadUser() {
-    try {
-      if (!window.supabase) return;
+        showToast("Camera preview ended.");
+      }
 
-      supabaseClient = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY,
-        {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true,
-            flowType: "pkce"
+      goLiveButton.addEventListener("click", () => {
+        if (previewActive) {
+          stopPreview();
+        } else {
+          startPreview();
+        }
+      });
+
+      $("flipCamera").addEventListener("click", async () => {
+        cameraFacing = cameraFacing === "user" ? "environment" : "user";
+
+        if (!previewActive) {
+          showToast(
+            cameraFacing === "user"
+              ? "Front camera selected."
+              : "Back camera selected."
+          );
+          return;
+        }
+
+        const previousStream = mediaStream;
+        const oldButtonText = $("flipCamera").textContent;
+        $("flipCamera").disabled = true;
+        $("flipCamera").textContent = "SWITCHING…";
+
+        try {
+          const newStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: {
+              facingMode: { exact: cameraFacing },
+              width: { ideal: 1280 },
+              height: { ideal: 1920 }
+            }
+          });
+
+          mediaStream = newStream;
+          video.srcObject = newStream;
+          await video.play();
+
+          previousStream.getTracks().forEach((track) => track.stop());
+          showToast(
+            cameraFacing === "user"
+              ? "Front camera active."
+              : "Back camera active."
+          );
+        } catch (error) {
+          console.error("Camera switch error:", error);
+          cameraFacing = cameraFacing === "user" ? "environment" : "user";
+          showToast("Could not switch camera on this device.");
+        } finally {
+          $("flipCamera").disabled = false;
+          $("flipCamera").textContent = oldButtonText;
+        }
+      });
+
+      $("shareSession").addEventListener("click", () => {
+        openModal("shareModal");
+      });
+
+      function shareText() {
+        return session.title + "\n" +
+          (session.description ? session.description + "\n" : "") +
+          audienceUrl();
+      }
+
+      $("shareWhatsApp").addEventListener("click", () => {
+        const url = "https://wa.me/?text=" +
+          encodeURIComponent(shareText());
+
+        closeModal("shareModal");
+        window.open(url, "_blank", "noopener,noreferrer");
+      });
+
+      $("shareOther").addEventListener("click", async () => {
+        const data = {
+          title: session.title,
+          text: shareText(),
+          url: audienceUrl()
+        };
+
+        closeModal("shareModal");
+
+        if (navigator.share) {
+          try {
+            await navigator.share(data);
+          } catch (error) {
+            if (error.name !== "AbortError") {
+              showToast("Sharing was not completed.");
+            }
+          }
+        } else {
+          try {
+            await navigator.clipboard.writeText(shareText());
+            showToast("Link copied. You can paste it into another app.");
+          } catch (error) {
+            showToast("Use Copy link to share this session.");
           }
         }
-      );
+      });
 
-      const { data, error } = await supabaseClient.auth.getSession();
-      if (error) throw error;
+      $("copyLink").addEventListener("click", async () => {
+        const url = audienceUrl();
 
-      currentUser = data.session ? data.session.user : null;
+        try {
+          await navigator.clipboard.writeText(url);
+          closeModal("shareModal");
+          showToast("Live link copied to clipboard.");
+        } catch (error) {
+          // Fallback for browsers without clipboard permission.
+          const input = document.createElement("textarea");
+          input.value = url;
+          input.style.position = "fixed";
+          input.style.opacity = "0";
+          document.body.appendChild(input);
+          input.select();
 
-      if (currentUser) {
-        const metadata = currentUser.user_metadata || {};
-        const displayName =
-          metadata.full_name ||
-          metadata.name ||
-          metadata.username ||
-          currentUser.email ||
-          "BIGULA Creator";
+          const copied = document.execCommand("copy");
+          input.remove();
 
-        $("profileAvatar").textContent =
-          displayName.trim().charAt(0).toUpperCase() || "B";
-
-        const avatarURL = metadata.avatar_url || metadata.picture;
-
-        if (avatarURL) {
-          const img = document.createElement("img");
-          img.src = avatarURL;
-          img.alt = "Creator profile";
-          img.referrerPolicy = "no-referrer";
-          img.onerror = () => img.remove();
-
-          $("profileAvatar").textContent = "";
-          $("profileAvatar").appendChild(img);
+          closeModal("shareModal");
+          showToast(
+            copied
+              ? "Live link copied to clipboard."
+              : "Could not copy automatically. Try sharing with WhatsApp."
+          );
         }
-      }
-    } catch (error) {
-      console.warn("Could not load BIGULA session:", error);
-    }
-  }
+      });
 
-  $("enableCameraBtn").addEventListener("click", requestCamera);
+      window.addEventListener("pagehide", () => {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+        }
+      });
 
-  startBtn.addEventListener("click", async () => {
-    if (!mediaStream) {
-      const ready = await requestCamera();
-      if (!ready) return;
-    }
-    startLocalPreviewSession();
-  });
-
-  endBtn.addEventListener("click", endLocalPreviewSession);
-
-  micBtn.addEventListener("click", () => {
-    if (!mediaStream) return;
-
-    micEnabled = !micEnabled;
-    setTrackEnabled("audio", micEnabled);
-    updateDeviceButtons();
-
-    toast(micEnabled ? "Microphone enabled." : "Microphone muted.");
-  });
-
-  cameraBtn.addEventListener("click", () => {
-    if (!mediaStream) return;
-
-    cameraEnabled = !cameraEnabled;
-    setTrackEnabled("video", cameraEnabled);
-    updateDeviceButtons();
-
-    if (!cameraEnabled) {
-      $("previewMessage").textContent = "Your camera is off.";
-    } else {
-      $("previewMessage").textContent = "Private local preview — not visible to viewers.";
-    }
-  });
-
-  flipBtn.addEventListener("click", async () => {
-    usingFrontCamera = !usingFrontCamera;
-    const wasInSession = sessionActive;
-
-    if (wasInSession) endLocalPreviewSession();
-
-    const ready = await requestCamera();
-
-    if (ready && wasInSession) {
-      startLocalPreviewSession();
-    }
-  });
-
-  $("settingsBtn").addEventListener("click", () => {
-    $("broadcastForm").scrollIntoView({ behavior: "smooth", block: "start" });
-    $("streamTitle").focus({ preventScroll: true });
-  });
-
-  $("broadcastForm").addEventListener("submit", event => {
-    event.preventDefault();
-  });
-
-  $("chatForm").addEventListener("submit", event => {
-    event.preventDefault();
-    toast("Live chat is not connected yet. It will be enabled with the streaming integration.");
-  });
-
-  $("backBtn").addEventListener("click", () => {
-    if (sessionActive) {
-      const confirmExit = confirm("Your local preview session is active. End it and leave the studio?");
-      if (!confirmExit) return;
-      endLocalPreviewSession();
-    }
-
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = "account.html";
-    }
-  });
-
-  window.addEventListener("beforeunload", () => {
-    if (durationInterval) clearInterval(durationInterval);
-    if (mediaStream) {
-      mediaStream.getTracks().forEach(track => track.stop());
-    }
-  });
-
-  loadUser();
-})();
-</script>
+      renderDetails();
+    })();
+  </script>
 </body>
 </html>
