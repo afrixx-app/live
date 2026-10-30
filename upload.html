@@ -1104,25 +1104,42 @@ async function uploadVideo(){
     pt.textContent=t;
   };
 
-  let uploadedPath=null;
-
   try{
     progress(3,"Preparing video…");
     const file=await renderEditedVideo();
     progress(12,"Uploading video…");
 
-    const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-    const path=`${currentUser.id}/${crypto.randomUUID()}_${safe}`;
+    // Upload the raw video directly to Cloudflare R2 through BIGULA's media Worker.
+    const {data:{session},error:sessionError}=await supabase.auth.getSession();
+    if(sessionError)throw sessionError;
+    const accessToken=session?.access_token;
+    if(!accessToken)throw new Error("Your session has expired. Please sign in again.");
 
-    const {data,error}=await supabase.storage.from("videos").upload(path,file,{
-      cacheControl:"3600",upsert:false,contentType:file.type||"video/webm"
+    const contentType=(file.type||"").split(";")[0].trim().toLowerCase();
+    const allowedVideoTypes=["video/mp4","video/webm","video/quicktime"];
+    if(!allowedVideoTypes.includes(contentType)){
+      throw new Error("Unsupported video format. Please use MP4, WebM, or MOV.");
+    }
+
+    const r2Response=await fetch("https://bigula-media-api.afrixx20.workers.dev/upload",{
+      method:"POST",
+      headers:{
+        "Authorization":"Bearer "+accessToken,
+        "Content-Type":file.type||contentType
+      },
+      body:file
     });
-    if(error)throw error;
-    uploadedPath=data.path;
+
+    let r2Result={};
+    try{r2Result=await r2Response.json();}catch(_){}
+    if(!r2Response.ok||!r2Result.success||!r2Result.url){
+      throw new Error(r2Result.error||"Cloudflare R2 upload failed. Please try again.");
+    }
+
+    const url=r2Result.url;
+
 
     progress(78,"Creating video record…");
-    const {data:pub}=supabase.storage.from("videos").getPublicUrl(data.path);
-    const url=pub.publicUrl;
 
     let row;
     const primary=await supabase.from("videos").insert({
@@ -1180,12 +1197,6 @@ async function uploadVideo(){
     }
   }catch(e){
     console.error(e);
-
-    // If the file uploaded but the database insert failed, try removing
-    // the orphaned storage file.
-    if(uploadedPath){
-      try{await supabase.storage.from("videos").remove([uploadedPath]);}catch(cleanupError){console.warn("Storage cleanup failed:",cleanupError);}
-    }
 
     msg($("step3Message"),"Upload failed: "+(e.message||e),"error");
     btn.disabled=false;
